@@ -1,0 +1,3 @@
+[submodule "legacy/2025-2-midas/Crime_Prediction"]
+	path = legacy/2025-2-midas/Crime_Prediction
+	url = https://github.com/YEOUL0520/Crime_Prediction.git

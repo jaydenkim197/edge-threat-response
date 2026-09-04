@@ -14,6 +14,7 @@
 | `jetson/Jetson_개발정보.txt` | `legacy/2025-2-midas/jetson/Jetson_개발정보.txt` | JetPack, Python, PyTorch, OpenCV와 호환성 제약 | `IMPLEMENTED` (보존), 실기기 재확인 `PLANNED` |
 | `jetson/Jetson_nano_flash_reset_guide.txt` | `legacy/2025-2-midas/jetson/Jetson_nano_flash_reset_guide.txt` | Nano 복구 절차의 출발점 | `IMPLEMENTED` (보존), 보드·이미지 호환성 확인 `PLANNED` |
 | `MIDAS_MSP 활동정리.txt` | `legacy/2025-2-midas/MIDAS_MSP 활동정리.txt` | 기존 목표·역할·제약의 역사적 근거 | `IMPLEMENTED` (보존) |
+| `YEOUL0520/Crime_Prediction` | `legacy/2025-2-midas/Crime_Prediction` (Git submodule) | 흉기 탐지 모델, 학습 데이터셋, 학습 코드, 웹 프로토타입을 포함한 원본 저장소 | `IMPLEMENTED` (참조), 실행 재현 `PLANNED` |
 
 ## 제외한 자산
 
@@ -31,3 +32,5 @@
 - legacy 코드에는 현재 Jetson 환경과 충돌할 수 있는 `torch`/`cv2` import 순서와 pandas 의존 결과 처리 등이 남아 있다. 수정하지 않은 역사적 기준으로 보존하며, 신규 구현의 기반 코드로 직접 실행하지 않는다.
 - 복구 가이드의 L4T 32.7.3과 개발 정보의 L4T 32.7.6은 다르다. 플래시 전 보드 모델·저장장치·호환 이미지를 반드시 실기기로 검증한다.
 - legacy 자산을 토대로 만든 새 코드·설정·테스트는 `app/`, `tests/`, `config/` 등 새 구조에 작성하며, legacy 파일을 덮어쓰지 않는다.
+- `Crime_Prediction` 원본은 2026-09-04 확인 기준 약 460 MB, 14,760개 파일이다. 데이터셋·모델을 중복 복제하지 않고 원본 commit `5e2286971b0e7a54ede4caa3baa03fe168edc5b8`을 submodule로 고정한다.
+- 해당 원본 학습 스크립트에는 API 키처럼 보이는 값이 있다. 이 저장소에는 내용을 재복제하지 않으며, 원본 소유자는 키를 폐기·재발급하고 환경변수 또는 로컬 `.env`로 이전해야 한다.

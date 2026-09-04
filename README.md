@@ -37,6 +37,16 @@ Camera
 - [문서화 운영 규칙](docs/documentation-governance.md): 기록·상태·보안 규칙
 - [기존 MIDAS 자산 선별 기록](docs/legacy-asset-selection.md): 가져온 baseline과 제외 근거
 
+## Legacy source checkout
+
+2025-2의 전체 모델·데이터셋·학습 소스는 용량과 원본 보존을 위해 Git submodule로 연결한다. 처음 clone할 때는 다음 명령을 사용한다.
+
+```bash
+git clone --recurse-submodules https://github.com/jaydenkim197/edge-threat-response.git
+```
+
+이미 clone한 경우에는 `git submodule update --init --recursive`를 실행한다. submodule 내부의 legacy 코드와 모델은 신규 시스템 코드로 직접 수정하지 않는다.
+
 ## Non-goals (현재 단계)
 
 - 단순히 YOLO 버전만 교체하는 작업
