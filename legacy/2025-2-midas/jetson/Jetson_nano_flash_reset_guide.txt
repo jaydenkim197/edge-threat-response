@@ -1,0 +1,103 @@
+✅ Ubuntu PC 도착 후 Step-by-Step
+✅ Step 0 — 사전 준비
+
+USB 에 있는 2개 파일 준비:
+
+Jetson-210_Linux_R32.7.3_aarch64.tbz2
+Tegra_Linux_Sample-Root-Filesystem_R32.7.3_aarch64.tbz2
+
+
+Jetson Nano → Recovery Mode 들어갈 준비
+(REC-GND short + USB 연결)
+
+복잡한 건 나중이고, 일단 파일부터 세팅
+
+✅ Step 1 — 작업 폴더 생성
+
+Ubuntu PC 에서:
+
+mkdir -p ~/jetson_flash
+cd ~/jetson_flash
+
+✅ Step 2 — 파일 복사
+
+USB 를 열어서 두 파일을
+~/jetson_flash/ 에 복사
+
+✅ Step 3 — BSP 압축 풀기
+tar -xjf Jetson-210_Linux_R32.7.3_aarch64.tbz2
+
+
+풀면 Linux_for_Tegra/ 디렉토리 생김
+
+✅ Step 4 — RootFS 압축 풀기
+sudo tar -xjf Tegra_Linux_Sample-Root-Filesystem_R32.7.3_aarch64.tbz2 -C Linux_for_Tegra/rootfs/
+
+✅ Step 5 — apply_binaries
+cd Linux_for_Tegra
+sudo ./apply_binaries.sh
+
+
+(QEMU 같은 dependency 나오면 알려줘 — 대부분 리얼 PC에서는 바로 통과)
+
+✅ Step 6 — Jetson Recovery Mode 연결
+
+Jetson 전원 OFF
+
+REC + GND 쇼트
+
+USB to Micro-B → Ubuntu PC 연결
+
+Jetson 전원 ON
+
+인식 확인:
+
+lsusb
+
+
+→ NVIDIA Corp. APX 보이면 OK
+
+✅ Step 7 — Flash 실행
+cd ~/jetson_flash/Linux_for_Tegra
+sudo ./flash.sh jetson-nano-emmc mmcblk0p1
+
+
+여기서 20–40분 정도 소요
+성공 시:
+
+*** The target has been flashed successfully ***
+
+✅ Step 8 — Jetson 부팅
+
+전원 OFF
+
+REC-GND 점퍼 제거
+
+모니터 + 키보드 연결
+
+전원 ON
+
+→ Ubuntu 최초 설정화면 나오면 성공
+
+✅ 요약 Checklist
+단계	행동
+1	~/jetson_flash 폴더 생성
+2	BSP/RootFS 파일 복사
+3	BSP 압축해제
+4	RootFS 압축해제
+5	apply_binaries.sh
+6	Jetson Recovery 연결 → lsusb 확인
+7	flash.sh jetson-nano-emmc mmcblk0p1
+8	점퍼 제거 → 부팅
+✅ 이후
+
+Jetson 부팅되면
+apt update 만 하고
+apt upgrade / dist-upgrade 절대 X
+
+원하면
+**더 극단적으로 줄인 ‘초간단 버전’**도 만들어줄 수 있어.
+이대로 따라가면 거의 100% 붙는다.
+
+가서 진행하고
+막히면 단계 적어주면 바로 이어서 알려줄게.

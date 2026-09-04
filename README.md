@@ -35,6 +35,7 @@ Camera
 - [아키텍처](docs/architecture.md): 현재 목표 구조와 책임 경계
 - [검증 매트릭스](docs/verification.md): 요구사항별 증거와 미검증 항목
 - [문서화 운영 규칙](docs/documentation-governance.md): 기록·상태·보안 규칙
+- [기존 MIDAS 자산 선별 기록](docs/legacy-asset-selection.md): 가져온 baseline과 제외 근거
 
 ## Non-goals (현재 단계)
 

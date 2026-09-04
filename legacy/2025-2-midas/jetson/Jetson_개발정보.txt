@@ -1,0 +1,297 @@
+1. 하드웨어 / OS / 기본 환경
+
+보드: Jetson Nano 4GB
+
+JetPack / L4T: 32.7.6
+
+기본적으로 Ubuntu 18.04 + CUDA 10.2 + cuDNN 8 세트
+
+RAM: 4 GB
+
+스토리지:
+
+eMMC/SD 내부 용량 부족
+
+실질적인 개발 환경은 외장 USB (ext4) 에 있음
+
+마운트 경로: /media/jetson/jetson_env
+
+2. Python / 가상환경
+
+Python 버전: 3.6.9 (Jetson 기본)
+
+가상환경(venv):
+
+위치: /media/jetson/jetson_env/crime_env
+
+활성화:
+
+cd /media/jetson/jetson_env
+source crime_env/bin/activate
+
+
+중요 제약:
+
+Python 3.6이라서
+
+최신 라이브러리(특히 ultralytics, pandas, matplotlib, seaborn, scipy)는 호환 X 또는 빌드 X 가능성이 큼
+
+Python 3.7+ 전용 문법/기능 쓰지 말 것
+(예: dataclasses, 일부 타입힌트, :=(walrus) 등)
+
+3. 현재 핵심 라이브러리 버전
+(1) PyTorch
+
+설치된 휠:
+
+torch-1.8.0a0+37c1f4a-cp36-cp36m-linux_aarch64.whl
+
+버전: 1.8.0a0+37c1f4a
+
+상태:
+
+CPU 텐서 연산 정상 동작 확인
+
+GPU(CUDA) 쪽은 라이브러리 심링크로 맞춰놓긴 했지만,
+안전하게는 CPU 추론 기준으로 개발하는 게 낫다고 보는 게 현실적
+
+(2) Numpy
+
+버전: 1.13.3 (시스템 apt 기반)
+
+주의:
+
+이 버전과 현대 pandas는 호환 안 됨
+
+실제로 pandas import 시
+
+this version of pandas is incompatible with numpy < 1.15.4
+라는 ImportError 발생
+
+결론:
+
+pandas 의존성 있는 코드 절대 쓰지 말 것
+
+Numpy는 1.13.3 기준으로 돌아가는 기본 연산만 사용
+
+(3) OpenCV
+
+버전: 3.2.0
+
+설치: apt 기반 (system library)
+
+상태:
+
+단독 import OK
+
+중요 버그:
+
+torch 먼저 import 후 cv2 import →
+libgomp.so.1: cannot allocate memory in static TLS block 에러 발생
+
+반대로,
+
+import cv2
+import torch
+
+
+순서면 정상 동작
+
+👉 규칙:
+모든 코드에서 반드시 import cv2를 torch보다 먼저 해야 함.
+
+4. YOLO / 모델 관련 스펙
+(1) YOLO 프레임워크
+
+현재 클론된 레포:
+
+경로: /media/jetson/jetson_env/projects/yolov5
+
+버전: v6.0 브랜치
+
+cd /media/jetson/jetson_env/projects
+git clone -b v6.0 https://github.com/ultralytics/yolov5
+
+
+YOLOv5 코드 수정 내역(핵심):
+
+utils/plots.py
+
+matplotlib / seaborn 제거
+
+OpenCV + numpy 기반 최소 기능만 남긴 커스텀 버전 사용
+
+최근에 feature_visualization 이 없어서 ImportError가 났고,
+이건 단순 “빈 스텁 함수” 추가로 해결할 예정:
+
+from pathlib import Path
+
+def feature_visualization(x, module_type, stage, n=32, save_dir=Path('')):
+    # no-op for Jetson
+    return
+
+
+models/common.py, utils/general.py
+
+import pandas as pd → Jetson에서는 깨지므로,
+
+try:
+    import pandas as pd
+except Exception:
+    pd = None
+
+
+그리고 pd.options.display... 는
+
+if pd is not None:
+    pd.options.display.max_columns = 10
+    pd.options.display.max_rows = 1000  # 있으면
+
+
+이렇게 감싸서 pandas 없이도 동작하도록 우회 중.
+
+utils/torch_utils.py
+
+예전에는 import torchvision 안 되는 문제 때문에 try/except 처리했었음
+(필요시 팀원이 다시 깔끔하게 정리 가능)
+
+(2) YOLO 모델 아키텍처 / 용량 제한
+
+Jetson Nano에서 현실적인 모델:
+
+yolov5n (nano): 추천
+
+yolov5s: 가능은 하나 CPU-only에선 FPS가 더 떨어질 수 있음
+
+절대 쓰지 말 것:
+
+yolov5m, yolov5l, yolov5x → Nano에서는 사실상 무리
+
+입력 해상도:
+
+기본 640×640 기준 구성
+
+속도 필요하면 416, 320 등으로 줄이는 것도 가능 (모델/코드에서 따로 조정)
+
+(3) 모델 훈련 / 배포 방식
+
+훈련(Training):
+
+Jetson Nano에서 훈련하는 건 현실적으로 비추
+
+팀원 PC(데스크탑/랩탑, Python 3.8+ 가능 환경)에서:
+
+최신 PyTorch + YOLOv5/ultralytics로 훈련
+
+단, 아키텍처는 YOLOv5 v6.0 기준으로 맞추는 걸 강력 추천
+(그래야 Jetson 쪽 attempt_load()로 그대로 로딩 가능)
+
+배포(Deployment):
+
+훈련된 best.pt/customknife_v1.1.pt 를 Nano로 복사
+
+Jetson에서는:
+
+torch 1.8.0
+
+yolov5 v6.0 repo
+
+attempt_load(weights) 로 로딩해서 CPU 추론만 수행
+
+5. Jetson에서 목표하는 동작 레벨
+
+추론 디바이스: cpu (현 환경 기준)
+
+예상 FPS (대략):
+
+yolov5n, 640×640, CPU → 1~3 FPS 정도 예상
+
+칼/무기 감지 시스템 용도로는 충분히 실용적인 수준
+(연속 CCTV 스트림 실시간 모니터링이 아니라, “발생하면 울려라” 시스템이기 때문에)
+
+목적:
+
+USB 웹캠에서 프레임 캡처
+
+YOLOv5n 기반 커스텀 모델 (customknife_v1.1.pt) 로 추론
+
+칼(knife) 클래스 감지 시 alarm.wav 재생
+
+(추후) FastAPI + pyngrok로 웹 대시보드 제공
+
+6. 디렉토리 구조 (Jetson 기준)
+/media/jetson/jetson_env/
+├── crime_env/                      # Python venv (현재 사용)
+│   └── ...                         # torch, numpy, cv2 등 설치
+└── projects/
+    ├── Crime_Prediction/           # 팀에서 개발 중인 메인 레포
+    │   ├── alarm.wav
+    │   ├── audio.py
+    │   ├── customknife_v1.1.pt
+    │   ├── yolo11n.pt (등등 모델들)
+    │   ├── webcam_test.py
+    │   └── ...
+    └── yolov5/                     # YOLOv5 v6.0 레포 (inference 전용)
+        ├── models/
+        ├── utils/
+        ├── detect.py
+        ├── yolo_min_test.py        # 단일 로딩/테스트용 (현재 작성 중)
+        └── ...
+
+
+팀원이 할 일 정리하면:
+
+훈련 파트: 로컬 PC에서 YOLOv5 v6.0 기준으로 모델 설계/학습
+
+배포 파트: 위 구조 맞춰서 .pt 모델만 Nano로 가져와서 추론 코드에 연결
+
+7. Jetson 쪽 코드 작성 시 “필수 규칙” 정리
+
+팀원이 Jetson 용 추론 코드를 개발할 때 반드시 지켜야 할 것들:
+
+import 순서
+
+import cv2
+import torch
+
+
+이 순서 지키지 않으면 TLS 에러로 죽음:
+
+/usr/lib/aarch64-linux-gnu/libgomp.so.1: cannot allocate memory in static TLS block
+
+pandas / matplotlib / seaborn 절대 사용 금지
+
+numpy 1.13.3 환경이라 현대 pandas와 호환 안 됨
+
+YOLOv5 내부에서도 pandas import하는 부분은 전부 try/except + pd = None + if pd is not None: 처리 필요
+
+ultralytics(최신 패키지) 사용 금지
+
+Python 3.6 + Jetson 환경에서 설치/의존성 맞추기 거의 불가능
+
+반드시 “로컬에서 ultralytics로 학습 → Jetson에서는 순수 YOLOv5 repo로 inference만 수행” 구조로 가야 함
+
+모델 사이즈 / 연산량
+
+yolov5n 기준으로 네트워크 설계 및 훈련
+
+헤드나 블록을 무식하게 늘리면 Nano에서는 추론이 안 돌아가거나 FPS 0.x 수준 될 수 있음
+
+Python 3.6 호환성
+
+f-string은 가능하지만,
+
+3.7 이상 문법/라이브러리 사용 금지
+(팀원이 trainer 쪽 코드 따로 짤 땐 상관 없지만, Nano에 올라오는 inference 코드만큼은 3.6 기준 맞춰야 함)
+
+8. 팀원한테 전달해주면 좋은 요약 문장 (짧게)
+
+Jetson 쪽은 Python 3.6.9 / torch 1.8.0 aarch64 / numpy 1.13.3 / opencv 3.2.0 환경이고,
+
+YOLOv5 v6.0 레포에 맞춘 경량 모델(yolov5n 기반) 로 추론만 돌릴 예정.
+
+Jetson에서는 pandas, matplotlib, seaborn, ultralytics 패키지 안 쓴다.
+
+모든 코드는 import cv2 → import torch 순서 지켜야 하고,
+
+훈련은 로컬(PC)에서 하고, .pt 모델만 Nano로 복사해서 YOLOv5 repo로 inference 한다.
