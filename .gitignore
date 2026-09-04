@@ -1,0 +1,36 @@
+# Course administration and meeting materials are not project source.
+/5조_회의록/
+/양식/
+/카카오톡 조편성/
+/260901_종합설계과제(1)_OT.txt
+
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# Sensitive/raw event data and generated runtime artifacts
+data/
+events/
+recordings/
+captures/
+logs/
+*.mp4
+*.avi
+*.mov
+
+# Large trained-model and build artifacts; document reproducible acquisition instead.
+models/
+*.pt
+*.onnx
+*.engine
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+build/
+dist/
