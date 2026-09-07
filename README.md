@@ -8,11 +8,12 @@
 
 ## 현재 상태
 
-- 상태: `PROPOSAL` / 초기 기획 및 기존 산출물 분석 완료
+- 상태: 프로젝트 방향·일정 `DECISION`, MVP 세부 범위 `PROPOSAL`
 - 기존 산출물: 2025-2 MIDAS 발표자료, 활동 정리, Jetson Nano 프로토타입 코드
-- 구현 저장소: 아직 구성되지 않음
+- 구현 저장소: 구성 완료, legacy 전체 소스는 Git submodule로 고정
 - Jetson Nano 실기기: 정상 부팅·카메라·GPIO 상태를 재확인해야 함
 - 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
+- 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
 
 ## 목표 시스템
 
@@ -29,12 +30,14 @@ Camera
 
 ## 문서 안내
 
+- [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계
-- [연구·제품 계획](docs/research-or-product-plan.md): 문제 정의, 범위, 후보, 평가 계획
+- [연구·실험 계획](docs/research-or-product-plan.md): 가설과 비교 실험의 보조 계획
 - [미결정 사항](docs/open-decisions.md): 확정 전 선택지와 판단 기준
 - [아키텍처](docs/architecture.md): 현재 목표 구조와 책임 경계
 - [검증 매트릭스](docs/verification.md): 요구사항별 증거와 미검증 항목
 - [문서화 운영 규칙](docs/documentation-governance.md): 기록·상태·보안 규칙
+- [회의·수업 결정 근거](docs/meeting-decisions/): 주제 선정과 일정 제약의 요약 기록
 - [기존 MIDAS 자산 선별 기록](docs/legacy-asset-selection.md): 가져온 baseline과 제외 근거
 
 ## Legacy source checkout
@@ -60,7 +63,7 @@ git clone --recurse-submodules https://github.com/jaydenkim197/edge-threat-respo
 
 ## 개발 작업공간 및 GitHub 동기화
 
-이 저장소의 기준 작업공간은 `Development_Github`이다. 다른 상위 수업 폴더의 복사본은 개발 기준으로 사용하지 않는다.
+이 저장소의 기준 작업공간은 `00_Development_Github`이다. 다른 상위 수업 폴더의 복사본은 개발 기준으로 사용하지 않는다.
 
 - 작업 시작 전 `git pull --ff-only`로 원격 `main`을 안전하게 반영한다. fast-forward가 불가능하면 임의로 병합하지 않고 원인을 확인한다.
 - 의도한 변경만 검토·stage하여 커밋한다. 이 작업공간에서는 commit 직후 `origin/main`으로 자동 push되도록 Git hook을 설정했다.

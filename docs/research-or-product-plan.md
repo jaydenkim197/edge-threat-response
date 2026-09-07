@@ -1,4 +1,8 @@
-# Research and Product Plan
+# Research and Experiment Plan
+
+상태: `PLANNED`
+
+2026-09-07부터 프로젝트 목적·범위·일정의 기준 역할은 `project-plan.md`로 이전했다. 이 문서는 MVP 결정 이후 연구 가설, 실험 변수, 시나리오, 분석 절차를 구체화하는 보조 문서다. 아래 후보는 `project-plan.md` 또는 `open-decisions.md`보다 우선하지 않는다.
 
 ## 문제 정의
 
@@ -11,30 +15,34 @@
 핵심 질문은 다음과 같다.
 
 1. 연속 프레임과 상태 머신을 적용하면 단일 프레임 경보보다 불필요한 경보를 줄일 수 있는가?
-2. 사람-흉기 공간 관계, 객체 추적, 움직임, 지속 시간을 결합한 규칙 기반 위협 점수가 실용적인가?
+2. 선택한 공간·시간 context factor가 사건 수준 판단에 기여하는가?
 3. 제한된 엣지 자원에서 정확도뿐 아니라 지연, FPS, 메모리, 온도, 전력, 장시간 안정성을 어떤 균형으로 확보할 수 있는가?
 
-## MVP 범위 - `PROPOSAL`
+## 초기 연구 비교안 - `PROPOSAL`
 
 ```text
-카메라 입력
-  -> 사람/흉기 탐지
-  -> 연속 프레임 판정 및 상태 머신
-  -> NORMAL / CAUTION / DANGER
-  -> 부저·LED 경보 + 이벤트 메타데이터 + 전후 영상 저장
-  -> 성능·자원 로그
+Baseline
+  -> single-frame weapon detection
+  -> immediate alarm
+
+Proposed
+  -> 동일 detection
+  -> 선택된 spatial / temporal context
+  -> threat state machine
+  -> alarm + event evidence
 ```
 
-MVP는 단일 카메라·로컬 우선 동작을 전제로 한다. 네트워크가 끊겨도 로컬 탐지와 경보는 유지되어야 한다.
+정확한 context factor, 상태 수, snapshot/clip 범위와 목표 수치는 아직 결정되지 않았다. MVP는 단일 카메라·로컬 우선 동작을 전제로 하며 네트워크가 끊겨도 핵심 경로가 유지되어야 한다.
 
 ## 개발 후보
 
 | 후보 | 가치 | 난이도 | 권장 위치 | 상태 |
 |---|---|---:|---|---|
-| 연속 프레임·상태 머신 경보 | 오탐 억제와 제품 완성도 | 중 | MVP | `PROPOSAL` |
-| 사건 전후 영상·이벤트 로그 | 사후 분석·재현·데이터 수집 | 중 | MVP | `PROPOSAL` |
-| 자동 복구·저장공간 관리·자원 모니터링 | 독립형 엣지 장치 안정성 | 중 | MVP | `PROPOSAL` |
-| 사람-흉기 관계·객체 추적·위협 점수 | 상황 인식 차별성 | 상 | 2차 개발 | `PROPOSAL` |
+| 연속 프레임·상태 머신 경보 | 오탐 억제와 제품 완성도 | 중 | MVP 후보 | `PROPOSAL` |
+| 사건 metadata·snapshot | 사후 분석·재현 | 중 | MVP 후보 | `PROPOSAL` |
+| benchmark·최소 자원 기록 | 논문 실험 착수 조건 | 중 | MVP 후보 | `PROPOSAL` |
+| 사람-흉기 관계·지속 시간 | 상황 인식 차별성 | 중 | MVP 후보 | `PROPOSAL` |
+| 객체 추적·움직임·복합 위협 점수 | 문맥 확장 | 상 | Stretch | `PROPOSAL` |
 | Nano vs Orin Nano 비교 | 정량적 엣지 최적화 연구 | 중상 | 검증 단계 | `PROPOSAL` |
 | Edge-Server 이벤트 대시보드 | 다중 장치 확장성 | 중 | 3차 개발 | `PROPOSAL` |
 | 멀티카메라 Re-ID | 시각적 차별성 | 상 | 후속 과제 | `DEFERRED` |
@@ -55,7 +63,7 @@ weapon confidence
 = threat score
 ```
 
-초기 상태는 `NORMAL`, `SUSPECTED`, `CONFIRMED`, `ALARM`, `COOLDOWN`으로 설계한다. 임계값·가중치·상태 전이 조건은 코드 하드코딩 대신 설정 파일과 실험으로 결정한다.
+현재 권장 상태 후보는 `NORMAL`, `SUSPECTED`, `ALARM`, `COOLDOWN`이다. 상태 수와 의미는 MVP 결정 전까지 확정하지 않으며, 결정된 임계값·가중치·전이 조건은 코드 하드코딩 대신 설정과 실험 기록으로 관리한다.
 
 ## 평가 계획 - `PLANNED`
 
@@ -69,4 +77,4 @@ weapon confidence
 
 ## 범위 관리
 
-이번 학기의 성공 기준은 모든 후보의 구현이 아니라, MVP를 재현 가능하게 만들고 선택한 상황 인식 요소와 성능·안정성 검증으로 기존 프로토타입보다 발전했음을 증명하는 것이다.
+이번 학기의 성공 기준은 모든 후보의 구현이 아니라, 확정된 MVP를 재현 가능하게 만들고 선택한 상황 인식 요소가 사건 수준 결과에 미치는 영향을 검증하는 것이다. 구체적인 범위와 일정은 `project-plan.md`를 따른다.

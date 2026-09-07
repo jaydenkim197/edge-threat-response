@@ -2,6 +2,47 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-07 - Master Plan과 장기 기록 체계 정비
+
+상태: 문서 기반 `IMPLEMENTED`, MVP 세부 기능 `PROPOSAL`
+
+### Goal / Why
+
+- 12월 최종 데모·보고서·졸업논문까지 프로젝트 방향과 증거 흐름이 흔들리지 않도록 최상위 계획과 문서 역할을 고정한다.
+- 10월 31일을 단순 데모가 아닌 반복 가능한 정량 실험 착수 시점으로 운영한다.
+
+### Scope / Changed files
+
+- `docs/project-plan.md`를 추가하고 README, AGENTS, architecture, open decisions, verification, documentation governance, research plan을 정합화했다.
+- 2026-08-27 주제 탐색 회의와 2026-09-01 OT의 공개 가능한 결정 근거를 `meeting-decisions/`에 요약했다.
+- 기능 구현, 모델 학습, MVP 확정, Jetson 설정 변경은 수행하지 않았다.
+
+### Decisions and judgment
+
+- 균형형 MVP 후보는 가장 유력하지만 팀 결정 전까지 `PROPOSAL`로 유지한다.
+- tracking, movement, dashboard, clip, Orin 비교는 기본적으로 stretch goal로 분리했다.
+- 근거 없는 오경보 30% 감소·recall 5%p 이내 같은 예시 수치는 목표로 채택하지 않았다.
+- 프로젝트 목적·범위·일정의 기존 기준 역할을 `research-or-product-plan.md`에서 `project-plan.md`로 이전하고, 전자는 연구·실험 보조 문서로 재정의했다.
+
+### Evidence / Limitations
+
+- 2026-08-27 회의록, 2026-09-01 OT 기록, 2026-09-04 회의록과 저장소의 기존 문서를 대조했다.
+- Nano 실기기, legacy model, GPIO, 카메라, 성능은 이번 작업에서 실행하거나 측정하지 않았다.
+
+### Environment / Verification commands
+
+- 환경: Windows, PowerShell, 기준 작업공간 `00_Development_Github`
+- 문서·상태 검색: `rg`, `Get-Content`
+- 변경 검증: `git diff --check`, `git status --short`
+- 원격 기준 확인: `git fetch origin`, `git rev-list --left-right --count main...origin/main`
+- Git commit: 이 기록을 포함하는 commit
+
+### Next action
+
+1. Nano와 legacy baseline의 실행 가능성을 진단한다.
+2. 사건 정답 규칙과 안전한 controlled scenario를 작성한다.
+3. 측정 결과와 일정에 근거해 균형형 MVP를 승인 또는 축소한다.
+
 ## 2026-09-07 - 기준 개발 작업공간을 Development_Github로 전환
 
 상태: `IMPLEMENTED` (로컬 Git 연결·동기화 정책), 원격 변경 감시 `NOT ADOPTED`

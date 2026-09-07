@@ -24,11 +24,16 @@
 | 문서 | 역할 | 갱신 시점 |
 |---|---|---|
 | `README.md` | 목적, 실행법, 현재 상태의 진입점 | 핵심 상태 변경 시 |
+| `project-plan.md` | 목적, 범위, 일정, 성공 조건의 최상위 기준 | 방향·범위·일정 변경 시 |
 | `development-log.md` | 변경·결정·검증·한계의 시간순 기록 | material task 종료 전 |
 | `open-decisions.md` | 미확정 선택과 결정 기준 | 선택지가 생기거나 확정될 때 |
 | `architecture.md` | 현재 시스템 경계와 계약 | 구조·통신·저장 경계 변경 시 |
 | `verification.md` | 요구사항별 검증 계획과 증거 | 테스트 계획·결과 변경 시 |
-| `research-or-product-plan.md` | 문제, 범위, 후보, 연구 질문, 지표 | 방향 변경 시 |
+| `research-or-product-plan.md` | 연구 가설, 실험 변수·시나리오·분석의 보조 계획 | MVP·실험 설계 변경 시 |
+
+## Source-of-truth hierarchy
+
+충돌이 있으면 실제 구현·검증 증거, 최신 명시적 결정, 과거 제안 순으로 해석한다. 문서 역할의 우선순위는 `project-plan → open-decisions → architecture → verification → development-log/meeting evidence`이며, README는 이 문서들의 현재 진입점이다. `PROPOSAL`은 구현 의무나 확정 사실로 해석하지 않는다.
 
 ## 기록 규칙
 
@@ -49,3 +54,38 @@
 - 위험: <호환성·성능·데이터·안전 위험>
 - 문서 영향: <갱신 대상>
 ```
+
+## Material task record
+
+개발 로그에는 최소 다음을 남긴다.
+
+```text
+Date / Goal / Why / Scope / Changed files
+Environment / Commands / Result / Verification
+Measured values / Known limitations / Decision impact
+Next action / Git commit
+```
+
+논문·최종보고서에 쓰일 실험은 다음을 추가한다.
+
+```text
+Experiment ID / Hypothesis
+Independent variable / Controlled variables
+Input or dataset / Hardware / Software and model version
+Threshold and configuration / Raw result location
+Summary metrics / Interpretation / Limitations
+```
+
+## Weekly report reuse
+
+- OT 요구에 따라 주간보고서는 최신 주차를 앞에 두는 누적형으로 관리한다.
+- 개발 로그와 검증 문서를 1차 근거로 사용하고, 보고서에는 요약·결정·증거 식별자만 옮긴다.
+- 팀 사진·원본 영상·개인정보는 공개 저장소에 넣지 않는다. LMS 제출본 또는 통제된 로컬 자료의 위치만 기록한다.
+- 주간보고서 작성 때문에 이미 남긴 기술 기록을 다시 복원하지 않도록, material task 종료 시 같은 주에 재사용할 요약을 남긴다.
+
+## Experiment evidence
+
+- 실험마다 고유 ID를 부여하고 고정 Git commit과 config를 연결한다.
+- raw result와 민감·대용량 자료는 Git 외부에 보관하고, 저장 위치·checksum 또는 식별자만 기록한다.
+- 요약표·그래프가 raw result에서 어떻게 생성됐는지 명령이나 script 버전을 남긴다.
+- 재실행으로 값이 바뀌면 기존 결과를 덮어쓰지 않고 run ID로 분리한다.
