@@ -1,0 +1,11 @@
+#!/bin/sh
+# Keep intentional local commits mirrored to GitHub. A failed push never rolls
+# back the commit; the next explicit push can retry after the cause is fixed.
+git push origin HEAD
+status=$?
+
+if [ "$status" -ne 0 ]; then
+  echo "WARNING: Commit was created locally, but GitHub push failed. Run: git push origin HEAD" >&2
+fi
+
+exit 0

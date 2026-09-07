@@ -6,6 +6,7 @@
 
 ## Engineering rules
 
+- 기준 개발 작업공간은 `Development_Github`이다. 작업 시작 전 `git pull --ff-only`를 실행하고, 완료·검증된 의도적 변경은 commit 후 원격 `main`까지 push한다.
 - 기능 변경 전 관련 코드와 `README.md`, `docs/open-decisions.md`, `docs/development-log.md`를 읽는다.
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.
 - Jetson 의존 코드(camera, GPIO, TensorRT, tegrastats)는 PC에서 검증 가능한 순수 로직과 인터페이스로 분리한다.

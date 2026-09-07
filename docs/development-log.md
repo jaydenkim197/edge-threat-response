@@ -2,6 +2,25 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-07 - 기준 개발 작업공간을 Development_Github로 전환
+
+상태: `IMPLEMENTED` (로컬 Git 연결·동기화 정책), 원격 변경 감시 `NOT ADOPTED`
+
+### 변경
+
+- `Development_Github`를 팀의 기준 개발 작업공간으로 지정하고, `edge-threat-response` 원격 `main` 및 기존 Crime_Prediction submodule 기준 commit에 연결했다.
+- 작업 시작 시 `git pull --ff-only`, 의도적 commit 후 자동 push를 적용하는 Git hook 정책을 추가했다.
+- 원격 변경을 무조건 자동 pull하는 파일 감시는 작업 중인 변경을 덮어쓰거나 충돌을 숨길 수 있어 채택하지 않았다.
+
+### 검증
+
+- 원격 `origin/main`을 fetch하고 mixed reset으로 working tree를 변경하지 않은 채 index·HEAD를 동기화했다.
+- `git status --short`가 비어 있고, submodule이 `5e2286971b0e7a54ede4caa3baa03fe168edc5b8`에 있음을 확인했다.
+
+### 한계
+
+- 자동 push는 의도적으로 commit한 변경에만 적용된다. 작업 중이거나 충돌 가능성이 있는 원격 변경은 자동으로 가져오지 않는다.
+
 ## 2026-09-04 - 기존 MIDAS 프로젝트 분석과 발전 방향 기록
 
 상태: `VERIFIED` (문서·산출물 검토), `PROPOSAL` (2026-2 발전 방향)

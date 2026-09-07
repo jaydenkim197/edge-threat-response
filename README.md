@@ -57,3 +57,12 @@ git clone --recurse-submodules https://github.com/jaydenkim197/edge-threat-respo
 ## 작업 시작 규칙
 
 각 material task는 목표, 범위, 완료 기준, 위험, 문서 영향을 먼저 정의한다. 구현 후에는 관련 코드·테스트·문서를 함께 갱신하고, 실제 실행한 검증과 한계만 기록한다.
+
+## 개발 작업공간 및 GitHub 동기화
+
+이 저장소의 기준 작업공간은 `Development_Github`이다. 다른 상위 수업 폴더의 복사본은 개발 기준으로 사용하지 않는다.
+
+- 작업 시작 전 `git pull --ff-only`로 원격 `main`을 안전하게 반영한다. fast-forward가 불가능하면 임의로 병합하지 않고 원인을 확인한다.
+- 의도한 변경만 검토·stage하여 커밋한다. 이 작업공간에서는 commit 직후 `origin/main`으로 자동 push되도록 Git hook을 설정했다.
+- GitHub의 변경을 감시하여 무조건 자동 pull하는 방식은 사용하지 않는다. 작업 중인 파일을 덮어쓰거나 충돌을 숨길 수 있기 때문이다.
+- 새 clone에서는 `git submodule update --init --recursive` 후 `git config core.hooksPath .githooks`를 한 번 실행해 같은 자동-push 정책을 적용한다.
