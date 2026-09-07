@@ -6,8 +6,8 @@
 |---|---|---|---|---|---|---|
 | P0-01 | P0 | Jetson Nano 복구 가능 여부 | 실기기 진단 후 유지 또는 대체 플랫폼 결정 | 부팅, 카메라, GPIO, 냉각, 저장장치 상태 | 구현 시작 전 | `BLOCKED` |
 | P0-02 | P0 | 기존 소스의 기준 저장소 | 현재 저장소와 고정된 legacy submodule을 기준으로 사용 | 비밀값·라이선스·재현 환경은 계속 별도 확인 | 완료 | `DECISION` / `IMPLEMENTED` |
-| P0-03 | P0 | 2026-2 MVP 기능 | 균형형 후보: baseline + proximity + persistence + 4-state machine + GPIO + metadata/snapshot + benchmark | 10월 31일 Nano 통합 가능성, 기존 대비 차별성, 평가·논문 연결성 | baseline 진단 직후 | 방향 `DECISION`, 기능 `PROPOSAL` |
-| P1-01 | P1 | 상황 인식 범위 | MVP는 proximity와 persistence 우선, tracking·movement는 stretch 권장 | 데이터 가용성, ablation 가능성, Nano 성능 영향 | MVP 확정 시 | `PROPOSAL` |
+| P0-03 | P0 | 2026-2 MVP 기능 | knife only + geometry association + K-of-N + 4-state + GPIO + metadata/snapshot + B0~B3 ablation | 세부사항은 `mvp-research-specification.md` | 완료 | `DECISION` |
+| P1-01 | P1 | 상황 인식 범위 | geometry-only association과 K-of-N을 MVP로, tracking·movement는 stretch | B0~B3 결과와 Nano 성능 | 완료 | `DECISION` |
 | P1-02 | P1 | Orin Nano 활용 | Nano 기준 결과 확보 후 성능 비교 플랫폼으로 사용. 대여 요청 진행 | 대여 승인, 동일 입력의 FPS·지연·전력·온도 | 실험 설계 전 | `PLANNED` |
 | P1-03 | P1 | 이벤트 전송·대시보드 | 로컬 경보 우선, 위험 이벤트 메타데이터만 서버 전송 | 네트워크 단절 시 동작, 개인정보·저장 정책 | 대시보드 구현 전 | `PROPOSAL` |
 | P1-04 | P1 | 영상·개인정보 경계 | 원본 영상 최소 보존, 이벤트 기반 저장, 접근 제어 명시 | 지도교수·기관 정책, 수집 장소·동의 범위 | 실제 수집 전 | `PLANNED` |
@@ -17,7 +17,9 @@
 | P0-04 | P0 | 1차 구매 목록 | 고성능 카메라와 하드웨어 가속/안정화 장비를 우선 검토 | Orin 대여 결과, Jetson 상태, 지원 마감일, 견적 | 구매 전 | `PLANNED` |
 | P1-05 | P1 | Web Dashboard 범위 | MVP 이후 선택 기능으로 보류 | MVP 진척, 시연 필요성, 개발 시간 | MVP 기능 확정 시 | `PROPOSAL` |
 | P0-05 | P0 | baseline 모델·runtime·입력 규격 | legacy 모델 재현 가능성을 먼저 확인하고 불가 시 비교 가능한 대체 baseline 정의 | Nano 호환성, class 정의, license, 고정 입력·threshold | 9월 baseline 복원 전 | `PROPOSAL` |
-| P0-06 | P0 | 사건 정답과 controlled scenario | 안전한 모형 소품 기반 시나리오와 event 시작·종료 규칙 정의 | 안전·동의, 반복성, positive/negative 균형 | MVP 확정 전 | `PROPOSAL` |
+| P0-06 | P0 | 사건 정답과 controlled scenario | person-associated knife event의 수동 annotation, positive/hard-negative 시나리오, distance 필수·lighting 선택 | matching 허용 구간, 모호 frame, 촬영 장소·동의, 반복 횟수 | 촬영 전 | 방법 `DECISION`, 세부 `PROPOSAL` |
 | P0-07 | P0 | 프로젝트 정량 목표치 | baseline 측정 후 false alarm·event recall·latency 목표 결정 | 표본 규모, baseline 분산, 일정, 실제 Nano 결과 | 제안서 목표 확정 전 | `PROPOSAL` |
-| P1-06 | P1 | 사건 증거 범위 | MVP는 metadata+snapshot, clip은 stretch 권장 | 개인정보, 저장공간, 오류 분석 가치 | MVP 확정 시 | `PROPOSAL` |
-| P1-07 | P1 | 상태 머신 상태·전이 | `NORMAL/SUSPECTED/ALARM/COOLDOWN` 4-state 후보 | 설명 가능성, 누락 내성, 단위 테스트 가능성 | MVP 확정 시 | `PROPOSAL` |
+| P1-06 | P1 | 사건 증거 범위 | MVP는 metadata+snapshot 1장, clip은 stretch | 개인정보, 저장공간, 오류 분석 가치 | 완료 | `DECISION` |
+| P1-07 | P1 | 상태 머신 상태·전이 | `CLEAR/CANDIDATE/CONFIRMED/COOLDOWN`; CONFIRMED가 GPIO·기록 action을 발생 | 파라미터·전이 세부는 baseline 후 | 완료 | `DECISION` |
+| P0-08 | P0 | threshold tuning과 final evaluation 분리 | development/tuning set으로 파라미터를 선택하고 holdout recording session/scene으로 final evaluation | 촬영 장소·세션 수·표본 규모 | 촬영 전 | `PROPOSAL` |
+| P1-08 | P1 | Stretch 우선순위 | Orin benchmark → TensorRT/FP16 → Tracking → Dashboard → Event clip → 추가 class → enclosure/PCB | 기본 MVP의 DoD 충족 | 완료 | `DECISION` |

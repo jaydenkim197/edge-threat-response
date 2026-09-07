@@ -2,6 +2,48 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-07 - MVP Research Specification 확정
+
+상태: MVP 범위·연구 설계 `DECISION`, 구현·실기기 결과 `PLANNED`
+
+### Goal / Why
+
+- 10월 구현과 11월 ablation·논문 결과가 같은 이벤트 정의와 평가 규칙을 따르도록 MVP 범위를 고정한다.
+- 단순 weapon presence가 아니라 person-associated knife event를 다루되, 실제 폭력 의도·행동 판별을 주장하지 않는 경계를 명시한다.
+
+### Scope / Changed files
+
+- `mvp-research-specification.md`를 새로 만들고, README, AGENTS, project plan, architecture, open decisions, verification, research plan을 갱신했다.
+- 모델 실행, Jetson 설정, threshold 선택, 촬영, annotation, 성능 측정은 수행하지 않았다.
+
+### Decisions
+
+- MVP weapon class는 `knife`만이다. 추가 class는 stretch다.
+- bounding-box geometry 기반 person–knife association, K-of-N temporal confirmation, `CLEAR/CANDIDATE/CONFIRMED/COOLDOWN` 상태 머신을 채택한다.
+- `CONFIRMED` 진입은 GPIO LED/Buzzer, event metadata, snapshot 1장을 발생시킨다. event clip은 stretch다.
+- controlled scenario와 수동 event annotation을 사용한다. distance는 필수, lighting은 선택이다.
+- B0 detection-only, B1 temporal-only, B2 spatial-only, B3 spatial+temporal ablation을 핵심 비교로 채택한다.
+- stretch 우선순위는 Orin benchmark, TensorRT/FP16, tracking, dashboard, event clip, 추가 class, enclosure/PCB 순서다.
+
+### Evidence / Limitations
+
+- 사용자와의 프로젝트 방향 논의에서 선택된 MVP 범위를 문서화했다.
+- K/N, confidence threshold, normalized-distance threshold, expanded-bbox ratio, cooldown, model/runtime, annotation matching rule, development/test split과 정량 목표는 아직 측정 근거가 없어 확정하지 않았다.
+- GPT-6 Astra는 코딩·문서·분석 작업의 보조로 활용하되, 실기기·촬영·하드웨어 검증 일정의 단축 근거로 사용하지 않는다.
+
+### Environment / Verification commands
+
+- 환경: Windows, PowerShell, 기준 작업공간 `00_Development_Github`
+- 문서 확인: `Get-Content`, `rg`
+- 변경 검증: `git diff --check`, `git status --short`
+- Git commit: 이 기록을 포함하는 commit
+
+### Next action
+
+1. Nano hardware와 legacy baseline의 실제 실행 가능성을 진단한다.
+2. 첫 controlled scenario 샘플로 annotation matching rule과 tuning/test split을 확정한다.
+3. baseline 결과를 근거로 model/runtime·threshold·K/N 후보를 결정한다.
+
 ## 2026-09-07 - Master Plan과 장기 기록 체계 정비
 
 상태: 문서 기반 `IMPLEMENTED`, MVP 세부 기능 `PROPOSAL`

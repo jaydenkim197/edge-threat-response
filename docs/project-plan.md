@@ -1,6 +1,6 @@
 # Master Project Plan
 
-상태: 프로젝트 방향·일정 원칙은 `DECISION`, MVP 세부 기능과 정량 목표치는 `PROPOSAL`
+상태: 프로젝트 방향·일정·MVP 연구 범위는 `DECISION`, 정량 목표치와 파라미터는 `PROPOSAL`
 
 이 문서는 프로젝트의 목적, 범위, 일정, 성공 조건을 정의하는 최상위 기준이다. 기술 구조는 `architecture.md`, 미확정 선택은 `open-decisions.md`, 실제 변경은 `development-log.md`, 검증 결과는 `verification.md`에서 관리한다.
 
@@ -38,13 +38,13 @@
 
 | ID | 질문 | 상태 |
 |---|---|---|
-| RQ1 | 선택한 공간·시간 문맥이 single-frame alert보다 사건 수준 오경보를 줄이는가? | `PROPOSAL` |
-| RQ2 | 오경보 감소 과정에서 실제 위협 사건의 recall과 경보 지연은 어떻게 변하는가? | `PROPOSAL` |
-| RQ3 | 각 context factor가 결과에 기여하는 정도는 무엇인가? | `PROPOSAL` |
+| RQ1 | 경량 공간·시간 event-confirmation 계층이 single-frame alert보다 사건 수준 오경보를 줄이는가? | `DECISION` |
+| RQ2 | 오경보 감소 과정에서 person-associated knife event recall과 경보 지연은 어떻게 변하는가? | `DECISION` |
+| RQ3 | spatial association과 temporal confirmation은 각각 어떤 기여를 하는가? | `DECISION` |
 | EQ1 | Jetson Nano에서 탐지·판단·경보·기록을 네트워크 없이 반복 실행할 수 있는가? | `DECISION` |
 | EQ2 | Nano의 자원·열·지연 제약 안에서 재현 가능한 실행 조건은 무엇인가? | `PLANNED` |
 
-RQ와 가설은 MVP·시나리오·정답 기준을 확정할 때 함께 확정한다.
+구체 가설·임계값·정량 목표는 baseline, development/tuning set, holdout test 설계 후 기록한다.
 
 ## 4. Scope
 
@@ -56,21 +56,21 @@ RQ와 가설은 MVP·시나리오·정답 기준을 확정할 때 함께 확정�
 - 사건 단위 평가, 성능·자원 측정, 재현 설정과 증거 기록
 - 안전한 모형 소품 또는 적법하게 사용할 수 있는 비민감 입력을 이용한 통제 시나리오
 
-### MVP Candidate - `PROPOSAL`
+### Official MVP - `DECISION`
 
 | 기능 | 목적·가치 | 난이도 / 의존성 | 논문 기여 | 일정 위험 | 상태 |
 |---|---|---|---|---|---|
-| Person/Weapon detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | `PLANNED` |
+| Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | `DECISION` |
 | Single-frame baseline | 기존 방식의 재현 가능한 비교군 | 중 / 탐지·GPIO | 필수 비교군 | 원본 환경 불명확 | `PLANNED` |
-| Person–weapon proximity | 단순한 공간 문맥 제공 | 중 / bounding box 계약 | context 효과 비교 | 관계 정의 오류 | `PROPOSAL` |
-| Temporal persistence | 순간 오탐 억제 | 중 / 프레임 시간·누락 처리 | context 효과 비교 | 임계값 과적합 | `PROPOSAL` |
-| 4-state machine | 판단 과정과 cooldown을 명시 | 중 / context 신호 | 설명·재현 가능성 | 상태 조건 복잡화 | `PROPOSAL` |
+| Person–knife geometry association | 정규화 거리와 확장 bbox로 공간 문맥 제공 | 중 / bounding box 계약 | context 효과 비교 | 관계 정의 오류 | `DECISION` |
+| K-of-N temporal confirmation | 순간 오탐·누락에 대한 시간 문맥 | 중 / 프레임 시간·누락 처리 | context 효과 비교 | 임계값 과적합 | `DECISION` |
+| CLEAR/CANDIDATE/CONFIRMED/COOLDOWN | 판단과 action을 분리 | 중 / context 신호 | 설명·재현 가능성 | 상태 조건 복잡화 | `DECISION` |
 | GPIO LED/Buzzer | 엣지 대응 데모 | 하 / Jetson GPIO | 공학 통합 | 하드웨어 상태 | `PLANNED` |
-| Event metadata + snapshot | 사건 근거와 오류 분석 | 중 / 저장 정책 | 실험 증거 | 개인정보·용량 | `PROPOSAL` |
-| Benchmark harness | baseline/proposed 반복 비교 | 중 / 시나리오·정답 | 핵심 실험 기반 | 뒤늦은 평가 설계 | `PROPOSAL` |
-| FPS·latency·RAM·temperature 기록 | 엣지 실행 가능성 평가 | 중 / 측정 도구 | 성능·제약 분석 | 측정 방법 차이 | `PROPOSAL` |
+| Event metadata + snapshot | 사건 근거와 오류 분석 | 중 / 저장 정책 | 실험 증거 | 개인정보·용량 | `DECISION` |
+| B0~B3 benchmark/ablation | baseline·spatial·temporal 기여 비교 | 중 / 시나리오·정답 | 핵심 실험 기반 | 뒤늦은 평가 설계 | `DECISION` |
+| FPS·latency·RAM·temperature 기록 | 엣지 실행 가능성 평가 | 중 / 측정 도구 | 성능·제약 분석 | 측정 방법 차이 | `DECISION` |
 
-현재 가장 유력한 균형형 후보는 `Detection + proximity + persistence + 4-state machine + GPIO + metadata/snapshot + benchmark`이다. 이는 추천안일 뿐 팀 결정 전까지 확정 범위가 아니다.
+세부 operational definition, scenario, ablation과 제외 범위는 `mvp-research-specification.md`를 따른다. model·runtime·threshold·K/N·정량 목표는 baseline 이후 결정한다.
 
 ### Stretch Goals
 
@@ -177,7 +177,7 @@ Proposed: detection + selected context
 | 기간 | 목표 | 종료 증거 |
 |---|---|---|
 | 9월 전반 | 기존 자료·장비·환경 inventory, Nano 진단, baseline 실행 조건 정리 | 진단 기록, 환경표, blocker |
-| 9월 후반 | baseline 복원, 시나리오·MVP·데이터 계약 확정 | baseline 증거, MVP decision, 테스트 초안 |
+| 9월 후반 | baseline 복원, MVP spec 확정, scenario·annotation·split 설계 | baseline 증거, spec, 테스트 초안 |
 | 10월 전반 | context logic·state machine·logging을 PC 입력에서 구현·검증 | 단위/통합 테스트, 설정 예시 |
 | 10월 후반 | Nano 통합, GPIO, benchmark harness, controlled dataset 준비 | 반복 실행과 실기기 증거 |
 | 2026-10-31 | practical development freeze / 실험 착수 가능 상태 | DoD 점검표, 고정 commit·config |

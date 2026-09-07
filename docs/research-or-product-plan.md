@@ -32,16 +32,16 @@ Proposed
   -> alarm + event evidence
 ```
 
-정확한 context factor, 상태 수, snapshot/clip 범위와 목표 수치는 아직 결정되지 않았다. MVP는 단일 카메라·로컬 우선 동작을 전제로 하며 네트워크가 끊겨도 핵심 경로가 유지되어야 한다.
+MVP의 context factor, 상태 수, snapshot 범위는 `mvp-research-specification.md`에서 확정했다. 정확한 임계값과 목표 수치는 baseline 이후 결정한다. MVP는 단일 카메라·로컬 우선 동작을 전제로 하며 네트워크가 끊겨도 핵심 경로가 유지되어야 한다.
 
 ## 개발 후보
 
 | 후보 | 가치 | 난이도 | 권장 위치 | 상태 |
 |---|---|---:|---|---|
-| 연속 프레임·상태 머신 경보 | 오탐 억제와 제품 완성도 | 중 | MVP 후보 | `PROPOSAL` |
-| 사건 metadata·snapshot | 사후 분석·재현 | 중 | MVP 후보 | `PROPOSAL` |
-| benchmark·최소 자원 기록 | 논문 실험 착수 조건 | 중 | MVP 후보 | `PROPOSAL` |
-| 사람-흉기 관계·지속 시간 | 상황 인식 차별성 | 중 | MVP 후보 | `PROPOSAL` |
+| K-of-N·4-state 경보 | 오탐 억제와 제품 완성도 | 중 | MVP | `DECISION` |
+| 사건 metadata·snapshot | 사후 분석·재현 | 중 | MVP | `DECISION` |
+| B0~B3 benchmark·최소 자원 기록 | 논문 실험 착수 조건 | 중 | MVP | `DECISION` |
+| person–knife geometry·지속 시간 | 상황 인식 차별성 | 중 | MVP | `DECISION` |
 | 객체 추적·움직임·복합 위협 점수 | 문맥 확장 | 상 | Stretch | `PROPOSAL` |
 | Nano vs Orin Nano 비교 | 정량적 엣지 최적화 연구 | 중상 | 검증 단계 | `PROPOSAL` |
 | Edge-Server 이벤트 대시보드 | 다중 장치 확장성 | 중 | 3차 개발 | `PROPOSAL` |
@@ -63,7 +63,7 @@ weapon confidence
 = threat score
 ```
 
-현재 권장 상태 후보는 `NORMAL`, `SUSPECTED`, `ALARM`, `COOLDOWN`이다. 상태 수와 의미는 MVP 결정 전까지 확정하지 않으며, 결정된 임계값·가중치·전이 조건은 코드 하드코딩 대신 설정과 실험 기록으로 관리한다.
+MVP 상태는 `CLEAR`, `CANDIDATE`, `CONFIRMED`, `COOLDOWN`으로 확정했다. `CONFIRMED`는 판단 상태이고 GPIO·기록은 그에 따른 action이다. 임계값과 전이 파라미터는 코드 하드코딩 대신 설정과 실험 기록으로 관리한다.
 
 ## 평가 계획 - `PLANNED`
 

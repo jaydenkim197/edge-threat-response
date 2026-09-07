@@ -25,6 +25,7 @@
 |---|---|---|
 | `README.md` | 목적, 실행법, 현재 상태의 진입점 | 핵심 상태 변경 시 |
 | `project-plan.md` | 목적, 범위, 일정, 성공 조건의 최상위 기준 | 방향·범위·일정 변경 시 |
+| `mvp-research-specification.md` | 확정 MVP의 이벤트 정의, 평가·시나리오·제외 범위 | MVP·실험 설계 변경 시 |
 | `development-log.md` | 변경·결정·검증·한계의 시간순 기록 | material task 종료 전 |
 | `open-decisions.md` | 미확정 선택과 결정 기준 | 선택지가 생기거나 확정될 때 |
 | `architecture.md` | 현재 시스템 경계와 계약 | 구조·통신·저장 경계 변경 시 |
@@ -33,7 +34,7 @@
 
 ## Source-of-truth hierarchy
 
-충돌이 있으면 실제 구현·검증 증거, 최신 명시적 결정, 과거 제안 순으로 해석한다. 문서 역할의 우선순위는 `project-plan → open-decisions → architecture → verification → development-log/meeting evidence`이며, README는 이 문서들의 현재 진입점이다. `PROPOSAL`은 구현 의무나 확정 사실로 해석하지 않는다.
+충돌이 있으면 실제 구현·검증 증거, 최신 명시적 결정, 과거 제안 순으로 해석한다. 문서 역할의 우선순위는 `project-plan → mvp-research-specification → open-decisions → architecture → verification → development-log/meeting evidence`이며, README는 이 문서들의 현재 진입점이다. `PROPOSAL`은 구현 의무나 확정 사실로 해석하지 않는다.
 
 ## 기록 규칙
 

@@ -8,10 +8,11 @@
 | 기존 Jetson Nano 부팅 | 전원·HDMI·팬·저장장치 점검 | Jetson Nano 실기기 | 미수행 | - | `BLOCKED` |
 | 기존 모델 추론 재현 | 기준 영상/카메라 입력으로 실행 | Jetson Nano, 원본 모델·소스 | 미수행 | - | `PLANNED` |
 | GPIO LED·부저 경보 | 정상·경보·복구 상태 수동 시험 | Jetson Nano 실기기 | 미수행 | - | `PLANNED` |
-| spatial/temporal context | 단위 테스트: 거리 정규화, 지속성, 누락 | 개발 PC | 범위 미확정·미구현 | - | `PROPOSAL` |
-| threat state machine | 단위 테스트: 전이, 임계값, 누락, cooldown | 개발 PC | 상태 미확정·미구현 | - | `PROPOSAL` |
-| 사건 metadata·snapshot | 고정 영상 시나리오 통합 테스트 | 개발 PC 및 Jetson | 범위 미확정·미구현 | - | `PROPOSAL` |
-| baseline vs proposed | 동일 입력·모델·설정으로 사건 지표 비교 | 개발 PC 및 Jetson | 평가 규칙 미정 | - | `PLANNED` |
+| geometry association | 단위 테스트: nearest person, 정규화 거리, 확장 bbox | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
+| K-of-N confirmation | 단위 테스트: history, 누락, K/N 경계 | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
+| 4-state machine | 단위 테스트: CLEAR/CANDIDATE/CONFIRMED/COOLDOWN, cooldown | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
+| 사건 metadata·snapshot | 고정 영상 시나리오 통합 테스트 | 개발 PC 및 Jetson | MVP 범위 확정·미구현 | - | `PLANNED` |
+| B0~B3 ablation | 동일 입력·모델·설정으로 사건 지표 비교 | 개발 PC 및 Jetson | scenario·split·matching 규칙 미정 | - | `PLANNED` |
 | 카메라 복구 | 연결 해제·재연결 fault injection | Jetson 실기기 | 미구현 | - | `PLANNED` |
 | 로컬 경보의 오프라인 유지 | 네트워크 차단 상태 시스템 시험 | Jetson 실기기 | 미구현 | - | `PLANNED` |
 | 성능·자원 기록 | 고정 입력, 해상도, 런타임으로 benchmark | Nano, 필요 시 Orin Nano | 미수행 | - | `PLANNED` |

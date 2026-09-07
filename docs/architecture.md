@@ -1,6 +1,6 @@
 # System Architecture
 
-상태: `PROPOSAL` - MVP 세부 범위와 장비 상태를 확인한 뒤 구현 구조로 확정한다. Tracker와 Dashboard는 현재 필수 경로가 아니다.
+상태: MVP 논리 구조 `DECISION`, 인터페이스·실기기 구현 `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
 
 ## 시스템 경계
 
@@ -8,8 +8,9 @@
 [Camera]
    -> [Camera Adapter]
    -> [Detector]
-   -> [Threat Analyzer]
-   -> [Alert State Machine]
+   -> [Spatial Association]
+   -> [Temporal K-of-N Buffer]
+   -> [CLEAR / CANDIDATE / CONFIRMED / COOLDOWN]
       -> [GPIO Alarm]
       -> [Event Recorder / Local Event Store]
       -> [Metrics / Benchmark]
@@ -26,7 +27,8 @@ Optional after MVP:
 | Camera Adapter | USB/CSI/영상 파일에서 프레임 획득·복구 | Jetson 카메라 구현 가능 |
 | Detector | 사람·흉기 bounding box와 confidence 생성 | PyTorch/TensorRT 교체 가능 |
 | Tracker | detection에 track ID와 이동 이력 부여 | Stretch goal, 공통 순수 로직 우선 |
-| Threat Analyzer | 위치 관계·지속 시간·움직임을 점수·근거로 변환 | 공통 순수 로직 |
+| Spatial Association | nearest person, 정규화 거리, 확장 bbox로 knife-person 연관 산출 | 공통 순수 로직 |
+| Temporal Confirmation | associated history를 K-of-N으로 판단 | 공통 순수 로직 |
 | Alert State Machine | 확정된 상태 전이와 cooldown | 공통 순수 로직 |
 | GPIO Alarm | LED·부저·상태 버튼 제어 | Jetson 전용 |
 | Event Recorder | metadata·snapshot 및 선택적 clip·보존 정책 관리 | 저장장치·인코더 의존 |
@@ -38,17 +40,17 @@ Optional after MVP:
 ### Detection v1
 
 - 생산자: Detector
-- 소비자: Threat Analyzer, Renderer, 선택적 Tracker
+- 소비자: Spatial Association, Renderer, 선택적 Tracker
 - 필드: `class_id`, `label`, `confidence`, `bbox`, `frame_timestamp`, `source_id`
 - 금지: 원본 영상 자체, 개인식별정보를 로그 필드에 직접 삽입
 - 오류 처리: 프레임 누락·모델 오류·신뢰도 미달은 명시적인 상태로 전달
 
 ### ThreatEvent v1
 
-- 생산자: Threat Analyzer / Alert State Machine
+- 생산자: Temporal Confirmation / Alert State Machine
 - 소비자: GPIO Alarm, Event Recorder, Dashboard
-- 필수 필드 후보: `event_id`, `timestamp`, `source_id`, `state`, `reasons`, `model_version`, `latency_ms`
-- 선택 필드 후보: `track_ids`, `score`, `snapshot_path`
+- 필수 필드 후보: `event_id`, `timestamp`, `source_id`, `state`, `reasons`, `model_version`, `latency_ms`, `scenario_id`
+- 선택 필드 후보: `associated_person_bbox`, `d_norm`, `snapshot_path`
 - 보존: 정책 확정 전까지 실제 민감 영상 보존 기간을 결정하지 않음
 - 오류 처리: 이벤트 저장·전송 실패는 로컬 경보를 차단하지 않음
 

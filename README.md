@@ -4,11 +4,11 @@
 
 ## 프로젝트 목적
 
-기존의 단일 프레임 기반 흉기 탐지·GPIO 경보 프로토타입을, **상황 인지형 엣지 위협 대응 시스템**으로 발전시킨다. 시스템은 사람·흉기 탐지, 객체 추적, 시간·공간 문맥 기반 위협 판단, 단계별 경보, 사건 기록 및 성능 검증을 목표로 한다.
+기존의 단일 프레임 기반 흉기 탐지·GPIO 경보 프로토타입을, **상황 인지형 엣지 위협 대응 시스템**으로 발전시킨다. MVP는 `Person-Associated Knife Event`를 bounding-box 공간 연관성과 K-of-N 시간 조건으로 확인하고, 단계별 경보·사건 기록·성능 검증을 수행한다.
 
 ## 현재 상태
 
-- 상태: 프로젝트 방향·일정 `DECISION`, MVP 세부 범위 `PROPOSAL`
+- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, 구현·실기기 검증 `PLANNED`
 - 기존 산출물: 2025-2 MIDAS 발표자료, 활동 정리, Jetson Nano 프로토타입 코드
 - 구현 저장소: 구성 완료, legacy 전체 소스는 Git submodule로 고정
 - Jetson Nano 실기기: 정상 부팅·카메라·GPIO 상태를 재확인해야 함
@@ -20,10 +20,9 @@
 ```text
 Camera
   -> Person/Weapon Detector
-  -> Object Tracker
-  -> Situation & Threat Analyzer
-  -> Alert State Machine
-  -> GPIO Alarm / Event Clip / Event Log / Dashboard
+  -> Person–Knife Spatial Association + K-of-N Temporal Confirmation
+  -> CLEAR / CANDIDATE / CONFIRMED / COOLDOWN
+  -> GPIO Alarm + Event Metadata + Snapshot
 ```
 
 자세한 구조와 데이터 경계는 [docs/architecture.md](docs/architecture.md)를, 후보와 결정 기준은 [docs/open-decisions.md](docs/open-decisions.md)를 참조한다.
@@ -31,6 +30,7 @@ Camera
 ## 문서 안내
 
 - [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
+- [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계
 - [연구·실험 계획](docs/research-or-product-plan.md): 가설과 비교 실험의 보조 계획
 - [미결정 사항](docs/open-decisions.md): 확정 전 선택지와 판단 기준
