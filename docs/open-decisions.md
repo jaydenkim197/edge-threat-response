@@ -16,7 +16,7 @@
 | P2-03 | P2 | Active Learning | 애매한 탐지 샘플 저장·라벨링은 후속 단계 | 데이터 보안, 라벨링 인력, 재학습 재현성 | MVP 검증 후 | `DEFERRED` |
 | P0-04 | P0 | 1차 구매 목록 | Orin용 NVMe·카메라·냉각/전원 안정화 장비를 우선 검토 | 정확한 대여 장비 구성, 보유품, 지원 마감일, 견적 | 구매 전 | `PLANNED` |
 | P1-05 | P1 | Web Dashboard 범위 | MVP 이후 선택 기능으로 보류 | MVP 진척, 시연 필요성, 개발 시간 | MVP 기능 확정 시 | `PROPOSAL` |
-| P0-05 | P0 | baseline detector 구조·모델·입력 규격 | detector contract는 person/knife로 고정하되 단일 2-class 모델과 legacy 2-model 구조는 dataset audit 후 선택 | person label 완전성, class 정의, license, Orin 성능, 고정 입력·threshold | detector adapter 구현 전 | `PROPOSAL` |
+| P0-05 | P0 | baseline detector 구조·모델·입력 규격 | output은 person/knife로 고정. COCO single-model sanity baseline 후 composite person+knife detector를 우선 검토하고, unified 2-class는 person annotation 완전성 확보 시에만 후보 | legacy는 knife-only, sample 품질, license, Orin latency, 고정 입력·threshold | detector adapter 구현 전 | contract `DECISION`, topology `PROPOSAL` |
 | P0-09 | P0 | JetPack 7.2.1 ML runtime | Jetson-compatible NVIDIA container 우선, 실제 보드에서 PyTorch·CUDA·Ultralytics smoke test 후 image digest와 버전 고정 | 공식 호환성, GPU access, YOLO load/inference, package conflict, 재현성 | detector adapter 구현 전 | `PROPOSAL` |
 | P0-06 | P0 | 사건 정답과 controlled scenario | person-associated knife event의 수동 annotation, positive/hard-negative 시나리오, distance 필수·lighting 선택 | matching 허용 구간, 모호 frame, 촬영 장소·동의, 반복 횟수 | 촬영 전 | 방법 `DECISION`, 세부 `PROPOSAL` |
 | P0-07 | P0 | 프로젝트 정량 목표치 | Orin baseline 측정 후 false alarm·event recall·latency 목표 결정 | 표본 규모, baseline 분산, 일정, 실제 Orin 결과 | 제안서 목표 확정 전 | `PROPOSAL` |
@@ -24,3 +24,5 @@
 | P1-07 | P1 | 상태 머신 상태·전이 | `CLEAR/CANDIDATE/CONFIRMED/COOLDOWN`; CONFIRMED가 GPIO·기록 action을 발생 | 파라미터·전이 세부는 baseline 후 | 완료 | `DECISION` |
 | P0-08 | P0 | threshold tuning과 final evaluation 분리 | development/tuning set으로 파라미터를 선택하고 holdout recording session/scene으로 final evaluation | 촬영 장소·세션 수·표본 규모 | 촬영 전 | `PROPOSAL` |
 | P1-08 | P1 | Stretch 우선순위 | TensorRT/FP16 → legacy Nano cross-device 비교 → Tracking → Dashboard → Event clip → 추가 class → enclosure/PCB | Orin이 기준 플랫폼으로 변경되어 기존 Orin benchmark 항목을 기준 검증으로 승격 | 완료 | `DECISION` |
+| P0-10 | P0 | 외부 dataset recipe | COCO/Open Images/knife-specific/CCTV 후보는 registry·sample 검수 후 승인된 source만 사용 | small/distant knife, person 동시 annotation, CCTV domain, negatives, license, 중복·leakage | D2 import 전 | `PROPOSAL` |
+| P0-11 | P0 | ambiguous annotation rule | 모형 knife·reflection·printed image·극소/가림 객체를 sample review로 결정 | detector claim boundary, 일관성, 팀 annotation 합의 | 직접 수집·재라벨링 전 | `PROPOSAL` |

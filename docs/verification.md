@@ -5,6 +5,9 @@
 | 요구사항 | 검증 방법 | 환경 | 최근 결과 | 증거 위치 | 상태 |
 |---|---|---|---|---|---|
 | 기준 저장소·legacy source | Git remote, commit, submodule 상태 확인 | 개발 PC | 저장소 및 고정 submodule 연결 | Git history, `.gitmodules` | `VERIFIED` |
+| legacy dataset inventory | image/label·YAML·training script·annotation format·filename group 점검 | 개발 PC, fixed submodule | 7,364 image-label pairs, missing/empty 0, knife-only, bbox 7,613 + polygon 1,447; split 교차 group 확인 | `docs/model-data-plan.md` | `VERIFIED` (구조), 품질·권리 `PLANNED` |
+| dataset validator·manifest | synthetic fixture와 legacy read-only audit | 개발 PC | 범위 확정·미구현 | - | `PLANNED` |
+| group split·leakage 검사 | source/session/exact hash의 split 교차 fixture | 개발 PC | 범위 확정·미구현 | - | `PLANNED` |
 | Orin Nano platform inventory | SKU·RAM·firmware·저장장치·JetPack·전원 모드 확인 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
 | JetPack 7.2.1 설치 | Jetson Linux 39.2.1 부팅과 SDK 구성 확인 | Jetson Orin Nano 실기기 | 공식 지원 환경만 확인, 설치 미수행 | NVIDIA 공식 문서 | `PLANNED` |
 | detector runtime smoke test | container GPU access, model load, 고정 이미지 추론 | Orin Nano, 후보 image/runtime | 미수행 | - | `PLANNED` |

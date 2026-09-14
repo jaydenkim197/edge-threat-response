@@ -2,6 +2,57 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-14 - 모델·데이터 준비 구현 범위 확정과 legacy dataset 구조 점검
+
+상태: D1 구현 범위·class contract `DECISION`, 외부 dataset·detector·학습 `PROPOSAL`, legacy 구조 `VERIFIED`
+
+### Goal / Why
+
+- detector 재학습 전에 raw label 의미, provenance, split leakage를 확인해 잘못된 2-class 병합과 평가 누수를 방지한다.
+- 시스템 core 개발과 병렬로 진행할 수 있는 최소 dataset tooling만 고정하고 대규모 다운로드·학습은 근거가 생길 때까지 미룬다.
+
+### Scope / Changed files
+
+- `model-data-plan.md`를 추가하고 implementation plan, README, AGENTS, project plan, open decisions, verification, legacy asset 기록을 갱신했다.
+- legacy submodule은 읽기 전용으로 조사했으며 dataset·weight·source code를 수정하지 않았다.
+- 외부 dataset 다운로드, 신규 코드 구현, model load·학습·추론은 수행하지 않았다.
+
+### Verified findings
+
+- legacy v1.0 1,183장과 v1.1 6,181장, 총 JPG 7,364장과 basename이 일치하는 label을 확인했다. missing image, missing label, empty label file은 0개다.
+- 두 dataset은 모두 `knife` 단일 클래스이고 9,060개 annotation의 raw class ID는 전부 0이다.
+- annotation은 bbox 7,613개와 polygon 1,447개가 혼재한다.
+- filename source group 기준 v1.0 내부 3개 group이 split을 교차하며, 두 version을 합치면 317개 group이 기존 split을 교차한다.
+- COCO의 person/knife class, Open Images의 box 규모·Person/Knife class, Simuletic sample의 114장·synthetic·person/knife·CC BY 4.0 선언을 각 공식/제공자 페이지에서 확인했다.
+
+### Decisions and judgment
+
+- detector output은 person/knife 두 logical class로 유지하되 단일 2-class model은 확정하지 않는다.
+- raw source class map을 별도로 관리하고 processed dataset에서만 canonical `0=person`, `1=knife`를 사용한다.
+- D1은 registry·manifest, bbox/polygon validator, exact duplicate와 group split leakage, report, fixture test까지 구현한다.
+- source별 downloader, 실제 병합, training wrapper는 각각 sample 승인과 detector 결정 뒤로 미룬다.
+- legacy knife-only data를 재사용할 수 있는 composite person+knife detector를 우선 후보로 두고, unified model은 person annotation 완전성 확보 시에만 검토한다.
+
+### Evidence / Limitations
+
+- 파일 개수·YAML·label token structure·filename group을 자동 집계했다. image 내용, bbox/polygon의 시각적 정확성, upstream source 접근성, 개별 image license는 검수하지 않았다.
+- exact image hash와 near-duplicate 검사는 아직 구현·실행하지 않았다.
+- provider가 제시한 dataset 설명은 후보 근거이며 프로젝트 적합성이나 성능을 증명하지 않는다.
+
+### Environment / Verification commands
+
+- 환경: Windows, PowerShell, 기준 작업공간 `00_Development_Github`
+- 원격 동기화: `git pull --ff-only`
+- legacy 조사: `Get-ChildItem`, `Get-Content`, `rg`, label token/group 집계
+- 공식 근거: Ultralytics COCO docs, Open Images V7와 boxable class CSV, Hugging Face provider dataset card
+- Git commit: 이 기록을 포함하는 commit
+
+### Next action
+
+1. 시스템 Increment A와 dataset D1 중 착수 순서를 정해 작은 단위로 구현한다.
+2. D1 결과로 legacy exact duplicate와 split leakage report를 생성한다.
+3. 팀이 외부 후보 sample과 ambiguous annotation rule을 검토한 뒤 D2 source를 승인한다.
+
 ## 2026-09-14 - 신규 기준 플랫폼을 Jetson Orin Nano로 변경하고 구현 단계를 고정
 
 상태: 플랫폼·구현 순서 `DECISION`, 실기기·ML runtime `PLANNED`

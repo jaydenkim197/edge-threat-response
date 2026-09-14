@@ -44,7 +44,13 @@
 - 같은 config와 입력은 순서·event ID를 제외한 동일 결과를 만든다.
 - snapshot port는 정의하되 frame이 없는 replay에서는 명시적으로 `not_captured`를 기록한다.
 
-## 3. Increment B — PC video and detector adapter
+## 3. Parallel data track
+
+Increment A와 병렬로 `model-data-plan.md`의 D1을 구현할 수 있다. D1은 legacy inventory, source registry, source-specific class mapping, bbox/polygon validation, JSONL manifest, group-aware split/leakage 검사와 fixture test까지만 포함한다.
+
+외부 dataset downloader, 실제 dataset 병합, training wrapper와 full training은 D1에 포함하지 않는다. 사람의 sample 승인과 detector topology 결정이 각각 D2와 D3의 gate다.
+
+## 4. Increment B — PC video and detector adapter
 
 P0-05와 P0-09가 결정된 뒤 진행한다.
 
@@ -62,7 +68,7 @@ P0-05와 P0-09가 결정된 뒤 진행한다.
 - knife 학습 이미지에 존재하는 person이 모두 annotation되지 않았다면 단일 2-class 학습으로 바로 합치지 않는다.
 - model file, class map, input size, confidence threshold, license와 hash를 기록한다.
 
-## 4. Increment C — Jetson Orin Nano integration
+## 5. Increment C — Jetson Orin Nano integration
 
 실제 장비 inventory와 JetPack 7.2.1 설치 확인 후 진행한다.
 
@@ -81,7 +87,7 @@ P0-05와 P0-09가 결정된 뒤 진행한다.
 - Orin 전원 모드, 냉각, 입력, model/runtime, commit, config가 evidence에 남는다.
 - 재부팅 후 문서화된 명령으로 반복 실행할 수 있다.
 
-## 5. Increment D — controlled experiment
+## 6. Increment D — controlled experiment
 
 - 안전한 scenario를 촬영하고 manual event ground truth를 작성한다.
 - development/tuning session으로 threshold·K/N을 고른 뒤 holdout session을 고정한다.
@@ -89,7 +95,7 @@ P0-05와 P0-09가 결정된 뒤 진행한다.
 - 실패 사례와 모호 사례를 snapshot·metadata·annotation으로 연결한다.
 - legacy Nano 비교는 Orin ablation이 끝난 뒤 가능할 때만 별도 실험으로 수행한다.
 
-## 6. Deferred until evidence exists
+## 7. Deferred until evidence exists
 
 - TensorRT/FP16은 먼저 PyTorch/container baseline을 측정한 뒤 필요성과 효과를 판단한다.
 - tracking, dashboard, event clip, 추가 weapon class, enclosure/PCB는 MVP DoD 이후에만 착수한다.

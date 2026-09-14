@@ -33,4 +33,7 @@
 - 복구 가이드의 L4T 32.7.3과 개발 정보의 L4T 32.7.6은 다르다. 플래시 전 보드 모델·저장장치·호환 이미지를 반드시 실기기로 검증한다.
 - legacy 자산을 토대로 만든 새 코드·설정·테스트는 `app/`, `tests/`, `config/` 등 새 구조에 작성하며, legacy 파일을 덮어쓰지 않는다.
 - `Crime_Prediction` 원본은 2026-09-04 확인 기준 약 460 MB, 14,760개 파일이다. 데이터셋·모델을 중복 복제하지 않고 원본 commit `5e2286971b0e7a54ede4caa3baa03fe168edc5b8`을 submodule로 고정한다.
+- 2026-09-14 재점검 결과, `ver1.0`은 1,183장, `ver1.1`은 6,181장으로 총 JPG 7,364장과 각 image에 대응하는 label을 포함한다. 두 `data.yaml`은 모두 `nc: 1`, `knife`만 정의하며 실제 9,060개 annotation의 class ID도 전부 0이다.
+- legacy label은 YOLO bbox 7,613개와 polygon 1,447개가 섞여 있다. 신규 validator와 importer는 두 형식을 구분해야 하며, legacy class `0=knife`를 신규 canonical `0=person`으로 잘못 해석하면 안 된다.
+- filename의 Roboflow source group을 기준으로 v1.0 내부에서 3개 group이 train/valid/test를 교차한다. 두 version을 합치면 317개 group이 기존 split을 교차하므로, 신규 학습 recipe는 source/session group 단위로 다시 분리해야 한다.
 - 해당 원본 학습 스크립트에는 API 키처럼 보이는 값이 있다. 이 저장소에는 내용을 재복제하지 않으며, 원본 소유자는 키를 폐기·재발급하고 환경변수 또는 로컬 `.env`로 이전해야 한다.

@@ -7,12 +7,13 @@
 ## Engineering rules
 
 - 기준 개발 작업공간은 `00_Development_Github`이다. 작업 시작 전 `git pull --ff-only`를 실행하고, 완료·검증된 의도적 변경은 commit 후 원격 `main`까지 push한다.
-- material task 시작 전 `docs/project-plan.md`, `docs/mvp-research-specification.md`, `docs/open-decisions.md`, `docs/architecture.md`, `docs/verification.md`, `docs/development-log.md`와 관련 코드를 확인한다.
+- material task 시작 전 `docs/project-plan.md`, `docs/mvp-research-specification.md`, `docs/open-decisions.md`, `docs/architecture.md`, `docs/verification.md`, `docs/development-log.md`와 관련 코드를 확인한다. dataset·model 작업은 `docs/model-data-plan.md`도 확인한다.
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.
 - 프로젝트 방향·일정·평가 가능성과 충돌하는 요청은 충돌을 먼저 명시하고 범위를 조정한다.
 - `PROPOSAL`을 팀 결정 없이 `DECISION`으로 바꾸지 않는다.
 - 신규 시스템은 Jetson Orin Nano Developer Kit와 고정된 JetPack 7.2.1 환경을 기준으로 설계한다. 실제 보드에서 확인하지 않은 드라이버·모델 런타임·GPIO·카메라 동작은 `VERIFIED`로 표기하지 않는다.
 - 기존 Jetson Nano 4GB와 JetPack 4 계열 코드는 legacy baseline으로 격리한다. 신규 공통 로직을 Python 3.6이나 구형 CUDA 제약에 맞추지 않는다.
+- legacy dataset의 raw class ID는 신규 canonical ID로 추정하지 않는다. source-specific class map을 명시하고, 동일 source/session group을 train과 test에 나누지 않는다.
 - 논문 평가 방법이 없거나 10월 31일 동결을 위협하는 기능을 핵심 범위에 임의로 추가하지 않는다.
 - 기존 MIDAS 결과를 신규 시스템의 검증 결과처럼 사용하지 않는다.
 - MVP는 knife only, geometry-only association, K-of-N, 4-state, metadata+snapshot, B0~B3 ablation을 기준으로 한다. 이 범위를 넓히는 기능은 stretch로 취급한다.

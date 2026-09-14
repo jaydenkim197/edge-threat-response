@@ -216,10 +216,12 @@ Proposed: detection + selected context
 1. `project-plan.md`: 목적·범위·일정·성공 기준
 2. `open-decisions.md`: 아직 확정되지 않은 선택
 3. `architecture.md`: 현재 채택된 기술 구조와 계약
-4. `verification.md`: 요구사항별 검증 상태와 증거
-5. `development-log.md`: 실제 작업과 변경의 시간순 이력
-6. `meeting-decisions/`: 팀 결정의 근거
-7. `research-or-product-plan.md`: 연구 가설·실험 설계를 구체화하는 보조 문서
+4. `implementation-plan.md`: 구현 단계와 착수·종료 gate
+5. `model-data-plan.md`: dataset·model 준비와 provenance·split 기준
+6. `verification.md`: 요구사항별 검증 상태와 증거
+7. `development-log.md`: 실제 작업과 변경의 시간순 이력
+8. `meeting-decisions/`: 팀 결정의 근거
+9. `research-or-product-plan.md`: 연구 가설·실험 설계를 구체화하는 보조 문서
 
 `README.md`는 이 구조의 진입점이며, `AGENTS.md`는 Codex 작업 행동 규칙이다. 둘은 project plan의 범위·결정을 대신하지 않는다.
 
@@ -244,10 +246,10 @@ Proposed: detection + selected context
 다음 개발 작업은 아래 순서로 진행한다.
 
 1. PC에서 순수 core, B0~B3, recorded-detection replay와 단위 테스트 구현
-2. Orin Nano 장비 SKU·저장장치·UEFI/QSPI·JetPack 7.2.1 설치 상태 inventory
-3. JetPack 7.2.1용 detector runtime/container 후보 smoke test 및 버전 고정
-4. 영상·카메라·GPIO·resource-monitor adapter를 순서대로 통합
-5. 안전한 controlled scenario, 사건 정답, tuning/holdout 규칙을 확정하고 benchmark 착수
+2. 병렬로 dataset D1: legacy audit, source registry, bbox/polygon validator, manifest, group split/leakage 검사 구현
+3. Orin Nano 장비 SKU·저장장치·UEFI/QSPI·JetPack 7.2.1 설치 상태 inventory
+4. sample 검수 후 dataset recipe와 detector topology를 결정하고 JetPack 7.2.1 runtime을 고정
+5. 영상·카메라·GPIO·resource-monitor adapter를 통합한 뒤 controlled benchmark 착수
 
 ## 13. Official platform references
 
