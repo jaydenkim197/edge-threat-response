@@ -1,6 +1,6 @@
 # Context-Aware Edge Threat Detection System
 
-> 2026-2 종합설계과제(1) - 기존 Jetson Nano 기반 흉기 탐지 프로젝트의 고도화
+> 2026-2 종합설계과제(1) - 기존 Jetson Nano 기반 흉기 탐지 프로젝트를 Jetson Orin Nano 환경으로 고도화
 
 ## 프로젝트 목적
 
@@ -11,7 +11,9 @@
 - 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, 구현·실기기 검증 `PLANNED`
 - 기존 산출물: 2025-2 MIDAS 발표자료, 활동 정리, Jetson Nano 프로토타입 코드
 - 구현 저장소: 구성 완료, legacy 전체 소스는 Git submodule로 고정
-- Jetson Nano 실기기: 정상 부팅·카메라·GPIO 상태를 재확인해야 함
+- 신규 기준 플랫폼: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1
+- 실제 Orin 보드의 SKU·저장장치·펌웨어·카메라·GPIO·ML runtime은 아직 inventory 및 검증 필요
+- 기존 Jetson Nano 4GB: 과거 시스템 보존과 선택적 장비 비교를 위한 legacy baseline
 - 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
 - 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
 
@@ -31,6 +33,7 @@ Camera
 
 - [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
 - [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
+- [구현 계획](docs/implementation-plan.md): 단계별 구현 범위, 모듈 경계, 착수·종료 조건
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계
 - [연구·실험 계획](docs/research-or-product-plan.md): 가설과 비교 실험의 보조 계획
 - [미결정 사항](docs/open-decisions.md): 확정 전 선택지와 판단 기준

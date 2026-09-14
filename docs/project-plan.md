@@ -8,7 +8,9 @@
 
 - 프로젝트명: 상황 인지형 Edge AI 흉기 위협 대응 시스템
 - 수행 기간: 2026-09-01 ~ 2026-12-11
-- 기준 플랫폼: Jetson Nano 4GB
+- 신규 시스템 기준 플랫폼: Jetson Orin Nano Developer Kit
+- 고정 소프트웨어 기준: JetPack 7.2.1 / Jetson Linux 39.2.1
+- legacy 기준: Jetson Nano 4GB와 2025-2 MIDAS 보존 환경
 - 기준 저장소: `jaydenkim197/edge-threat-response`
 - 개발 동결 목표: 2026-10-31
 
@@ -29,7 +31,7 @@
 - 기존 보존 코드는 single-frame weapon detection과 즉시 GPIO 경보 중심이다.
 - 기존 정량 수치는 재현 조건이 부족하여 현재 기준 성능을 증명하지 못한다.
 - 사건 단위의 정답 정의, 오경보·누락·경보 지연 평가 절차가 없다.
-- Jetson Nano의 현재 부팅, 카메라, GPIO, 모델 호환성과 지속 운용 상태가 미검증이다.
+- 대여·사용할 Jetson Orin Nano의 정확한 SKU, 저장장치, 펌웨어, 카메라, GPIO, 모델 호환성과 지속 운용 상태가 미검증이다.
 - 상황 문맥을 추가했을 때 실제로 오경보가 줄어드는지는 아직 가설이다.
 
 따라서 이 프로젝트는 단순 모델 교체나 mAP 상승보다, 동일 입력에서 baseline과 context-aware 판단을 비교할 수 있는 시스템·실험 체계를 만드는 데 초점을 둔다.
@@ -41,8 +43,8 @@
 | RQ1 | 경량 공간·시간 event-confirmation 계층이 single-frame alert보다 사건 수준 오경보를 줄이는가? | `DECISION` |
 | RQ2 | 오경보 감소 과정에서 person-associated knife event recall과 경보 지연은 어떻게 변하는가? | `DECISION` |
 | RQ3 | spatial association과 temporal confirmation은 각각 어떤 기여를 하는가? | `DECISION` |
-| EQ1 | Jetson Nano에서 탐지·판단·경보·기록을 네트워크 없이 반복 실행할 수 있는가? | `DECISION` |
-| EQ2 | Nano의 자원·열·지연 제약 안에서 재현 가능한 실행 조건은 무엇인가? | `PLANNED` |
+| EQ1 | Jetson Orin Nano에서 탐지·판단·경보·기록을 네트워크 없이 반복 실행할 수 있는가? | `DECISION` |
+| EQ2 | Orin Nano의 자원·열·지연 제약 안에서 재현 가능한 실행 조건은 무엇인가? | `PLANNED` |
 
 구체 가설·임계값·정량 목표는 baseline, development/tuning set, holdout test 설계 후 기록한다.
 
@@ -51,7 +53,7 @@
 ### In Scope
 
 - 2025 MIDAS baseline의 출처·환경·동작을 재구성하고 재측정
-- Jetson Nano 로컬 카메라 입력, 탐지, GPIO 경보
+- Jetson Orin Nano 로컬 카메라 입력, 탐지, GPIO 경보
 - baseline과 proposed 판단을 같은 입력으로 비교하는 실행 경로
 - 사건 단위 평가, 성능·자원 측정, 재현 설정과 증거 기록
 - 안전한 모형 소품 또는 적법하게 사용할 수 있는 비민감 입력을 이용한 통제 시나리오
@@ -78,7 +80,7 @@
 - object tracking과 track ID 기반 연속성
 - movement/approaching 분석 및 복합 threat score
 - TensorRT/FP16 최적화
-- Orin Nano 확보 시 동일 workload 비교
+- 일정과 장비 상태가 허용할 경우 legacy Nano와 Orin Nano의 동일 workload 비교
 - 선택적 로컬 dashboard
 
 ### Deferred / Out of Scope for MVP
@@ -94,12 +96,12 @@
 
 MVP는 아래 조건을 모두 만족하는 조합으로 팀이 확정한다.
 
-1. 2026-10-31까지 Jetson Nano에서 통합·검증 가능하다.
+1. 2026-10-31까지 Jetson Orin Nano에서 통합·검증 가능하다.
 2. 기존 single-frame alert와 구조적 차이가 명확하다.
 3. 최종 데모에서 판단 이유를 설명할 수 있다.
 4. 동일 입력과 정답 기준으로 정량 평가할 수 있다.
 5. baseline 대 proposed 또는 ablation 실험으로 논문에 연결된다.
-6. Orin Nano 등 미확보 장비에 성공 여부가 종속되지 않는다.
+6. 실기기 입고 전에도 공통 판단 로직과 평가 경로를 PC에서 구현·검증할 수 있다.
 7. 구현뿐 아니라 오류 분석과 반복 실행까지 남은 인력·시간으로 완료 가능하다.
 
 MVP 확정 시 `open-decisions.md`의 관련 항목을 `DECISION`으로 변경하고, 결정 날짜·참여자·제외 범위·완료 조건을 회의 결정 문서와 개발 로그에 남긴다.
@@ -120,7 +122,7 @@ IMPLEMENTED
 10월 31일 개발 동결 판단 항목은 다음과 같다. 구체 기능은 MVP 결정 후 확정한다.
 
 - baseline과 proposed를 같은 버전·입력·설정으로 실행할 수 있다.
-- 카메라→탐지→판단→GPIO/기록 전체 경로가 Nano에서 작동한다.
+- 카메라→탐지→판단→GPIO/기록 전체 경로가 Orin Nano에서 작동한다.
 - 네트워크 없이 핵심 경로가 유지된다.
 - 설정, 모델 버전, threshold, 실행 명령이 기록된다.
 - 사건 정답과 지표 산출 절차가 정의된다.
@@ -167,21 +169,25 @@ Proposed: detection + selected context
 
 ## 8. Platform Strategy
 
-- Jetson Nano 4GB는 필수 기준 플랫폼이다.
-- Jetson Orin Nano는 확보될 경우 비교·확장 플랫폼이며 MVP dependency가 아니다.
-- PC/영상 파일 테스트는 순수 로직·반복 실험 준비에 사용하고, Jetson 실기기 검증과 별도로 기록한다.
-- Nano의 실제 baseline 측정 전에는 FPS 목표나 TensorRT 필요성을 확정하지 않는다.
+- 신규 시스템의 기준은 **Jetson Orin Nano Developer Kit + JetPack 7.2.1 / Jetson Linux 39.2.1**로 고정한다. 재현성을 위해 개발 중 임의로 최신 버전으로 자동 추종하지 않고, 변경 시 별도 결정을 남긴다.
+- JetPack 기준 구성은 Ubuntu 24.04, kernel 6.8, CUDA 13.2.1, cuDNN 9.20.0, TensorRT 10.16.2, VPI 4.1.3이다. 이는 NVIDIA 공식 배포 정보로 확인한 플랫폼 기준이며 프로젝트 ML runtime의 동작 검증 결과는 아니다.
+- detector용 PyTorch/Ultralytics와 NVIDIA container image는 JetPack 7.2.1 및 실제 보드에서 smoke test한 뒤 고정한다. NVIDIA 문서의 예시 container tag를 프로젝트 의존성으로 그대로 채택하지 않는다.
+- 공통 domain·spatial·temporal·state-machine·ablation 로직은 Python 3.10~3.12에서 동작하는 platform-neutral package로 만들고, camera·detector·GPIO·resource monitor를 adapter로 분리한다.
+- detector runtime은 재현성과 호스트 OS 분리를 위해 Jetson-compatible NVIDIA container를 우선 검토한다. 순수 core와 PC replay test는 container 없이도 실행 가능해야 한다.
+- 기존 Jetson Nano 4GB와 구형 JetPack 환경은 legacy 보존·선택적 cross-device 비교 대상이다. 신규 코드를 Python 3.6 또는 JetPack 4 제약에 맞추지 않는다.
+- B0~B3는 동일 Orin 장비, 동일 detector, 동일 입력과 설정에서 비교한다. Nano 대 Orin 비교는 context ablation과 분리된 하드웨어 실험으로만 수행한다.
+- PC/recorded-detection 테스트와 Orin 실기기 검증을 별도 증거로 기록한다. 실제 Orin 측정 전에는 FPS 목표나 TensorRT 필요성을 확정하지 않는다.
 
 ## 9. Timeline
 
 | 기간 | 목표 | 종료 증거 |
 |---|---|---|
-| 9월 전반 | 기존 자료·장비·환경 inventory, Nano 진단, baseline 실행 조건 정리 | 진단 기록, 환경표, blocker |
-| 9월 후반 | baseline 복원, MVP spec 확정, scenario·annotation·split 설계 | baseline 증거, spec, 테스트 초안 |
+| 9월 전반 | 기존 자료 inventory, Orin 장비·펌웨어·저장장치 진단, legacy baseline 조건 정리 | 진단 기록, 환경표, blocker |
+| 9월 후반 | PC core/replay 구현, detector·runtime 후보 smoke test, scenario·annotation·split 설계 | 단위 테스트, runtime 증거, spec |
 | 10월 전반 | context logic·state machine·logging을 PC 입력에서 구현·검증 | 단위/통합 테스트, 설정 예시 |
-| 10월 후반 | Nano 통합, GPIO, benchmark harness, controlled dataset 준비 | 반복 실행과 실기기 증거 |
+| 10월 후반 | Orin 통합, GPIO, benchmark harness, controlled dataset 준비 | 반복 실행과 실기기 증거 |
 | 2026-10-31 | practical development freeze / 실험 착수 가능 상태 | DoD 점검표, 고정 commit·config |
-| 11월 | benchmark, ablation, 오류 분석, 가능 시 Nano/Orin 비교, 논문·보고서 | 원시 결과, 요약표·그래프, 해석 |
+| 11월 | Orin benchmark·ablation·오류 분석, 가능 시 Nano/Orin 별도 비교, 논문·보고서 | 원시 결과, 요약표·그래프, 해석 |
 | 12월 초 | 최종 데모·영상·최종보고서·졸업논문 정리 | 제출본과 재현 절차 |
 
 11월의 새 기능은 실험을 막는 결함 수정 또는 명시적으로 승인된 작은 확장만 허용한다. 핵심 알고리즘 변경 시 실험 버전과 결과를 분리한다.
@@ -190,14 +196,16 @@ Proposed: detection + selected context
 
 | 위험 | 영향 | 대응 |
 |---|---|---|
-| Nano 구형 JetPack/Python/CUDA stack | 모델·라이브러리 실행 실패 | 환경 inventory 후 기존 조합 재현, adapter 분리, 변경 최소화 |
+| JetPack 7.2.1과 ML framework 호환성 | detector 설치·실행 실패 | NVIDIA container 우선 검토, 실제 보드 smoke test 후 버전 고정 |
+| Orin 보드 SKU·펌웨어·저장장치 미확인 | 설치·성능·일정 차질 | 장비 수령 즉시 inventory, UEFI/QSPI 경로와 설치 대상을 확인 |
+| legacy Nano 구형 stack | 과거 baseline 재현 실패 | 신규 경로와 격리하고 cross-device 비교를 선택 실험으로 유지 |
 | 낮은 inference 성능 | 실시간 데모·지연 목표 실패 | 실제 baseline 측정 후 해상도·모델·precision 최적화 결정 |
 | thermal throttling | 장시간 결과 왜곡 | 전원 모드·냉각·온도·warm-up 조건 기록 |
 | 카메라/GPIO 호환성 | 통합 지연 | 9월에 독립 smoke test, mock interface 제공 |
 | 제한된 데이터·시나리오 | 일반화 주장 제한 | 연구 범위를 controlled scenario로 명시하고 과도한 일반화 금지 |
 | 오탐·미탐 trade-off | 안전성과 성능 해석 오류 | event recall·false alarm·latency 동시 보고 |
 | 위험한 촬영 | 인적·윤리 위험 | 실제 흉기 금지, 안전한 모형·통제 장소·동의 절차 사용 |
-| Orin 대여 실패 | 비교 실험 취소 | Nano만으로 완결되는 설계 유지 |
+| Orin 사용 일정 지연 | 실기기 통합 지연 | PC core·recorded replay·mock adapter를 먼저 완성하고 hardware adapter를 후속 연결 |
 | 일정 초과 | 실험·논문 시간 부족 | 10월 31일 동결, stretch goal 승격 조건 적용 |
 | 문서 부채 | 결과 재현·보고서 작성 실패 | 개발 로그와 검증 증거를 작업 완료 조건에 포함 |
 
@@ -235,8 +243,16 @@ Proposed: detection + selected context
 
 다음 개발 작업은 아래 순서로 진행한다.
 
-1. Nano 하드웨어·소프트웨어·카메라·GPIO 진단
-2. legacy 모델과 baseline 실행 가능성 확인
-3. 안전한 controlled scenario와 사건 정답 기준 초안 작성
-4. 균형형 MVP 기능을 일정·의존성·평가 가능성으로 승인 또는 축소
-5. 고정된 MVP와 DoD를 기준으로 구현 작업 분해
+1. PC에서 순수 core, B0~B3, recorded-detection replay와 단위 테스트 구현
+2. Orin Nano 장비 SKU·저장장치·UEFI/QSPI·JetPack 7.2.1 설치 상태 inventory
+3. JetPack 7.2.1용 detector runtime/container 후보 smoke test 및 버전 고정
+4. 영상·카메라·GPIO·resource-monitor adapter를 순서대로 통합
+5. 안전한 controlled scenario, 사건 정답, tuning/holdout 규칙을 확정하고 benchmark 착수
+
+## 13. Official platform references
+
+- NVIDIA JetPack downloads and release information: <https://developer.nvidia.com/embedded/jetpack/downloads>
+- Jetson Orin Nano Developer Kit quick start: <https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/quick_start.html>
+- Jetson Orin Nano Docker setup: <https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/latest/setup_docker.html>
+
+위 링크는 2026-09-14에 확인했다. 이후 NVIDIA 최신판이 바뀌더라도 본 프로젝트의 기준은 별도 결정 전까지 JetPack 7.2.1로 유지한다.

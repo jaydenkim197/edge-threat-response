@@ -20,6 +20,16 @@ Optional after MVP:
    [Dashboard / Event API]
 ```
 
+## 기준 플랫폼과 실행 경계
+
+- 신규 시스템 배포 기준: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1.
+- 공통 core: Python 3.10~3.12, PyTorch·OpenCV·GPIO 비의존. PC와 Orin에서 같은 단위 테스트를 실행한다.
+- detector adapter: Jetson-compatible NVIDIA container를 우선 검토하되 실제 보드 smoke test 전에는 image와 framework 버전을 고정하지 않는다.
+- hardware adapter: camera, GPIO, `tegrastats` 계열 자원 수집을 core 바깥에 둔다.
+- legacy adapter: 2025-2 Nano 코드는 submodule에서 보존하며 신규 package의 runtime 기준으로 사용하지 않는다.
+
+처음 구현은 영상 대신 timestamp와 detection 목록을 가진 recorded-detection stream을 입력으로 사용한다. 이 경로에서 B0~B3, 상태 전이, 알람 중복 억제, metadata 생성을 결정론적으로 검증한 뒤 detector와 실제 frame을 연결한다.
+
 ## 책임 분리
 
 | 컴포넌트 | 책임 | 플랫폼 의존성 |
@@ -53,6 +63,21 @@ Optional after MVP:
 - 선택 필드 후보: `associated_person_bbox`, `d_norm`, `snapshot_path`
 - 보존: 정책 확정 전까지 실제 민감 영상 보존 기간을 결정하지 않음
 - 오류 처리: 이벤트 저장·전송 실패는 로컬 경보를 차단하지 않음
+
+### MVP temporal identity boundary
+
+MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보장하지 않는다. 각 프레임에서 `associated_person_knife_exists`라는 source-level boolean을 계산하고 K-of-N은 이 신호를 집계한다. 따라서 결과는 특정 개인의 연속 소지를 추적했다는 의미가 아니다.
+
+### B0~B3 실행 의미
+
+| 조건 | confirmation predicate |
+|---|---|
+| B0 | 현재 frame에 reliable knife detection 존재 |
+| B1 | reliable knife presence가 K-of-N 충족 |
+| B2 | 현재 frame에 geometry-associated person–knife pair 존재 |
+| B3 | geometry association 신호가 K-of-N 충족 |
+
+네 조건은 하나의 pipeline과 event contract를 공유하고 confirmation predicate만 교체한다.
 
 ## 실패와 fallback
 

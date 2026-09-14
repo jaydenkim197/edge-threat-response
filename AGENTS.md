@@ -11,11 +11,13 @@
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.
 - 프로젝트 방향·일정·평가 가능성과 충돌하는 요청은 충돌을 먼저 명시하고 범위를 조정한다.
 - `PROPOSAL`을 팀 결정 없이 `DECISION`으로 바꾸지 않는다.
-- Orin Nano 확보를 전제로 핵심 경로를 설계하지 않는다.
+- 신규 시스템은 Jetson Orin Nano Developer Kit와 고정된 JetPack 7.2.1 환경을 기준으로 설계한다. 실제 보드에서 확인하지 않은 드라이버·모델 런타임·GPIO·카메라 동작은 `VERIFIED`로 표기하지 않는다.
+- 기존 Jetson Nano 4GB와 JetPack 4 계열 코드는 legacy baseline으로 격리한다. 신규 공통 로직을 Python 3.6이나 구형 CUDA 제약에 맞추지 않는다.
 - 논문 평가 방법이 없거나 10월 31일 동결을 위협하는 기능을 핵심 범위에 임의로 추가하지 않는다.
 - 기존 MIDAS 결과를 신규 시스템의 검증 결과처럼 사용하지 않는다.
 - MVP는 knife only, geometry-only association, K-of-N, 4-state, metadata+snapshot, B0~B3 ablation을 기준으로 한다. 이 범위를 넓히는 기능은 stretch로 취급한다.
 - Jetson 의존 코드(camera, GPIO, TensorRT, tegrastats)는 PC에서 검증 가능한 순수 로직과 인터페이스로 분리한다.
+- B0~B3 ablation은 동일 Orin 장비·detector·입력·설정에서 수행한다. Nano와 Orin의 장비 비교는 별도 실험으로 취급한다.
 - 측정하지 않은 정확도, FPS, 지연시간, 전력, 온도, 안정성 수치를 만들거나 추정값처럼 기록하지 않는다.
 - 실기기 검증과 개발 PC/영상 파일 검증을 구분한다.
 - 비밀값, API 키, 개인식별정보, 원본 민감 영상·음성은 코드·문서·커밋에 넣지 않는다.

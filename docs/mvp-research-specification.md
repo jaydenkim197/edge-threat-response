@@ -23,7 +23,8 @@
 | evidence | metadata + snapshot 1장 | `DECISION` |
 | tracking, movement, pose/hand keypoint, 행동·의도 판별 | MVP 제외 | `DECISION` |
 | event clip, dashboard, 추가 weapon class | Stretch | `DECISION` |
-| Orin Nano | 동일 workload 비교 플랫폼 | `DECISION`; 대여 여부 `PLANNED` |
+| 기준 실행 플랫폼 | Jetson Orin Nano Developer Kit / JetPack 7.2.1 | `DECISION`; 실기기 세부·검증 `PLANNED` |
+| legacy Nano | 과거 baseline 보존 및 선택적 cross-device 비교 | `DECISION`; 재현 가능성 `PLANNED` |
 
 ## 2. Spatial association
 
@@ -93,7 +94,7 @@ associated = (d_norm <= τ_distance) AND (knife_center in expanded_person_box(α
 
 ### Ablation conditions
 
-동일 detector, model, 입력 영상, confidence threshold, 해상도, Jetson 조건에서 다음 네 조건을 비교한다.
+동일 detector, model, 입력 영상, confidence threshold, 해상도, Jetson Orin Nano 조건에서 다음 네 조건을 비교한다.
 
 | ID | 조건 |
 |---|---|
@@ -112,8 +113,8 @@ associated = (d_norm <= τ_distance) AND (knife_center in expanded_person_box(α
 
 기본 MVP가 `IMPLEMENTED + JETSON VERIFIED + REPEATABLE + BENCHMARKABLE`을 만족한 뒤에만 아래 순서로 검토한다.
 
-1. Orin Nano 동일 workload benchmark
-2. TensorRT/FP16 최적화
+1. TensorRT/FP16 최적화
+2. legacy Nano와 Orin Nano의 별도 cross-device benchmark
 3. Tracking
 4. Simple dashboard
 5. Event clip
@@ -122,4 +123,4 @@ associated = (d_norm <= τ_distance) AND (knife_center in expanded_person_box(α
 
 ## 7. Remaining parameters
 
-다음은 `DECISION`이 아니다: model/runtime, input resolution, confidence threshold, `α`, `τ_distance`, `K`, `N`, cooldown, camera FPS, sampling rate, final metric targets, alert matching tolerance, tuning/test split. 이 값은 baseline 증거와 experiment record를 근거로 선택한다.
+다음은 `DECISION`이 아니다: Orin Nano 정확한 SKU·RAM·저장장치, PyTorch/Ultralytics/container image, model/runtime, input resolution, confidence threshold, `α`, `τ_distance`, `K`, `N`, cooldown, camera FPS, sampling rate, final metric targets, alert matching tolerance, tuning/test split. 이 값은 장비 inventory, runtime smoke test, baseline 증거와 experiment record를 근거로 선택한다.

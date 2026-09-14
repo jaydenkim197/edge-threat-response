@@ -5,9 +5,11 @@
 | 요구사항 | 검증 방법 | 환경 | 최근 결과 | 증거 위치 | 상태 |
 |---|---|---|---|---|---|
 | 기준 저장소·legacy source | Git remote, commit, submodule 상태 확인 | 개발 PC | 저장소 및 고정 submodule 연결 | Git history, `.gitmodules` | `VERIFIED` |
-| 기존 Jetson Nano 부팅 | 전원·HDMI·팬·저장장치 점검 | Jetson Nano 실기기 | 미수행 | - | `BLOCKED` |
-| 기존 모델 추론 재현 | 기준 영상/카메라 입력으로 실행 | Jetson Nano, 원본 모델·소스 | 미수행 | - | `PLANNED` |
-| GPIO LED·부저 경보 | 정상·경보·복구 상태 수동 시험 | Jetson Nano 실기기 | 미수행 | - | `PLANNED` |
+| Orin Nano platform inventory | SKU·RAM·firmware·저장장치·JetPack·전원 모드 확인 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
+| JetPack 7.2.1 설치 | Jetson Linux 39.2.1 부팅과 SDK 구성 확인 | Jetson Orin Nano 실기기 | 공식 지원 환경만 확인, 설치 미수행 | NVIDIA 공식 문서 | `PLANNED` |
+| detector runtime smoke test | container GPU access, model load, 고정 이미지 추론 | Orin Nano, 후보 image/runtime | 미수행 | - | `PLANNED` |
+| 기존 모델 추론 재현 | 기준 영상/카메라 입력으로 실행 | Orin Nano adapter 또는 격리된 legacy Nano 환경 | 미수행 | - | `PLANNED` |
+| GPIO LED·부저 경보 | 정상·경보·복구 상태 수동 시험 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
 | geometry association | 단위 테스트: nearest person, 정규화 거리, 확장 bbox | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
 | K-of-N confirmation | 단위 테스트: history, 누락, K/N 경계 | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
 | 4-state machine | 단위 테스트: CLEAR/CANDIDATE/CONFIRMED/COOLDOWN, cooldown | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
@@ -15,7 +17,7 @@
 | B0~B3 ablation | 동일 입력·모델·설정으로 사건 지표 비교 | 개발 PC 및 Jetson | scenario·split·matching 규칙 미정 | - | `PLANNED` |
 | 카메라 복구 | 연결 해제·재연결 fault injection | Jetson 실기기 | 미구현 | - | `PLANNED` |
 | 로컬 경보의 오프라인 유지 | 네트워크 차단 상태 시스템 시험 | Jetson 실기기 | 미구현 | - | `PLANNED` |
-| 성능·자원 기록 | 고정 입력, 해상도, 런타임으로 benchmark | Nano, 필요 시 Orin Nano | 미수행 | - | `PLANNED` |
+| 성능·자원 기록 | 고정 입력, 해상도, 런타임으로 benchmark | Orin Nano, 선택적으로 legacy Nano | 미수행 | - | `PLANNED` |
 | 개인정보·보존 정책 | 수집 전 정책·기관 요구사항 확인 | 프로젝트 운영 환경 | 미수행 | - | `PLANNED` |
 
 ## Benchmark 최소 기록 항목

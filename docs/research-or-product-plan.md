@@ -43,7 +43,8 @@ MVP의 context factor, 상태 수, snapshot 범위는 `mvp-research-specificatio
 | B0~B3 benchmark·최소 자원 기록 | 논문 실험 착수 조건 | 중 | MVP | `DECISION` |
 | person–knife geometry·지속 시간 | 상황 인식 차별성 | 중 | MVP | `DECISION` |
 | 객체 추적·움직임·복합 위협 점수 | 문맥 확장 | 상 | Stretch | `PROPOSAL` |
-| Nano vs Orin Nano 비교 | 정량적 엣지 최적화 연구 | 중상 | 검증 단계 | `PROPOSAL` |
+| Orin Nano runtime·TensorRT 비교 | 기준 플랫폼의 최적화 효과 분석 | 중상 | MVP 검증 이후 | `PROPOSAL` |
+| legacy Nano vs Orin Nano 비교 | 세대별 장비 성능 차이의 보조 분석 | 중상 | 선택 실험 | `PROPOSAL` |
 | Edge-Server 이벤트 대시보드 | 다중 장치 확장성 | 중 | 3차 개발 | `PROPOSAL` |
 | 멀티카메라 Re-ID | 시각적 차별성 | 상 | 후속 과제 | `DEFERRED` |
 | RGB + IR/Thermal 융합 | 저조도 강건성 연구 | 상 | 후속 과제 | `DEFERRED` |

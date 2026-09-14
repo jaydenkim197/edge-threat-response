@@ -2,6 +2,51 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-14 - 신규 기준 플랫폼을 Jetson Orin Nano로 변경하고 구현 단계를 고정
+
+상태: 플랫폼·구현 순서 `DECISION`, 실기기·ML runtime `PLANNED`
+
+### Goal / Why
+
+- 구형 Jetson Nano 환경에 신규 코드를 맞추지 않고 최신 Jetson Orin Nano 지원 환경을 기준으로 개발한다.
+- 실기기와 detector가 준비되기 전에도 연구 핵심인 spatial·temporal·state-machine·B0~B3를 PC에서 검증할 수 있도록 작업을 분리한다.
+
+### Scope / Changed files
+
+- `implementation-plan.md`를 추가하고 README, AGENTS, project plan, MVP specification, architecture, open decisions, verification, research plan을 정합화했다.
+- 소스 코드, 모델, dataset, container, Jetson 설정은 변경하지 않았다.
+
+### Decisions
+
+- 신규 기준 플랫폼은 Jetson Orin Nano Developer Kit, 고정 기준 소프트웨어는 JetPack 7.2.1 / Jetson Linux 39.2.1이다.
+- 기존 Jetson Nano 4GB는 legacy baseline과 선택적 cross-device 비교용으로 격리한다.
+- B0~B3 ablation은 동일 Orin 장비·detector·입력·설정에서 수행하며 Nano/Orin 비교와 섞지 않는다.
+- 첫 구현은 platform-neutral pure core, JSONL detection replay, mock alarm·metadata, B0~B3와 테스트다.
+- 실제 video/detector는 model/runtime 결정 후, camera/GPIO/resource adapter는 Orin inventory와 runtime smoke test 후 연결한다.
+- tracking이 없는 MVP의 K-of-N은 동일 개인이 아니라 source-level association boolean을 집계한다.
+- legacy가 person과 knife에 별도 모델을 사용하는 만큼 단일 2-class 재학습은 자동 채택하지 않고 person annotation 완전성을 먼저 확인한다.
+
+### Evidence / Limitations
+
+- 2026-09-14 NVIDIA 공식 페이지에서 JetPack 7.2.1, Jetson Linux 39.2.1, Ubuntu 24.04, kernel 6.8, CUDA 13.2.1, cuDNN 9.20.0, TensorRT 10.16.2, VPI 4.1.3과 Jetson Orin Family 지원을 확인했다.
+- Orin Nano quick-start 문서에서 JetPack 7.2.1 설치가 USB의 Jetson ISO 방식이며, 구형 firmware에는 JetPack 6.x-generation UEFI/QSPI update path가 필요함을 확인했다.
+- NVIDIA는 재현 가능한 Jetson AI/CUDA 환경 분리를 위해 Docker 사용 경로를 제공한다.
+- 실제 대여 장비의 SKU·RAM·저장장치·firmware와 PyTorch/Ultralytics/container 호환성은 확인하지 않았다. 공식 지원 표는 프로젝트 모델의 동작·성능 증거가 아니다.
+
+### Environment / Verification commands
+
+- 환경: Windows, PowerShell, 기준 작업공간 `00_Development_Github`
+- 원격 동기화: `git pull --ff-only`
+- 문서 확인: `Get-Content`, `rg`
+- 공식 근거: NVIDIA JetPack downloads, Orin Nano quick start, Docker setup
+- Git commit: 이 기록을 포함하는 commit
+
+### Next action
+
+1. Increment A의 pure core와 replay 계약을 구현한다.
+2. Orin 수령 즉시 SKU·RAM·storage·firmware·JetPack 설치 상태를 기록한다.
+3. dataset annotation을 audit한 뒤 detector topology와 JetPack 7.2.1 ML runtime을 고정한다.
+
 ## 2026-09-07 - MVP Research Specification 확정
 
 상태: MVP 범위·연구 설계 `DECISION`, 구현·실기기 결과 `PLANNED`
