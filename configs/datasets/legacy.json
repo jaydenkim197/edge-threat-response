@@ -1,0 +1,50 @@
+{
+  "$schema": "./registry.schema.json",
+  "schema_version": 1,
+  "canonical_classes": {
+    "0": "person",
+    "1": "knife"
+  },
+  "sources": [
+    {
+      "source_id": "legacy-new-knife-v3",
+      "root": "legacy/2025-2-midas/Crime_Prediction/ver1.0/data",
+      "source_url": "https://universe.roboflow.com/work-4iofb/new_knife/dataset/3",
+      "declared_license": "CC BY 4.0 (declared by bundled Roboflow metadata; not independently verified per image)",
+      "raw_class_names": {
+        "0": "knife"
+      },
+      "class_map": {
+        "0": 1
+      },
+      "splits": {
+        "train": {"images": "train/images", "labels": "train/labels"},
+        "valid": {"images": "valid/images", "labels": "valid/labels"},
+        "test": {"images": "test/images", "labels": "test/labels"}
+      },
+      "group_namespace": "legacy-knife",
+      "group_strategy": "roboflow_stem",
+      "notes": ["Legacy data; preserve raw files and original splits read-only."]
+    },
+    {
+      "source_id": "legacy-knife-detection-v1",
+      "root": "legacy/2025-2-midas/Crime_Prediction/ver1.1/data",
+      "source_url": "https://universe.roboflow.com/work-4iofb/knife-detection-bstjz-2k6wu/dataset/1",
+      "declared_license": "CC BY 4.0 (declared by bundled Roboflow metadata; not independently verified per image)",
+      "raw_class_names": {
+        "0": "knife"
+      },
+      "class_map": {
+        "0": 1
+      },
+      "splits": {
+        "train": {"images": "train/images", "labels": "train/labels"},
+        "valid": {"images": "valid/images", "labels": "valid/labels"},
+        "test": {"images": "test/images", "labels": "test/labels"}
+      },
+      "group_namespace": "legacy-knife",
+      "group_strategy": "roboflow_stem",
+      "notes": ["Legacy data; preserve raw files and original splits read-only."]
+    }
+  ]
+}

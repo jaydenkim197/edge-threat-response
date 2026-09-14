@@ -2,6 +2,65 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-14 - D1 dataset audit·manifest·split planning 도구 구현
+
+상태: D1 `IMPLEMENTED`, synthetic/legacy structure `VERIFIED`, 시각 품질·외부 source·학습 `PLANNED`
+
+### Goal / Why
+
+- source별 class 의미를 보존하면서 YOLO bbox/polygon dataset을 일관되게 검사한다.
+- 동일 원본 group과 exact duplicate가 train/test에 나뉘는 누수를 실제 학습 전에 탐지·방지한다.
+
+### Scope / Changed files
+
+- `pyproject.toml`과 `src/edge_threat_response/dataset/`에 registry, label parser, audit, manifest, report, group split planner와 CLI를 구현했다.
+- `configs/datasets/`에 JSON schema와 legacy v1.0/v1.1 registry를 추가했다.
+- `tests/`에 parser·registry·audit·split·CLI fixture test를 추가했다.
+- `reports/datasets/legacy-2026-09-14/`에 추적 가능한 summary와 Markdown report를 생성했다. 대용량 manifest와 issues JSONL은 재생성 가능하므로 Git에서 제외했다.
+- legacy submodule과 raw image/label은 수정하지 않았다. 외부 다운로드·실제 split 적용·학습은 수행하지 않았다.
+
+### Implemented behavior
+
+- source별 raw→canonical class mapping을 registry load 시 검증한다.
+- YOLO normalized bbox와 polygon을 구분하고 class, finite coordinate, boundary, positive extent를 검사한다.
+- image/label pairing, empty label, orphan, case-insensitive duplicate stem을 검사한다.
+- stable image ID, source/group/split, source/license reference, annotation·class counts, SHA-256을 JSONL manifest로 생성한다.
+- original split의 source-group·exact-hash leakage를 탐지한다.
+- split planner는 source group과 exact duplicate 연결요소를 하나의 assignment unit으로 배치하며 raw 파일은 이동하지 않는다.
+- audit은 CI용 fail-on severity와 알려진 legacy 문제를 inventory할 `--fail-on never`를 분리한다.
+
+### Environment / Commands / Verification
+
+- 환경: Windows, Python 3.11.9, editable package `edge-threat-response 0.1.0`
+- 테스트: `python -m unittest discover -s tests -v` → 13 tests, all passed
+- 구문 검사: `python -m compileall -q src tests` → passed
+- 설치·CLI: `python -m pip install -e . --no-deps`, `etr-dataset --help` → passed
+- 전체 audit: `etr-dataset audit --registry configs/datasets/legacy.json --repo-root . --output-dir reports/datasets/legacy-2026-09-14 --fail-on never`
+- split smoke: 전체 manifest, development-only ratio 0.70/0.15/0.15, seed 20260914 → 7,364 eligible, 0 excluded, 3,552 groups; raw 파일 변경 없음
+- lint: `ruff`는 개발 PC에 설치되어 있지 않아 실행하지 못했다.
+- Git commit: 이 기록을 포함하는 commit
+
+### Measured result
+
+- images 7,364, objects 9,060, valid label files 7,364, invalid/missing/empty 0
+- annotation: bbox 7,613, polygon 1,447; raw class `0` 9,060건을 canonical knife `1`로 mapping
+- unique source groups 3,552, original split crossing groups 317
+- exact duplicate image groups 3, exact hashes crossing original splits 0
+
+### Known limitations / Decision impact
+
+- image decode·손상 검사와 시각적 label 품질 검수는 하지 않는다.
+- filename grouping은 registry가 지정한 규칙의 결과이며 실제 촬영 session ground truth가 아니다.
+- perceptual near-duplicate 검사는 구현하지 않았다.
+- smoke-test split 비율과 seed는 연구 결정이 아니며 어떤 학습 dataset에도 적용하지 않았다.
+- legacy 기존 split은 최종 detector 평가에 사용하지 않고 승인된 source/session group 기준으로 다시 계획해야 한다.
+
+### Next action
+
+1. 외부·legacy sample의 시각 검수와 ambiguous annotation rule을 팀이 확정한다.
+2. 시스템 Increment A의 domain·spatial·temporal·state-machine·B0~B3 core를 구현한다.
+3. 승인 source가 정해진 뒤에만 D2 importer와 processed recipe를 추가한다.
+
 ## 2026-09-14 - 모델·데이터 준비 구현 범위 확정과 legacy dataset 구조 점검
 
 상태: D1 구현 범위·class contract `DECISION`, 외부 dataset·detector·학습 `PROPOSAL`, legacy 구조 `VERIFIED`

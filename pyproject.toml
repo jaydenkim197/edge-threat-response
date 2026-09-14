@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "edge-threat-response"
+version = "0.1.0"
+description = "Context-aware edge threat response research tooling"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.scripts]
+etr-dataset = "edge_threat_response.dataset.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

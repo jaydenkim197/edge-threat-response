@@ -1,0 +1,68 @@
+{
+  "canonical_classes": {
+    "0": "person",
+    "1": "knife"
+  },
+  "generated_at": "2026-09-14T13:13:09.596184+00:00",
+  "hash_images": true,
+  "registry": "configs/datasets/legacy.json",
+  "schema_version": 1,
+  "sources": {
+    "legacy-knife-detection-v1": {
+      "annotation_status": {
+        "valid": 6181
+      },
+      "images": 6181,
+      "objects": 7613,
+      "original_splits": {
+        "test": 569,
+        "train": 5046,
+        "valid": 566
+      },
+      "unique_groups": 2817
+    },
+    "legacy-new-knife-v3": {
+      "annotation_status": {
+        "valid": 1183
+      },
+      "images": 1183,
+      "objects": 1447,
+      "original_splits": {
+        "test": 237,
+        "train": 709,
+        "valid": 237
+      },
+      "unique_groups": 1180
+    }
+  },
+  "totals": {
+    "annotation_formats": {
+      "bbox": 7613,
+      "polygon": 1447
+    },
+    "annotation_status": {
+      "valid": 7364
+    },
+    "canonical_class_objects": {
+      "1": 9060
+    },
+    "cross_split_duplicate_hash_count": 0,
+    "cross_split_group_count": 317,
+    "exact_duplicate_groups": 3,
+    "images": 7364,
+    "invalid_or_missing_labels": 0,
+    "issue_counts": {
+      "exact_duplicate_image": 3,
+      "group_split_leakage": 317
+    },
+    "issue_severity_counts": {
+      "error": 317,
+      "warning": 3
+    },
+    "objects": 9060,
+    "raw_class_objects": {
+      "0": 9060
+    },
+    "unique_groups": 3552
+  }
+}

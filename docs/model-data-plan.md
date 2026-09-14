@@ -59,7 +59,7 @@
 
 ## 4. Data implementation scope
 
-### D1 — implement now: inventory and validation foundation
+### D1 — inventory and validation foundation: `IMPLEMENTED`, PC `VERIFIED`
 
 - machine-readable dataset-source registry schema와 작성 예시
 - JSONL image manifest builder: stable image ID, source, original path/reference, source group/session, declared license, raw/canonical class map, split, hash, notes
@@ -72,6 +72,8 @@
 - JSON summary와 사람이 읽는 Markdown/text report
 - 소형 synthetic fixture를 이용한 단위·CLI smoke test
 - legacy v1.0/v1.1 audit report 생성
+
+구현은 `src/edge_threat_response/dataset/`에 있으며 CLI는 `etr-dataset audit`과 `etr-dataset plan-split`이다. 13개 표준 라이브러리 단위·통합 테스트와 전체 legacy read-only audit를 통과했다. 실제 결과는 `reports/datasets/legacy-2026-09-14/`에 보존한다. 이는 label 구조 검증이며 image 내용·시각적 annotation 품질·license 검증이 아니다.
 
 ### D2 — only after human sample approval: selected-source import
 

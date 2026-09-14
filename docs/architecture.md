@@ -79,6 +79,20 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 
 네 조건은 하나의 pipeline과 event contract를 공유하고 confirmation predicate만 교체한다.
 
+## Offline dataset preparation path
+
+```text
+[Source Registry + Source-specific Class Map]
+  -> [Read-only Image/YOLO Label Audit]
+  -> [JSONL Manifest + SHA-256]
+  -> [Group / Exact-duplicate Leakage Check]
+  -> [Group-aware Split Plan]
+  -> human approval
+  -> [Selected-source Import / Training]
+```
+
+현재 `IMPLEMENTED` 범위는 human approval 전까지다. audit과 split planner는 raw image·label을 수정하거나 복사하지 않는다. source group과 exact duplicate가 연결된 record는 하나의 assignment unit으로 처리해 planned split 사이에 나뉘지 않게 한다.
+
 ## 실패와 fallback
 
 - 카메라 입력이 끊기면 재시도를 수행하고, 복구 실패 상태를 명시한다.

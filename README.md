@@ -14,6 +14,7 @@
 - 신규 기준 플랫폼: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1
 - 실제 Orin 보드의 SKU·저장장치·펌웨어·카메라·GPIO·ML runtime은 아직 inventory 및 검증 필요
 - 기존 Jetson Nano 4GB: 과거 시스템 보존과 선택적 장비 비교를 위한 legacy baseline
+- dataset D1: registry, bbox/polygon validation, manifest, exact duplicate·group leakage 검사, split planner를 PC에서 구현·검증
 - 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
 - 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
 
@@ -53,6 +54,26 @@ git clone --recurse-submodules https://github.com/jaydenkim197/edge-threat-respo
 ```
 
 이미 clone한 경우에는 `git submodule update --init --recursive`를 실행한다. submodule 내부의 legacy 코드와 모델은 신규 시스템 코드로 직접 수정하지 않는다.
+
+## Dataset audit tooling
+
+Python 3.10 이상에서 editable install 후 실행한다.
+
+```text
+python -m pip install -e . --no-deps
+python -m unittest discover -s tests -v
+etr-dataset audit --registry configs/datasets/legacy.json --repo-root . --output-dir reports/datasets/legacy-2026-09-14 --fail-on never
+```
+
+`audit`은 원본 dataset을 수정하지 않고 `manifest.jsonl`, `issues.jsonl`, `summary.json`, `report.md`를 생성한다. 기본 `--fail-on error`는 오류가 있으면 exit code 1을 반환한다. 현재 legacy split에는 알려진 group leakage가 있어 위 재현 명령만 `--fail-on never`를 사용한다.
+
+분할 계획은 실제 파일을 옮기지 않고 manifest의 `planned_split`과 group assignment만 생성한다. 비율과 seed는 연구 결정 후 명시적으로 전달해야 한다.
+
+```text
+etr-dataset plan-split --manifest reports/datasets/legacy-2026-09-14/manifest.jsonl --output-dir reports/datasets/local-plan --ratios train=0.7,val=0.15,test=0.15 --seed 12345
+```
+
+위 비율은 CLI 형식 예시이며 프로젝트의 확정 split이 아니다. 현재 재현 결과는 [legacy dataset audit report](reports/datasets/legacy-2026-09-14/report.md)에 있다.
 
 ## Non-goals (현재 단계)
 

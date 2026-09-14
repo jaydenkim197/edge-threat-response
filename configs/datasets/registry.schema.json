@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jaydenkim197/edge-threat-response/dataset-registry.schema.json",
+  "title": "Edge Threat Response Dataset Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "canonical_classes", "sources"],
+  "properties": {
+    "$schema": {"type": "string"},
+    "schema_version": {"const": 1},
+    "canonical_classes": {
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "^[0-9]+$": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/source"}
+    }
+  },
+  "$defs": {
+    "split": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["images", "labels"],
+      "properties": {
+        "images": {"type": "string", "minLength": 1},
+        "labels": {"type": "string", "minLength": 1}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "root",
+        "class_map",
+        "raw_class_names",
+        "splits",
+        "group_strategy"
+      ],
+      "properties": {
+        "source_id": {"type": "string", "minLength": 1},
+        "root": {"type": "string", "minLength": 1},
+        "source_url": {"type": ["string", "null"]},
+        "declared_license": {"type": ["string", "null"]},
+        "class_map": {
+          "type": "object",
+          "minProperties": 1,
+          "patternProperties": {
+            "^[0-9]+$": {"type": "integer", "minimum": 0}
+          },
+          "additionalProperties": false
+        },
+        "raw_class_names": {
+          "type": "object",
+          "minProperties": 1,
+          "patternProperties": {
+            "^[0-9]+$": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        "splits": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/split"}
+        },
+        "group_namespace": {"type": "string", "minLength": 1},
+        "group_strategy": {
+          "enum": ["roboflow_stem", "stem", "parent", "regex"]
+        },
+        "group_pattern": {"type": "string", "minLength": 1},
+        "notes": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    }
+  }
+}

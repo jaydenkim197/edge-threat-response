@@ -246,7 +246,7 @@ Proposed: detection + selected context
 다음 개발 작업은 아래 순서로 진행한다.
 
 1. PC에서 순수 core, B0~B3, recorded-detection replay와 단위 테스트 구현
-2. 병렬로 dataset D1: legacy audit, source registry, bbox/polygon validator, manifest, group split/leakage 검사 구현
+2. dataset D1: legacy audit, source registry, bbox/polygon validator, manifest, group split/leakage 검사 구현 — `IMPLEMENTED`, PC `VERIFIED`
 3. Orin Nano 장비 SKU·저장장치·UEFI/QSPI·JetPack 7.2.1 설치 상태 inventory
 4. sample 검수 후 dataset recipe와 detector topology를 결정하고 JetPack 7.2.1 runtime을 고정
 5. 영상·카메라·GPIO·resource-monitor adapter를 통합한 뒤 controlled benchmark 착수

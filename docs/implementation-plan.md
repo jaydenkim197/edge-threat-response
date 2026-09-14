@@ -44,11 +44,13 @@
 - 같은 config와 입력은 순서·event ID를 제외한 동일 결과를 만든다.
 - snapshot port는 정의하되 frame이 없는 replay에서는 명시적으로 `not_captured`를 기록한다.
 
-## 3. Parallel data track
+## 3. Parallel data track — D1 `IMPLEMENTED` / PC `VERIFIED`
 
 Increment A와 병렬로 `model-data-plan.md`의 D1을 구현할 수 있다. D1은 legacy inventory, source registry, source-specific class mapping, bbox/polygon validation, JSONL manifest, group-aware split/leakage 검사와 fixture test까지만 포함한다.
 
 외부 dataset downloader, 실제 dataset 병합, training wrapper와 full training은 D1에 포함하지 않는다. 사람의 sample 승인과 detector topology 결정이 각각 D2와 D3의 gate다.
+
+구현 위치는 `src/edge_threat_response/dataset/`, registry는 `configs/datasets/`, 재현 가능한 요약 결과는 `reports/datasets/`다. 실제 legacy audit에서는 7,364 images와 9,060 objects를 파싱했고 label 구조 오류는 없었으나 기존 split을 교차하는 source group 317개를 확인했다.
 
 ## 4. Increment B — PC video and detector adapter
 
