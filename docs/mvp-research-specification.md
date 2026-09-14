@@ -49,7 +49,7 @@ associated = (d_norm <= τ_distance) AND (knife_center in expanded_person_box(α
 
 ### K-of-N
 
-최근 `N`개 유효 프레임 중 `K`개 이상에서 `associated`가 참이면 temporal condition을 만족한다. 프레임 누락·detector 미검출은 명시적으로 buffer에 기록한다. `K`, `N`, frame sampling rate는 baseline 후 결정한다.
+최근 `N`개 pipeline sample 중 `K`개 이상에서 `associated`가 참이면 temporal condition을 만족한다. 프레임 누락·detector error·미검출은 false sample로 명시적으로 buffer에 기록한다. window가 N개로 채워지기 전이라도 true가 K개 누적되면 확인한다. `K`, `N`, frame sampling rate는 baseline 후 결정한다.
 
 ### State contract
 
@@ -60,7 +60,7 @@ associated = (d_norm <= τ_distance) AND (knife_center in expanded_person_box(α
 | `CONFIRMED` | association과 K-of-N 조건 충족 | GPIO LED/Buzzer, event metadata, snapshot 1장 |
 | `COOLDOWN` | confirmed 후 재경보 억제 구간 | 새 event 전이 규칙에 따라 GPIO 억제 |
 
-`CONFIRMED`는 판단 상태이고, GPIO 경보·기록은 그 상태에 따른 action이다. cooldown 시간, 재진입 조건, event 종료 조건은 측정 전 파라미터다.
+`CONFIRMED`는 판단 상태이고, GPIO 경보·기록은 그 상태에 따른 action이다. 구현 contract는 confirmed 근거가 사라지면 `COOLDOWN`으로 가고, 설정된 연속 clear sample 뒤 `CLEAR`로 rearm하는 것이다. clear sample 수는 측정 전 파라미터다.
 
 ## 4. Controlled scenario and annotation
 

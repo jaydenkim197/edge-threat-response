@@ -1,0 +1,175 @@
+{
+  "runs": [
+    {
+      "mode": "B0",
+      "input": "tests\\fixtures\\replay\\basic.jsonl",
+      "input_sha256": "8fb126fbab4c4f4085f0b3f09be5592c7f2ef6b7906863e2f035b6fe207faaa6",
+      "config": "configs\\replay\\development.example.json",
+      "config_sha256": "5f78814f4d3fb3e6cffb54d8de5a2d6f9e92b1f9b37cd9311e89b1a0c3e181c5",
+      "config_id": "increment-a-development-example",
+      "run_id": "increment-a-smoke",
+      "model_version": "recorded-detections-no-model",
+      "frame_count": 9,
+      "event_count": 2,
+      "event_frame_indices": [
+        0,
+        7
+      ],
+      "state_counts": {
+        "CLEAR": 2,
+        "CONFIRMED": 5,
+        "COOLDOWN": 2
+      },
+      "alarm_signals": [
+        {
+          "active": true,
+          "frame_index": 0,
+          "timestamp_s": 0.0,
+          "event_id": "increment-a-smoke-B0-0001-c09dd8b297c5"
+        },
+        {
+          "active": false,
+          "frame_index": 3,
+          "timestamp_s": 0.3,
+          "event_id": null
+        },
+        {
+          "active": true,
+          "frame_index": 7,
+          "timestamp_s": 0.7,
+          "event_id": "increment-a-smoke-B0-0002-3f750d3a0919"
+        }
+      ],
+      "action_error_count": 0
+    },
+    {
+      "mode": "B1",
+      "input": "tests\\fixtures\\replay\\basic.jsonl",
+      "input_sha256": "8fb126fbab4c4f4085f0b3f09be5592c7f2ef6b7906863e2f035b6fe207faaa6",
+      "config": "configs\\replay\\development.example.json",
+      "config_sha256": "5f78814f4d3fb3e6cffb54d8de5a2d6f9e92b1f9b37cd9311e89b1a0c3e181c5",
+      "config_id": "increment-a-development-example",
+      "run_id": "increment-a-smoke",
+      "model_version": "recorded-detections-no-model",
+      "frame_count": 9,
+      "event_count": 2,
+      "event_frame_indices": [
+        1,
+        8
+      ],
+      "state_counts": {
+        "CANDIDATE": 2,
+        "CLEAR": 1,
+        "CONFIRMED": 4,
+        "COOLDOWN": 2
+      },
+      "alarm_signals": [
+        {
+          "active": true,
+          "frame_index": 1,
+          "timestamp_s": 0.1,
+          "event_id": "increment-a-smoke-B1-0001-dd94909f433f"
+        },
+        {
+          "active": false,
+          "frame_index": 4,
+          "timestamp_s": 0.4,
+          "event_id": null
+        },
+        {
+          "active": true,
+          "frame_index": 8,
+          "timestamp_s": 0.8,
+          "event_id": "increment-a-smoke-B1-0002-83cc1e6ae5da"
+        }
+      ],
+      "action_error_count": 0
+    },
+    {
+      "mode": "B2",
+      "input": "tests\\fixtures\\replay\\basic.jsonl",
+      "input_sha256": "8fb126fbab4c4f4085f0b3f09be5592c7f2ef6b7906863e2f035b6fe207faaa6",
+      "config": "configs\\replay\\development.example.json",
+      "config_sha256": "5f78814f4d3fb3e6cffb54d8de5a2d6f9e92b1f9b37cd9311e89b1a0c3e181c5",
+      "config_id": "increment-a-development-example",
+      "run_id": "increment-a-smoke",
+      "model_version": "recorded-detections-no-model",
+      "frame_count": 9,
+      "event_count": 2,
+      "event_frame_indices": [
+        1,
+        7
+      ],
+      "state_counts": {
+        "CANDIDATE": 1,
+        "CLEAR": 2,
+        "CONFIRMED": 4,
+        "COOLDOWN": 2
+      },
+      "alarm_signals": [
+        {
+          "active": true,
+          "frame_index": 1,
+          "timestamp_s": 0.1,
+          "event_id": "increment-a-smoke-B2-0001-7fbcf5331139"
+        },
+        {
+          "active": false,
+          "frame_index": 3,
+          "timestamp_s": 0.3,
+          "event_id": null
+        },
+        {
+          "active": true,
+          "frame_index": 7,
+          "timestamp_s": 0.7,
+          "event_id": "increment-a-smoke-B2-0002-5c8d6c7406c0"
+        }
+      ],
+      "action_error_count": 0
+    },
+    {
+      "mode": "B3",
+      "input": "tests\\fixtures\\replay\\basic.jsonl",
+      "input_sha256": "8fb126fbab4c4f4085f0b3f09be5592c7f2ef6b7906863e2f035b6fe207faaa6",
+      "config": "configs\\replay\\development.example.json",
+      "config_sha256": "5f78814f4d3fb3e6cffb54d8de5a2d6f9e92b1f9b37cd9311e89b1a0c3e181c5",
+      "config_id": "increment-a-development-example",
+      "run_id": "increment-a-smoke",
+      "model_version": "recorded-detections-no-model",
+      "frame_count": 9,
+      "event_count": 2,
+      "event_frame_indices": [
+        2,
+        8
+      ],
+      "state_counts": {
+        "CANDIDATE": 3,
+        "CLEAR": 1,
+        "CONFIRMED": 3,
+        "COOLDOWN": 2
+      },
+      "alarm_signals": [
+        {
+          "active": true,
+          "frame_index": 2,
+          "timestamp_s": 0.2,
+          "event_id": "increment-a-smoke-B3-0001-80075a43c1f5"
+        },
+        {
+          "active": false,
+          "frame_index": 4,
+          "timestamp_s": 0.4,
+          "event_id": null
+        },
+        {
+          "active": true,
+          "frame_index": 8,
+          "timestamp_s": 0.8,
+          "event_id": "increment-a-smoke-B3-0002-49e1820bf701"
+        }
+      ],
+      "action_error_count": 0
+    }
+  ]
+}

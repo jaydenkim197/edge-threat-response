@@ -1,6 +1,6 @@
 # System Architecture
 
-상태: MVP 논리 구조 `DECISION`, 인터페이스·실기기 구현 `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
+상태: MVP 논리 구조 `DECISION`, 공통 core·replay 인터페이스 `IMPLEMENTED`/PC `VERIFIED`, detector·실기기 adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
 
 ## 시스템 경계
 
@@ -37,36 +37,38 @@ Optional after MVP:
 | Camera Adapter | USB/CSI/영상 파일에서 프레임 획득·복구 | Jetson 카메라 구현 가능 |
 | Detector | 사람·흉기 bounding box와 confidence 생성 | PyTorch/TensorRT 교체 가능 |
 | Tracker | detection에 track ID와 이동 이력 부여 | Stretch goal, 공통 순수 로직 우선 |
-| Spatial Association | nearest person, 정규화 거리, 확장 bbox로 knife-person 연관 산출 | 공통 순수 로직 |
-| Temporal Confirmation | associated history를 K-of-N으로 판단 | 공통 순수 로직 |
-| Alert State Machine | 확정된 상태 전이와 cooldown | 공통 순수 로직 |
+| Spatial Association | nearest person, 정규화 거리, 확장 bbox로 knife-person 연관 산출 | 공통 순수 로직, `IMPLEMENTED` |
+| Temporal Confirmation | knife/associated source-level boolean history를 K-of-N으로 판단 | 공통 순수 로직, `IMPLEMENTED` |
+| Alert State Machine | 확정된 상태 전이와 clear-frame rearm | 공통 순수 로직, `IMPLEMENTED` |
 | GPIO Alarm | LED·부저·상태 버튼 제어 | Jetson 전용 |
 | Event Recorder | metadata·snapshot 및 선택적 clip·보존 정책 관리 | 저장장치·인코더 의존 |
 | Resource Monitor | CPU/GPU/RAM/온도/전력 수집 | Jetson `tegrastats` 등 |
 | Dashboard/Event API | 위험 이벤트의 표시·선택적 전송 | 네트워크·서버 의존 |
 
-## 최소 데이터 계약 - `PROPOSAL`
+## 최소 데이터 계약
 
-### Detection v1
+### Recorded Detection v1 — `IMPLEMENTED`
 
-- 생산자: Detector
-- 소비자: Spatial Association, Renderer, 선택적 Tracker
-- 필드: `class_id`, `label`, `confidence`, `bbox`, `frame_timestamp`, `source_id`
+- 생산자: 현재 replay adapter, 이후 Detector adapter
+- 소비자: Spatial Association과 B0~B3 pipeline
+- frame 필드: `frame_index`, `timestamp_s`, `source_id`, `status`, `detections`, 선택적 `error`
+- detection 필드: `label`, `confidence`, `bbox_xyxy`, 선택적 `detection_id`
 - 금지: 원본 영상 자체, 개인식별정보를 로그 필드에 직접 삽입
-- 오류 처리: 프레임 누락·모델 오류·신뢰도 미달은 명시적인 상태로 전달
+- 오류 처리: `valid`, `missing`, `detector_error`를 구분한다. 비정상 frame에는 detection을 허용하지 않고 K-of-N에 false sample을 넣는다.
+- 순서 계약: 한 pipeline/replay는 하나의 `source_id`만 허용하고 frame index는 strictly increasing, timestamp는 non-decreasing이어야 한다.
 
-### ThreatEvent v1
+### ThreatEvent v1 — metadata `IMPLEMENTED`, actual snapshot `PLANNED`
 
 - 생산자: Temporal Confirmation / Alert State Machine
 - 소비자: GPIO Alarm, Event Recorder, Dashboard
-- 필수 필드 후보: `event_id`, `timestamp`, `source_id`, `state`, `reasons`, `model_version`, `latency_ms`, `scenario_id`
-- 선택 필드 후보: `associated_person_bbox`, `d_norm`, `snapshot_path`
+- 필수 필드: schema/event/run/sequence ID, source, frame index·timestamp, state, B0~B3 policy, reasons, model/config ID, reliable object counts, associated pair count, snapshot status
+- 선택 필드: selected association, snapshot path/error
 - 보존: 정책 확정 전까지 실제 민감 영상 보존 기간을 결정하지 않음
-- 오류 처리: 이벤트 저장·전송 실패는 로컬 경보를 차단하지 않음
+- 오류 처리: snapshot·event 저장·alarm adapter 실패는 frame result에 별도로 남긴다. event 저장 실패가 alarm 호출을 차단하지 않는다.
 
 ### MVP temporal identity boundary
 
-MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보장하지 않는다. 각 프레임에서 `associated_person_knife_exists`라는 source-level boolean을 계산하고 K-of-N은 이 신호를 집계한다. 따라서 결과는 특정 개인의 연속 소지를 추적했다는 의미가 아니다.
+MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보장하지 않는다. 각 프레임에서 `associated_person_knife_exists`라는 source-level boolean을 계산하고 K-of-N은 최근 N개 pipeline sample의 신호를 집계한다. `missing`과 `detector_error`도 false sample로 window에 포함한다. 따라서 결과는 특정 개인의 연속 소지를 추적했다는 의미가 아니다.
 
 ### B0~B3 실행 의미
 
@@ -78,6 +80,13 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 | B3 | geometry association 신호가 K-of-N 충족 |
 
 네 조건은 하나의 pipeline과 event contract를 공유하고 confirmation predicate만 교체한다.
+
+### State transition implementation
+
+- `CLEAR`/`CANDIDATE`에서 mode predicate가 확정되면 `CONFIRMED`로 진입하고 event·alarm action을 한 번만 호출한다.
+- 확정 근거가 사라지면 `COOLDOWN`으로 전이하고 alarm을 해제한다.
+- `COOLDOWN`에서는 설정된 수의 연속 clear sample을 관측해야 `CLEAR`로 rearm된다. 중간 evidence는 clear streak을 0으로 되돌린다.
+- rearm 수치는 config로 주입하며 현재 example 값은 연구 결정이 아니다.
 
 ## Offline dataset preparation path
 

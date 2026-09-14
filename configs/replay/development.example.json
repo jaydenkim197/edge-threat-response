@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "config_id": "increment-a-development-example",
+  "run_id": "increment-a-smoke",
+  "model_version": "recorded-detections-no-model",
+  "mode": "B3",
+  "confidence": {
+    "person": 0.5,
+    "knife": 0.5
+  },
+  "spatial": {
+    "normalized_distance_threshold": 0.5,
+    "expanded_person_ratio": 0.25
+  },
+  "temporal": {
+    "k": 2,
+    "n": 3
+  },
+  "state_machine": {
+    "rearm_clear_frames": 2
+  }
+}

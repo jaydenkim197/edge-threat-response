@@ -28,6 +28,11 @@ reports/datasets/**/issues.jsonl
 reports/datasets/**/planned-manifest.jsonl
 reports/datasets/**/split-plan.json
 
+# Replay detail is reproducible from the committed fixture/config; keep concise summaries.
+reports/replay/**/frames.jsonl
+reports/replay/**/events.jsonl
+reports/replay/**/B[0-3]/summary.json
+
 # Large trained-model and build artifacts; document reproducible acquisition instead.
 models/
 *.pt

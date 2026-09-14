@@ -1,0 +1,9 @@
+{"frame_index":0,"timestamp_s":0.0,"source_id":"fixture-camera","status":"valid","detections":[{"detection_id":"k0","label":"knife","confidence":0.9,"bbox_xyxy":[0.75,0.45,0.85,0.55]}]}
+{"frame_index":1,"timestamp_s":0.1,"source_id":"fixture-camera","status":"valid","detections":[{"detection_id":"p1","label":"person","confidence":0.95,"bbox_xyxy":[0.1,0.1,0.5,0.9]},{"detection_id":"k1","label":"knife","confidence":0.9,"bbox_xyxy":[0.42,0.45,0.48,0.55]}]}
+{"frame_index":2,"timestamp_s":0.2,"source_id":"fixture-camera","status":"valid","detections":[{"detection_id":"p2","label":"person","confidence":0.95,"bbox_xyxy":[0.1,0.1,0.5,0.9]},{"detection_id":"k2","label":"knife","confidence":0.9,"bbox_xyxy":[0.42,0.45,0.48,0.55]}]}
+{"frame_index":3,"timestamp_s":0.3,"source_id":"fixture-camera","status":"missing","detections":[]}
+{"frame_index":4,"timestamp_s":0.4,"source_id":"fixture-camera","status":"valid","detections":[]}
+{"frame_index":5,"timestamp_s":0.5,"source_id":"fixture-camera","status":"valid","detections":[]}
+{"frame_index":6,"timestamp_s":0.6,"source_id":"fixture-camera","status":"valid","detections":[]}
+{"frame_index":7,"timestamp_s":0.7,"source_id":"fixture-camera","status":"valid","detections":[{"detection_id":"p7","label":"person","confidence":0.95,"bbox_xyxy":[0.1,0.1,0.5,0.9]},{"detection_id":"k7","label":"knife","confidence":0.9,"bbox_xyxy":[0.42,0.45,0.48,0.55]}]}
+{"frame_index":8,"timestamp_s":0.8,"source_id":"fixture-camera","status":"valid","detections":[{"detection_id":"p8","label":"person","confidence":0.95,"bbox_xyxy":[0.1,0.1,0.5,0.9]},{"detection_id":"k8","label":"knife","confidence":0.9,"bbox_xyxy":[0.42,0.45,0.48,0.55]}]}

@@ -2,6 +2,59 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-14 - Increment A 판단 core와 B0~B3 replay 구현
+
+상태: pure core·recorded-detection replay `IMPLEMENTED` / 개발 PC `VERIFIED`, detector·영상·snapshot·GPIO·Jetson `PLANNED`
+
+### Goal / Why
+
+- 실제 모델과 Jetson이 준비되기 전에 연구 핵심인 geometry association, K-of-N, 상태 전이와 B0~B3 차이를 결정론적으로 검증한다.
+- 향후 detector, camera, snapshot, GPIO adapter가 따를 입력·event·오류 계약을 고정한다.
+
+### Scope / Changed files
+
+- `src/edge_threat_response/`에 domain, config, spatial, temporal, state machine, ports, pipeline, replay loader와 `etr-replay` CLI를 구현했다.
+- `configs/replay/development.example.json`과 synthetic detection fixture를 추가했다.
+- geometry·K-of-N·전 상태·cooldown/rearm·B0~B3·event 중복 억제·port 실패 격리·replay validation·CLI test를 추가했다.
+- 실제 영상 decode, detector, model weight, camera, snapshot 저장, GPIO, Jetson runtime, dataset 학습은 수행하지 않았다.
+
+### Implemented contracts and judgment
+
+- reliable knife마다 중심점이 가장 가까운 person을 선택하고 person bbox diagonal로 거리를 정규화한다. 거리 threshold와 확장 person bbox 포함을 모두 만족해야 associated다.
+- knife presence와 associated-pair presence에 별도 K-of-N buffer를 사용한다. `missing`·`detector_error`도 false sample로 window에 포함하고, N개가 차기 전이라도 K개 true이면 확인한다.
+- B0는 current knife, B1은 knife K-of-N, B2는 current association, B3는 association K-of-N으로 한 pipeline에서 predicate만 바꾼다.
+- `CONFIRMED` 진입당 event·alarm을 한 번만 발생시키고 근거 소실 시 alarm을 해제한다. cooldown은 설정된 연속 clear sample 뒤에만 rearm된다.
+- event recorder 실패는 alarm을 차단하지 않는다. snapshot port 실패와 action 오류는 frame evidence에 명시한다.
+- tracking이 없으므로 temporal signal은 동일 person이 아닌 source-level boolean이다.
+
+### Environment / Commands / Verification
+
+- 환경: Windows, Python 3.11.9, editable package `edge-threat-response 0.1.0`
+- 테스트: `python -m unittest discover -s tests -v` → 38 tests, all passed
+- 구문 검사: `python -m compileall -q src tests` → passed
+- 설치: `python -m pip install -e .` → passed
+- CLI smoke: `etr-replay --input tests/fixtures/replay/basic.jsonl --config configs/replay/development.example.json --output-dir reports/replay/increment-a-smoke` → passed, action error 0
+- Git commit: 이 기록을 포함하는 commit
+
+### Measured software-smoke result
+
+- 동일 9-frame synthetic detection 입력에서 최초 event frame: B0=0, B1=1, B2=1, B3=2
+- cooldown 후 두 번째 event frame: B0=7, B1=8, B2=7, B3=8
+- mode별 event 2개, event recorder/alarm action error 0
+
+### Known limitations / Decision impact
+
+- 이 결과는 detector 정확도, 실제 frame snapshot, GPIO, Jetson 성능 또는 연구 가설을 검증하지 않는다.
+- development config의 confidence, distance, bbox expansion, K/N, rearm 수치는 테스트 fixture용이며 최종 파라미터가 아니다.
+- frame rate와 시간 간격이 불규칙한 실제 입력에서도 frame-count K-of-N을 쓸지는 baseline에서 sampling contract와 함께 확인해야 한다.
+- Increment B는 P0-05 detector topology와 P0-09 runtime 결정 뒤 진행한다.
+
+### Next action
+
+1. D2 sample review로 external/legacy source와 ambiguous annotation rule을 승인한다.
+2. Orin Nano 수령 시 hardware/JetPack inventory와 container GPU smoke를 수행한다.
+3. detector topology·runtime을 고정한 뒤 video/detector/snapshot adapter를 Increment B로 연결한다.
+
 ## 2026-09-14 - D1 dataset audit·manifest·split planning 도구 구현
 
 상태: D1 `IMPLEMENTED`, synthetic/legacy structure `VERIFIED`, 시각 품질·외부 source·학습 `PLANNED`

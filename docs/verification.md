@@ -13,11 +13,11 @@
 | detector runtime smoke test | container GPU access, model load, 고정 이미지 추론 | Orin Nano, 후보 image/runtime | 미수행 | - | `PLANNED` |
 | 기존 모델 추론 재현 | 기준 영상/카메라 입력으로 실행 | Orin Nano adapter 또는 격리된 legacy Nano 환경 | 미수행 | - | `PLANNED` |
 | GPIO LED·부저 경보 | 정상·경보·복구 상태 수동 시험 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
-| geometry association | 단위 테스트: nearest person, 정규화 거리, 확장 bbox | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
-| K-of-N confirmation | 단위 테스트: history, 누락, K/N 경계 | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
-| 4-state machine | 단위 테스트: CLEAR/CANDIDATE/CONFIRMED/COOLDOWN, cooldown | 개발 PC | MVP 범위 확정·미구현 | - | `PLANNED` |
-| 사건 metadata·snapshot | 고정 영상 시나리오 통합 테스트 | 개발 PC 및 Jetson | MVP 범위 확정·미구현 | - | `PLANNED` |
-| B0~B3 ablation | 동일 입력·모델·설정으로 사건 지표 비교 | 개발 PC 및 Jetson | scenario·split·matching 규칙 미정 | - | `PLANNED` |
+| geometry association | 단위 테스트: nearest person, 정규화 거리, 확장 bbox·경계 | 개발 PC, Python 3.11.9 | 구현, 관련 test 통과 | `tests/test_spatial.py` | `VERIFIED` (순수 로직) |
+| K-of-N confirmation | 단위 테스트: 조기 확인, dropout, window 만료, 잘못된 K/N | 개발 PC, Python 3.11.9 | 구현, 관련 test 통과 | `tests/test_temporal_state_machine.py` | `VERIFIED` (순수 로직) |
+| 4-state machine | 단위 테스트: 전 상태, action 중복 억제, clear rearm | 개발 PC, Python 3.11.9 | 구현, 관련 test 통과 | `tests/test_temporal_state_machine.py`, `tests/test_pipeline.py` | `VERIFIED` (순수 로직) |
+| 사건 metadata·snapshot | recorded-detection fixture와 port failure 통합 test | 개발 PC, Python 3.11.9 | metadata JSONL·deterministic ID·저장 실패 시 alarm 유지 검증; replay snapshot은 `not_captured` | `tests/test_pipeline.py`, `reports/replay/increment-a-smoke/` | metadata `VERIFIED`; 실제 snapshot `PLANNED` |
+| B0~B3 ablation | 동일 recorded detection·설정으로 4 policy replay | 개발 PC, Python 3.11.9 | 9 frames에서 최초 event B0=0, B1=1, B2=1, B3=2; mode당 2 events | `tests/test_pipeline.py`, `reports/replay/increment-a-smoke/report.md` | policy/replay `VERIFIED`; 모델·본 실험 `PLANNED` |
 | 카메라 복구 | 연결 해제·재연결 fault injection | Jetson 실기기 | 미구현 | - | `PLANNED` |
 | 로컬 경보의 오프라인 유지 | 네트워크 차단 상태 시스템 시험 | Jetson 실기기 | 미구현 | - | `PLANNED` |
 | 성능·자원 기록 | 고정 입력, 해상도, 런타임으로 benchmark | Orin Nano, 선택적으로 legacy Nano | 미수행 | - | `PLANNED` |

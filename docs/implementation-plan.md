@@ -13,7 +13,7 @@
 - B0~B3는 별도 코드 복사본이 아니라 동일 pipeline의 confirmation policy로 구현한다.
 - threshold와 K/N은 설정으로 주입하고, 초기 development default를 연구 결론이나 최종값으로 표기하지 않는다.
 
-## 2. Increment A — PC pure core and replay
+## 2. Increment A — PC pure core and replay — `IMPLEMENTED` / PC `VERIFIED`
 
 가장 먼저 구현한다. 실제 모델·영상·Jetson 없이도 완료할 수 있고 이후 모든 adapter의 기준 계약이 된다.
 
@@ -43,6 +43,8 @@
 - `CONFIRMED` 진입당 alarm과 event가 정확히 한 번 발생한다.
 - 같은 config와 입력은 순서·event ID를 제외한 동일 결과를 만든다.
 - snapshot port는 정의하되 frame이 없는 replay에서는 명시적으로 `not_captured`를 기록한다.
+
+2026-09-14 기준 위 항목을 구현했다. `configs/replay/development.example.json`의 수치는 동작 검증용이며 연구 파라미터가 아니다. 9-frame synthetic detection fixture에서 B0/B1/B2/B3 최초 확인 frame이 각각 0/1/1/2로 분리되었고, 전체 38개 test가 통과했다. 실제 detector, 영상 decode, snapshot capture와 Jetson adapter는 포함하지 않았다.
 
 ## 3. Parallel data track — D1 `IMPLEMENTED` / PC `VERIFIED`
 

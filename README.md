@@ -8,13 +8,14 @@
 
 ## 현재 상태
 
-- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, 구현·실기기 검증 `PLANNED`
+- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, Increment A core `IMPLEMENTED`/PC `VERIFIED`, 모델·실기기 `PLANNED`
 - 기존 산출물: 2025-2 MIDAS 발표자료, 활동 정리, Jetson Nano 프로토타입 코드
 - 구현 저장소: 구성 완료, legacy 전체 소스는 Git submodule로 고정
 - 신규 기준 플랫폼: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1
 - 실제 Orin 보드의 SKU·저장장치·펌웨어·카메라·GPIO·ML runtime은 아직 inventory 및 검증 필요
 - 기존 Jetson Nano 4GB: 과거 시스템 보존과 선택적 장비 비교를 위한 legacy baseline
 - dataset D1: registry, bbox/polygon validation, manifest, exact duplicate·group leakage 검사, split planner를 PC에서 구현·검증
+- runtime Increment A: geometry association, K-of-N, 4-state machine, B0~B3, mock alarm, JSONL event/replay를 PC에서 구현·검증
 - 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
 - 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
 
@@ -74,6 +75,17 @@ etr-dataset plan-split --manifest reports/datasets/legacy-2026-09-14/manifest.js
 ```
 
 위 비율은 CLI 형식 예시이며 프로젝트의 확정 split이 아니다. 현재 재현 결과는 [legacy dataset audit report](reports/datasets/legacy-2026-09-14/report.md)에 있다.
+
+## Detection replay core
+
+Increment A는 영상이나 모델 대신 timestamp와 detection 목록을 가진 JSONL을 입력으로 받는다. 아래 개발용 fixture와 설정으로 B0~B3를 같은 입력에 반복 실행할 수 있다.
+
+```text
+python -m pip install -e . --no-deps
+etr-replay --input tests/fixtures/replay/basic.jsonl --config configs/replay/development.example.json --output-dir reports/replay/local-run
+```
+
+각 mode 폴더에는 frame별 판단, event JSONL, summary가 생성된다. replay에는 원본 frame이 없으므로 event의 snapshot 상태는 `not_captured`다. 예제의 confidence, 거리, bbox 확장, K/N, rearm 값은 계약·CLI 검증용이며 연구 최종값이 아니다. 커밋된 smoke 결과는 [Increment A replay report](reports/replay/increment-a-smoke/report.md)에 정리했다.
 
 ## Non-goals (현재 단계)
 
