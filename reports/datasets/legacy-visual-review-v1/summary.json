@@ -1,0 +1,30 @@
+{
+  "candidate_count": 7361,
+  "contact_sheet_count": 8,
+  "decode_error_count": 0,
+  "decoded_count": 7361,
+  "per_stratum": 12,
+  "review_status": "pending_human_review",
+  "schema_version": 1,
+  "seed": 20260915,
+  "selected_by_annotation_format": {
+    "bbox": 106,
+    "polygon": 41
+  },
+  "selected_by_size_bucket": {
+    "large": 83,
+    "medium": 18,
+    "small": 13,
+    "tiny": 14
+  },
+  "selected_by_source": {
+    "legacy-knife-detection-v1": 92,
+    "legacy-new-knife-v3": 36
+  },
+  "selected_by_split": {
+    "test": 30,
+    "train": 71,
+    "val": 27
+  },
+  "selected_count": 128
+}

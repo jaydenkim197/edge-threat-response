@@ -54,7 +54,7 @@ Increment A와 병렬로 `model-data-plan.md`의 D1을 구현할 수 있다. D1�
 
 구현 위치는 `src/edge_threat_response/dataset/`, registry는 `configs/datasets/`, 재현 가능한 요약 결과는 `reports/datasets/`다. 실제 legacy audit에서는 7,364 images와 9,060 objects를 파싱했고 label 구조 오류는 없었으나 기존 split을 교차하는 source group 317개를 확인했다.
 
-## 4. Increment B — PC video and detector adapter
+## 4. Increment B — PC video and detector adapter — `IMPLEMENTED` / PC `VERIFIED`
 
 ML dependency가 없는 port, fake backend, class remap, frame/video contract와 snapshot binding은 P0-05/P0-09 최종 결정 전에도 진행한다. 실제 Ultralytics model load와 Jetson runtime 검증만 해당 결정 이후 수행한다. 현재 노트북의 CPU training/inference smoke는 Increment B 완료 조건이 아니다.
 
@@ -75,7 +75,7 @@ ML dependency가 없는 port, fake backend, class remap, frame/video contract와
 
 현재 우선순위와 CUDA·Orin 이후 경계는 `pre-orin-work-plan.md`를 따른다.
 
-2026-09-15에 schema v2 spatial policy, knife-only exporter와 config-driven training runner를 구현했다. 전체 development export와 32/8 CPU smoke는 통과했으며 detector/video/snapshot adapter는 아직 포함하지 않았다.
+2026-09-15에 single/composite detector, canonical class remap, fail-closed error 처리, OpenCV image/video, detection JSONL, B0~B3 재사용과 current-frame snapshot을 구현했다. fake backend 단위·통합 test와 YOLO26n person + legacy knife weight의 3-frame PC smoke를 통과했다. 이는 선택 detector 성능이나 CUDA/Orin runtime을 검증하지 않는다.
 
 ## 5. Increment C — Jetson Orin Nano integration
 

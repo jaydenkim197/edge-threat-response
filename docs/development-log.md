@@ -2,6 +2,63 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-15 - W4 review pack·W5 detector/video·W6 CUDA handoff 구현
+
+상태: W4 tooling·W5·W6 handoff `IMPLEMENTED`/PC `VERIFIED`, W4 사람 판정·CUDA full training·Orin `PLANNED`
+
+### Goal / Why
+
+- Orin 도착 전 legacy dataset의 시각 검수 근거를 만들고, 새 knife weight가 없어도 image/video→canonical detection→B0~B3→metadata/snapshot 전체 경로를 검증한다.
+- 첫 full training을 사람의 data review 뒤 CUDA 환경으로 안전하게 넘기고, run·dataset·artifact provenance를 남긴다.
+
+### Scope / Changed files
+
+- `dataset/review.py`, `etr-dataset review-pack`, review requirement와 test를 추가했다.
+- `detector.py`, `media.py`, `runtime.py`, `detect_cli.py`에 lazy Ultralytics single/composite adapter, class remap, fail-closed component error, OpenCV image/video, canonical JSONL, latency/provenance와 current-frame snapshot을 구현했다.
+- `etr-detect`, `etr-run`, development/legacy smoke config와 detector/runtime test를 추가했다.
+- training runner에 Git commit, dataset manifest, artifact hash와 GPU-required preflight를 추가하고 CUDA development profile, Colab notebook, handoff 문서를 작성했다.
+- README, architecture, implementation/pre-Orin/model-data plan, open decisions, verification과 재현 가능한 summary/report를 갱신했다.
+- legacy submodule과 raw dataset은 수정하지 않았다. review image/CSV, run output, video, snapshot, weights는 Git에서 제외했다.
+
+### Environment / Commands
+
+- Windows build 26200, Python 3.11.9, AMD Ryzen 5 4600H, CUDA false.
+- `.venv-ml`: torch 2.14.0+cpu, torchvision 0.29.0, Ultralytics 8.4.152, OpenCV 5.0.0.93, Pillow 12.3.0.
+- W4: `etr-dataset review-pack ... --per-stratum 12 --seed 20260915`.
+- W5: 실제 YOLO26n person + legacy `customknife_v1.1.pt` composite로 image와 3-frame video를 `etr-detect`/`etr-run` 실행하고, 생성 detection JSONL을 `etr-replay` B0~B3에 재사용했다.
+- W6: CUDA-required local preflight를 실행해 CUDA false를 명시적으로 탐지했다. 실제 full training은 실행하지 않았다.
+
+### Results / Measured evidence
+
+- W4: exact duplicate 제외 7,361장 decode 성공, 오류 0. deterministic sample 128장, contact sheet 8장 생성.
+- 표본 구성: source 92/36, split train 71/val 27/test 30, 최소 bbox area bucket tiny 14/small 13/medium 18/large 83.
+- 개발자가 contact sheet 8페이지 전체를 확인했으며 사람 동반 장면과 제품·주방·손/knife 클로즈업·워터마크·저해상도 장면이 혼재했다. 같은 인물·배경의 반복은 filename/exact-hash만으로 near-duplicate/session 분리가 완전하지 않을 수 있음을 보여준다. row별 사람 판정은 아직 완료되지 않았다.
+- W5 actual PC smoke: 3 valid frames, canonical detections 9개, B3 event frame 1에서 1회, JPEG snapshot 1장, action error 0.
+- 같은 detection JSONL의 event frame은 B0=0, B1=1, B2=0, B3=1이었다.
+- model cold load가 포함된 첫 frame 6,210.685 ms, 3-frame median inference 106.694 ms. 이 수치는 배포 성능 근거가 아니다.
+- W6 local preflight: expected exit 2, `torch.cuda.is_available() == false`; Git/config/data/dataset manifest와 환경 hash evidence 생성 확인.
+
+### Verification / Limitations
+
+- `python -m unittest discover -s tests -v` → 56 tests, all passed.
+- `python -m compileall -q src tests` → passed.
+- notebook/training/detector JSON parse → passed.
+- `git diff --check` → passed.
+- review sample은 전체 품질 보증이 아니며 `review.csv`의 사람 판정 전에는 Baseline v1 학습 승인으로 간주하지 않는다.
+- legacy 반복 양성 이미지는 정확도·일반화 평가 자료가 아니다. legacy knife weight의 성능 lineage도 `UNVERIFIED`다.
+- 실제 CUDA full training, 선택 detector, 독립 영상, Orin runtime/camera/GPIO와 benchmark는 검증하지 않았다.
+
+### Decision impact / Next action
+
+- composite topology는 구현 가능성이 확인됐지만 P0-05의 최종 detector 결정으로 승격하지 않는다.
+- 팀이 local `data/review/legacy-development-v1/review.csv`를 검토하고 baseline 학습 승인·제외 규칙을 기록한다.
+- 승인 후 Colab notebook으로 legacy Baseline v1을 학습하고 `best.pt`를 동일 W5 pipeline에 경로 교체해 독립 영상 smoke를 수행한다.
+- W7은 Baseline v1을 막지 않으며 DaSCI Knife/SOHAS → Open Images selective → Simuletic smoke 순으로 표본 검토한다.
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-15 - Spatial v2·knife exporter·YOLO26n CPU smoke 구현
 
 상태: class mapping·spatial v2·dataset exporter·training runner `IMPLEMENTED`/PC `VERIFIED`, detector 성능·CUDA/Orin `PLANNED`

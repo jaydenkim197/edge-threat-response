@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "topology": "composite",
+  "components": [
+    {
+      "component_id": "coco-person",
+      "weights": "yolo26n.pt",
+      "class_map": {
+        "0": "person"
+      },
+      "predict_arguments": {
+        "imgsz": 640,
+        "device": "cpu"
+      }
+    },
+    {
+      "component_id": "custom-knife",
+      "weights": "models/knife-baseline-v1/best.pt",
+      "class_map": {
+        "0": "knife"
+      },
+      "predict_arguments": {
+        "imgsz": 640,
+        "device": "cpu"
+      }
+    }
+  ]
+}

@@ -77,7 +77,7 @@
 
 구현은 `src/edge_threat_response/dataset/`에 있으며 CLI는 `etr-dataset audit`과 `etr-dataset plan-split`이다. 13개 표준 라이브러리 단위·통합 테스트와 전체 legacy read-only audit를 통과했다. 실제 결과는 `reports/datasets/legacy-2026-09-14/`에 보존한다. 이는 label 구조 검증이며 image 내용·시각적 annotation 품질·license 검증이 아니다.
 
-### D2 — exporter `IMPLEMENTED`, visual review/import `PLANNED`
+### D2 — exporter/review tooling `IMPLEMENTED`, human approval/import `PLANNED`
 
 - legacy image decode/손상 검사와 deterministic visual-review pack 생성
 - source·객체 크기·annotation 형식별 표본, review CSV와 contact sheet 생성
@@ -91,7 +91,9 @@ COCO/Open Images 전용 downloader를 일반화해 미리 만들지 않는다. �
 
 2026-09-15에 group-aware planned manifest를 knife-only YOLO dataset으로 materialize하는 exporter를 구현했다. model-local class는 `0=knife`이고 runtime adapter mapping은 canonical knife ID `1`이다. development default `70/15/15`, seed `20260915`로 생성한 전체 출력은 exact duplicate 3장을 제외한 7,361장/9,057 objects이며 source group과 exact hash의 split 교차는 0건이다. 이 split과 수치는 연구 최종 결정이 아니다.
 
-### D3 — training runner/CPU smoke `IMPLEMENTED`, CUDA profile `PLANNED`
+같은 날 visual-review pack 생성기를 구현하고 7,361장 전체 decode 오류 0, source/split/format/normalized-area별 128장 표본과 contact sheet 8장을 생성했다. 전 페이지 개발 확인에서 제품사진·주방·손/knife 클로즈업·워터마크·저해상도 장면 등 CCTV와 다른 domain 및 반복 인물·배경이 함께 보였다. 현재 split metric은 engineering baseline 외 일반화 근거로 사용하지 않는다. 사람의 CSV 판정이 끝날 때까지 dataset 품질 승인과 ambiguous annotation 규칙은 `PENDING`이다.
+
+### D3 — training runner/CPU smoke/CUDA handoff `IMPLEMENTED`, CUDA execution `PLANNED`
 
 - YOLO26n primary와 YOLO11n fallback을 development proposal로 둔 config-driven train/evaluate/infer command
 - run ID, Git commit, dataset manifest/version, split, seed, model/checkpoint, config, hardware와 command 기록
@@ -100,6 +102,8 @@ COCO/Open Images 전용 downloader를 일반화해 미리 만들지 않는다. �
 - 작은 approved sample의 start-to-finish smoke는 CUDA GPU 또는 Orin 환경에서 실행. 현재 개발 노트북 CPU smoke는 필수 조건에서 제외
 
 사용자 결정으로 2026-09-15에 CPU smoke도 선택적으로 수행했다. YOLO26n, 32 train/8 val, 320 px, 1 epoch, batch 4가 정상 완료되고 checkpoint 재로딩·단일 이미지 inference가 실행됐다. 이는 배관 검증이며 metric 0을 성능 결과로 해석하지 않는다.
+
+CUDA development profile, GPU-required preflight와 review-gated Colab notebook을 추가했다. training invocation은 Git commit, config/data YAML/dataset manifest hash, 환경, metric과 artifact hash를 기록한다. 로컬 CPU에서 CUDA-required preflight가 의도대로 실패하는 것만 확인했으며 실제 GPU full training은 실행하지 않았다.
 
 ### D4 — full training and evaluation
 

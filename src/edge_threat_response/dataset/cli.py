@@ -8,6 +8,7 @@ from pathlib import Path
 from .audit import audit_registry, write_audit_outputs
 from .materialize import materialize_knife_yolo, parse_split_limits
 from .registry import RegistryError, load_registry
+from .review import generate_review_pack
 from .split import parse_ratios, plan_manifest_file
 from .audit import read_manifest
 
@@ -64,6 +65,16 @@ def build_parser() -> argparse.ArgumentParser:
     materialize_parser.add_argument(
         "--link-mode", choices=("hardlink", "copy"), default="hardlink"
     )
+
+    review_parser = subparsers.add_parser(
+        "review-pack",
+        help="Decode registered images and create a stratified human-review pack.",
+    )
+    review_parser.add_argument("--manifest", type=Path, required=True)
+    review_parser.add_argument("--repo-root", type=Path, default=Path.cwd())
+    review_parser.add_argument("--output-dir", type=Path, required=True)
+    review_parser.add_argument("--per-stratum", type=int, default=8)
+    review_parser.add_argument("--seed", type=int, required=True)
     return parser
 
 
@@ -77,7 +88,9 @@ def main(argv: list[str] | None = None) -> int:
             return _run_plan_split(args)
         if args.command == "materialize-knife-yolo":
             return _run_materialize_knife_yolo(args)
-    except (RegistryError, OSError, ValueError) as exc:
+        if args.command == "review-pack":
+            return _run_review_pack(args)
+    except (RegistryError, OSError, RuntimeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     parser.error(f"Unsupported command {args.command!r}.")
@@ -145,6 +158,19 @@ def _run_materialize_knife_yolo(args: argparse.Namespace) -> int:
         source_manifest=args.manifest,
         limits=parse_split_limits(args.limits),
         link_mode=args.link_mode,
+    )
+    print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+    return 0
+
+
+def _run_review_pack(args: argparse.Namespace) -> int:
+    records = read_manifest(args.manifest)
+    summary = generate_review_pack(
+        records,
+        repo_root=args.repo_root,
+        output_dir=args.output_dir,
+        per_stratum=args.per_stratum,
+        seed=args.seed,
     )
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
     return 0

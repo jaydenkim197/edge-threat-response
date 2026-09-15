@@ -6,6 +6,7 @@ import importlib.metadata
 import json
 import os
 import platform
+import subprocess
 import sys
 import time
 from dataclasses import dataclass
@@ -90,6 +91,7 @@ def run_training(
     output_dir: Path,
     batch_override: int | None = None,
     run_name_override: str | None = None,
+    dataset_manifest: Path | None = None,
     model_factory: Callable[[str], Any] | None = None,
 ) -> dict[str, object]:
     config = TrainingConfig.load(config_path)
@@ -119,7 +121,15 @@ def run_training(
         "model": config.model,
         "arguments": arguments,
         "environment": _environment_record(),
+        "git_commit": _git_commit(),
     }
+    if dataset_manifest is not None:
+        if not dataset_manifest.is_file():
+            raise ValueError(f"Dataset manifest does not exist: {dataset_manifest}")
+        manifest["dataset_manifest"] = {
+            "path": str(dataset_manifest.resolve()),
+            "sha256": _sha256_file(dataset_manifest),
+        }
     _write_json(evidence_path, manifest)
     started = time.monotonic()
     try:
@@ -173,24 +183,100 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--batch", type=int)
     parser.add_argument("--run-name")
+    parser.add_argument("--dataset-manifest", type=Path)
+    parser.add_argument(
+        "--preflight-only",
+        action="store_true",
+        help="Validate the training environment and exit without loading a model.",
+    )
+    parser.add_argument(
+        "--require-cuda",
+        action="store_true",
+        help="Make preflight fail unless a CUDA device is available.",
+    )
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
+        if args.preflight_only:
+            result = training_preflight(
+                args.config,
+                data_yaml=args.data,
+                dataset_manifest=args.dataset_manifest,
+                require_cuda=args.require_cuda,
+            )
+            args.output_dir.mkdir(parents=True, exist_ok=True)
+            _write_json(args.output_dir / "preflight.json", result)
+            print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+            return 0 if result["status"] == "passed" else 2
         manifest = run_training(
             args.config,
             data_yaml=args.data,
             output_dir=args.output_dir,
             batch_override=args.batch,
             run_name_override=args.run_name,
+            dataset_manifest=args.dataset_manifest,
         )
     except (ImportError, OSError, RuntimeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(manifest, ensure_ascii=False, sort_keys=True))
     return 0
+
+
+def training_preflight(
+    config_path: Path,
+    *,
+    data_yaml: Path,
+    dataset_manifest: Path | None,
+    require_cuda: bool,
+    torch_module: Any | None = None,
+) -> dict[str, object]:
+    config = TrainingConfig.load(config_path)
+    if not data_yaml.is_file():
+        raise ValueError(f"Dataset YAML does not exist: {data_yaml}")
+    if dataset_manifest is not None and not dataset_manifest.is_file():
+        raise ValueError(f"Dataset manifest does not exist: {dataset_manifest}")
+    if torch_module is None:
+        try:
+            import torch as torch_module
+        except ImportError as exc:
+            raise RuntimeError("PyTorch is not installed in the training environment.") from exc
+    cuda_available = bool(torch_module.cuda.is_available())
+    device_count = int(torch_module.cuda.device_count()) if cuda_available else 0
+    devices = [torch_module.cuda.get_device_name(index) for index in range(device_count)]
+    errors = []
+    if require_cuda and not cuda_available:
+        errors.append("CUDA is required but torch.cuda.is_available() is false.")
+    return {
+        "schema_version": 1,
+        "status": "failed" if errors else "passed",
+        "checked_at": datetime.now(timezone.utc).isoformat(),
+        "profile_id": config.profile_id,
+        "config_path": str(config_path.resolve()),
+        "config_sha256": _sha256_file(config_path),
+        "data_yaml": str(data_yaml.resolve()),
+        "data_yaml_sha256": _sha256_file(data_yaml),
+        "dataset_manifest": (
+            {
+                "path": str(dataset_manifest.resolve()),
+                "sha256": _sha256_file(dataset_manifest),
+            }
+            if dataset_manifest is not None
+            else None
+        ),
+        "git_commit": _git_commit(),
+        "environment": _environment_record(),
+        "cuda": {
+            "required": require_cuda,
+            "available": cuda_available,
+            "device_count": device_count,
+            "devices": devices,
+        },
+        "errors": errors,
+    }
 
 
 def _environment_record() -> dict[str, object]:
@@ -208,6 +294,21 @@ def _environment_record() -> dict[str, object]:
         "logical_cpu_count": os.cpu_count(),
         "packages": packages,
     }
+
+
+def _git_commit() -> str | None:
+    try:
+        completed = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    value = completed.stdout.strip()
+    return value or None
 
 
 def _artifact_records(save_dir: Path) -> list[dict[str, object]]:

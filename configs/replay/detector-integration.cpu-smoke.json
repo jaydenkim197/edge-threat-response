@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "config_id": "detector-integration-cpu-smoke",
+  "run_id": "detector-integration-cpu-smoke",
+  "model_version": "yolo26n-plus-legacy-customknife-v1.1-unverified",
+  "mode": "B3",
+  "confidence": {
+    "person": 0.5,
+    "knife": 0.4
+  },
+  "spatial": {
+    "policy": "expanded_bbox_only",
+    "expanded_person_ratio": 0.25
+  },
+  "temporal": {
+    "k": 2,
+    "n": 3
+  },
+  "state_machine": {
+    "rearm_clear_frames": 2
+  }
+}

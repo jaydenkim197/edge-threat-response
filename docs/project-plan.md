@@ -62,13 +62,13 @@
 
 | 기능 | 목적·가치 | 난이도 / 의존성 | 논문 기여 | 일정 위험 | 상태 |
 |---|---|---|---|---|---|
-| Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | `DECISION` |
+| Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | adapter/legacy PC smoke `IMPLEMENTED`; 선택 모델·Orin `PLANNED` |
 | Single-frame baseline | 기존 방식의 재현 가능한 비교군 | 중 / 탐지·GPIO | 필수 비교군 | 원본 환경 불명확 | `PLANNED` |
 | Person–knife geometry association | 정규화 거리와 확장 bbox로 공간 문맥 제공 | 중 / bounding box 계약 | context 효과 비교 | 관계 정의 오류 | core `IMPLEMENTED` / PC `VERIFIED` |
 | K-of-N temporal confirmation | 순간 오탐·누락에 대한 시간 문맥 | 중 / 프레임 시간·누락 처리 | context 효과 비교 | 임계값 과적합 | core `IMPLEMENTED` / PC `VERIFIED` |
 | CLEAR/CANDIDATE/CONFIRMED/COOLDOWN | 판단과 action을 분리 | 중 / context 신호 | 설명·재현 가능성 | 상태 조건 복잡화 | core `IMPLEMENTED` / PC `VERIFIED` |
 | GPIO LED/Buzzer | 엣지 대응 데모 | 하 / Jetson GPIO | 공학 통합 | 하드웨어 상태 | `PLANNED` |
-| Event metadata + snapshot | 사건 근거와 오류 분석 | 중 / 저장 정책 | 실험 증거 | 개인정보·용량 | `DECISION` |
+| Event metadata + snapshot | 사건 근거와 오류 분석 | 중 / 저장 정책 | 실험 증거 | 개인정보·용량 | file-input PC `VERIFIED`; camera/정책 `PLANNED` |
 | B0~B3 benchmark/ablation | baseline·spatial·temporal 기여 비교 | 중 / 시나리오·정답 | 핵심 실험 기반 | 뒤늦은 평가 설계 | policy/replay `IMPLEMENTED`; 본 실험 `PLANNED` |
 | FPS·latency·RAM·temperature 기록 | 엣지 실행 가능성 평가 | 중 / 측정 도구 | 성능·제약 분석 | 측정 방법 차이 | `DECISION` |
 

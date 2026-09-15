@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "frame_count": 3,
+  "frame_status_counts": {
+    "valid": 3
+  },
+  "canonical_detection_count": 9,
+  "event_count": 1,
+  "event_frame_index": 1,
+  "snapshot_count": 1,
+  "action_error_count": 0,
+  "detections_sha256": "0736dd18756be49be088c65628f96a1df52f21b40490e04405270ae1c4a32639",
+  "person_weight_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+  "knife_weight_sha256": "187b95e7f403182e45fab21b6c027ee2c4f649de3e4f0991f7609886013a45d0",
+  "b0_to_b3_event_frames": {
+    "B0": [0],
+    "B1": [1],
+    "B2": [0],
+    "B3": [1]
+  }
+}

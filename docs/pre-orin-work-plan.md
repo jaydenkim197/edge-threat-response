@@ -1,6 +1,6 @@
 # Pre-Orin Work Plan
 
-상태: 작업 순서·class contract `DECISION`, W1~W3·CPU smoke `IMPLEMENTED`/PC `VERIFIED`, 나머지 detector/model/runtime/외부 dataset 채택 `PROPOSAL`
+상태: 작업 순서·class contract `DECISION`, W1~W6 tooling·PC smoke `IMPLEMENTED`/PC `VERIFIED`, W4 사람 검수·CUDA full training·W7 외부 dataset 채택 `PLANNED`/`PROPOSAL`
 
 이 문서는 Jetson Orin Nano가 도착하기 전에 개발 PC에서 끝낼 작업과, CUDA GPU 또는 실기기가 있어야 하는 작업을 분리한다. 현재 노트북에서 PyTorch/Ultralytics CPU 학습 smoke를 수행하지 못하더라도 pre-Orin 개발은 중단하지 않는다.
 
@@ -27,9 +27,9 @@
 | 1 | W1 | 문서·class contract 정합화 | `IMPLEMENTED` / raw source ID, model-local training ID, runtime canonical label의 경계 정의 |
 | 2 | W2 | Spatial association schema v2 | `IMPLEMENTED` / expanded bbox 판정, normalized distance 진단값, v1 replay 호환과 단위 test |
 | 3 | W3 | Knife-only dataset exporter | `IMPLEMENTED` / 전체 7,361장 materialize, polygon→bbox, exact duplicate 3장 제거, group/hash leakage 0 |
-| 4 | W4 | Dataset visual-review pack | decode/손상 검사, source·객체 크기·annotation 형식별 표본과 review CSV/contact sheet를 생성; 모호 사례를 팀 결정 대상으로 분리 |
-| 5 | W5 | Detector/video integration scaffold | ML import 없이 fake backend로 single/composite detector, class remap, 오류 격리, frame source, detection JSONL, B0~B3 replay, snapshot binding을 검증 |
-| 6 | W6 | CUDA training handoff package | `IN PROGRESS` / config-driven runner와 CPU smoke evidence 완료; GPU preflight·CUDA profile·Colab 절차는 남음 |
+| 4 | W4 | Dataset visual-review pack | tooling·7,361장 decode·128장 review pack `IMPLEMENTED`/PC `VERIFIED`; 사람 판정·학습 승인 `PENDING` |
+| 5 | W5 | Detector/video integration scaffold | fake backend 계약과 actual legacy composite CPU image/video·JSONL·B0~B3·snapshot smoke `IMPLEMENTED`/PC `VERIFIED` |
+| 6 | W6 | CUDA training handoff package | runner evidence, GPU preflight, CUDA development profile, human-gated Colab notebook `IMPLEMENTED`/contract `VERIFIED`; CUDA full run `PLANNED` |
 | 7 | W7 | External dataset candidate record | Simuletic은 synthetic smoke-only, DaSCI Knife/SOHAS는 우선 표본 검수 후보, Open Images는 selective subset 후보로 기록; 무검수 대량 병합 금지 |
 
 ### W1 class mapping contract
@@ -45,7 +45,7 @@
 - `etr-detect`: 영상/이미지 입력을 한 번 추론해 canonical detection JSONL과 latency/run manifest 생성
 - `etr-replay`: 같은 JSONL을 B0~B3에 재사용
 - `etr-run`: 실제 frame을 B3에 연결하고 `CONFIRMED` 진입 시 metadata와 snapshot 생성
-- actual Ultralytics model load는 CUDA 또는 Orin smoke 전까지 `PLANNED`로 유지
+- actual Ultralytics CPU model load는 legacy composite로 smoke 완료했으나 선택 detector의 CUDA/Orin load와 성능은 `PLANNED`로 유지
 
 ## 4. Explicitly deferred
 

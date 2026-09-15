@@ -1,6 +1,6 @@
 # System Architecture
 
-상태: MVP 논리 구조 `DECISION`, 공통 core·replay 인터페이스 `IMPLEMENTED`/PC `VERIFIED`, detector·실기기 adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
+상태: MVP 논리 구조 `DECISION`, 공통 core·replay·detector/video/snapshot 인터페이스 `IMPLEMENTED`/PC `VERIFIED`, CUDA/Orin·camera/GPIO adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
 
 ## 시스템 경계
 
@@ -34,14 +34,14 @@ Optional after MVP:
 
 | 컴포넌트 | 책임 | 플랫폼 의존성 |
 |---|---|---|
-| Camera Adapter | USB/CSI/영상 파일에서 프레임 획득·복구 | Jetson 카메라 구현 가능 |
-| Detector | 사람·흉기 bounding box와 confidence 생성 | PyTorch/TensorRT 교체 가능 |
+| Camera Adapter | USB/CSI/영상 파일에서 프레임 획득·복구 | OpenCV image/video PC adapter `IMPLEMENTED`; Jetson camera `PLANNED` |
+| Detector | 사람·흉기 bounding box와 confidence 생성 | single/composite·Ultralytics lazy adapter PC `IMPLEMENTED`; CUDA/TensorRT 교체 가능 |
 | Tracker | detection에 track ID와 이동 이력 부여 | Stretch goal, 공통 순수 로직 우선 |
 | Spatial Association | v1은 nearest person + 정규화 거리 + 확장 bbox, 신규 v2는 nearest person + 확장 bbox 판정과 정규화 거리 진단값 산출 | v1/v2 `IMPLEMENTED`, PC `VERIFIED` |
 | Temporal Confirmation | knife/associated source-level boolean history를 K-of-N으로 판단 | 공통 순수 로직, `IMPLEMENTED` |
 | Alert State Machine | 확정된 상태 전이와 clear-frame rearm | 공통 순수 로직, `IMPLEMENTED` |
 | GPIO Alarm | LED·부저·상태 버튼 제어 | Jetson 전용 |
-| Event Recorder | metadata·snapshot 및 선택적 clip·보존 정책 관리 | 저장장치·인코더 의존 |
+| Event Recorder | metadata·snapshot 및 선택적 clip·보존 정책 관리 | JSONL+동기 current-frame snapshot PC `IMPLEMENTED`; 보존 정책 `PLANNED` |
 | Resource Monitor | CPU/GPU/RAM/온도/전력 수집 | Jetson `tegrastats` 등 |
 | Dashboard/Event API | 위험 이벤트의 표시·선택적 전송 | 네트워크·서버 의존 |
 
@@ -57,7 +57,7 @@ Optional after MVP:
 - 오류 처리: `valid`, `missing`, `detector_error`를 구분한다. 비정상 frame에는 detection을 허용하지 않고 K-of-N에 false sample을 넣는다.
 - 순서 계약: 한 pipeline/replay는 하나의 `source_id`만 허용하고 frame index는 strictly increasing, timestamp는 non-decreasing이어야 한다.
 
-### ThreatEvent v1 — metadata `IMPLEMENTED`, actual snapshot `PLANNED`
+### ThreatEvent v1 — metadata·file-input snapshot `IMPLEMENTED`/PC `VERIFIED`, camera snapshot `PLANNED`
 
 - 생산자: Temporal Confirmation / Alert State Machine
 - 소비자: GPIO Alarm, Event Recorder, Dashboard
@@ -65,6 +65,15 @@ Optional after MVP:
 - 선택 필드: selected association, snapshot path/error
 - 보존: 정책 확정 전까지 실제 민감 영상 보존 기간을 결정하지 않음
 - 오류 처리: snapshot·event 저장·alarm adapter 실패는 frame result에 별도로 남긴다. event 저장 실패가 alarm 호출을 차단하지 않는다.
+
+### Detector / media adapter — `IMPLEMENTED`, PC `VERIFIED`
+
+- `etr-detect`: OpenCV image/video frame을 single 또는 required-component composite detector에 입력하고 canonical detection JSONL과 component latency를 기록한다.
+- model-local class는 adapter config에서 runtime `person`/`knife` 문자열로 remap한다. unmapped model class는 downstream 계약에 내보내지 않는다.
+- composite의 required component 하나라도 실패하면 부분 detection을 안전 상태처럼 사용하지 않고 해당 frame 전체를 `detector_error`로 기록한다.
+- `etr-run`: current decoded frame을 snapshot port에 동기 binding하고 pipeline의 `CONFIRMED` 진입 시 JPEG 한 장을 저장한다.
+- input, detector/pipeline config와 로컬 weight의 path·size·SHA-256을 summary provenance에 기록한다.
+- Ultralytics와 OpenCV는 lazy optional dependency라 pure core와 replay test는 ML package 없이 유지된다.
 
 ### MVP temporal identity boundary
 

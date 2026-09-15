@@ -8,16 +8,18 @@
 
 ## 현재 상태
 
-- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, core·spatial v2·dataset exporter·training smoke `IMPLEMENTED`/PC `VERIFIED`, 실제 detector·실기기 `PLANNED`
+- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, core·dataset review/export·training handoff·detector/video/snapshot scaffold `IMPLEMENTED`/PC `VERIFIED`, CUDA full training·실기기 `PLANNED`
 - 기존 산출물: 2025-2 MIDAS 발표자료, 활동 정리, Jetson Nano 프로토타입 코드
 - 구현 저장소: 구성 완료, legacy 전체 소스는 Git submodule로 고정
 - 신규 기준 플랫폼: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1
 - 실제 Orin 보드의 SKU·저장장치·펌웨어·카메라·GPIO·ML runtime은 아직 inventory 및 검증 필요
 - 기존 Jetson Nano 4GB: 과거 시스템 보존과 선택적 장비 비교를 위한 legacy baseline
 - dataset D1: registry, bbox/polygon validation, manifest, exact duplicate·group leakage 검사, split planner를 PC에서 구현·검증
-- dataset D2 일부: knife-only YOLO exporter 구현, 전체 development output의 group/hash leakage 0 검증; visual review와 외부 source 승인은 남음
+- dataset D2: knife-only YOLO exporter와 deterministic visual-review pack 구현; 7,361장 decode 오류 0, 128장 검수표본 생성, 사람의 품질 판정·외부 source 승인은 남음
 - runtime Increment A: geometry association, K-of-N, 4-state machine, B0~B3, mock alarm, JSONL event/replay를 PC에서 구현·검증
 - training smoke: YOLO26n CPU 1 epoch와 checkpoint 재로딩을 검증했으나 성능 학습·평가는 아직 수행하지 않음
+- pre-Orin Increment B: single/composite detector, canonical class remap, OpenCV image/video, detection JSONL, B0~B3 재생, metadata+actual snapshot을 PC에서 검증
+- CUDA handoff: GPU preflight, Baseline v1 development config와 human-gated Colab notebook 준비; full training은 아직 실행하지 않음
 - 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
 - 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
 
@@ -87,6 +89,15 @@ etr-dataset materialize-knife-yolo --manifest data/work/legacy-development-split
 
 검증된 development export 요약은 [legacy development dataset report](reports/datasets/legacy-development-v1/report.md)에 있다.
 
+사람 검수용 pack은 Pillow가 있는 격리 환경에서 생성한다. contact sheet와 review CSV는 원본 이미지가 포함되므로 로컬 `data/review/`에만 둔다.
+
+```text
+.venv-ml/Scripts/python -m pip install -r requirements/review.txt
+.venv-ml/Scripts/etr-dataset review-pack --manifest data/work/legacy-development-split/planned-manifest.jsonl --repo-root . --output-dir data/review/legacy-development-v1 --per-stratum 12 --seed 20260915
+```
+
+재현 결과는 [legacy visual review report](reports/datasets/legacy-visual-review-v1/report.md)에 있다. `review.csv`의 판정 열을 사람이 채우기 전까지 학습 승인은 완료되지 않은 상태다.
+
 ## Detector training smoke
 
 ML 환경은 일반 개발 환경과 분리한다. 아래 profile은 dataset·학습 배관 검사용이며 성능 학습이나 연구 파라미터가 아니다.
@@ -99,6 +110,20 @@ python -m venv .venv-ml
 ```
 
 2026-09-15 실행 결과는 [YOLO26n CPU smoke report](reports/training/yolo26n-cpu-smoke-2026-09-15/report.md)에 기록했다. model weight와 전체 run output은 Git에 포함하지 않는다.
+
+CUDA full-training 인계 절차와 Colab review gate는 [CUDA / Colab training handoff](docs/training-cuda-handoff.md)를 따른다.
+
+## Detector and video integration
+
+`etr-detect`는 image/video를 canonical detection JSONL로 변환한다. `etr-run`은 같은 adapter를 B3 pipeline에 연결해 event metadata와 snapshot을 생성한다. 실제 weight·입력·config의 hash가 summary provenance에 기록된다.
+
+```text
+etr-detect --input INPUT.mp4 --detector-config configs/detection/composite.development.example.json --output-dir runs/detection/local
+etr-run --input INPUT.mp4 --detector-config configs/detection/composite.development.example.json --pipeline-config configs/replay/development-v2.example.json --output-dir runs/runtime/local
+etr-replay --input runs/runtime/local/detections.jsonl --config configs/replay/development-v2.example.json --output-dir runs/replay/local
+```
+
+`configs/detection/legacy-composite.cpu-smoke.json`은 보존된 legacy weight의 PC 배관 검증용이고 detector 채택이나 성능 근거가 아니다. 결과는 [pre-Orin integration report](reports/runtime/pre-orin-detector-integration-2026-09-15/report.md)에 있다.
 
 ## Detection replay core
 
