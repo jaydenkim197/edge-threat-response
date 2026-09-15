@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "purpose": "training pipeline smoke only",
+  "environment": {
+    "cpu": "AMD Ryzen 5 4600H",
+    "python": "3.11.9",
+    "torch": "2.14.0+cpu",
+    "torchvision": "0.29.0",
+    "ultralytics": "8.4.152",
+    "opencv_python": "5.0.0.93",
+    "cuda_available": false
+  },
+  "dataset": {
+    "train_images": 32,
+    "val_images": 8,
+    "objects": 49,
+    "decoded_images": 40,
+    "class_names": {"0": "knife"}
+  },
+  "training": {
+    "model": "yolo26n.pt",
+    "model_source_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+    "epochs": 1,
+    "imgsz": 320,
+    "batch": 4,
+    "workers": 0,
+    "device": "cpu",
+    "seed": 20260915,
+    "duration_seconds": 18.282,
+    "best_pt_sha256": "d53211fdcfc55b9b5681493a77cafe1a3b84b2cbadfd763d51066b2f3817e680",
+    "last_pt_sha256": "dc3c4e9acb41e6c88532de02f4adb721610b0ec38d95320da9999bdd253f23d0"
+  },
+  "checks": {
+    "dataset_load": "passed",
+    "forward_backward": "passed",
+    "loss": "passed",
+    "validation": "passed",
+    "checkpoint_write": "passed",
+    "checkpoint_reload": "passed",
+    "single_image_inference": "passed"
+  },
+  "performance_metrics_are_valid": false
+}

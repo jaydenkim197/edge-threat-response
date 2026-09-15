@@ -1,7 +1,7 @@
 import math
 import unittest
 
-from edge_threat_response.domain import BBox, Detection
+from edge_threat_response.domain import BBox, Detection, SpatialPolicy
 from edge_threat_response.spatial import associate_person_knives
 
 
@@ -58,6 +58,31 @@ class SpatialAssociationTests(unittest.TestCase):
         self.assertIsNone(result.person)
         self.assertIsNone(result.normalized_distance)
         self.assertFalse(result.associated)
+
+    def test_expanded_bbox_only_keeps_distance_as_diagnostic(self):
+        person = detection("person", (0.0, 0.0, 1.0, 1.0), "person")
+        knife = detection("knife", (1.15, 1.15, 1.25, 1.25), "knife")
+
+        result = associate_person_knives(
+            (person,),
+            (knife,),
+            policy=SpatialPolicy.EXPANDED_BBOX_ONLY,
+            expanded_person_ratio=0.25,
+        )[0]
+
+        self.assertTrue(result.center_in_expanded_person)
+        self.assertIsNotNone(result.normalized_distance)
+        self.assertTrue(result.associated)
+
+    def test_expanded_bbox_only_rejects_distance_threshold(self):
+        with self.assertRaisesRegex(ValueError, "must be omitted"):
+            associate_person_knives(
+                (),
+                (),
+                policy=SpatialPolicy.EXPANDED_BBOX_ONLY,
+                expanded_person_ratio=0.25,
+                normalized_distance_threshold=0.5,
+            )
 
 
 if __name__ == "__main__":

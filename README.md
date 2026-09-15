@@ -8,14 +8,16 @@
 
 ## 현재 상태
 
-- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, Increment A core `IMPLEMENTED`/PC `VERIFIED`, 모델·실기기 `PLANNED`
+- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, core·spatial v2·dataset exporter·training smoke `IMPLEMENTED`/PC `VERIFIED`, 실제 detector·실기기 `PLANNED`
 - 기존 산출물: 2025-2 MIDAS 발표자료, 활동 정리, Jetson Nano 프로토타입 코드
 - 구현 저장소: 구성 완료, legacy 전체 소스는 Git submodule로 고정
 - 신규 기준 플랫폼: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1
 - 실제 Orin 보드의 SKU·저장장치·펌웨어·카메라·GPIO·ML runtime은 아직 inventory 및 검증 필요
 - 기존 Jetson Nano 4GB: 과거 시스템 보존과 선택적 장비 비교를 위한 legacy baseline
 - dataset D1: registry, bbox/polygon validation, manifest, exact duplicate·group leakage 검사, split planner를 PC에서 구현·검증
+- dataset D2 일부: knife-only YOLO exporter 구현, 전체 development output의 group/hash leakage 0 검증; visual review와 외부 source 승인은 남음
 - runtime Increment A: geometry association, K-of-N, 4-state machine, B0~B3, mock alarm, JSONL event/replay를 PC에서 구현·검증
+- training smoke: YOLO26n CPU 1 epoch와 checkpoint 재로딩을 검증했으나 성능 학습·평가는 아직 수행하지 않음
 - 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
 - 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
 
@@ -76,6 +78,27 @@ etr-dataset plan-split --manifest reports/datasets/legacy-2026-09-14/manifest.js
 ```
 
 위 비율은 CLI 형식 예시이며 프로젝트의 확정 split이 아니다. 현재 재현 결과는 [legacy dataset audit report](reports/datasets/legacy-2026-09-14/report.md)에 있다.
+
+계획된 manifest는 knife-only YOLO dataset으로 materialize할 수 있다. raw/source class `0=knife`는 학습 model-local `0=knife`로 유지되고, runtime adapter에서 canonical knife ID `1`로 변환한다.
+
+```text
+etr-dataset materialize-knife-yolo --manifest data/work/legacy-development-split/planned-manifest.jsonl --registry configs/datasets/legacy.json --repo-root . --output-dir data/processed/knife-legacy-development-v1 --link-mode hardlink
+```
+
+검증된 development export 요약은 [legacy development dataset report](reports/datasets/legacy-development-v1/report.md)에 있다.
+
+## Detector training smoke
+
+ML 환경은 일반 개발 환경과 분리한다. 아래 profile은 dataset·학습 배관 검사용이며 성능 학습이나 연구 파라미터가 아니다.
+
+```text
+python -m venv .venv-ml
+.venv-ml/Scripts/python -m pip install -r requirements/ml-smoke.txt
+.venv-ml/Scripts/python -m pip install -e .
+.venv-ml/Scripts/etr-train --config configs/training/cpu-smoke.json --data data/processed/knife-legacy-cpu-smoke-v1/data.yaml --output-dir runs/training
+```
+
+2026-09-15 실행 결과는 [YOLO26n CPU smoke report](reports/training/yolo26n-cpu-smoke-2026-09-15/report.md)에 기록했다. model weight와 전체 run output은 Git에 포함하지 않는다.
 
 ## Detection replay core
 

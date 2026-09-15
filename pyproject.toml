@@ -13,6 +13,7 @@ dependencies = []
 [project.scripts]
 etr-dataset = "edge_threat_response.dataset.cli:main"
 etr-replay = "edge_threat_response.replay_cli:main"
+etr-train = "edge_threat_response.training:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

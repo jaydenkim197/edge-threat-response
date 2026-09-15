@@ -6,8 +6,10 @@ import sys
 from pathlib import Path
 
 from .audit import audit_registry, write_audit_outputs
+from .materialize import materialize_knife_yolo, parse_split_limits
 from .registry import RegistryError, load_registry
 from .split import parse_ratios, plan_manifest_file
+from .audit import read_manifest
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -46,6 +48,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="Comma-separated ratios, for example train=0.7,val=0.15,test=0.15.",
     )
     split_parser.add_argument("--seed", type=int, required=True)
+
+    materialize_parser = subparsers.add_parser(
+        "materialize-knife-yolo",
+        help="Create a leakage-safe one-class YOLO knife dataset from a planned manifest.",
+    )
+    materialize_parser.add_argument("--manifest", type=Path, required=True)
+    materialize_parser.add_argument("--registry", type=Path, required=True)
+    materialize_parser.add_argument("--repo-root", type=Path, default=Path.cwd())
+    materialize_parser.add_argument("--output-dir", type=Path, required=True)
+    materialize_parser.add_argument(
+        "--limits",
+        help="Optional split limits, for example train=32,val=8,test=0.",
+    )
+    materialize_parser.add_argument(
+        "--link-mode", choices=("hardlink", "copy"), default="hardlink"
+    )
     return parser
 
 
@@ -57,6 +75,8 @@ def main(argv: list[str] | None = None) -> int:
             return _run_audit(args)
         if args.command == "plan-split":
             return _run_plan_split(args)
+        if args.command == "materialize-knife-yolo":
+            return _run_materialize_knife_yolo(args)
     except (RegistryError, OSError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
@@ -112,6 +132,21 @@ def _run_plan_split(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def _run_materialize_knife_yolo(args: argparse.Namespace) -> int:
+    registry = load_registry(args.registry, repo_root=args.repo_root)
+    records = read_manifest(args.manifest)
+    summary = materialize_knife_yolo(
+        records,
+        registry=registry,
+        output_dir=args.output_dir,
+        source_manifest=args.manifest,
+        limits=parse_split_limits(args.limits),
+        link_mode=args.link_mode,
+    )
+    print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
     return 0
 
 

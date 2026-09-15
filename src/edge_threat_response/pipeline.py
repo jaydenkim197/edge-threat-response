@@ -120,6 +120,7 @@ class ThreatPipeline:
         associations = associate_person_knives(
             people,
             knives,
+            policy=self.config.spatial_policy,
             normalized_distance_threshold=self.config.normalized_distance_threshold,
             expanded_person_ratio=self.config.expanded_person_ratio,
         )

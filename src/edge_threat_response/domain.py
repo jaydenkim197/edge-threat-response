@@ -26,6 +26,11 @@ class AblationMode(str, Enum):
     B3 = "B3"
 
 
+class SpatialPolicy(str, Enum):
+    DISTANCE_AND_EXPANDED_BBOX = "distance_and_expanded_bbox"
+    EXPANDED_BBOX_ONLY = "expanded_bbox_only"
+
+
 @dataclass(frozen=True)
 class BBox:
     x_min: float

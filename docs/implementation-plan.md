@@ -75,6 +75,8 @@ ML dependency가 없는 port, fake backend, class remap, frame/video contract와
 
 현재 우선순위와 CUDA·Orin 이후 경계는 `pre-orin-work-plan.md`를 따른다.
 
+2026-09-15에 schema v2 spatial policy, knife-only exporter와 config-driven training runner를 구현했다. 전체 development export와 32/8 CPU smoke는 통과했으며 detector/video/snapshot adapter는 아직 포함하지 않았다.
+
 ## 5. Increment C — Jetson Orin Nano integration
 
 실제 장비 inventory와 JetPack 7.2.1 설치 확인 후 진행한다.

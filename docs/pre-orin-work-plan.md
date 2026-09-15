@@ -1,14 +1,14 @@
 # Pre-Orin Work Plan
 
-상태: 작업 순서·CPU smoke 제외·class contract·spatial v2 `DECISION`, detector/model/runtime/외부 dataset 채택 `PROPOSAL`
+상태: 작업 순서·class contract `DECISION`, W1~W3·CPU smoke `IMPLEMENTED`/PC `VERIFIED`, 나머지 detector/model/runtime/외부 dataset 채택 `PROPOSAL`
 
 이 문서는 Jetson Orin Nano가 도착하기 전에 개발 PC에서 끝낼 작업과, CUDA GPU 또는 실기기가 있어야 하는 작업을 분리한다. 현재 노트북에서 PyTorch/Ultralytics CPU 학습 smoke를 수행하지 못하더라도 pre-Orin 개발은 중단하지 않는다.
 
 ## 1. Verified basis
 
 - 기준 저장소는 `00_Development_Github`, 기준 commit은 계획 작성 직전 `f8acb89`이며 원격 `main`과 일치했다.
-- 개발 PC에는 NVIDIA CUDA GPU가 없고 `torch`, `ultralytics`, `opencv-python`이 설치되어 있지 않다.
-- ML dependency가 없는 현재 순수 로직은 `python -m unittest discover -s tests -v`에서 38 tests가 통과했다.
+- 초기 inventory에서 NVIDIA CUDA GPU와 ML package가 없음을 확인했다. 이후 격리된 `.venv-ml`에 CPU runtime을 설치했으며 일반 개발 Python과 분리했다.
+- 순수 로직과 신규 config/export/training contract는 `python -m unittest discover -s tests -v`에서 46 tests가 통과했다.
 - legacy dataset 7,364장은 knife-only이고 person annotation이 없으므로 완전한 person annotation 없이 unified 2-class 학습에 사용하지 않는다.
 - JetPack 7.2.1은 Orin Nano 공식 지원 기준이지만, 실제 대여 장비에서 PyTorch·Ultralytics·container·TensorRT 조합은 아직 검증되지 않았다.
 
@@ -24,12 +24,12 @@
 
 | 순서 | ID | 작업 | 완료 기준 |
 |---:|---|---|---|
-| 1 | W1 | 문서·class contract 정합화 | raw source ID, model-local training ID, runtime canonical label의 경계가 문서와 config에서 모순 없이 정의됨 |
-| 2 | W2 | Spatial association schema v2 | 신규 config는 nearest person + expanded bbox만 판정에 사용하고 normalized distance는 진단값으로 보존; v1 replay 결과는 유지 |
-| 3 | W3 | Knife-only dataset exporter | group-aware planned split을 실제 YOLO dataset으로 materialize; polygon→bbox, model-local `0=knife`, 원본 불변, cross-split leakage 0을 검증 |
+| 1 | W1 | 문서·class contract 정합화 | `IMPLEMENTED` / raw source ID, model-local training ID, runtime canonical label의 경계 정의 |
+| 2 | W2 | Spatial association schema v2 | `IMPLEMENTED` / expanded bbox 판정, normalized distance 진단값, v1 replay 호환과 단위 test |
+| 3 | W3 | Knife-only dataset exporter | `IMPLEMENTED` / 전체 7,361장 materialize, polygon→bbox, exact duplicate 3장 제거, group/hash leakage 0 |
 | 4 | W4 | Dataset visual-review pack | decode/손상 검사, source·객체 크기·annotation 형식별 표본과 review CSV/contact sheet를 생성; 모호 사례를 팀 결정 대상으로 분리 |
 | 5 | W5 | Detector/video integration scaffold | ML import 없이 fake backend로 single/composite detector, class remap, 오류 격리, frame source, detection JSONL, B0~B3 replay, snapshot binding을 검증 |
-| 6 | W6 | CUDA training handoff package | dataset preflight, YOLO26n primary/YOLO11n fallback config, GPU preflight, run manifest와 Colab/학교 GPU 실행 절차를 준비; 실제 학습은 실행하지 않음 |
+| 6 | W6 | CUDA training handoff package | `IN PROGRESS` / config-driven runner와 CPU smoke evidence 완료; GPU preflight·CUDA profile·Colab 절차는 남음 |
 | 7 | W7 | External dataset candidate record | Simuletic은 synthetic smoke-only, DaSCI Knife/SOHAS는 우선 표본 검수 후보, Open Images는 selective subset 후보로 기록; 무검수 대량 병합 금지 |
 
 ### W1 class mapping contract
@@ -51,7 +51,7 @@
 
 ### CUDA GPU 확보 후
 
-- YOLO26n/YOLO11n load·train·export smoke
+- YOLO26n/YOLO11n CUDA load·train·export smoke
 - COCO single-model sanity baseline과 legacy/custom knife weight 확인
 - knife-only full training과 validation
 - 실제 detector topology, input size와 confidence 후보 축소
@@ -68,6 +68,8 @@
 ## 5. Pre-Orin completion meaning
 
 W1~W7이 완료되면 시스템은 `CODE READY`와 `CONTRACT VERIFIED`로 기록한다. 실제 모델 추론, detector 정확도, Jetson 호환성, snapshot 실영상 품질과 edge 성능은 그 결과만으로 `VERIFIED`라고 표기하지 않는다.
+
+2026-09-15의 CPU smoke는 학습 배관만 검증했다. 32 train/8 val, 1 epoch 결과의 metric은 detector 성능 근거가 아니다.
 
 ## References checked on 2026-09-15
 

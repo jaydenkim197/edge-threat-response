@@ -2,21 +2,34 @@ from __future__ import annotations
 
 import math
 
-from .domain import AssociationResult, Detection
+from .domain import AssociationResult, Detection, SpatialPolicy
 
 
 def associate_person_knives(
     people: tuple[Detection, ...] | list[Detection],
     knives: tuple[Detection, ...] | list[Detection],
     *,
-    normalized_distance_threshold: float,
     expanded_person_ratio: float,
+    policy: SpatialPolicy = SpatialPolicy.DISTANCE_AND_EXPANDED_BBOX,
+    normalized_distance_threshold: float | None = None,
 ) -> tuple[AssociationResult, ...]:
-    if (
-        not math.isfinite(normalized_distance_threshold)
-        or normalized_distance_threshold < 0
-    ):
-        raise ValueError("Normalized-distance threshold must be finite and non-negative.")
+    if not isinstance(policy, SpatialPolicy):
+        raise ValueError("policy must be a SpatialPolicy value.")
+    if policy is SpatialPolicy.DISTANCE_AND_EXPANDED_BBOX:
+        if (
+            isinstance(normalized_distance_threshold, bool)
+            or not isinstance(normalized_distance_threshold, (int, float))
+            or not math.isfinite(normalized_distance_threshold)
+            or normalized_distance_threshold < 0
+        ):
+            raise ValueError(
+                "Normalized-distance threshold must be finite and non-negative "
+                "for the legacy policy."
+            )
+    elif normalized_distance_threshold is not None:
+        raise ValueError(
+            "Normalized-distance threshold must be omitted for expanded_bbox_only."
+        )
     if not math.isfinite(expanded_person_ratio) or expanded_person_ratio < 0:
         raise ValueError("Expanded-person ratio must be finite and non-negative.")
 
@@ -44,6 +57,10 @@ def associate_person_knives(
         inside = nearest_person.bbox.expand_by_ratio(expanded_person_ratio).contains(
             knife.bbox.center
         )
+        associated = inside
+        if policy is SpatialPolicy.DISTANCE_AND_EXPANDED_BBOX:
+            assert normalized_distance_threshold is not None
+            associated = inside and normalized_distance <= normalized_distance_threshold
         results.append(
             AssociationResult(
                 knife=knife,
@@ -51,7 +68,7 @@ def associate_person_knives(
                 center_distance=center_distance,
                 normalized_distance=normalized_distance,
                 center_in_expanded_person=inside,
-                associated=(inside and normalized_distance <= normalized_distance_threshold),
+                associated=associated,
             )
         )
     return tuple(results)

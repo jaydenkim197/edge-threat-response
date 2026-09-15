@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "status": "passed",
+  "recipe": "knife-only-yolo-detect-v1",
+  "development_defaults": {
+    "ratios": {"train": 0.7, "val": 0.15, "test": 0.15},
+    "seed": 20260915,
+    "research_split_final": false
+  },
+  "planned": {
+    "records": 7364,
+    "groups": 3552,
+    "train": 5155,
+    "val": 1104,
+    "test": 1105
+  },
+  "materialized": {
+    "images": 7361,
+    "labels": 7361,
+    "objects": 9057,
+    "train": 5153,
+    "val": 1104,
+    "test": 1104,
+    "bbox_annotations": 7610,
+    "polygon_to_bbox_annotations": 1447,
+    "exact_duplicate_records_skipped": 3,
+    "bad_label_lines": 0,
+    "cross_split_groups": 0,
+    "cross_split_hashes": 0,
+    "changed_source_images_after_audit": 0,
+    "changed_source_labels_after_audit": 0
+  },
+  "class_contract": {
+    "model_local": {"0": "knife"},
+    "runtime_canonical_mapping": {"0": 1}
+  },
+  "planned_manifest_sha256": "8811c3a2f99fff428f3a539dc4de964d136055c7854f69722bfa6400fd514101"
+}

@@ -10,5 +10,7 @@
 
 - [legacy-2026-09-14/report.md](legacy-2026-09-14/report.md)
 - [legacy-2026-09-14/summary.json](legacy-2026-09-14/summary.json)
+- [legacy-development-v1/report.md](legacy-development-v1/report.md)
+- [legacy-development-v1/summary.json](legacy-development-v1/summary.json)
 
 재현 명령은 루트 `README.md`를 따른다. report는 파일·label 구조와 leakage를 검증하며 image 내용, annotation의 시각적 정확성, 개별 image license 또는 모델 성능을 증명하지 않는다.

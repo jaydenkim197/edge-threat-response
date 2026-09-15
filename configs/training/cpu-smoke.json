@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "profile_id": "yolo26n-cpu-smoke-v1",
+  "model": "yolo26n.pt",
+  "task": "detect",
+  "run_name": "yolo26n-cpu-smoke-batch4",
+  "arguments": {
+    "epochs": 1,
+    "imgsz": 320,
+    "batch": 4,
+    "workers": 0,
+    "device": "cpu",
+    "cache": false,
+    "pretrained": true,
+    "plots": false,
+    "save": true,
+    "val": true,
+    "seed": 20260915,
+    "deterministic": true,
+    "verbose": true
+  }
+}

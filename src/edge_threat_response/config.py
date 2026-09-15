@@ -6,7 +6,7 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Any
 
-from .domain import AblationMode
+from .domain import AblationMode, SpatialPolicy
 
 
 @dataclass(frozen=True)
@@ -18,7 +18,8 @@ class PipelineConfig:
     mode: AblationMode
     person_confidence_threshold: float
     knife_confidence_threshold: float
-    normalized_distance_threshold: float
+    spatial_policy: SpatialPolicy
+    normalized_distance_threshold: float | None
     expanded_person_ratio: float
     temporal_k: int
     temporal_n: int
@@ -28,9 +29,9 @@ class PipelineConfig:
         if (
             isinstance(self.schema_version, bool)
             or not isinstance(self.schema_version, int)
-            or self.schema_version != 1
+            or self.schema_version not in {1, 2}
         ):
-            raise ValueError("Only pipeline config schema_version 1 is supported.")
+            raise ValueError("Only pipeline config schema_version 1 or 2 is supported.")
         for name in ("config_id", "run_id", "model_version"):
             value = getattr(self, name)
             if not isinstance(value, str) or not value.strip():
@@ -49,18 +50,36 @@ class PipelineConfig:
                 or not 0 <= value <= 1
             ):
                 raise ValueError(f"{name} must be between 0 and 1.")
-        for name in (
-            "normalized_distance_threshold",
-            "expanded_person_ratio",
-        ):
-            value = getattr(self, name)
+        if not isinstance(self.spatial_policy, SpatialPolicy):
+            raise ValueError("spatial_policy must be a SpatialPolicy value.")
+        if self.schema_version == 1 and self.spatial_policy is not SpatialPolicy.DISTANCE_AND_EXPANDED_BBOX:
+            raise ValueError("Pipeline config schema_version 1 requires the legacy spatial policy.")
+        if self.schema_version == 2 and self.spatial_policy is not SpatialPolicy.EXPANDED_BBOX_ONLY:
+            raise ValueError("Pipeline config schema_version 2 requires expanded_bbox_only.")
+        if self.spatial_policy is SpatialPolicy.DISTANCE_AND_EXPANDED_BBOX:
+            value = self.normalized_distance_threshold
             if (
                 isinstance(value, bool)
                 or not isinstance(value, (int, float))
                 or not math.isfinite(value)
                 or value < 0
             ):
-                raise ValueError(f"{name} must be finite and non-negative.")
+                raise ValueError(
+                    "normalized_distance_threshold must be finite and non-negative "
+                    "for the legacy spatial policy."
+                )
+        elif self.normalized_distance_threshold is not None:
+            raise ValueError(
+                "normalized_distance_threshold must be omitted for expanded_bbox_only."
+            )
+        value = self.expanded_person_ratio
+        if (
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(value)
+            or value < 0
+        ):
+            raise ValueError("expanded_person_ratio must be finite and non-negative.")
         if _is_not_positive_int(self.temporal_k) or _is_not_positive_int(
             self.temporal_n
         ):
@@ -80,17 +99,31 @@ class PipelineConfig:
             spatial = _require_dict(data, "spatial")
             temporal = _require_dict(data, "temporal")
             state_machine = _require_dict(data, "state_machine")
+            schema_version = data["schema_version"]
+            if schema_version == 1:
+                spatial_policy = SpatialPolicy.DISTANCE_AND_EXPANDED_BBOX
+                normalized_distance_threshold = spatial[
+                    "normalized_distance_threshold"
+                ]
+            elif schema_version == 2:
+                spatial_policy = SpatialPolicy(spatial["policy"])
+                normalized_distance_threshold = spatial.get(
+                    "normalized_distance_threshold"
+                )
+            else:
+                raise ValueError(
+                    "Only pipeline config schema_version 1 or 2 is supported."
+                )
             return cls(
-                schema_version=data["schema_version"],
+                schema_version=schema_version,
                 config_id=data["config_id"],
                 run_id=data["run_id"],
                 model_version=data["model_version"],
                 mode=AblationMode(data["mode"]),
                 person_confidence_threshold=confidence["person"],
                 knife_confidence_threshold=confidence["knife"],
-                normalized_distance_threshold=spatial[
-                    "normalized_distance_threshold"
-                ],
+                spatial_policy=spatial_policy,
+                normalized_distance_threshold=normalized_distance_threshold,
                 expanded_person_ratio=spatial["expanded_person_ratio"],
                 temporal_k=temporal["k"],
                 temporal_n=temporal["n"],

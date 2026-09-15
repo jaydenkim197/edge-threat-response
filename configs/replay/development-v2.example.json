@@ -1,0 +1,22 @@
+{
+  "schema_version": 2,
+  "config_id": "expanded-bbox-development-example",
+  "run_id": "expanded-bbox-smoke",
+  "model_version": "recorded-detections-no-model",
+  "mode": "B3",
+  "confidence": {
+    "person": 0.5,
+    "knife": 0.5
+  },
+  "spatial": {
+    "policy": "expanded_bbox_only",
+    "expanded_person_ratio": 0.25
+  },
+  "temporal": {
+    "k": 2,
+    "n": 3
+  },
+  "state_machine": {
+    "rearm_clear_frames": 2
+  }
+}

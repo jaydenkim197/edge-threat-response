@@ -2,6 +2,51 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-15 - Spatial v2·knife exporter·YOLO26n CPU smoke 구현
+
+상태: class mapping·spatial v2·dataset exporter·training runner `IMPLEMENTED`/PC `VERIFIED`, detector 성능·CUDA/Orin `PLANNED`
+
+### Goal / Why
+
+- 실제 detector 연결 전에 신규 spatial 정책과 raw/model-local/runtime class 경계를 코드로 고정한다.
+- group-aware knife-only dataset이 실제 YOLO 학습까지 연결되는지 작은 CPU smoke로 확인한다.
+
+### Scope / Changed files
+
+- pipeline config schema v2와 `expanded_bbox_only` spatial policy를 추가하고 schema v1 결과를 호환 보존했다.
+- `etr-dataset materialize-knife-yolo` exporter를 추가해 polygon→bbox, knife model-local class 0, hardlink/copy, exact duplicate 제거와 manifest를 구현했다.
+- config-driven `etr-train`, CPU smoke config와 고정 ML requirement를 추가했다.
+- 관련 config, 단위 test, README, 계획·검증 문서와 재현 가능한 smoke summary/report를 갱신했다.
+- raw dataset과 legacy submodule은 수정하지 않았다. generated dataset, venv, runs와 weights는 Git에서 제외했다.
+
+### Environment / Results
+
+- Windows/Python 3.11.9, AMD Ryzen 5 4600H, CUDA false.
+- `.venv-ml`: torch 2.14.0+cpu, torchvision 0.29.0, Ultralytics 8.4.152, OpenCV 5.0.0.93.
+- development split default 70/15/15, seed 20260915: train 5,155 / val 1,104 / test 1,105 planned.
+- exact duplicate 3장 제거 후 전체 materialized output: train 5,153 / val 1,104 / test 1,104, 총 7,361 images/labels와 9,057 objects.
+- bbox 7,610건과 polygon→bbox 1,447건. output bad label line 0, cross-split source group 0, exact hash 0.
+- audit 이후 source image 7,364장과 대응 label의 SHA-256 변경 0건을 재확인했다.
+- smoke: train 32 / val 8, 49 objects, 40 images decode 성공, YOLO26n 320 px/1 epoch/batch 4.
+- wrapper 측정 training duration 18.282 s. validation과 best/last checkpoint 생성, best checkpoint 재로딩·단일 이미지 inference 성공.
+
+### Verification / Limitations
+
+- `python -m unittest discover -s tests -v` → 46 tests, all passed.
+- smoke의 precision/recall/mAP 0은 1 epoch·극소 표본 결과이며 성능 근거로 사용하지 않는다.
+- 전체 materialized split은 development default이고 visual label 품질 검수와 최종 연구 split 승인을 대신하지 않는다.
+- YOLO26n 선택, detector topology, threshold, CUDA/Jetson 호환성과 성능은 아직 `PROPOSAL`/`PLANNED`다.
+
+### Next action
+
+1. Dataset visual-review pack과 ambiguous annotation 검토 자료
+2. fake backend 기반 detector/video/detection-JSONL/snapshot integration
+3. CUDA profile·GPU preflight·Colab/학교 GPU 인계 절차
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-15 - Orin 도착 전 작업 재정렬과 CPU smoke 제외
 
 상태: pre-Orin 작업 순서·class mapping·spatial v2 방향 `DECISION`, 실제 adapter·exporter·학습 `PLANNED`

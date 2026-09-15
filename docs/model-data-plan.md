@@ -77,7 +77,7 @@
 
 구현은 `src/edge_threat_response/dataset/`에 있으며 CLI는 `etr-dataset audit`과 `etr-dataset plan-split`이다. 13개 표준 라이브러리 단위·통합 테스트와 전체 legacy read-only audit를 통과했다. 실제 결과는 `reports/datasets/legacy-2026-09-14/`에 보존한다. 이는 label 구조 검증이며 image 내용·시각적 annotation 품질·license 검증이 아니다.
 
-### D2 — preparation before approval, import only after human sample approval
+### D2 — exporter `IMPLEMENTED`, visual review/import `PLANNED`
 
 - legacy image decode/손상 검사와 deterministic visual-review pack 생성
 - source·객체 크기·annotation 형식별 표본, review CSV와 contact sheet 생성
@@ -89,13 +89,17 @@
 
 COCO/Open Images 전용 downloader를 일반화해 미리 만들지 않는다. 채택 source와 공식 접근 방법이 정해진 뒤 얇은 importer만 추가한다.
 
-### D3 — scaffold now, execute after detector/runtime decision
+2026-09-15에 group-aware planned manifest를 knife-only YOLO dataset으로 materialize하는 exporter를 구현했다. model-local class는 `0=knife`이고 runtime adapter mapping은 canonical knife ID `1`이다. development default `70/15/15`, seed `20260915`로 생성한 전체 출력은 exact duplicate 3장을 제외한 7,361장/9,057 objects이며 source group과 exact hash의 split 교차는 0건이다. 이 split과 수치는 연구 최종 결정이 아니다.
+
+### D3 — training runner/CPU smoke `IMPLEMENTED`, CUDA profile `PLANNED`
 
 - YOLO26n primary와 YOLO11n fallback을 development proposal로 둔 config-driven train/evaluate/infer command
 - run ID, Git commit, dataset manifest/version, split, seed, model/checkpoint, config, hardware와 command 기록
 - Precision, Recall, mAP50, mAP50-95와 per-class metric 자동 수집
 - artifact filename, SHA-256, storage reference, evaluation link 기록
 - 작은 approved sample의 start-to-finish smoke는 CUDA GPU 또는 Orin 환경에서 실행. 현재 개발 노트북 CPU smoke는 필수 조건에서 제외
+
+사용자 결정으로 2026-09-15에 CPU smoke도 선택적으로 수행했다. YOLO26n, 32 train/8 val, 320 px, 1 epoch, batch 4가 정상 완료되고 checkpoint 재로딩·단일 이미지 inference가 실행됐다. 이는 배관 검증이며 metric 0을 성능 결과로 해석하지 않는다.
 
 ### D4 — full training and evaluation
 

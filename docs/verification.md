@@ -8,14 +8,16 @@
 | legacy dataset inventory | image/label·YAML·training script·annotation format·filename group 점검 | 개발 PC, fixed submodule | 7,364 image-label pairs, missing/empty 0, knife-only, bbox 7,613 + polygon 1,447; split 교차 group 확인 | `docs/model-data-plan.md` | `VERIFIED` (구조), 품질·권리 `PLANNED` |
 | dataset validator·manifest | synthetic fixture와 legacy read-only audit | Windows, Python 3.11.9 | 13 tests 통과; 7,364 images·9,060 objects 파싱, invalid/missing 0 | `tests/`, `reports/datasets/legacy-2026-09-14/` | `VERIFIED` (구조) |
 | group split·leakage 검사 | source/session/exact hash의 split 교차 fixture와 legacy manifest smoke | Windows, Python 3.11.9 | source group·exact duplicate 동시 보존; 기존 split 교차 group 317 탐지 | audit report, split smoke output은 로컬 temp | `VERIFIED` (PC) |
-| 개발 PC ML runtime | package/GPU inventory | Windows, Python 3.11.9 | NVIDIA CUDA GPU 없음; torch·Ultralytics·OpenCV 미설치. CPU model smoke는 pre-Orin gate에서 제외 | `docs/pre-orin-work-plan.md` | inventory `VERIFIED`; model smoke `DEFERRED` |
+| 개발 PC ML runtime | 격리 venv의 package/GPU inventory | Windows, Python 3.11.9 | `.venv-ml`: torch 2.14.0+cpu, torchvision 0.29.0, Ultralytics 8.4.152, OpenCV 5.0.0.93; CUDA false | training smoke report | `VERIFIED` (PC local) |
+| knife-only dataset materialization | 전체 planned manifest export, label·group·hash 재검사 | Windows, development default split | 7,361 images/labels, 9,057 objects, exact duplicate 3장 제거, polygon 1,447건 bbox 변환; bad label/group/hash leakage 0 | local `data/processed`, training smoke report | `VERIFIED` (structure); 연구 split `PROPOSAL` |
+| YOLO26n CPU training smoke | 32 train/8 val, 320 px, 1 epoch, batch 4; checkpoint reload/infer | Ryzen 5 4600H CPU | 18.282 s, best/last.pt 생성, 재로딩·1 image inference 성공 | `reports/training/yolo26n-cpu-smoke-2026-09-15/` | `VERIFIED` (plumbing only) |
 | Pre-Orin adapter/video scaffold | fake detector·frame source·JSONL·snapshot integration test | 개발 PC, ML dependency 없음 | 미구현 | - | `PLANNED` |
 | Orin Nano platform inventory | SKU·RAM·firmware·저장장치·JetPack·전원 모드 확인 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
 | JetPack 7.2.1 설치 | Jetson Linux 39.2.1 부팅과 SDK 구성 확인 | Jetson Orin Nano 실기기 | 공식 지원 환경만 확인, 설치 미수행 | NVIDIA 공식 문서 | `PLANNED` |
 | detector runtime smoke test | native GPU access·model load·고정 이미지 추론 후 container 대안 비교 | Orin Nano, 후보 runtime/image | 미수행 | - | `PLANNED` |
 | 기존 모델 추론 재현 | 기준 영상/카메라 입력으로 실행 | Orin Nano adapter 또는 격리된 legacy Nano 환경 | 미수행 | - | `PLANNED` |
 | GPIO LED·부저 경보 | 정상·경보·복구 상태 수동 시험 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
-| geometry association | 단위 테스트: nearest person, 정규화 거리, 확장 bbox·경계 | 개발 PC, Python 3.11.9 | 구현, 관련 test 통과 | `tests/test_spatial.py` | `VERIFIED` (순수 로직) |
+| geometry association | 단위 테스트: v1 distance+bbox와 v2 expanded-bbox-only, 진단 거리, 경계 | 개발 PC, Python 3.11.9 | schema v1 호환과 v2 구현, 관련 test 통과 | `tests/test_spatial.py`, `tests/test_pipeline_config.py` | `VERIFIED` (순수 로직) |
 | K-of-N confirmation | 단위 테스트: 조기 확인, dropout, window 만료, 잘못된 K/N | 개발 PC, Python 3.11.9 | 구현, 관련 test 통과 | `tests/test_temporal_state_machine.py` | `VERIFIED` (순수 로직) |
 | 4-state machine | 단위 테스트: 전 상태, action 중복 억제, clear rearm | 개발 PC, Python 3.11.9 | 구현, 관련 test 통과 | `tests/test_temporal_state_machine.py`, `tests/test_pipeline.py` | `VERIFIED` (순수 로직) |
 | 사건 metadata·snapshot | recorded-detection fixture와 port failure 통합 test | 개발 PC, Python 3.11.9 | metadata JSONL·deterministic ID·저장 실패 시 alarm 유지 검증; replay snapshot은 `not_captured` | `tests/test_pipeline.py`, `reports/replay/increment-a-smoke/` | metadata `VERIFIED`; 실제 snapshot `PLANNED` |
