@@ -2,8 +2,10 @@
 
 상태: Python-first runtime `DECISION`, Hybrid C++ 전환 `DEFERRED`, Core-only C++ 채택하지 않음
 
-기록일: 2026-09-15  
-분석 기준: Git commit `3b5337c`, Windows Python 3.11.9, unit test 56개 통과 상태  
+기록일: 2026-09-15
+
+분석 기준: Git commit `3b5337c`, Windows Python 3.11.9, unit test 56개 통과 상태
+
 적용 범위: Jetson Orin Nano production runtime의 구현 언어와 C++ 전환 gate
 
 ## 1. 결정 요약
