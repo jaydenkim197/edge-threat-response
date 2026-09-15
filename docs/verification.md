@@ -8,9 +8,11 @@
 | legacy dataset inventory | image/label·YAML·training script·annotation format·filename group 점검 | 개발 PC, fixed submodule | 7,364 image-label pairs, missing/empty 0, knife-only, bbox 7,613 + polygon 1,447; split 교차 group 확인 | `docs/model-data-plan.md` | `VERIFIED` (구조), 품질·권리 `PLANNED` |
 | dataset validator·manifest | synthetic fixture와 legacy read-only audit | Windows, Python 3.11.9 | 13 tests 통과; 7,364 images·9,060 objects 파싱, invalid/missing 0 | `tests/`, `reports/datasets/legacy-2026-09-14/` | `VERIFIED` (구조) |
 | group split·leakage 검사 | source/session/exact hash의 split 교차 fixture와 legacy manifest smoke | Windows, Python 3.11.9 | source group·exact duplicate 동시 보존; 기존 split 교차 group 317 탐지 | audit report, split smoke output은 로컬 temp | `VERIFIED` (PC) |
+| 개발 PC ML runtime | package/GPU inventory | Windows, Python 3.11.9 | NVIDIA CUDA GPU 없음; torch·Ultralytics·OpenCV 미설치. CPU model smoke는 pre-Orin gate에서 제외 | `docs/pre-orin-work-plan.md` | inventory `VERIFIED`; model smoke `DEFERRED` |
+| Pre-Orin adapter/video scaffold | fake detector·frame source·JSONL·snapshot integration test | 개발 PC, ML dependency 없음 | 미구현 | - | `PLANNED` |
 | Orin Nano platform inventory | SKU·RAM·firmware·저장장치·JetPack·전원 모드 확인 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
 | JetPack 7.2.1 설치 | Jetson Linux 39.2.1 부팅과 SDK 구성 확인 | Jetson Orin Nano 실기기 | 공식 지원 환경만 확인, 설치 미수행 | NVIDIA 공식 문서 | `PLANNED` |
-| detector runtime smoke test | container GPU access, model load, 고정 이미지 추론 | Orin Nano, 후보 image/runtime | 미수행 | - | `PLANNED` |
+| detector runtime smoke test | native GPU access·model load·고정 이미지 추론 후 container 대안 비교 | Orin Nano, 후보 runtime/image | 미수행 | - | `PLANNED` |
 | 기존 모델 추론 재현 | 기준 영상/카메라 입력으로 실행 | Orin Nano adapter 또는 격리된 legacy Nano 환경 | 미수행 | - | `PLANNED` |
 | GPIO LED·부저 경보 | 정상·경보·복구 상태 수동 시험 | Jetson Orin Nano 실기기 | 미수행 | - | `PLANNED` |
 | geometry association | 단위 테스트: nearest person, 정규화 거리, 확장 bbox·경계 | 개발 PC, Python 3.11.9 | 구현, 관련 test 통과 | `tests/test_spatial.py` | `VERIFIED` (순수 로직) |

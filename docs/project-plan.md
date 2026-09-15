@@ -173,7 +173,7 @@ Proposed: detection + selected context
 - JetPack 기준 구성은 Ubuntu 24.04, kernel 6.8, CUDA 13.2.1, cuDNN 9.20.0, TensorRT 10.16.2, VPI 4.1.3이다. 이는 NVIDIA 공식 배포 정보로 확인한 플랫폼 기준이며 프로젝트 ML runtime의 동작 검증 결과는 아니다.
 - detector용 PyTorch/Ultralytics와 NVIDIA container image는 JetPack 7.2.1 및 실제 보드에서 smoke test한 뒤 고정한다. NVIDIA 문서의 예시 container tag를 프로젝트 의존성으로 그대로 채택하지 않는다.
 - 공통 domain·spatial·temporal·state-machine·ablation 로직은 Python 3.10~3.12에서 동작하는 platform-neutral package로 만들고, camera·detector·GPIO·resource monitor를 adapter로 분리한다.
-- detector runtime은 재현성과 호스트 OS 분리를 위해 Jetson-compatible NVIDIA container를 우선 검토한다. 순수 core와 PC replay test는 container 없이도 실행 가능해야 한다.
+- detector runtime은 JetPack 7.2.1 실제 보드에서 native PyTorch·Ultralytics smoke를 먼저 수행하고, container는 재현성과 호스트 OS 분리를 위한 대안으로 비교한다. 순수 core와 PC replay test는 두 runtime 없이도 실행 가능해야 한다.
 - 기존 Jetson Nano 4GB와 구형 JetPack 환경은 legacy 보존·선택적 cross-device 비교 대상이다. 신규 코드를 Python 3.6 또는 JetPack 4 제약에 맞추지 않는다.
 - B0~B3는 동일 Orin 장비, 동일 detector, 동일 입력과 설정에서 비교한다. Nano 대 Orin 비교는 context ablation과 분리된 하드웨어 실험으로만 수행한다.
 - PC/recorded-detection 테스트와 Orin 실기기 검증을 별도 증거로 기록한다. 실제 Orin 측정 전에는 FPS 목표나 TensorRT 필요성을 확정하지 않는다.
@@ -196,7 +196,7 @@ Proposed: detection + selected context
 
 | 위험 | 영향 | 대응 |
 |---|---|---|
-| JetPack 7.2.1과 ML framework 호환성 | detector 설치·실행 실패 | NVIDIA container 우선 검토, 실제 보드 smoke test 후 버전 고정 |
+| JetPack 7.2.1과 ML framework 호환성 | detector 설치·실행 실패 | 실제 보드 native smoke 우선, container 대안 비교, 성공한 버전만 고정 |
 | Orin 보드 SKU·펌웨어·저장장치 미확인 | 설치·성능·일정 차질 | 장비 수령 즉시 inventory, UEFI/QSPI 경로와 설치 대상을 확인 |
 | legacy Nano 구형 stack | 과거 baseline 재현 실패 | 신규 경로와 격리하고 cross-device 비교를 선택 실험으로 유지 |
 | 낮은 inference 성능 | 실시간 데모·지연 목표 실패 | 실제 baseline 측정 후 해상도·모델·precision 최적화 결정 |

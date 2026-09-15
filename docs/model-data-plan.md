@@ -43,8 +43,10 @@
 ## 3. Detection and class contract
 
 - downstream detector output label은 `person`, `knife` 두 개로 제한한다.
-- processed unified dataset에서만 canonical ID `0=person`, `1=knife`를 사용한다.
-- raw dataset의 class ID는 source별 mapping으로 해석한다. 예를 들어 legacy `0=knife`는 processed export에서 canonical `1=knife`로 변환한다.
+- runtime canonical registry에서는 ID `0=person`, `1=knife`를 사용한다. runtime contract의 주 식별자는 문자열 label이며 숫자 ID는 source/model adapter 경계에서만 변환한다.
+- raw dataset class ID는 source별 mapping으로 해석한다. legacy raw `0=knife`는 runtime canonical ID `1`에 대응한다.
+- knife-only YOLO 학습 dataset과 model output은 model-local `0=knife`를 사용한다. detector adapter가 model-local `0`을 runtime canonical `knife`/ID `1`로 변환한다.
+- processed unified 2-class dataset은 모든 식별 가능한 person과 knife annotation이 완전한 경우에만 `0=person`, `1=knife`를 사용한다.
 - `holding_knife`, `threat`, `weapon_event`, `knife_on_table`을 detector class로 만들지 않는다.
 - person–knife 관계와 사건은 spatial/temporal layer에서 판단한다.
 - 두 logical class가 하나의 model file에서 나와야 한다는 결정은 하지 않는다.
@@ -75,8 +77,10 @@
 
 구현은 `src/edge_threat_response/dataset/`에 있으며 CLI는 `etr-dataset audit`과 `etr-dataset plan-split`이다. 13개 표준 라이브러리 단위·통합 테스트와 전체 legacy read-only audit를 통과했다. 실제 결과는 `reports/datasets/legacy-2026-09-14/`에 보존한다. 이는 label 구조 검증이며 image 내용·시각적 annotation 품질·license 검증이 아니다.
 
-### D2 — only after human sample approval: selected-source import
+### D2 — preparation before approval, import only after human sample approval
 
+- legacy image decode/손상 검사와 deterministic visual-review pack 생성
+- source·객체 크기·annotation 형식별 표본, review CSV와 contact sheet 생성
 - 승인된 source에 한해서 metadata/subset importer 구현
 - source-specific class mapping과 annotation conversion
 - polygon-to-bbox 변환이 필요하면 raw 보존과 deterministic processed export를 분리
@@ -85,13 +89,13 @@
 
 COCO/Open Images 전용 downloader를 일반화해 미리 만들지 않는다. 채택 source와 공식 접근 방법이 정해진 뒤 얇은 importer만 추가한다.
 
-### D3 — after detector decision: training record scaffold
+### D3 — scaffold now, execute after detector/runtime decision
 
-- 선택한 한 framework에 대한 config-driven train/evaluate/infer command
+- YOLO26n primary와 YOLO11n fallback을 development proposal로 둔 config-driven train/evaluate/infer command
 - run ID, Git commit, dataset manifest/version, split, seed, model/checkpoint, config, hardware와 command 기록
 - Precision, Recall, mAP50, mAP50-95와 per-class metric 자동 수집
 - artifact filename, SHA-256, storage reference, evaluation link 기록
-- 작은 approved sample로 start-to-finish smoke run
+- 작은 approved sample의 start-to-finish smoke는 CUDA GPU 또는 Orin 환경에서 실행. 현재 개발 노트북 CPU smoke는 필수 조건에서 제외
 
 ### D4 — full training and evaluation
 

@@ -36,6 +36,7 @@ Camera
 - [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
 - [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
 - [구현 계획](docs/implementation-plan.md): 단계별 구현 범위, 모듈 경계, 착수·종료 조건
+- [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): CPU 학습 없이 진행할 현재 작업, CUDA·실기기 이후 작업 경계
 - [모델·데이터 준비 계획](docs/model-data-plan.md): 데이터 inventory, 라벨·분할 계약, 검증·학습 단계
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계
 - [연구·실험 계획](docs/research-or-product-plan.md): 가설과 비교 실험의 보조 계획

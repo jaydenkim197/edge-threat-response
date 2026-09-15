@@ -56,12 +56,12 @@ Increment A와 병렬로 `model-data-plan.md`의 D1을 구현할 수 있다. D1�
 
 ## 4. Increment B — PC video and detector adapter
 
-P0-05와 P0-09가 결정된 뒤 진행한다.
+ML dependency가 없는 port, fake backend, class remap, frame/video contract와 snapshot binding은 P0-05/P0-09 최종 결정 전에도 진행한다. 실제 Ultralytics model load와 Jetson runtime 검증만 해당 결정 이후 수행한다. 현재 노트북의 CPU training/inference smoke는 Increment B 완료 조건이 아니다.
 
 ### 포함
 
 - OpenCV 또는 선택된 media backend의 video-file frame source
-- 선택된 person/knife detector adapter
+- single/composite를 모두 수용하는 person/knife detector adapter와 model-local→runtime canonical class remap
 - 실제 frame에서 `CONFIRMED` 전이 시 snapshot 1장 저장
 - detector latency와 end-to-end latency 계측 지점
 - 고정 영상 smoke/integration test
@@ -71,6 +71,9 @@ P0-05와 P0-09가 결정된 뒤 진행한다.
 - 단일 person/knife 2-class 모델을 새로 학습할지, legacy person 모델과 knife 모델을 결합할지 dataset audit로 정한다.
 - knife 학습 이미지에 존재하는 person이 모두 annotation되지 않았다면 단일 2-class 학습으로 바로 합치지 않는다.
 - model file, class map, input size, confidence threshold, license와 hash를 기록한다.
+- JetPack 7.2.1 runtime은 native smoke를 먼저 수행하고 container를 대안으로 비교한다.
+
+현재 우선순위와 CUDA·Orin 이후 경계는 `pre-orin-work-plan.md`를 따른다.
 
 ## 5. Increment C — Jetson Orin Nano integration
 

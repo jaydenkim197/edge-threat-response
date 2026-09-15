@@ -28,7 +28,7 @@
 
 ## 2. Spatial association
 
-각 reliable knife detection마다 가장 가까운 person을 선택한다. 중심점 거리의 정규화 후보는 다음과 같다.
+각 reliable knife detection마다 중심점 거리가 가장 가까운 person을 선택한다. 중심점의 정규화 거리는 진단과 후속 분석을 위해 다음과 같이 계산해 기록한다.
 
 ```text
 d_norm(knife, person) = ||c_knife - c_person|| / sqrt(w_person² + h_person²)
@@ -37,13 +37,13 @@ d_norm(knife, person) = ||c_knife - c_person|| / sqrt(w_person² + h_person²)
 - `c_*`: bounding box 중심점
 - `w_person`, `h_person`: 선택된 person bounding box의 너비·높이
 
-동시에 knife 중심점이 person bounding box를 비율 `α`만큼 확장한 영역 안에 있는지 확인한다. MVP의 associated predicate는 두 기하 신호를 함께 사용한다.
+knife 중심점이 person bounding box를 비율 `α`만큼 확장한 영역 안에 있는지 확인한다. 신규 MVP schema v2의 associated predicate는 하나의 판정 파라미터만 사용한다.
 
 ```text
-associated = (d_norm <= τ_distance) AND (knife_center in expanded_person_box(α))
+associated = knife_center in expanded_person_box(α)
 ```
 
-`α`, `τ_distance`, detector confidence threshold와 association 실패 처리 방식은 baseline 및 development set에서 결정한다. 이 공식은 소지 여부를 증명하지 않으며, bbox 기반 공간 연관만 나타낸다.
+`α`, detector confidence threshold와 association 실패 처리 방식은 baseline 및 development set에서 결정한다. `d_norm`은 판정 gate가 아니다. 이미 생성된 replay evidence를 재현하기 위해 schema v1의 `d_norm + expanded bbox` 동시 조건은 호환 정책으로 보존한다. 어느 공식도 소지 여부를 증명하지 않으며 bbox 기반 공간 연관만 나타낸다.
 
 ## 3. Temporal confirmation and state machine
 

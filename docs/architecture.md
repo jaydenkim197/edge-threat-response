@@ -24,7 +24,7 @@ Optional after MVP:
 
 - 신규 시스템 배포 기준: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1.
 - 공통 core: Python 3.10~3.12, PyTorch·OpenCV·GPIO 비의존. PC와 Orin에서 같은 단위 테스트를 실행한다.
-- detector adapter: Jetson-compatible NVIDIA container를 우선 검토하되 실제 보드 smoke test 전에는 image와 framework 버전을 고정하지 않는다.
+- detector adapter: JetPack 7.2.1 실제 보드에서 native PyTorch·Ultralytics smoke를 먼저 수행하고 container는 재현성 대안으로 비교한다. 성공 전에는 framework 버전이나 image를 고정하지 않는다.
 - hardware adapter: camera, GPIO, `tegrastats` 계열 자원 수집을 core 바깥에 둔다.
 - legacy adapter: 2025-2 Nano 코드는 submodule에서 보존하며 신규 package의 runtime 기준으로 사용하지 않는다.
 
@@ -37,7 +37,7 @@ Optional after MVP:
 | Camera Adapter | USB/CSI/영상 파일에서 프레임 획득·복구 | Jetson 카메라 구현 가능 |
 | Detector | 사람·흉기 bounding box와 confidence 생성 | PyTorch/TensorRT 교체 가능 |
 | Tracker | detection에 track ID와 이동 이력 부여 | Stretch goal, 공통 순수 로직 우선 |
-| Spatial Association | nearest person, 정규화 거리, 확장 bbox로 knife-person 연관 산출 | 공통 순수 로직, `IMPLEMENTED` |
+| Spatial Association | v1은 nearest person + 정규화 거리 + 확장 bbox, 신규 v2는 nearest person + 확장 bbox 판정과 정규화 거리 진단값 산출 | v1 `IMPLEMENTED`, v2 `PLANNED` |
 | Temporal Confirmation | knife/associated source-level boolean history를 K-of-N으로 판단 | 공통 순수 로직, `IMPLEMENTED` |
 | Alert State Machine | 확정된 상태 전이와 clear-frame rearm | 공통 순수 로직, `IMPLEMENTED` |
 | GPIO Alarm | LED·부저·상태 버튼 제어 | Jetson 전용 |

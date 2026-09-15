@@ -2,6 +2,49 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-15 - Orin 도착 전 작업 재정렬과 CPU smoke 제외
+
+상태: pre-Orin 작업 순서·class mapping·spatial v2 방향 `DECISION`, 실제 adapter·exporter·학습 `PLANNED`
+
+### Goal / Why
+
+- 외부 GPT 평가를 저장소·개발 PC·공식 플랫폼 정보와 대조하고, 현재 노트북에서 어려운 CPU model smoke가 전체 개발을 막지 않도록 작업 경계를 다시 정한다.
+- Jetson 도착 전에는 ML dependency가 없는 계약·데이터 변환·adapter/video 골격을 최대한 끝내고, 실제 model·CUDA·hardware 검증은 증거를 만들 수 있는 환경으로 이관한다.
+
+### Scope / Changed files
+
+- `pre-orin-work-plan.md`를 추가하고 README, implementation plan, model/data plan, MVP specification, architecture, open decisions, verification을 정합화했다.
+- 코드, dataset, model, ML package와 Jetson 설정은 변경하지 않았다.
+
+### Verified findings and decisions
+
+- 기준 commit `f8acb89`가 원격 `main`과 일치하고 working tree가 깨끗한 상태에서 시작했다.
+- Windows Python 3.11.9 환경에 torch·Ultralytics·OpenCV가 설치되어 있지 않다. 현재 순수 로직은 `unittest` 38개가 통과했다.
+- CPU training smoke를 pre-Orin 완료 조건에서 제외하고 fake backend·dataset contract·replay integration으로 대체한다.
+- raw class, model-local training class, runtime canonical class를 분리한다. knife-only YOLO는 model-local `0=knife`, runtime은 canonical `knife`/ID `1`이다.
+- 신규 spatial schema v2는 expanded bbox만 association gate로 사용하고 normalized distance는 진단값으로 남긴다. 기존 v1은 replay 호환성을 위해 보존한다.
+- composite detector는 primary proposal일 뿐 최종 topology가 아니다. split·seed·epoch·batch·image size는 development default다.
+- 저장소 전체 AGPL 지정은 수행하지 않고 Ultralytics 사용·배포 정책을 P0-12로 추가했다.
+- JetPack 7.2.1 actual-board runtime은 native smoke 우선, container 비교 순서로 수정했다.
+
+### Verification / Limitations
+
+- `git pull --ff-only` → already up to date.
+- `python -m unittest discover -s tests -v` → 38 tests, all passed.
+- 모델 load, CPU/CUDA training, OpenCV video, snapshot, Orin runtime은 수행하지 않았다.
+- 공식 플랫폼 지원은 실제 대여 장비의 모델 호환성과 성능을 증명하지 않는다.
+
+### Next action
+
+1. class/config와 spatial v2의 하위 호환 구현
+2. knife-only dataset exporter와 visual-review pack
+3. fake detector 기반 detector/video/snapshot integration scaffold
+4. CUDA training handoff package와 외부 dataset 후보 기록
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-14 - Increment A 판단 core와 B0~B3 replay 구현
 
 상태: pure core·recorded-detection replay `IMPLEMENTED` / 개발 PC `VERIFIED`, detector·영상·snapshot·GPIO·Jetson `PLANNED`
