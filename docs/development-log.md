@@ -2,6 +2,45 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-15 - Python-first runtime과 조건부 Hybrid C++ gate 확정
+
+상태: runtime 언어 `DECISION`, Hybrid C++ `DEFERRED`, Orin 성능 검증 `PLANNED`
+
+### Goal / Why
+
+- 현재 Python runtime을 C++로 전환할 실제 비용, 디버깅 위험과 기대 성능을 저장소 구현 상태와 일정 기준으로 판단한다.
+- C++가 빠를 것이라는 가정만으로 10월 31일 통합 MVP 일정을 위험하게 만들지 않도록 전환 조건을 고정한다.
+
+### Scope / Changed files
+
+- `docs/runtime-language-decision.md`에 source inventory, 세 선택지, 시간·Codex workload·failure mode·test 재사용·성능·일정과 전환 trigger를 기록했다.
+- `project-plan`, `architecture`, `implementation-plan`, `open-decisions`, `verification`, `README`에 Python-first 결정과 문서 진입점을 연결했다.
+- 코드, CMake와 C++ 구현은 변경하지 않았다.
+
+### Environment / Commands / Result
+
+- 기준 저장소: Git `3b5337c`, `main...origin/main`, 작업 시작 시 clean.
+- `src/edge_threat_response/**`, `tests/**`, CLI/config와 필수 계획·검증 문서를 inventory했다.
+- `python -m unittest discover -s tests -q`: 56 tests 통과, 0.606 s.
+- Runtime 관련 Python source는 13개 파일, 약 1,841줄이다. 이는 port 규모 근거이며 생산성 측정값은 아니다.
+
+### Verification / Measured values / Limitations
+
+- 코드 동작 회귀는 기존 56 tests로 재확인했다. 이번 작업은 문서 분석이므로 C++ build나 Orin 실행을 수행하지 않았다.
+- 시간, debugging과 Codex workload 범위는 현재 source 규모와 신규 TensorRT/CUDA/GStreamer/CMake 작업에 기반한 추정치이며 실측 성능이 아니다.
+- NVIDIA 공식 TensorRT 문서의 Python/C++ inference parity 설명과 Jetson 설치·GStreamer 문서를 근거로 사용했지만 프로젝트 모델의 Orin 성능은 여전히 `PLANNED`다.
+
+### Decision impact / Next action
+
+- Orin Increment C는 Python으로 먼저 완료하고, direct TensorRT Python을 포함한 고정 조건 benchmark를 수행한다.
+- C++17 production runtime은 p95 latency/FPS/memory 목표 미달, Python-side frame budget 25% 이상, Python 최적화 실패와 3주 이상 일정 여유를 모두 충족할 때만 착수한다.
+- Spatial/K-of-N/FSM만 C++로 옮기는 Core-only C++는 채택하지 않는다.
+
+### Git
+
+- 분석 기준 commit: `3b5337c`
+- 문서 변경 commit: 이 기록을 포함한 Git history
+
 ## 2026-09-15 - W4 review pack·W5 detector/video·W6 CUDA handoff 구현
 
 상태: W4 tooling·W5·W6 handoff `IMPLEMENTED`/PC `VERIFIED`, W4 사람 판정·CUDA full training·Orin `PLANNED`

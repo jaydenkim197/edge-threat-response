@@ -20,6 +20,7 @@
 - training smoke: YOLO26n CPU 1 epoch와 checkpoint 재로딩을 검증했으나 성능 학습·평가는 아직 수행하지 않음
 - pre-Orin Increment B: single/composite detector, canonical class remap, OpenCV image/video, detection JSONL, B0~B3 재생, metadata+actual snapshot을 PC에서 검증
 - CUDA handoff: GPU preflight, Baseline v1 development config와 human-gated Colab notebook 준비; full training은 아직 실행하지 않음
+- runtime 언어: Python으로 Orin 통합·TensorRT benchmark를 먼저 완료하고, 측정된 Python-side 병목이 전환 gate를 충족할 때만 Hybrid C++ production runtime을 검토
 - 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
 - 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
 
@@ -40,6 +41,7 @@ Camera
 - [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
 - [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
 - [구현 계획](docs/implementation-plan.md): 단계별 구현 범위, 모듈 경계, 착수·종료 조건
+- [Runtime 언어 결정](docs/runtime-language-decision.md): Python 유지 근거, C++ 비용·위험과 조건부 전환 gate
 - [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): CPU 학습 없이 진행할 현재 작업, CUDA·실기기 이후 작업 경계
 - [모델·데이터 준비 계획](docs/model-data-plan.md): 데이터 inventory, 라벨·분할 계약, 검증·학습 단계
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계

@@ -27,6 +27,7 @@
 | `project-plan.md` | 목적, 범위, 일정, 성공 조건의 최상위 기준 | 방향·범위·일정 변경 시 |
 | `mvp-research-specification.md` | 확정 MVP의 이벤트 정의, 평가·시나리오·제외 범위 | MVP·실험 설계 변경 시 |
 | `implementation-plan.md` | 단계별 구현 범위와 gate | 구현 순서·범위 변경 시 |
+| `runtime-language-decision.md` | Python/C++ runtime 선택 근거와 조건부 전환 gate | runtime 언어·성능 병목 판단 변경 시 |
 | `model-data-plan.md` | dataset/model provenance·label·split·학습 준비 기준 | dataset·model 작업 시 |
 | `development-log.md` | 변경·결정·검증·한계의 시간순 기록 | material task 종료 전 |
 | `open-decisions.md` | 미확정 선택과 결정 기준 | 선택지가 생기거나 확정될 때 |

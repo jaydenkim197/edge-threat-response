@@ -27,6 +27,8 @@ Optional after MVP:
 - detector adapter: JetPack 7.2.1 실제 보드에서 native PyTorch·Ultralytics smoke를 먼저 수행하고 container는 재현성 대안으로 비교한다. 성공 전에는 framework 버전이나 image를 고정하지 않는다.
 - hardware adapter: camera, GPIO, `tegrastats` 계열 자원 수집을 core 바깥에 둔다.
 - legacy adapter: 2025-2 Nano 코드는 submodule에서 보존하며 신규 package의 runtime 기준으로 사용하지 않는다.
+- runtime language: Python reference와 production path를 먼저 Orin에서 통합·측정한다. C++17 production path는 `runtime-language-decision.md`의 benchmark trigger를 충족할 때만 별도 adapter/runtime으로 추가하며 Python event/replay contract를 golden oracle로 유지한다.
+- core-only native extension: spatial/K-of-N/FSM만 C++로 옮기는 구조는 채택하지 않는다. 판단 core는 detector와 camera data path보다 계산량이 작고 Python↔C++ 경계만 늘리기 때문이다.
 
 처음 구현은 영상 대신 timestamp와 detection 목록을 가진 recorded-detection stream을 입력으로 사용한다. 이 경로에서 B0~B3, 상태 전이, 알람 중복 억제, metadata 생성을 결정론적으로 검증한 뒤 detector와 실제 frame을 연결한다.
 

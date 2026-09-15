@@ -81,10 +81,12 @@ ML dependency가 없는 port, fake backend, class remap, frame/video contract와
 
 실제 장비 inventory와 JetPack 7.2.1 설치 확인 후 진행한다.
 
+Runtime 언어 gate는 `runtime-language-decision.md`를 따른다. 이 Increment는 Python production path로 먼저 완료하며 C++ 구현은 완료 조건이 아니다.
+
 ### 포함
 
-1. NVIDIA container runtime과 후보 detector image smoke test
-2. image tag뿐 아니라 digest, Python, PyTorch, CUDA, cuDNN, TensorRT, Ultralytics 버전 고정
+1. native Python GPU access·후보 detector smoke test 후 container를 재현성 대안으로 비교
+2. 성공한 native package 또는 container image의 digest, Python, PyTorch, CUDA, cuDNN, TensorRT, Ultralytics 버전 고정
 3. USB/CSI camera adapter와 연결 복구 시험
 4. GPIO LED/Buzzer adapter와 mock/hardware parity test
 5. RAM·온도·CPU/GPU·FPS·latency resource recorder
@@ -107,6 +109,7 @@ ML dependency가 없는 port, fake backend, class remap, frame/video contract와
 ## 7. Deferred until evidence exists
 
 - TensorRT/FP16은 먼저 PyTorch/container baseline을 측정한 뒤 필요성과 효과를 판단한다.
+- Hybrid C++ production runtime은 Python+TensorRT end-to-end benchmark와 profiler가 정량 전환 gate를 충족할 때만 착수한다. Core-only C++는 채택하지 않는다.
 - tracking, dashboard, event clip, 추가 weapon class, enclosure/PCB는 MVP DoD 이후에만 착수한다.
 - NVIDIA 문서의 예시 container tag는 프로젝트 runtime 결정이 아니다.
 - 공식 JetPack 구성 정보는 플랫폼 근거일 뿐, 프로젝트 모델의 호환성·성능 증거가 아니다.
