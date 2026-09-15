@@ -24,7 +24,6 @@
 | P1-07 | P1 | 상태 머신 상태·전이 | `CLEAR/CANDIDATE/CONFIRMED/COOLDOWN`; CONFIRMED 진입당 action 1회, 연속 clear sample 뒤 rearm | rearm sample 수는 baseline 후 | 완료 | `DECISION`; PC core `VERIFIED` |
 | P0-08 | P0 | threshold tuning과 final evaluation 분리 | development/tuning set으로 파라미터를 선택하고 holdout recording session/scene으로 final evaluation | 촬영 장소·세션 수·표본 규모 | 촬영 전 | `PROPOSAL` |
 | P1-08 | P1 | Stretch 우선순위 | TensorRT/FP16 → legacy Nano cross-device 비교 → Tracking → Dashboard → Event clip → 추가 class → enclosure/PCB | Orin이 기준 플랫폼으로 변경되어 기존 Orin benchmark 항목을 기준 검증으로 승격 | 완료 | `DECISION` |
-| P1-09 | P1 | Production runtime 언어 | Python으로 Orin 통합·TensorRT benchmark를 먼저 완료하고, 정량 gate 충족 시에만 Python reference를 유지한 Hybrid C++17 runtime 추가; Core-only C++는 채택하지 않음 | 동일 TensorRT engine의 Python/C++ inference 차이는 작을 가능성이 높고 현재 Python runtime·golden replay가 구현됨; 실기기 C++ debugging은 일정 위험이 큼 | 완료 | `DECISION`; C++ `DEFERRED` |
 | P0-10 | P0 | 외부 dataset recipe | COCO/Open Images/knife-specific/CCTV 후보는 registry·sample 검수 후 승인된 source만 사용 | small/distant knife, person 동시 annotation, CCTV domain, negatives, license, 중복·leakage | D2 import 전 | `PROPOSAL` |
 | P0-11 | P0 | ambiguous annotation rule | 모형 knife·reflection·printed image·극소/가림 객체를 sample review로 결정 | detector claim boundary, 일관성, 팀 annotation 합의 | 직접 수집·재라벨링 전 | `PROPOSAL` |
 | P0-12 | P0 | Ultralytics 사용·배포 라이선스 | 저장소 전체 라이선스를 자동 지정하지 않고, 공개 학술 AGPL-3.0 경로와 다른 배포 경로를 모델/runtime 채택 전에 명시적으로 선택 | 공개 범위, model weight·학습 script 공개 여부, 포트폴리오·후속 상용 활용 | Ultralytics dependency·model을 배포하기 전 | `PLANNED` |
