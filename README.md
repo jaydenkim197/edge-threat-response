@@ -1,41 +1,44 @@
-# Context-Aware Edge Threat Detection System
+# 상황 인지형 Edge AI 흉기 위협 대응 시스템
 
-> 2026-2 종합설계과제(1) - 기존 Jetson Nano 기반 흉기 탐지 프로젝트를 Jetson Orin Nano 환경으로 고도화
+> Context-Aware Edge AI Threat Response System · 2026-2 종합설계과제(1)
 
-## 프로젝트 목적
+Jetson Orin Nano에서 사람과 칼을 탐지하고, **공간적 연관성**과 **시간적 지속성**을 함께 판단해 잠재적 흉기 위협 상황에만 단계적으로 대응하는 엣지 AI 시스템입니다.
 
-기존의 단일 프레임 기반 흉기 탐지·GPIO 경보 프로토타입을, **상황 인지형 엣지 위협 대응 시스템**으로 발전시킨다. MVP는 `Person-Associated Knife Event`를 bounding-box 공간 연관성과 K-of-N 시간 조건으로 확인하고, 단계별 경보·사건 기록·성능 검증을 수행한다.
+## 프로젝트 한눈에 보기
 
-## 현재 상태
+- **무엇을:** 기존 Jetson Nano의 단일 프레임 흉기 탐지·즉시 경보 프로토타입을 상황 인지형 시스템으로 고도화합니다.
+- **어떻게:** `person`과 `knife`의 bounding box 공간 연관성, K-of-N 시간 확인, 4-state machine을 결합합니다.
+- **무엇과 비교:** 동일 입력에서 단일 프레임 탐지(B0)부터 공간·시간 문맥을 모두 적용한 B3까지 비교합니다.
+- **무엇을 남기나:** Jetson Orin Nano의 GPIO 경보, 사건 metadata·snapshot, 재현 가능한 성능·오류 분석 근거를 만듭니다.
+- **주장 범위:** 실제 폭력 의도·범죄·위험행동을 판별하지 않습니다. 사람과 칼의 공간적·시간적 연관성을 근거로 **잠재적 흉기 위협 상황**을 탐지합니다.
 
-- 상태: 프로젝트 방향·MVP 연구 범위 `DECISION`, core·dataset review/export·training handoff·detector/video/snapshot scaffold `IMPLEMENTED`/PC `VERIFIED`, CUDA full training·실기기 `PLANNED`
-- 기존 산출물: 2025-2 MIDAS 발표자료, 활동 정리, Jetson Nano 프로토타입 코드
-- 구현 저장소: 구성 완료, legacy 전체 소스는 Git submodule로 고정
-- 신규 기준 플랫폼: Jetson Orin Nano Developer Kit, JetPack 7.2.1 / Jetson Linux 39.2.1
-- 실제 Orin 보드의 SKU·저장장치·펌웨어·카메라·GPIO·ML runtime은 아직 inventory 및 검증 필요
-- 기존 Jetson Nano 4GB: 과거 시스템 보존과 선택적 장비 비교를 위한 legacy baseline
-- dataset D1: registry, bbox/polygon validation, manifest, exact duplicate·group leakage 검사, split planner를 PC에서 구현·검증
-- dataset D2: knife-only YOLO exporter와 deterministic visual-review pack 구현; 7,361장 decode 오류 0, 128장 검수표본 생성, 사람의 품질 판정·외부 source 승인은 남음
-- runtime Increment A: geometry association, K-of-N, 4-state machine, B0~B3, mock alarm, JSONL event/replay를 PC에서 구현·검증
-- training smoke: YOLO26n CPU 1 epoch와 checkpoint 재로딩을 검증했으나 성능 학습·평가는 아직 수행하지 않음
-- pre-Orin Increment B: single/composite detector, canonical class remap, OpenCV image/video, detection JSONL, B0~B3 재생, metadata+actual snapshot을 PC에서 검증
-- CUDA handoff: GPU preflight, Baseline v1 development config와 human-gated Colab notebook 준비; full training은 아직 실행하지 않음
-- 성능 수치: 기존 발표자료의 수치는 참고용이며, 이번 프로젝트 기준의 재측정은 아직 수행하지 않음
-- 일정 원칙: 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태 확보
-
-## 목표 시스템
+## 구현 흐름
 
 ```text
 Camera
-  -> Person/Weapon Detector
+  -> Person/Knife Detector
   -> Person–Knife Spatial Association + K-of-N Temporal Confirmation
   -> CLEAR / CANDIDATE / CONFIRMED / COOLDOWN
   -> GPIO Alarm + Event Metadata + Snapshot
 ```
 
-자세한 구조와 데이터 경계는 [docs/architecture.md](docs/architecture.md)를, 후보와 결정 기준은 [docs/open-decisions.md](docs/open-decisions.md)를 참조한다.
+## 현재 개발 상태
+
+- **설계:** MVP 범위와 B0~B3 비교 구조는 `DECISION`입니다. 기준 플랫폼은 Jetson Orin Nano Developer Kit / JetPack 7.2.1입니다.
+- **PC에서 검증됨:** 판단 core, replay, dataset audit/export/review tooling, detector/video/snapshot scaffold, CUDA training handoff가 구현·검증되었습니다.
+- **아직 남음:** CUDA full training, 최종 detector 선택, Orin runtime·camera·GPIO·TensorRT·benchmark입니다.
+- **증거 원칙:** 기존 MIDAS 성능 수치는 재현 조건이 부족해 이번 프로젝트의 공식 결과로 사용하지 않습니다.
+- **일정 목표:** 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태를 확보합니다.
+
+자세한 구조는 [아키텍처](docs/architecture.md), 연구 범위는 [Master Project Plan](docs/project-plan.md), 검증 증거는 [검증 매트릭스](docs/verification.md)에서 확인할 수 있습니다.
 
 ## 문서 안내
+
+처음 읽는 경우 아래 순서를 권장합니다.
+
+1. [Master Project Plan](docs/project-plan.md): 왜 이 프로젝트를 하는지, 무엇을 완료해야 하는지
+2. [MVP Research Specification](docs/mvp-research-specification.md): 무엇을 event로 판단하고 어떻게 비교하는지
+3. [아키텍처](docs/architecture.md): 실제 시스템 흐름과 모듈 경계
 
 - [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
 - [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
