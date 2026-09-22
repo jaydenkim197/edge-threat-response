@@ -2,6 +2,45 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-22 - Target-CCTV dataset source strategy and admission gates
+
+상태: target domain·source 역할 분리 `DECISION`, individual source import·recipe·full training `PROPOSAL`/`PLANNED`
+
+### Goal / Why
+
+- 공개 dataset의 이미지 수나 설명만으로 source를 합쳐 기존 legacy의 domain mismatch·duplicate·split leakage 문제를 되풀이하지 않는다.
+- 최종 설치 환경에 가까운 data를 학습·외부평가·synthetic 보조 실험으로 분리해 detector 성능과 B0~B3 event 판단 실험의 근거를 보존한다.
+
+### Scope / Changed files
+
+- `docs/dataset-source-strategy.md`를 새로 만들어 target CCTV assumption, source별 역할·적용 한계, first recipe 순서, admission audit, 근거와 즉시 작업을 기록했다.
+- README, master plan, MVP specification, model/data plan, open decisions, architecture, verification, pre-Orin plan, documentation governance를 해당 기준으로 정합화했다.
+- 코드, raw dataset, external download, model weight, training config 및 model run은 변경하지 않았다.
+
+### Decision
+
+- 목표 domain은 약 3 m 높이의 fixed indoor CCTV가 사람을 elevated/oblique angle로 보는 복도·출입구·공용공간이다. 작은/먼 knife, person co-occurrence, 손·팔 occlusion을 우선한다.
+- legacy는 사람 review 후 별도의 L0 baseline으로만 사용한다. SOHAS는 첫 public real-world training 후보, DaSCI는 cross-source dedup audit 후 보강 후보로 둔다.
+- ACF Knife와 US Mock Attack은 Dataset v1 training에 넣지 않고 external CCTV holdout 후보로 보존한다. Simuletic 114장은 primary recipe에서 제외하며 real-data baseline 뒤 synthetic ablation에만 사용한다.
+- publicly described source 수치나 license는 raw package·usage terms·manifest audit 전 project inventory나 성능 근거로 쓰지 않는다.
+
+### Evidence / Verification
+
+- 공식 source page와 ACF peer-reviewed paper를 desk review했다. SOHAS repository는 CC BY-SA 4.0을 명시한다.
+- ACF paper는 full-HD CCTV와 small knife 문제를 설명하지만, raw package manifest·license·접근성은 확인하지 않았다. 논문 본문의 ACF Knife image 수와 표의 label 수 표기가 달라 raw manifest가 권위 있는 inventory가 되어야 한다.
+- 문서 링크와 상태 표현을 검토했으며, code test는 source code가 변경되지 않아 실행하지 않았다. `git diff --check`는 commit 전 실행한다.
+
+### Limitations / Next action
+
+1. legacy review CSV의 human verdict가 아직 없어 L0 full training도 승인되지 않았다.
+2. SOHAS, DaSCI, ACF, US Mock Attack의 raw package·license·source/session metadata와 100장 표본 audit이 남아 있다.
+3. SOHAS–DaSCI–legacy exact/perceptual duplicate report가 없으므로 source 병합이나 CUDA full training을 시작하지 않는다.
+4. audit 승인 후에만 R1 SOHAS recipe, external CCTV holdout 및 CUDA run을 확정한다.
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-15 - W4 review pack·W5 detector/video·W6 CUDA handoff 구현
 
 상태: W4 tooling·W5·W6 handoff `IMPLEMENTED`/PC `VERIFIED`, W4 사람 판정·CUDA full training·Orin `PLANNED`

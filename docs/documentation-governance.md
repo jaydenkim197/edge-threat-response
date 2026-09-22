@@ -28,6 +28,7 @@
 | `mvp-research-specification.md` | 확정 MVP의 이벤트 정의, 평가·시나리오·제외 범위 | MVP·실험 설계 변경 시 |
 | `implementation-plan.md` | 단계별 구현 범위와 gate | 구현 순서·범위 변경 시 |
 | `model-data-plan.md` | dataset/model provenance·label·split·학습 준비 기준 | dataset·model 작업 시 |
+| `dataset-source-strategy.md` | 공개 dataset의 목표 domain, source 역할, 채택 한계와 admission audit | 공개 source 후보·recipe·외부 평가 경계 변경 시 |
 | `development-log.md` | 변경·결정·검증·한계의 시간순 기록 | material task 종료 전 |
 | `open-decisions.md` | 미확정 선택과 결정 기준 | 선택지가 생기거나 확정될 때 |
 | `architecture.md` | 현재 시스템 경계와 계약 | 구조·통신·저장 경계 변경 시 |

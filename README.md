@@ -26,6 +26,7 @@ Camera
 
 - **설계:** MVP 범위와 B0~B3 비교 구조는 `DECISION`입니다. 기준 플랫폼은 Jetson Orin Nano Developer Kit / JetPack 7.2.1입니다.
 - **PC에서 검증됨:** 판단 core, replay, dataset audit/export/review tooling, detector/video/snapshot scaffold, CUDA training handoff가 구현·검증되었습니다.
+- **데이터 전략:** 약 3 m 고정형 실내 CCTV를 목표 domain으로 두고, 공개 data는 source·권리·중복·session 누수 audit 뒤에만 사용합니다. 첫 public real-data 후보는 SOHAS이며, ACF/Mock Attack은 초기 학습이 아닌 외부 CCTV 평가 후보로 보존합니다.
 - **아직 남음:** CUDA full training, 최종 detector 선택, Orin runtime·camera·GPIO·TensorRT·benchmark입니다.
 - **증거 원칙:** 기존 MIDAS 성능 수치는 재현 조건이 부족해 이번 프로젝트의 공식 결과로 사용하지 않습니다.
 - **일정 목표:** 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태를 확보합니다.
@@ -45,6 +46,7 @@ Camera
 - [구현 계획](docs/implementation-plan.md): 단계별 구현 범위, 모듈 경계, 착수·종료 조건
 - [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): CPU 학습 없이 진행할 현재 작업, CUDA·실기기 이후 작업 경계
 - [모델·데이터 준비 계획](docs/model-data-plan.md): 데이터 inventory, 라벨·분할 계약, 검증·학습 단계
+- [Dataset Source Strategy](docs/dataset-source-strategy.md): 공개 source별 역할, 적용 한계, audit·중복·누수 방지 gate
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계
 - [연구·실험 계획](docs/research-or-product-plan.md): 가설과 비교 실험의 보조 계획
 - [미결정 사항](docs/open-decisions.md): 확정 전 선택지와 판단 기준

@@ -99,6 +99,8 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 
 ## Offline dataset preparation path
 
+공개 source는 runtime input과 분리된 offline raw storage에서 audit한다. target domain은 약 3 m 높이의 fixed indoor CCTV의 elevated/oblique view이며, training source·external CCTV holdout·synthetic ablation은 같은 recipe나 split에 섞지 않는다. source별 provenance, role, audit gate는 [Dataset Source Strategy](dataset-source-strategy.md)를 따른다.
+
 ```text
 [Source Registry + Source-specific Class Map]
   -> [Read-only Image/YOLO Label Audit]

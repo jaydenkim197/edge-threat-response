@@ -14,6 +14,12 @@
 - 기준 저장소: `jaydenkim197/edge-threat-response`
 - 개발 동결 목표: 2026-10-31
 
+### Target deployment and data-domain assumption
+
+- camera 모델·화각은 미정이지만, dataset 검수와 controlled scenario는 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 비스듬히 보는 환경을 기준으로 한다.
+- 작은/먼 knife, person co-occurrence, 손·팔 가림과 복잡한 배경을 우선한다. 제품사진·정면 close-up은 보조 appearance data일 수 있으나 target-domain 성능의 근거가 아니다.
+- 공개 dataset은 source·license·annotation·duplicate/session leakage audit을 통과한 뒤에만 import한다. source별 학습·외부평가·synthetic 보조 역할은 [Dataset Source Strategy](dataset-source-strategy.md)를 따른다.
+
 ### 역사적 맥락
 
 이 프로젝트는 2025-2 MIDAS에서 진행한 Jetson Nano 기반 흉기 탐지·GPIO 경보 프로토타입을 발전시킨다. 당시 자료에는 카메라 입력, YOLO 기반 사람·흉기 탐지, Jetson 추론, LED·부저 경보, WebSocket UI가 제시되어 있다.
@@ -248,7 +254,7 @@ Proposed: detection + selected context
 1. PC에서 순수 core, B0~B3, recorded-detection replay와 단위 테스트 구현
 2. dataset D1: legacy audit, source registry, bbox/polygon validator, manifest, group split/leakage 검사 구현 — `IMPLEMENTED`, PC `VERIFIED`
 3. Orin Nano 장비 SKU·저장장치·UEFI/QSPI·JetPack 7.2.1 설치 상태 inventory
-4. sample 검수 후 dataset recipe와 detector topology를 결정하고 JetPack 7.2.1 runtime을 고정
+4. 공개 source audit과 legacy 사람 검수 후 dataset recipe와 detector topology를 결정하고 JetPack 7.2.1 runtime을 고정
 5. 영상·카메라·GPIO·resource-monitor adapter를 통합한 뒤 controlled benchmark 착수
 
 ## 13. Official platform references

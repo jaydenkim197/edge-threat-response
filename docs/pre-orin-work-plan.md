@@ -30,7 +30,7 @@
 | 4 | W4 | Dataset visual-review pack | tooling·7,361장 decode·128장 review pack `IMPLEMENTED`/PC `VERIFIED`; 사람 판정·학습 승인 `PENDING` |
 | 5 | W5 | Detector/video integration scaffold | fake backend 계약과 actual legacy composite CPU image/video·JSONL·B0~B3·snapshot smoke `IMPLEMENTED`/PC `VERIFIED` |
 | 6 | W6 | CUDA training handoff package | runner evidence, GPU preflight, CUDA development profile, human-gated Colab notebook `IMPLEMENTED`/contract `VERIFIED`; CUDA full run `PLANNED` |
-| 7 | W7 | External dataset candidate record | Simuletic은 synthetic smoke-only, DaSCI Knife/SOHAS는 우선 표본 검수 후보, Open Images는 selective subset 후보로 기록; 무검수 대량 병합 금지 |
+| 7 | W7 | External dataset candidate record | target domain은 약 3 m fixed/elevated indoor CCTV. SOHAS는 첫 public real-data 후보, DaSCI는 dedup 뒤 보강 후보, ACF/Mock Attack은 initial training 제외 외부 CCTV holdout 후보, Simuletic은 synthetic-only ablation. 상세 gate는 `dataset-source-strategy.md`; 무검수 대량 병합 금지 |
 
 ### W1 class mapping contract
 

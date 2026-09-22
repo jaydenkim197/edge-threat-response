@@ -124,3 +124,9 @@ associated = knife_center in expanded_person_box(α)
 ## 7. Remaining parameters
 
 다음은 `DECISION`이 아니다: Orin Nano 정확한 SKU·RAM·저장장치, PyTorch/Ultralytics/container image, model/runtime, input resolution, confidence threshold, `α`, `τ_distance`, `K`, `N`, cooldown, camera FPS, sampling rate, final metric targets, alert matching tolerance, tuning/test split. 이 값은 장비 inventory, runtime smoke test, baseline 증거와 experiment record를 근거로 선택한다.
+
+## 8. Target camera and data-domain assumption
+
+실제 camera model·FOV·focal length는 아직 `PLANNED`이다. 그 전 controlled scenario와 dataset audit은 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 elevated/oblique angle로 보는 환경을 target domain으로 사용한다. 이 전제는 작은/먼 knife, person co-occurrence, 손·팔 occlusion을 우선 검수한다는 뜻이지, 정해지지 않은 거리·pixel threshold를 이미 확정했다는 뜻은 아니다.
+
+공개 data는 training source, external CCTV holdout, synthetic viewpoint ablation 역할을 혼합하지 않는다. source별 적용 범위와 audit gate는 [Dataset Source Strategy](dataset-source-strategy.md)를 따른다.
