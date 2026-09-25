@@ -27,10 +27,10 @@
 
 | 후보 | 확인된 사실 | 현재 판단 |
 |---|---|---|
-| SOHAS / OD-WeaponDetection | official repository가 detection data와 CC BY-SA 4.0을 명시. weapon과 similar handled object source | 첫 public real-world source `PROPOSAL`; stratified 100장 audit 후에만 채택 판단 |
+| SOHAS / OD-WeaponDetection | official repository에 detection data와 similar handled object source가 있다. README의 CC BY-SA 4.0과 `License.md`의 CC BY 4.0 전문이 충돌 | 첫 public real-world source `PROPOSAL`; 실제 적용 권리와 stratified 표본 audit 후 채택 판단 |
 | DaSCI / OD-WeaponDetection Knife | knife detection source 후보. SOHAS와 source lineage/중복 가능성이 있음 | knife-appearance 보강 `PROPOSAL`; SOHAS와 동시 병합 전 cross-source dedup 필수 |
-| ACF Knife | full-HD CCTV·small knife를 다룬 ACF 연구의 source. raw package license/manifest 미확인 | Dataset v1 training에는 0장; external CCTV holdout 후보 `PROPOSAL` |
-| US Mock Attack | 3 CCTV camera의 full-HD mock attack frames를 논문이 기술; knife label 수가 적고 sequential frame | Dataset v1 training에는 0장; camera/sequence holdout·scenario reference 후보 `PROPOSAL` |
+| ACF Knife | full-HD CCTV·small knife를 다룬 ACF 연구의 source. 논문이 제시한 저장소는 2026-09-26 접근 실패 | Dataset v1 training에는 0장; raw 파일·권리·라벨 확보 시 external **image/frame** holdout 후보 `PROPOSAL` |
+| US Mock Attack | 3 CCTV camera의 full-HD mock attack frames를 논문이 기술; knife label 수가 적고 sequential frame | Dataset v1 training에는 0장; 원본 시간 순서·event 정답 확인 시 camera/sequence 사건 평가 후보 `PROPOSAL` |
 | COCO | 80-class detection에 `person=0`, `knife=43`; COCO 2017 train 118,287 / val 5,000 | pretrained sanity baseline 후보. CCTV·small-knife 적합성은 sample 검수 필요 |
 | Open Images V7 | 약 9M images, 600 boxable classes, 1.9M box-annotated images; boxable class 목록에 Person과 Knife 존재 | 선택적 보강 후보. class subset의 라벨 밀도·license·동시 person annotation을 확인한 뒤 채택 |
 | Simuletic CCTV knife sample | 114 synthetic CCTV-style images, person/knife YOLO labels, CC BY 4.0 선언 | pipeline smoke/sample 검수용 후보. 본 실험의 주력 real-world dataset으로 사용하지 않음 |
@@ -44,7 +44,7 @@
 - SOHAS / OD-WeaponDetection official repository: <https://github.com/ari-dasci/OD-WeaponDetection>
 - ACF dataset paper and availability reference: <https://pmc.ncbi.nlm.nih.gov/articles/PMC9572610/>
 
-후보라는 이유만으로 dataset을 다운로드·병합하지 않는다. provider 설명의 숫자와 license 표시는 source record이며, 실제 annotation 품질과 프로젝트 적합성 검증을 대신하지 않는다. target domain, source 역할, source별 적용 한계와 admission gate의 기준 문서는 [Dataset Source Strategy](dataset-source-strategy.md)다.
+후보라는 이유만으로 dataset을 다운로드·병합하지 않는다. provider 설명의 숫자와 license 표시는 source record이며, 실제 annotation 품질과 프로젝트 적합성 검증을 대신하지 않는다. target domain과 source 역할은 [Dataset Source Strategy](dataset-source-strategy.md), 검사 순서와 legacy review 열 정의는 [Dataset Evaluation Criteria](dataset-evaluation-criteria.md), 문헌 근거는 [선행연구 검토](prior-work-and-dataset-review.md)를 따른다.
 
 ## 3. Detection and class contract
 

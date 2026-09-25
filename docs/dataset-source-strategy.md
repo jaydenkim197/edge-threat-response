@@ -2,7 +2,7 @@
 
 상태: target domain·source 역할 분리·채택 gate `DECISION`, 개별 공개 source의 실제 채택·dataset recipe `PROPOSAL`
 
-이 문서는 공개 dataset의 **이미지 수**가 아니라 현장 CCTV 적합성, annotation, 권리, 중복·누수 위험 및 실험 역할을 기준으로 결정한 source 전략이다. 원본 image, video, annotation 및 model binary는 Git에 넣지 않는다. 실제 파일을 내려받거나 학습에 넣는 행위는 이 문서의 audit gate를 통과한 뒤에만 가능하다.
+이 문서는 공개 dataset의 **이미지 수**가 아니라 현장 CCTV 적합성, annotation, 권리, 중복·누수 위험 및 실험 역할을 기준으로 결정한 source 전략이다. 구체 검수 양식과 역할별 gate는 [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)를 따른다. 원본 image, video, annotation 및 model binary는 Git에 넣지 않는다. 학습·평가 채택은 source audit 후 결정한다.
 
 ## 1. Target domain — `DECISION`
 
@@ -20,16 +20,16 @@
 | 역할 | source | 지금 적용할 양 | 이후 허용 범위 | 이유 |
 |---|---|---:|---|---|
 | L0 legacy baseline | 기존 MIDAS 7,361장 development export | 0장 — 사람 review 승인 전 학습 금지 | 승인된 legacy만 별도 **legacy-only** baseline run | 현 데이터의 domain mismatch·반복 배경·원본 split leakage를 숨기지 않고 재현 기준으로 남긴다. |
-| P1 primary real-world candidate | SOHAS detection | audit 표본만: stratified 100장 | audit 통과 시 첫 public real-data training source 후보 | knife와 smartphone·wallet·card·banknote 등 similar handled object가 있어 hard negative를 다룰 수 있다. |
+| P1 primary real-world candidate | SOHAS detection | audit 표본만: stratified 100장 | 권리 충돌 해결과 audit 통과 시 첫 public real-data training source 후보 | knife와 smartphone·wallet·card·banknote 등 similar handled object가 있어 hard negative를 다룰 수 있다. |
 | P2 knife-diversity candidate | DaSCI / OD-WeaponDetection knife detection | audit 표본만: stratified 100장 | SOHAS와 **별도** source로 먼저 평가; dedup 통과 전 동시 병합 금지 | knife 종류·거리·가림 보강 후보이나 SOHAS와 lineage/중복 가능성을 먼저 확인해야 한다. |
-| E1 external CCTV test candidate | ACF Knife | audit 표본만: 접근 가능 범위 | **Dataset v1 학습에는 0장**. source/session 단위 holdout 외부 평가 후보 | 1920×1080 CCTV, small knife 문제와 직접 맞닿아 있다. 먼저 학습에 섞으면 target-domain 일반화 검증이 사라진다. |
-| E2 sequential CCTV test candidate | US Mock Attack | audit 표본만: camera/sequence별 표본 | **Dataset v1 학습에는 0장**. camera/sequence 전체를 함께 다루는 보조 외부 평가·scenario 설계 후보 | 공개 설명상 knife label 수가 적고 연속 frame이라 random image split은 누수 위험이 크다. |
+| E1 external CCTV test candidate | ACF Knife | 0장 — 논문의 원 저장소가 현재 접근되지 않음 | **Dataset v1 학습에는 0장**. 파일·권리·라벨 확보 시 외부 **이미지** 평가 후보 | 1920×1080 CCTV, small knife 문제와 직접 맞닿아 있다. 영상과 event 정답 확인 전에는 사건 지표를 계산할 수 없다. |
+| E2 sequential CCTV test candidate | US Mock Attack | audit 표본만: camera/sequence별 표본 | **Dataset v1 학습에는 0장**. 데이터·시간 순서·event 정답 확인 시 외부 sequence 평가 후보 | 공개 설명상 knife label 수가 적고 연속 frame이라 random image split은 누수 위험이 크다. |
 | S1 synthetic viewpoint check | Simuletic CCTV Knife | 필요 시 전체 114장 검수 | primary recipe에는 0장. real-data baseline 이후 별도 synthetic augmentation ablation에만 최대 114장 | target viewpoint에는 가깝지만 synthetic-to-real gap과 작은 표본을 본 결과와 혼동하지 않는다. |
 | D1 deferred candidate | Dangerous Items | 0장 | license와 manifest가 확인된 뒤에만 재검토 | small/blur/occlusion 설명은 유망하지만 현재 공개 record의 권리 표시가 충분히 확인되지 않았다. |
 | G1 gap-filling candidate | Open Images V7 | 0장 | source audit 후 필요한 visual gap만 제한적으로 선정 | web-image domain이고 image별 license·annotation density 확인이 필요하다. |
 | person detector | COCO pretrained model | 별도 custom data import 없음 | person detector sanity/composite adapter의 pretrained source | COCO person pretrained model은 사용 가능하되, COCO knife data를 본 project의 knife training corpus로 자동 채택하지 않는다. |
 
-`stratified 100장`은 source 규모가 100장보다 작으면 전체를 뜻한다. 표본은 knife bbox normalized-size 구간, person co-occurrence, viewpoint, occlusion, negative/hard-negative를 가능한 한 고르게 포함한다. 이 수는 **source 채택 심사량**일 뿐, 최종 학습량이나 연구 표본 수가 아니다.
+`stratified 100장`은 source 규모가 100장보다 작으면 전체를 뜻한다. 표본은 knife positive와 no-knife negative, source/version·camera/session 및 knife bbox normalized-size 구간을 가능한 범위에서 나누어 뽑는다. 이 수는 **초기 검수 작업량**이며 전체 source의 정확한 구성비, 최종 학습량 또는 연구 표본 수를 보증하지 않는다.
 
 ## 3. First usable training recipe
 
@@ -51,11 +51,11 @@ S1: R2 + Simuletic 114장 이하 synthetic ablation — 선택적, 본 결과와
 
 SOHAS의 non-knife class는 MVP runtime class를 늘리는 근거가 아니다. knife-only model을 유지하고, audit에서 knife가 없다고 확인된 image만 hard-negative empty-label candidate로 사용할 수 있다. source의 원래 class·annotation은 registry에 보존하며, unified `person + knife` model로 자동 변환하지 않는다.
 
-ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCTV generalization evidence** 후보이다. 사용 가능 권리, raw annotation, camera/location/session metadata가 확인되면 training source와 image·sequence가 겹치지 않도록 source/session 단위 holdout으로 보존한다.
+ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCTV generalization evidence** 후보이다. 사용 가능 권리, raw annotation, camera/location/session metadata가 확인되면 training source와 image·sequence가 겹치지 않도록 source/session 단위 holdout으로 보존한다. Bbox만 확보되면 image/frame-level detector 평가에 한정한다. B0~B3 event 지표에는 연속 영상, positive/negative 사건과 수동 start/end 정답이 추가로 필요하다.
 
 ## 4. Mandatory audit gate before import
 
-각 source는 아래 항목을 모두 source registry와 review record에 남겨야 한다.
+각 source는 아래 항목을 source registry와 review record에 남긴다. 합격·보류·역할 제한 규칙은 [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)를 따른다.
 
 1. **Origin and rights:** 공식 upstream URL, version/date, download checksum, license text, course research usage 범위와 redistribution restriction.
 2. **File and label contract:** image count, decoded count, class map, bbox/polygon format, empty/invalid/orphan labels, annotation completeness.
@@ -64,20 +64,20 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 5. **Human review:** 표본별 keep/reject/uncertain 사유와 ambiguous annotation rule. person/knife labels가 모두 필요한 unified model은 별도 completeness audit이 필요하다.
 6. **Split and recipe:** raw file을 바꾸지 않는 group-aware split manifest, source contribution, run ID, configuration·manifest hash.
 
-한 항목이라도 불명확하면 `DEFERRED`로 두며, 대량 download·병합·full training·성과 주장으로 넘어가지 않는다. 공용 CCTV/직접 촬영 영상에는 개인식별정보와 동의·보존·접근 권한 정책을 먼저 적용한다.
+권리 불명확, 라벨 오류, cross-source 중복 미해결 자료는 채택을 보류한다. 촬영 세션이 불명확한 자료는 독립 일반화 평가에 쓰지 않는다. 사건 정답이 없는 자료는 detector의 image/frame 평가까지만 허용한다. 공용 CCTV/직접 촬영 영상에는 개인식별정보와 동의·보존·접근 권한 정책을 먼저 적용한다.
 
 ## 5. Evidence and caveats
 
-- [SOHAS / OD-WeaponDetection 공식 저장소](https://github.com/ari-dasci/OD-WeaponDetection)는 weapon detection dataset과 CC BY-SA 4.0 license를 명시한다. 실제 download package의 version·file manifest·annotation은 아직 audit하지 않았다.
-- [ACF 논문](https://pmc.ncbi.nlm.nih.gov/articles/PMC9572610/)은 ACF Knife의 1920×1080 CCTV data와 small-object label 문제를 설명한다. 본문은 3,559장, 표의 한 행은 3,618 labels로 표기하므로 raw manifest가 확인되기 전에는 어느 수치도 project inventory로 쓰지 않는다.
+- [SOHAS / OD-WeaponDetection 공식 저장소](https://github.com/ari-dasci/OD-WeaponDetection)의 README는 CC BY-SA 4.0을 적지만 [`License.md`](https://github.com/ari-dasci/OD-WeaponDetection/blob/master/License.md)는 CC BY 4.0 전문이다. 실제 적용 범위를 확인하기 전에는 라이선스를 확정하지 않는다. Download package의 version·file manifest·annotation도 아직 audit하지 않았다.
+- [ACF 논문](https://pmc.ncbi.nlm.nih.gov/articles/PMC9572610/)은 ACF Knife의 1920×1080 CCTV data와 small-object label 문제를 설명한다. 3,559 image와 3,618 knife label은 서로 다른 단위다. 논문이 제시한 [원 저장소](https://github.com/iCUBE-Laboratory/The-Armed-CCTV-Footage)는 2026-09-26 접근에 실패했으므로 raw inventory와 사용 가능성은 미확인이다.
 - 같은 논문은 [US Mock Attack source](https://github.com/Deepknowledge-US/US-Real-time-gun-detection-in-CCTV-An-open-problem-dataset)의 5,149 full-HD mock-attack frames와 knife 210 labels를 표기한다. 연속 frame/camera grouping은 raw package에서 다시 확인한다.
 - [Simuletic dataset card](https://huggingface.co/datasets/Simuletic/cctv-knife-detection-dataset)는 114 synthetic CCTV-style person/knife sample과 CC BY 4.0을 제시한다. 이는 real CCTV 성능 근거가 아니다.
 - [Open Images V7 facts](https://storage.googleapis.com/openimages/web/factsfigures_v7.html)는 규모·class availability 근거일 뿐, 선택 image의 rights/annotation completeness를 보장하지 않는다.
 
 ## 6. Immediate next actions
 
-1. W4의 legacy review CSV를 사람이 판정해 L0 baseline의 사용 가능 범위를 확정한다.
-2. SOHAS, DaSCI, ACF, US Mock Attack의 **공식 package/usage terms 접근성**만 확인하고, source별 100장(작으면 전체) audit manifest를 만든다. 아직 training import는 하지 않는다.
+1. W4의 legacy review CSV 128장을 [검수 기준](dataset-evaluation-criteria.md)에 따라 사람이 판정해 L0 baseline의 사용 가능 범위를 확정한다.
+2. SOHAS, DaSCI, ACF, US Mock Attack의 **공식 package/usage terms 접근성**을 확인한다. 접근 가능한 source는 역할별로 첫 100장(작으면 전체) audit manifest를 만든다.
 3. SOHAS–DaSCI–legacy cross-source exact/perceptual duplicate 검사와 session/source-group report를 만든다.
 4. audit 결과로 R1의 실제 source recipe와 external CCTV holdout 가능 여부를 팀이 승인한다.
 5. 이후에만 CUDA full training을 run ID·manifest hash·config·artifact hash와 함께 실행한다.

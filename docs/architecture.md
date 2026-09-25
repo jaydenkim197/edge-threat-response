@@ -99,7 +99,7 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 
 ## Offline dataset preparation path
 
-공개 source는 runtime input과 분리된 offline raw storage에서 audit한다. target domain은 약 3 m 높이의 fixed indoor CCTV의 elevated/oblique view이며, training source·external CCTV holdout·synthetic ablation은 같은 recipe나 split에 섞지 않는다. source별 provenance, role, audit gate는 [Dataset Source Strategy](dataset-source-strategy.md)를 따른다.
+공개 source는 runtime input과 분리된 offline raw storage에서 audit한다. target domain은 약 3 m 높이의 fixed indoor CCTV의 elevated/oblique view이며, training source·external CCTV holdout·synthetic ablation은 같은 recipe나 split에 섞지 않는다. Source별 provenance와 role은 [Dataset Source Strategy](dataset-source-strategy.md), 역할별 채택 gate는 [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)를 따른다. Bbox image set은 detector 평가에 사용하며, 사건 B0~B3 평가에는 시간 순서가 보존된 입력과 event start/end 정답이 필요하다.
 
 ```text
 [Source Registry + Source-specific Class Map]

@@ -47,6 +47,8 @@ Camera
 - [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): CPU 학습 없이 진행할 현재 작업, CUDA·실기기 이후 작업 경계
 - [모델·데이터 준비 계획](docs/model-data-plan.md): 데이터 inventory, 라벨·분할 계약, 검증·학습 단계
 - [Dataset Source Strategy](docs/dataset-source-strategy.md): 공개 source별 역할, 적용 한계, audit·중복·누수 방지 gate
+- [Dataset Evaluation Criteria](docs/dataset-evaluation-criteria.md): 공개 source와 legacy 128장 검수의 gate·판정 열
+- [선행연구·공개 데이터 검토](docs/prior-work-and-dataset-review.md): 확인된 연구 근거와 자료별 활용 경계
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계
 - [연구·실험 계획](docs/research-or-product-plan.md): 가설과 비교 실험의 보조 계획
 - [미결정 사항](docs/open-decisions.md): 확정 전 선택지와 판단 기준

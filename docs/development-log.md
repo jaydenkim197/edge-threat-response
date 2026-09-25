@@ -2,6 +2,46 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-26 - 선행연구 검토 정정과 역할별 dataset 평가 기준
+
+상태: 문헌·저장소 desk review `VERIFIED` (표기·접근 상태 한정), 평가 절차 `DECISION`, raw package·legacy 사람 판정·source 채택 `PLANNED`
+
+### Goal / Why
+
+- GPT가 작성한 선행연구·dataset 자료의 사실관계와 과장된 점수·채택 표현을 고쳐 연구 근거로 쓸 수 있게 한다.
+- 다음 작업인 legacy 128장 사람 검수와 공개 source 표본 검수에 동일한 역할별 판정 기준을 적용한다.
+
+### Scope / Changed files
+
+- `prior-work-and-dataset-review.md`를 재작성해 논문별 확인 사실, 우리 구성요소와의 관계, 적용 한계 및 공개 dataset의 역할을 명시했다.
+- `dataset-evaluation-criteria.md`를 추가해 권리·라벨·독립성 gate, training/image/event/synthetic 역할별 질문, legacy `review.csv` 열 정의를 기록했다.
+- `dataset-source-strategy.md`, `model-data-plan.md`, `open-decisions.md`, `architecture.md`, `verification.md`, `documentation-governance.md`, README를 정합화했다.
+- 코드·raw dataset·검수 CSV·모델과 학습 run은 수정하지 않았다. 기존 C++ 관련 미추적 파일도 변경하지 않았다.
+
+### Evidence / Result
+
+- OD-WeaponDetection 공식 README의 CC BY-SA 4.0 표기와 같은 저장소 `License.md`의 CC BY 4.0 전문이 충돌한다. 실제 적용 범위 확인 전 권리 gate 미통과로 기록했다.
+- ACF 논문이 인용한 GitHub 저장소는 2026-09-26 `git ls-remote`에서 repository not found였다. 외부 image 평가 **후보**로 유지하며 사용 가능성을 확정하지 않았다.
+- DISARM 공식 페이지에서 현재 공개된 것은 test subset임을 확인했다. DISARM temporal window는 bbox 연속성을 사용하고 우리 K-of-N boolean window와 구현이 다르다.
+- local `review.csv` header가 문서의 8개 판정 열과 일치하고 contact sheet 8장이 존재함을 확인했다.
+- 선행연구의 근거 없는 100점 순위를 제거하고, 공개 bbox dataset만으로 B0~B3 event metric을 평가할 수 없다는 경계를 추가했다.
+
+### Verification / Limitations
+
+- 검증 환경: Windows PowerShell, 공식 논문·제공자 저장소·dataset card의 공개 페이지와 현재 로컬 저장소.
+- `git pull --ff-only` → already up to date. 문서 변경이므로 code test는 실행하지 않았다. `git diff --check`와 내부 링크 검사는 commit 전 실행한다.
+- 외부 raw package, bbox 시각 품질, image 중복, 성능, 실제 CCTV event annotation은 확인하지 않았다. 특정 공개 dataset은 아직 `ADOPTED`가 아니다.
+
+### Decision impact / Next action
+
+1. 다음 gate는 legacy 128장의 사람이 하는 visual review다. CSV는 현재 판정 전 상태로 보존한다.
+2. 결과를 source/version·split·bbox size 구간으로 집계해 L0의 전체/선별/역사적 기준 중 역할을 결정한다.
+3. 이후 SOHAS 권리 충돌과 source package를 확인하고, 통과한 source만 표본·중복 audit으로 진행한다.
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-22 - Target-CCTV dataset source strategy and admission gates
 
 상태: target domain·source 역할 분리 `DECISION`, individual source import·recipe·full training `PROPOSAL`/`PLANNED`
