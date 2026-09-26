@@ -69,8 +69,8 @@
 | 기능 | 목적·가치 | 난이도 / 의존성 | 논문 기여 | 일정 위험 | 상태 |
 |---|---|---|---|---|---|
 | Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | adapter/legacy PC smoke `IMPLEMENTED`; 선택 모델·Orin `PLANNED` |
-| Single-frame baseline | 기존 방식의 재현 가능한 비교군 | 중 / 탐지·GPIO | 필수 비교군 | 원본 환경 불명확 | `PLANNED` |
-| Person–knife geometry association | 정규화 거리와 확장 bbox로 공간 문맥 제공 | 중 / bounding box 계약 | context 효과 비교 | 관계 정의 오류 | core `IMPLEMENTED` / PC `VERIFIED` |
+| Single-frame baseline | 기존 방식의 재현 가능한 비교군 | 중 / 탐지·GPIO | 필수 비교군 | 원본 환경 불명확 | B0 replay `IMPLEMENTED`/PC `VERIFIED`; 실기기 비교 `PLANNED` |
+| Person–knife geometry association | nearest person과 확장 bbox로 공간 문맥 제공; 정규화 거리는 진단값 | 중 / bounding box 계약 | context 효과 비교 | 관계 정의 오류 | core `IMPLEMENTED` / PC `VERIFIED` |
 | K-of-N temporal confirmation | 순간 오탐·누락에 대한 시간 문맥 | 중 / 프레임 시간·누락 처리 | context 효과 비교 | 임계값 과적합 | core `IMPLEMENTED` / PC `VERIFIED` |
 | CLEAR/CANDIDATE/CONFIRMED/COOLDOWN | 판단과 action을 분리 | 중 / context 신호 | 설명·재현 가능성 | 상태 조건 복잡화 | core `IMPLEMENTED` / PC `VERIFIED` |
 | GPIO LED/Buzzer | 엣지 대응 데모 | 하 / Jetson GPIO | 공학 통합 | 하드웨어 상태 | `PLANNED` |
@@ -98,9 +98,9 @@
 
 확장 기능은 핵심 MVP가 실기기에서 통합·반복 검증된 뒤에만 승격한다.
 
-## 5. MVP Decision Rules
+## 5. MVP Scope-change Rules
 
-MVP는 아래 조건을 모두 만족하는 조합으로 팀이 확정한다.
+MVP 범위는 [MVP Research Specification](mvp-research-specification.md)에 확정돼 있다. 기능을 승격하거나 범위를 변경할 때는 아래 조건을 다시 확인한다.
 
 1. 2026-10-31까지 Jetson Orin Nano에서 통합·검증 가능하다.
 2. 기존 single-frame alert와 구조적 차이가 명확하다.
@@ -110,7 +110,7 @@ MVP는 아래 조건을 모두 만족하는 조합으로 팀이 확정한다.
 6. 실기기 입고 전에도 공통 판단 로직과 평가 경로를 PC에서 구현·검증할 수 있다.
 7. 구현뿐 아니라 오류 분석과 반복 실행까지 남은 인력·시간으로 완료 가능하다.
 
-MVP 확정 시 `open-decisions.md`의 관련 항목을 `DECISION`으로 변경하고, 결정 날짜·참여자·제외 범위·완료 조건을 회의 결정 문서와 개발 로그에 남긴다.
+범위가 실제로 바뀌면 `open-decisions.md`의 관련 항목, 변경 이유·제외 범위·완료 조건과 개발 로그를 함께 갱신한다.
 
 ## 6. Definition of Done
 
@@ -125,7 +125,7 @@ IMPLEMENTED
 + EVIDENCE RECORDED
 ```
 
-10월 31일 개발 동결 판단 항목은 다음과 같다. 구체 기능은 MVP 결정 후 확정한다.
+10월 31일 개발 동결 판단 항목은 다음과 같다. 기능별 operational definition은 MVP Research Specification을 따른다.
 
 - baseline과 proposed를 같은 버전·입력·설정으로 실행할 수 있다.
 - 카메라→탐지→판단→GPIO/기록 전체 경로가 Orin Nano에서 작동한다.
@@ -163,15 +163,7 @@ Proposed: detection + selected context
 
 오경보 30% 감소와 event recall 감소 5%p 이내는 현재 근거 없는 예시이므로 목표로 채택하지 않는다. baseline과 통제 시나리오의 규모를 확인한 뒤 P0 결정으로 정한다.
 
-### 최소 실험군 후보
-
-- 사람이 안전한 모형 흉기를 들고 정지하거나 접근
-- 모형 흉기만 놓여 있고 사람이 멀리 있음
-- 사람이 놓인 모형 흉기 주변을 지나감
-- 순간적 false detection 또는 짧은 검출
-- 일부 프레임의 detection 누락
-
-촬영 전 안전 수칙, 참여 동의, 장소, 보존·삭제 정책을 확정한다. 실제 흉기나 위험 행동은 사용하지 않는다.
+Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP Research Specification](mvp-research-specification.md)을 따른다. 촬영 전 참여 동의, 장소, 보존·삭제 정책을 확정한다. 실제 흉기나 위험 행동은 사용하지 않는다.
 
 ## 8. Platform Strategy
 
@@ -188,9 +180,9 @@ Proposed: detection + selected context
 
 | 기간 | 목표 | 종료 증거 |
 |---|---|---|
-| 9월 전반 | 기존 자료 inventory, Orin 장비·펌웨어·저장장치 진단, legacy baseline 조건 정리 | 진단 기록, 환경표, blocker |
-| 9월 후반 | PC core/replay 구현, detector·runtime 후보 smoke test, scenario·annotation·split 설계 | 단위 테스트, runtime 증거, spec |
-| 10월 전반 | context logic·state machine·logging을 PC 입력에서 구현·검증 | 단위/통합 테스트, 설정 예시 |
+| 9월 전반 | 기존 자료 inventory, PC core/replay·dataset tooling 구축 | 개발 로그·PC 검증 증거 확보; Orin inventory는 장비 입고 후 |
+| 9월 후반 | legacy 128장 사람 검수, 공개 source audit, controlled scenario·split 세부 설계 | 검수 기록·source gate·annotation 규칙 |
+| 10월 전반 | 승인된 데이터의 CUDA baseline 학습, Orin 입고 시 runtime·camera·GPIO smoke | 고정 run evidence·장비 inventory·통합 이슈 |
 | 10월 후반 | Orin 통합, GPIO, benchmark harness, controlled dataset 준비 | 반복 실행과 실기기 증거 |
 | 2026-10-31 | practical development freeze / 실험 착수 가능 상태 | DoD 점검표, 고정 commit·config |
 | 11월 | Orin benchmark·ablation·오류 분석, 가능 시 Nano/Orin 별도 비교, 논문·보고서 | 원시 결과, 요약표·그래프, 해석 |
@@ -207,7 +199,7 @@ Proposed: detection + selected context
 | legacy Nano 구형 stack | 과거 baseline 재현 실패 | 신규 경로와 격리하고 cross-device 비교를 선택 실험으로 유지 |
 | 낮은 inference 성능 | 실시간 데모·지연 목표 실패 | 실제 baseline 측정 후 해상도·모델·precision 최적화 결정 |
 | thermal throttling | 장시간 결과 왜곡 | 전원 모드·냉각·온도·warm-up 조건 기록 |
-| 카메라/GPIO 호환성 | 통합 지연 | 9월에 독립 smoke test, mock interface 제공 |
+| 카메라/GPIO 호환성 | 통합 지연 | Orin 입고 직후 독립 smoke test, PC mock interface 활용 |
 | 제한된 데이터·시나리오 | 일반화 주장 제한 | 연구 범위를 controlled scenario로 명시하고 과도한 일반화 금지 |
 | 오탐·미탐 trade-off | 안전성과 성능 해석 오류 | event recall·false alarm·latency 동시 보고 |
 | 위험한 촬영 | 인적·윤리 위험 | 실제 흉기 금지, 안전한 모형·통제 장소·동의 절차 사용 |
@@ -220,14 +212,14 @@ Proposed: detection + selected context
 ### Source-of-truth hierarchy
 
 1. `project-plan.md`: 목적·범위·일정·성공 기준
-2. `open-decisions.md`: 아직 확정되지 않은 선택
-3. `architecture.md`: 현재 채택된 기술 구조와 계약
-4. `implementation-plan.md`: 구현 단계와 착수·종료 gate
+2. `mvp-research-specification.md`: 확정된 MVP의 이벤트·평가 기준
+3. `open-decisions.md`: 아직 확정되지 않은 선택
+4. `architecture.md`: 현재 채택된 기술 구조와 계약
 5. `model-data-plan.md`: dataset·model 준비와 provenance·split 기준
-6. `verification.md`: 요구사항별 검증 상태와 증거
-7. `development-log.md`: 실제 작업과 변경의 시간순 이력
-8. `meeting-decisions/`: 팀 결정의 근거
-9. `research-or-product-plan.md`: 연구 가설·실험 설계를 구체화하는 보조 문서
+6. `pre-orin-work-plan.md`: 실기기 도착 전 남은 작업과 gate
+7. `verification.md`: 요구사항별 검증 상태와 증거
+8. `development-log.md`: 실제 작업과 변경의 시간순 이력
+9. `meeting-decisions/`: 당시 팀 결정의 근거
 
 `README.md`는 이 구조의 진입점이며, `AGENTS.md`는 Codex 작업 행동 규칙이다. 둘은 project plan의 범위·결정을 대신하지 않는다.
 
@@ -247,15 +239,15 @@ Proposed: detection + selected context
 
 주간보고서는 매주 금요일 제출 요구에 맞춰 최신 주차가 앞에 오도록 누적하되, 상세 기술 근거는 개발 로그와 검증 문서를 링크한다. 원본 영상·사진·대용량 결과·개인정보는 Git에 넣지 않고 통제된 로컬 저장 위치와 식별자만 기록한다.
 
-## 12. Immediate Decision Gate
+## 12. Current Work Gate
 
-다음 개발 작업은 아래 순서로 진행한다.
+2026-09-26 현재, 남은 선행 작업은 아래 순서로 진행한다. 세부 상태는 [Pre-Orin Work Plan](pre-orin-work-plan.md)과 [Verification Matrix](verification.md)를 따른다.
 
-1. PC에서 순수 core, B0~B3, recorded-detection replay와 단위 테스트 구현
-2. dataset D1: legacy audit, source registry, bbox/polygon validator, manifest, group split/leakage 검사 구현 — `IMPLEMENTED`, PC `VERIFIED`
-3. Orin Nano 장비 SKU·저장장치·UEFI/QSPI·JetPack 7.2.1 설치 상태 inventory
-4. 공개 source audit과 legacy 사람 검수 후 dataset recipe와 detector topology를 결정하고 JetPack 7.2.1 runtime을 고정
-5. 영상·카메라·GPIO·resource-monitor adapter를 통합한 뒤 controlled benchmark 착수
+1. legacy 128장 사람 검수와 L0 baseline 역할 결정
+2. 공개 source의 권리·표본·중복 audit과 dataset recipe 결정
+3. 승인된 recipe의 CUDA 학습·고정 detector evidence 확보
+4. Orin Nano 입고 시 SKU·저장장치·JetPack 상태 inventory, runtime·카메라·GPIO 통합
+5. controlled scenario의 event 정답을 만들고 동일 조건 B0~B3 benchmark 착수
 
 ## 13. Official platform references
 

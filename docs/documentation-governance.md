@@ -26,7 +26,6 @@
 | `README.md` | 목적, 실행법, 현재 상태의 진입점 | 핵심 상태 변경 시 |
 | `project-plan.md` | 목적, 범위, 일정, 성공 조건의 최상위 기준 | 방향·범위·일정 변경 시 |
 | `mvp-research-specification.md` | 확정 MVP의 이벤트 정의, 평가·시나리오·제외 범위 | MVP·실험 설계 변경 시 |
-| `implementation-plan.md` | 단계별 구현 범위와 gate | 구현 순서·범위 변경 시 |
 | `model-data-plan.md` | dataset/model provenance·label·split·학습 준비 기준 | dataset·model 작업 시 |
 | `dataset-source-strategy.md` | 공개 dataset의 목표 domain, source 역할, 채택 한계와 admission audit | 공개 source 후보·recipe·외부 평가 경계 변경 시 |
 | `dataset-evaluation-criteria.md` | source gate, 역할별 채택 질문, legacy 사람 검수의 열 정의 | dataset sample 검수와 채택 기준 변경 시 |
@@ -35,11 +34,12 @@
 | `open-decisions.md` | 미확정 선택과 결정 기준 | 선택지가 생기거나 확정될 때 |
 | `architecture.md` | 현재 시스템 경계와 계약 | 구조·통신·저장 경계 변경 시 |
 | `verification.md` | 요구사항별 검증 계획과 증거 | 테스트 계획·결과 변경 시 |
-| `research-or-product-plan.md` | 연구 가설, 실험 변수·시나리오·분석의 보조 계획 | MVP·실험 설계 변경 시 |
+| `pre-orin-work-plan.md` | 실기기 전 남은 작업과 gate | 장비·dataset·학습 의존성 변경 시 |
+| `training-cuda-handoff.md` | 승인된 데이터의 CUDA 학습·반입 절차 | training runner·GPU workflow 변경 시 |
 
 ## Source-of-truth hierarchy
 
-충돌이 있으면 실제 구현·검증 증거, 최신 명시적 결정, 과거 제안 순으로 해석한다. 문서 역할의 우선순위는 `project-plan → mvp-research-specification → open-decisions → architecture → implementation-plan/model-data-plan → verification → development-log/meeting evidence`이며, README는 이 문서들의 현재 진입점이다. `PROPOSAL`은 구현 의무나 확정 사실로 해석하지 않는다.
+충돌이 있으면 실제 구현·검증 증거, 최신 명시적 결정, 과거 제안 순으로 해석한다. 문서 역할의 우선순위는 `project-plan → mvp-research-specification → open-decisions → architecture/model-data-plan → pre-orin-work-plan → verification → development-log/meeting evidence`이며, README는 이 문서들의 현재 진입점이다. `PROPOSAL`은 구현 의무나 확정 사실로 해석하지 않는다.
 
 ## 기록 규칙
 

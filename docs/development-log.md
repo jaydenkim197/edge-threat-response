@@ -2,6 +2,42 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-26 - 중복·과거형 문서 정리
+
+상태: 문서 구조 `IMPLEMENTED`; 내부 참조·변경 범위 검증은 아래 명령 결과로 기록
+
+### Goal / Why
+
+- 현재 MVP와 실행 상태를 빠르게 찾을 수 있도록 중복된 계획 문서와 끝난 단계 중심 문구를 줄인다.
+- 과거 결정·실험 증거는 보존하면서 현행 작업 순서가 오래된 초안에 의해 혼동되지 않게 한다.
+
+### Scope / Changed files
+
+- `research-or-product-plan.md`는 확정된 MVP 명세·Project Plan과 내용이 겹치고 MVP에서 제외한 threat score 초안이 남아 있어 삭제했다.
+- `implementation-plan.md`은 이미 끝난 Increment A/B와 현재 구조·Pre-Orin 계획을 중복해 삭제했다. 두 파일의 Git 이력은 복구 가능하다.
+- 빈 미추적 `C++기반 코드 전환 가능성.txt`를 제거했다. 파일 크기는 0 byte였고 Git에는 추적된 적이 없다.
+- `pre-orin-work-plan.md`를 남은 W4 사람 검수·source audit·CUDA 학습·Orin 통합 중심으로 다시 작성했다.
+- README, Master Plan, 문서 운영 규칙, architecture, open decisions, verification, 2026-09-04 회의 기록과 legacy asset 기록의 오래된 참조·상태를 정리했다.
+- Code, dataset, model, run result와 회의·실험 원본 증거는 변경하지 않았다.
+
+### Environment / Verification / Limitations
+
+- 환경: Windows PowerShell, Git `main`. `git pull --ff-only` → already up to date.
+- `rg --files docs`, 문서별 참조 검색, Git status와 파일 크기로 삭제 범위를 확인했다.
+- README·AGENTS·docs의 Markdown 문서 19개를 검사했고 로컬 파일 링크 오류는 0건이었다. 삭제 문서의 현행 참조는 없고 과거 개발 로그의 언급만 남겼다.
+- `git diff --check`와 변경 범위 확인을 commit 전 실행한다. 문서 전용 작업이어서 code test는 실행하지 않는다.
+- 보고서와 과거 회의 요약은 당시의 사실을 보존한다. 현재 상태로 읽어야 하는 부분에는 최신 기준 문서 링크를 추가했다.
+
+### Decision impact / Next action
+
+1. Legacy 128장 사람 검수 및 L0 사용 범위 결정.
+2. 권리·라벨·중복 gate를 통과한 공개 source만 추가 평가.
+3. 승인된 데이터의 CUDA baseline과 Orin 실기기 통합 증거 확보.
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-26 - 선행연구 검토 정정과 역할별 dataset 평가 기준
 
 상태: 문헌·저장소 desk review `VERIFIED` (표기·접근 상태 한정), 평가 절차 `DECISION`, raw package·legacy 사람 판정·source 채택 `PLANNED`

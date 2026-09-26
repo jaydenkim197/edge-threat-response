@@ -1,9 +1,10 @@
 # Verification Matrix
 
-구현 저장소와 legacy source 연결은 준비되었으나 신규 시스템과 실기기는 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
+신규 시스템의 판단 core·PC 영상 입력·replay는 개발 PC에서 검증됐지만 Orin 실기기 통합과 성능은 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
 
 | 요구사항 | 검증 방법 | 환경 | 최근 결과 | 증거 위치 | 상태 |
 |---|---|---|---|---|---|
+| 현행 문서 구조·링크 | 삭제 문서 참조 검색, Markdown 로컬 링크 확인, `git diff --check` | Windows PowerShell, 2026-09-26 | 중복 계획 2개 제거, 문서 19개 로컬 링크 오류 0건; 코드·실험 결과 불변 | `docs/development-log.md`, Git diff | `VERIFIED` (문서 정합성) |
 | 기준 저장소·legacy source | Git remote, commit, submodule 상태 확인 | 개발 PC | 저장소 및 고정 submodule 연결 | Git history, `.gitmodules` | `VERIFIED` |
 | legacy dataset inventory | image/label·YAML·training script·annotation format·filename group 점검 | 개발 PC, fixed submodule | 7,364 image-label pairs, missing/empty 0, knife-only, bbox 7,613 + polygon 1,447; split 교차 group 확인 | `docs/model-data-plan.md` | `VERIFIED` (구조), 품질·권리 `PLANNED` |
 | dataset validator·manifest | synthetic fixture와 legacy read-only audit | Windows, Python 3.11.9 | 13 tests 통과; 7,364 images·9,060 objects 파싱, invalid/missing 0 | `tests/`, `reports/datasets/legacy-2026-09-14/` | `VERIFIED` (구조) |

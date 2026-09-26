@@ -31,7 +31,7 @@
 
 - legacy 코드에는 현재 Jetson 환경과 충돌할 수 있는 `torch`/`cv2` import 순서와 pandas 의존 결과 처리 등이 남아 있다. 수정하지 않은 역사적 기준으로 보존하며, 신규 구현의 기반 코드로 직접 실행하지 않는다.
 - 복구 가이드의 L4T 32.7.3과 개발 정보의 L4T 32.7.6은 다르다. 플래시 전 보드 모델·저장장치·호환 이미지를 반드시 실기기로 검증한다.
-- legacy 자산을 토대로 만든 새 코드·설정·테스트는 `app/`, `tests/`, `config/` 등 새 구조에 작성하며, legacy 파일을 덮어쓰지 않는다.
+- legacy 자산을 토대로 만든 새 코드·설정·테스트는 현재의 `src/`, `configs/`, `tests/` 구조에 작성하며, legacy 파일을 덮어쓰지 않는다.
 - `Crime_Prediction` 원본은 2026-09-04 확인 기준 약 460 MB, 14,760개 파일이다. 데이터셋·모델을 중복 복제하지 않고 원본 commit `5e2286971b0e7a54ede4caa3baa03fe168edc5b8`을 submodule로 고정한다.
 - 2026-09-14 재점검 결과, `ver1.0`은 1,183장, `ver1.1`은 6,181장으로 총 JPG 7,364장과 각 image에 대응하는 label을 포함한다. 두 `data.yaml`은 모두 `nc: 1`, `knife`만 정의하며 실제 9,060개 annotation의 class ID도 전부 0이다.
 - legacy label은 YOLO bbox 7,613개와 polygon 1,447개가 섞여 있다. 신규 validator와 importer는 두 형식을 구분해야 하며, legacy class `0=knife`를 신규 canonical `0=person`으로 잘못 해석하면 안 된다.

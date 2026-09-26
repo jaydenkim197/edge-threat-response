@@ -1,81 +1,35 @@
 # Pre-Orin Work Plan
 
-상태: 작업 순서·class contract `DECISION`, W1~W6 tooling·PC smoke `IMPLEMENTED`/PC `VERIFIED`, W4 사람 검수·CUDA full training·W7 외부 dataset 채택 `PLANNED`/`PROPOSAL`
+기준일: 2026-09-26
 
-이 문서는 Jetson Orin Nano가 도착하기 전에 개발 PC에서 끝낼 작업과, CUDA GPU 또는 실기기가 있어야 하는 작업을 분리한다. 현재 노트북에서 PyTorch/Ultralytics CPU 학습 smoke를 수행하지 못하더라도 pre-Orin 개발은 중단하지 않는다.
+상태: PC core·replay·dataset tooling·video adapter·CUDA handoff `IMPLEMENTED`/PC `VERIFIED`; legacy 사람 검수·외부 source audit·CUDA full training·Orin 통합 `PLANNED`
 
-## 1. Verified basis
+이 문서는 Orin Nano를 받기 전의 **남은 작업**을 관리한다. 과거 W1~W6의 상세 구현·측정 이력은 [Development Log](development-log.md)와 [Verification Matrix](verification.md)에 보존한다. 실제 보드가 도착하면 환경·장비 상태를 재확인하고 이 계획을 갱신한다.
 
-- 기준 저장소는 `00_Development_Github`, 기준 commit은 계획 작성 직전 `f8acb89`이며 원격 `main`과 일치했다.
-- 초기 inventory에서 NVIDIA CUDA GPU와 ML package가 없음을 확인했다. 이후 격리된 `.venv-ml`에 CPU runtime을 설치했으며 일반 개발 Python과 분리했다.
-- 순수 로직과 신규 config/export/training contract는 `python -m unittest discover -s tests -v`에서 46 tests가 통과했다.
-- legacy dataset 7,364장은 knife-only이고 person annotation이 없으므로 완전한 person annotation 없이 unified 2-class 학습에 사용하지 않는다.
-- JetPack 7.2.1은 Orin Nano 공식 지원 기준이지만, 실제 대여 장비에서 PyTorch·Ultralytics·container·TensorRT 조합은 아직 검증되지 않았다.
+## 현재 확인된 기반
 
-## 2. Corrections to the proposed approach
+- 순수 판단 core, B0~B3 replay, knife-only dataset audit/export/review pack, image/video detector adapter와 snapshot 경로를 PC에서 검증했다.
+- legacy 원본은 7,364장이고 exact duplicate 3장을 제거한 development export는 7,361장이다. 기존 split에는 source group 교차가 발견됐다.
+- 로컬 CPU에서 YOLO26n 소규모 학습 smoke를 완료했다. 이는 학습 배관 검증이며 detector 품질 근거가 아니다.
+- CUDA용 runner·config·GPU preflight·Colab notebook은 준비됐지만 full training은 실행하지 않았다.
+- W4 review pack은 128행 CSV와 8개 contact sheet가 준비됐다. 사람 판정과 L0 학습 승인은 아직 없다.
+- 선택 detector의 CUDA/Orin 성능, 카메라, GPIO와 TensorRT 동작은 실기기에서 검증되지 않았다.
 
-1. CPU training smoke는 pre-Orin 완료 조건에서 제외한다. 대신 dataset contract, fake detector, video/frame contract와 replay integration을 ML dependency 없이 검증한다.
-2. detector topology는 고정하지 않는다. COCO single-model은 sanity baseline, COCO person + custom knife composite는 primary implementation proposal, unified 2-class는 annotation 완전성 확보 후 후보로 둔다.
-3. `70/15/15`, seed, epochs, batch, image size는 development/training default이며 연구 파라미터나 최종 결론이 아니다.
-4. 프로젝트 전체 라이선스는 자동으로 AGPL-3.0으로 지정하지 않는다. Ultralytics 사용·모델 공개·배포 범위를 확인하는 P0 결정으로 관리한다.
-5. JetPack 7.2.1에서는 actual-board native runtime smoke를 먼저 수행하고, container는 재현성 대안으로 비교한다. 특정 image/tag를 실기기 검증 전에 고정하지 않는다.
+## 다음 작업과 완료 기준
 
-## 3. Work now — ordered backlog
+| 순서 | 작업 | 완료 증거 |
+|---:|---|---|
+| 1 | Legacy 128장 사람 검수 | [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)에 따라 `review.csv`를 판정하고 source/version·split·bbox-size 구간별 결과와 불확실 사례를 기록 |
+| 2 | L0 사용 범위 결정 | 표본 결과에 근거해 legacy 전체/선별/역사적 기준의 역할과 추가 검수 필요성을 결정. `open-decisions.md`에 근거 연결 |
+| 3 | 공개 source audit | SOHAS 권리 표기 충돌을 확인하고 접근 가능한 source를 표본·라벨·session·중복 검사. ACF는 원본 접근 가능성부터 확인 |
+| 4 | CUDA full-training 준비·실행 | 승인된 dataset recipe와 group-aware manifest, 고정 config·run ID·hash를 남기고 GPU에서 학습. [CUDA handoff](training-cuda-handoff.md) 준수 |
+| 5 | Orin 입고 시 inventory·통합 | SKU·전원·저장장치·JetPack 확인 후 native runtime, 모델, camera, GPIO, 자원 측정 순으로 실기기 검증 |
 
-| 순서 | ID | 작업 | 완료 기준 |
-|---:|---|---|---|
-| 1 | W1 | 문서·class contract 정합화 | `IMPLEMENTED` / raw source ID, model-local training ID, runtime canonical label의 경계 정의 |
-| 2 | W2 | Spatial association schema v2 | `IMPLEMENTED` / expanded bbox 판정, normalized distance 진단값, v1 replay 호환과 단위 test |
-| 3 | W3 | Knife-only dataset exporter | `IMPLEMENTED` / 전체 7,361장 materialize, polygon→bbox, exact duplicate 3장 제거, group/hash leakage 0 |
-| 4 | W4 | Dataset visual-review pack | tooling·7,361장 decode·128장 review pack `IMPLEMENTED`/PC `VERIFIED`; 사람 판정·학습 승인 `PENDING` |
-| 5 | W5 | Detector/video integration scaffold | fake backend 계약과 actual legacy composite CPU image/video·JSONL·B0~B3·snapshot smoke `IMPLEMENTED`/PC `VERIFIED` |
-| 6 | W6 | CUDA training handoff package | runner evidence, GPU preflight, CUDA development profile, human-gated Colab notebook `IMPLEMENTED`/contract `VERIFIED`; CUDA full run `PLANNED` |
-| 7 | W7 | External dataset candidate record | target domain은 약 3 m fixed/elevated indoor CCTV. SOHAS는 첫 public real-data 후보, DaSCI는 dedup 뒤 보강 후보, ACF/Mock Attack은 initial training 제외 외부 CCTV holdout 후보, Simuletic은 synthetic-only ablation. 상세 gate는 `dataset-source-strategy.md`; 무검수 대량 병합 금지 |
+1~3은 보드 없이 진행할 수 있다. 4는 CUDA GPU, 5는 실제 Orin이 필요하다. 공개 source 채택은 [Dataset Source Strategy](dataset-source-strategy.md)의 후보 역할과 [검수 기준](dataset-evaluation-criteria.md)의 gate를 따른다. Detector topology는 [P0-05](open-decisions.md)에 남겨 두며, knife-only 학습 source에 person bbox가 없다는 이유만으로 unified 2-class 데이터에 병합하지 않는다.
 
-### W1 class mapping contract
+## 검증 경계
 
-- raw legacy annotation: source-local `0=knife`
-- knife-only training dataset/model: model-local `0=knife`
-- runtime canonical detection: `person`, `knife` label을 사용하며 registry의 canonical numeric ID는 `0=person`, `1=knife`
-- knife detector adapter: model-local `0`을 runtime canonical `knife`/ID `1`로 변환
-- unified training dataset은 모든 person과 knife가 완전하게 annotation된 경우에만 `0=person`, `1=knife`를 사용
-
-### W5 execution boundary
-
-- `etr-detect`: 영상/이미지 입력을 한 번 추론해 canonical detection JSONL과 latency/run manifest 생성
-- `etr-replay`: 같은 JSONL을 B0~B3에 재사용
-- `etr-run`: 실제 frame을 B3에 연결하고 `CONFIRMED` 진입 시 metadata와 snapshot 생성
-- actual Ultralytics CPU model load는 legacy composite로 smoke 완료했으나 선택 detector의 CUDA/Orin load와 성능은 `PLANNED`로 유지
-
-## 4. Explicitly deferred
-
-### CUDA GPU 확보 후
-
-- YOLO26n/YOLO11n CUDA load·train·export smoke
-- COCO single-model sanity baseline과 legacy/custom knife weight 확인
-- knife-only full training과 validation
-- 실제 detector topology, input size와 confidence 후보 축소
-
-### Orin 수령 후
-
-- SKU·RAM·storage·firmware inventory와 JetPack 7.2.1 설치
-- native PyTorch/Ultralytics smoke 후 container 비교
-- camera, GPIO, offline/failure behavior
-- target에서 TensorRT FP16 engine 생성
-- FPS, inference/end-to-end latency, RAM, temperature, power 측정
-- controlled scenario와 동일 조건 B0~B3 본 실험
-
-## 5. Pre-Orin completion meaning
-
-W1~W7이 완료되면 시스템은 `CODE READY`와 `CONTRACT VERIFIED`로 기록한다. 실제 모델 추론, detector 정확도, Jetson 호환성, snapshot 실영상 품질과 edge 성능은 그 결과만으로 `VERIFIED`라고 표기하지 않는다.
-
-2026-09-15의 CPU smoke는 학습 배관만 검증했다. 32 train/8 val, 1 epoch 결과의 metric은 detector 성능 근거가 아니다.
-
-## References checked on 2026-09-15
-
-- NVIDIA Jetson Orin Nano JetPack 7.2.1 quick start: <https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/quick_start.html>
-- NVIDIA JetPack archive/support mapping: <https://developer.nvidia.com/embedded/jetpack-archive>
-- Ultralytics supported models: <https://docs.ultralytics.com/models>
-- Ultralytics Jetson setup and runtime cautions: <https://docs.ultralytics.com/guides/nvidia-jetson>
-- PyTorch Windows install options: <https://pytorch.org/get-started/locally/>
-- Ultralytics license choices: <https://www.ultralytics.com/license>
+- Development split 비율·seed, image size, confidence, K/N은 연구 최종값이 아니다.
+- PC smoke와 실기기 성능을 별도 기록한다. Orin Nano의 FPS·지연·메모리·온도는 실제 장비에서만 측정한다.
+- TensorRT/FP16은 PyTorch 또는 선택 runtime의 기준 성능을 얻은 뒤 필요성과 효과를 판단하는 Stretch다.
+- 동일 detector·입력·설정의 B0~B3 사건 비교에는 시간 순서와 수동 event start/end 정답이 필요하다.

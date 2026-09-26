@@ -28,7 +28,7 @@ Optional after MVP:
 - hardware adapter: camera, GPIO, `tegrastats` 계열 자원 수집을 core 바깥에 둔다.
 - legacy adapter: 2025-2 Nano 코드는 submodule에서 보존하며 신규 package의 runtime 기준으로 사용하지 않는다.
 
-처음 구현은 영상 대신 timestamp와 detection 목록을 가진 recorded-detection stream을 입력으로 사용한다. 이 경로에서 B0~B3, 상태 전이, 알람 중복 억제, metadata 생성을 결정론적으로 검증한 뒤 detector와 실제 frame을 연결한다.
+Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay는 B0~B3와 상태 전이를 같은 입력에 반복 실행하고, PC video 경로는 실제 frame과 detector를 연결한다. 카메라·GPIO의 Orin 실기기 연결은 후속 검증 대상이다.
 
 ## 책임 분리
 
