@@ -2,6 +2,38 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-09-29 - 수업 자료와 개발 저장소 폴더 통합
+
+상태: 로컬 폴더 구조 `IMPLEMENTED`; Git·submodule·Python import·CLI `VERIFIED`; Orin 실기기와 관련 없음
+
+### Goal / Why
+
+- 바탕화면의 수업 자료 폴더를 상위로 두고 개발 저장소를 그 안으로 옮긴다. GitHub 동기화 범위를 개발 저장소로 한정한다.
+- 비개발 자료는 날짜·내용 중심 파일명과 역할별 폴더로 정리하되, 개인정보가 포함될 수 있는 채팅·팀원 사진·서명은 저장소 밖에 둔다.
+
+### Scope / Changed files
+
+- 기존 `Desktop/00_Development_Github`을 수업 상위 폴더의 `03_개발_GitHub`으로 이동했다. 저장소 내부 소스·모델·실험 데이터 이름은 바꾸지 않았다.
+- 상위 폴더의 오래된 별도 `.git`은 현재 저장소 `main`의 조상 commit `f209940`을 가리켰고, 고유한 추적 변경 없이 파일 이동으로 인한 삭제 상태였다. 삭제하지 않고 `99_이전Git_백업/.git`에 보존했다.
+- 상위 폴더의 비개발 자료 46개 중 SHA-256이 정확히 같은 제안서 PDF와 주간보고서 양식 HWP 각 중복본 1개를 제거했다. 나머지 44개를 날짜 접두어와 역할별 폴더로 정리했다. 상위 `260929_폴더안내.md`가 구조·날짜 해석·동기화 범위를 설명한다.
+- 이 저장소에서는 `AGENTS.md`, `README.md`, 이 개발 로그와 검증 매트릭스의 경로·상태만 갱신한다.
+
+### Environment / Verification / Limitations
+
+- Windows PowerShell, Git `main`; 이동 전후 `git status --short --branch`는 clean, `origin/main`과 일치. `git pull --ff-only`는 already up to date. 고정된 `Crime_Prediction` submodule commit `5e228697`도 유지됐다.
+- 로컬 `.venv-ml` 이동 후 이전 절대 경로의 editable `.pth`와 CLI launcher가 깨졌다. Python 3.11.9·현재 setuptools에서 한글 경로의 `pip install -e .`는 cp1252 `UnicodeEncodeError`로 실패했다. 일반 `pip install . --force-reinstall --no-deps --no-build-isolation`로 launcher를 갱신하고, 로컬 `.pth`에 가상환경 기준 상대 `src` 경로를 먼저 넣어 live source import를 복구했다. 이 `.venv-ml` 변경은 Git에 포함되지 않는다.
+- 복구 시험 중 만든 `%LOCALAPPDATA%/edge-threat-response-worktree` junction은 제거 명령이 호스트 정책에 막혀 남아 있다. 실제 파일 복사본은 아니며 새 저장소를 가리키는 로컬 링크다. 개발 경로로 사용하지 않는다.
+- 이후 source import와 `etr-dataset --help`, `etr-replay --help`가 실행됐다. `python -m unittest discover -s tests -q`는 56개 전부 통과했고 `git diff --check`도 통과했다. 장비 기능 검증은 이번 파일 정리의 범위가 아니다.
+
+### Decision impact / Next action
+
+- 이후 개발 작업은 새 `03_개발_GitHub` 경로만 사용한다. 기존 절대 경로를 하드코딩한 외부 자동화가 있다면 별도로 갱신해야 한다.
+- 구형 가상환경의 설치 문제는 로컬에서 우회 복구했지만, 새 환경의 editable 설치는 경로 인코딩 문제를 확인한 뒤 실행한다.
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-26 - 중복·과거형 문서 정리
 
 상태: 문서 구조 `IMPLEMENTED`; 내부 참조·변경 범위 검증은 아래 명령 결과로 기록

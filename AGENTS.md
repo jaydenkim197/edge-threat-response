@@ -6,7 +6,7 @@
 
 ## Engineering rules
 
-- 기준 개발 작업공간은 `00_Development_Github`이다. 작업 시작 전 `git pull --ff-only`를 실행하고, 완료·검증된 의도적 변경은 commit 후 원격 `main`까지 push한다.
+- 기준 개발 작업공간은 상위 수업 폴더의 `03_개발_GitHub`이다. 작업 시작 전 `git pull --ff-only`를 실행하고, 완료·검증된 의도적 변경은 commit 후 원격 `main`까지 push한다. 상위 폴더의 회의록·제출물·팀원 자료는 저장소 밖에 둔다.
 - material task 시작 전 `docs/project-plan.md`, `docs/mvp-research-specification.md`, `docs/open-decisions.md`, `docs/architecture.md`, `docs/verification.md`, `docs/development-log.md`와 관련 코드를 확인한다. dataset·model 작업은 `docs/model-data-plan.md`도 확인한다.
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.
 - 프로젝트 방향·일정·평가 가능성과 충돌하는 요청은 충돌을 먼저 명시하고 범위를 조정한다.

@@ -68,10 +68,10 @@ git clone --recurse-submodules https://github.com/jaydenkim197/edge-threat-respo
 
 ## Dataset audit tooling
 
-Python 3.10 이상에서 editable install 후 실행한다.
+Python 3.10 이상에서 설치 후 실행한다. 현재 Windows 개발 PC에서는 한글 상위 경로와 setuptools 조합 때문에 `pip install -e .`가 인코딩 오류로 실패했다. 아래의 일반 설치를 사용하며, 소스 변경 후에는 다시 설치한다. 현재 로컬 `.venv-ml`은 별도로 소스 경로를 연결해 놓았다.
 
 ```text
-python -m pip install -e . --no-deps
+python -m pip install . --no-deps
 python -m unittest discover -s tests -v
 etr-dataset audit --registry configs/datasets/legacy.json --repo-root . --output-dir reports/datasets/legacy-2026-09-14 --fail-on never
 ```
@@ -110,7 +110,7 @@ ML 환경은 일반 개발 환경과 분리한다. 아래 profile은 dataset·�
 ```text
 python -m venv .venv-ml
 .venv-ml/Scripts/python -m pip install -r requirements/ml-smoke.txt
-.venv-ml/Scripts/python -m pip install -e .
+.venv-ml/Scripts/python -m pip install . --no-deps
 .venv-ml/Scripts/etr-train --config configs/training/cpu-smoke.json --data data/processed/knife-legacy-cpu-smoke-v1/data.yaml --output-dir runs/training
 ```
 
@@ -135,7 +135,7 @@ etr-replay --input runs/runtime/local/detections.jsonl --config configs/replay/d
 Increment A는 영상이나 모델 대신 timestamp와 detection 목록을 가진 JSONL을 입력으로 받는다. 아래 개발용 fixture와 설정으로 B0~B3를 같은 입력에 반복 실행할 수 있다.
 
 ```text
-python -m pip install -e . --no-deps
+python -m pip install . --no-deps
 etr-replay --input tests/fixtures/replay/basic.jsonl --config configs/replay/development.example.json --output-dir reports/replay/local-run
 ```
 
@@ -154,7 +154,7 @@ etr-replay --input tests/fixtures/replay/basic.jsonl --config configs/replay/dev
 
 ## 개발 작업공간 및 GitHub 동기화
 
-이 저장소의 기준 작업공간은 `00_Development_Github`이다. 다른 상위 수업 폴더의 복사본은 개발 기준으로 사용하지 않는다.
+이 저장소의 기준 작업공간은 상위 수업 폴더 안의 `03_개발_GitHub`이다. 상위 폴더 자체는 Git 저장소가 아니며 회의록·제출물·팀원 사진·서명은 GitHub 동기화 대상이 아니다.
 
 - 작업 시작 전 `git pull --ff-only`로 원격 `main`을 안전하게 반영한다. fast-forward가 불가능하면 임의로 병합하지 않고 원인을 확인한다.
 - 의도한 변경만 검토·stage하여 커밋한다. 이 작업공간에서는 commit 직후 `origin/main`으로 자동 push되도록 Git hook을 설정했다.
