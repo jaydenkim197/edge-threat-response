@@ -4,6 +4,7 @@
 
 | 요구사항 | 검증 방법 | 환경 | 최근 결과 | 증거 위치 | 상태 |
 |---|---|---|---|---|---|
+| 원격 RTX 3060 학습 환경 | 격리 venv·pip check·전체 tests·CUDA backward·YOLO26n FP32/AMP 1 epoch·validation·checkpoint reload/infer | Windows, Python 3.12.4, RTX 3060 12 GB, driver 560.94, torch 2.6.0+cu124, 2026-10-02 | pip check 정상; 56 tests 통과; 생성 8 train/4 val에서 두 smoke 통과, AMP 활성화 확인 | `reports/training/pc13-cuda-smoke-2026-10-02/report.md`, 원격 `runs/pc13-cuda-amp-smoke-20261002/` | 학습 plumbing `VERIFIED`; 실제 dataset full run·Orin `PLANNED` |
 | 개발 저장소 경로·동기화 경계 | 이동 전후 Git status·remote·submodule 확인, 로컬 import·CLI smoke·단위 테스트 | Windows, 2026-09-29 | `03_개발_GitHub`만 활성 Git; `main`과 `origin/main` 일치, submodule 동일 commit; Python import·CLI help 성공, 56 tests 통과 | `docs/development-log.md`, Git status | `VERIFIED` (로컬 경로·실행), 외부 자동화 경로 `UNVERIFIED` |
 | 현행 문서 구조·링크 | 삭제 문서 참조 검색, Markdown 로컬 링크 확인, `git diff --check` | Windows PowerShell, 2026-09-26 | 중복 계획 2개 제거, 문서 19개 로컬 링크 오류 0건; 코드·실험 결과 불변 | `docs/development-log.md`, Git diff | `VERIFIED` (문서 정합성) |
 | 기준 저장소·legacy source | Git remote, commit, submodule 상태 확인 | 개발 PC | 저장소 및 고정 submodule 연결 | Git history, `.gitmodules` | `VERIFIED` |

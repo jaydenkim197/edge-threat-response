@@ -2,6 +2,30 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-02 - 원격 RTX 3060 학습 환경 설정
+
+상태: 원격 clone·격리 ML 환경 `IMPLEMENTED`; CUDA/AMP 학습 plumbing `VERIFIED`; 실제 dataset full training `PLANNED`.
+
+### Goal / Why / Scope / Changed files
+
+- 사용자가 제공한 SSH PC에서 비어 있는 `C:\Class6`를 확인하고 `edge-threat-response` clone과 `.venv-ml`을 생성했다. 전역 Anaconda·GPU driver·기존 파일은 변경하지 않았다.
+- 기존 runner를 재사용하고 `tools/cuda_training_smoke.py`, `configs/training/requirements-pc13.txt`를 추가했다. `training-cuda-handoff.md`, verification, 이 로그와 [검증 report](../reports/training/pc13-cuda-smoke-2026-10-02/report.md)를 갱신했다.
+- legacy 학습 절차는 팀원의 L0 트랙임을 handoff에 명시하고 신규 source audit와 독립적으로 환경을 준비했다. 실제 source 다운로드·병합·학습 승인과 모델 선택은 범위 밖이다.
+
+### Environment / Commands / Result / Limitations
+
+- Windows / Python 3.12.4 / i9-13900 / RAM 약 32 GB / RTX 3060 12 GB / driver 560.94. torch 2.6.0+cu124·torchvision 0.21.0+cu124와 Ultralytics 8.4.152 조합을 설치했다. 상세 pin·재설치 명령은 handoff에 있다.
+- `pip check` 정상, 원격 `python -m unittest discover -s tests -q` 56개 통과. 로컬도 56개 통과, helper compile 확인.
+- `python tools/cuda_training_smoke.py --output runs/pc13-cuda-smoke-20261002`와 별도 `--amp` run: 8 train/4 val 생성 이미지, 320 px, batch 2, workers 0, 1 epoch에서 forward/backward·loss·validation·best/last.pt·checkpoint reload GPU inference 확인. runner duration 각각 8.765/5.063 s. 실모델 성능·FPS 근거가 아니다.
+- 초기 deterministic 경고를 보고 helper에서 torch import 전 cuBLAS workspace 설정을 추가해 AMP run을 검증했다. 반복 동일 결과·큰 batch·장시간 학습·SSH 단절 지속·Drive 업로드·Orin은 미검증이다.
+- raw run과 전체 pip freeze는 원격 ignored `runs/`에 보존했다. 생성 데이터·weight·환경은 Git에 넣지 않고 code/config/요약만 sync한다.
+- 문서 로컬 링크 4개 오류 0건, `git diff --check` 통과. SCP 반입 helper·requirements의 로컬/원격 SHA-256 일치를 확인했다. 원격 CLI help도 실행됐다.
+
+### Decision impact / Next action / Git
+
+- 실제 GPU 학습 경로는 준비됐지만 source·label·split 승인 gate는 유지한다. 다음은 SOHAS audit과 신규 recipe 승인 후 actual CUDA run이다.
+- Commit: 이 기록을 포함하는 commit. 원격에는 의도적으로 반입한 파일만 path-scoped stash로 보존한 뒤 fast-forward한다. 모델·runs·venv는 ignored 상태로 그대로 유지한다.
+
 ## 2026-10-02 - 개발 Agent Layer 참고자료의 최소 적용
 
 상태: 작업 규칙·문서 절차 `IMPLEMENTED`; 검증 결과는 아래에 기록. 모델·시스템 기능 변경 없음.
