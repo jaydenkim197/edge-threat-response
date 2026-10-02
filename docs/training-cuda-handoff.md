@@ -50,6 +50,14 @@ Cloud에서 학습 PC로 접근하려면 지원되는 private network/VPN 경로
 
 실제 recipe 승인이 나면 먼저 작은 시험으로 SSH 종료 뒤에도 지속되는 독립 background job을 검증하고 실행한다. 고유 run ID와 commit/config/dataset hash, stdout/stderr, status/exit code, checkpoints를 보존하고 실행 중인 GPU job과 중복 launch하지 않는다. 재부팅/절전 지속성은 별도 확인해야 한다. 현재 그 시험·full training·Drive 인증/업로드는 수행하지 않았다.
 
+## Windows SOHAS staging 주의사항
+
+2026-10-02 로컬→학습 PC SSH 연결과 `0b51dd4`의 VOC audit를 재검증했다. Cloud 연결 복구를 뜻하지는 않는다. 원격 전체 70 tests 및 byte-exact annotation audit가 통과했다.
+
+Windows의 `core.autocrlf=true` checkout은 XML 줄바꿈을 바꾸어 pinned Git blob 검사에 실패할 수 있다. 검사나 원본을 수정하지 않고, **새 staging clone에서만** `git clone --config core.autocrlf=false --filter=blob:none --no-checkout ...`를 사용한 뒤 기존 label/XML-only sparse checkout과 고정 upstream commit checkout을 수행한다. 전역 Git 설정은 변경하지 않는다. 이미지 경로를 sparse checkout에 추가하지 않는다.
+
+원격 정상 staging은 `data/source-audit/sohas-upstream-byte-exact/`, 결과는 `data/source-audit/sohas-voc-pc13-byte-exact-20261002/`다. 초기 실패 staging/output도 원인 증거로 보존했다. `review-sample.csv`는 100개 **라벨 기준 검수 대기 목록**이며 이미지나 완료된 사람 판정이 아니다. 권리·좌표·이미지 검수·group/split 승인은 계속 필요하다.
+
 ## Colab 절차
 
 `notebooks/baseline-v1-colab.ipynb`를 Colab에서 열고 위에서 아래로 실행한다. notebook의 `REVIEW_APPROVED` 기본값은 `False`이며, review 결과를 팀이 확인한 뒤에만 직접 `True`로 바꾼다.

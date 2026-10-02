@@ -2,6 +2,18 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-02 - 로컬 SSH 작업 재개와 Windows SOHAS byte-exact audit
+
+상태: 로컬→학습 PC SSH·Windows label audit `VERIFIED`; 실제 이미지/권리/좌표/recipe 승인·full training `PLANNED`.
+
+- 목적/범위/완료 기준: 사용자의 연결 복구 후 작업 재개 요청에 따라 Cloud 변경을 pull하고 기존 audit를 원격에서 재현한다. 기존 staging 보존, 테스트·실제 audit·검수 목록 생성·문서 기록을 완료 기준으로 잡았다. 위험은 Windows checkout 변환과 미승인 source 반입이며 학습 gate를 유지했다.
+- `search-first`와 `verification-loop`를 적용해 기존 VOC CLI를 재사용했다. source/helper/dependency 추가 없이 clone-local 설정만 사용했다. 변경 문서는 이 로그·verification·training-cuda-handoff·SOHAS metadata report다.
+- Windows/Python 3.12.4 원격 repo를 `0b51dd4`까지 fast-forward했다. 전체 70 tests는 원격 0.554 s, 로컬 1.212 s에 통과했다.
+- 첫 실제 audit는 XML 4,686개 blob 불일치로 exit 1. upstream clone의 `core.autocrlf=true`를 확인했고, byte 검증을 완화하지 않았다. 기존 source/output은 보존하고 새 `data/source-audit/sohas-upstream-byte-exact/`를 `git clone --config core.autocrlf=false --filter=blob:none --no-checkout`으로 준비했다. upstream `48860b9`, 같은 label/XML-only sparse checkout이며 전역 설정·이미지를 변경/다운로드하지 않았다.
+- CLI 정상 출력 `data/source-audit/sohas-voc-pc13-byte-exact-20261002/`: exit 0, 구조 오류 0; metadata 5,859 / VOC knife 2,349 / YOLO knife 2,277 / mismatch 58 / orphan 83 / case-only warning 181. 100개 review sample·전체 queue를 생성했다.
+- 한계/결정 영향: 이미지 0, 좌표 `unknown`, 사람 검수 pending, 학습 승인 false. R1/H1은 기존 PROPOSAL을 유지한다. Cloud 연결·SSH 종료 후 job 지속·Drive 업로드·실제 full training은 미검증이다.
+- 다음: 사용 권리 근거 확인 → 승인된 이미지 표본/좌표 검수 → near duplicate/session grouping 및 공통 tuning/test → recipe 승인 후 CUDA 학습. Git: 이 기록을 포함하는 commit.
+
 ## 2026-10-02 - Cloud 장시간 작업 인계와 SOHAS VOC 승인 전 준비
 
 상태: source-specific 변환·audit `IMPLEMENTED`, synthetic 좌표 계약·Cloud label dry-run `VERIFIED`; 실제 이미지/좌표/권리/recipe 승인·full training `PLANNED`; Cloud→학습 PC SSH `BLOCKED`.

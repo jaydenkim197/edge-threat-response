@@ -88,3 +88,11 @@
 원시 출력은 ignored `data/source-audit/sohas-voc-cloud-final/`의 `voc-candidates.jsonl`, `issues.jsonl`, `summary.json`, `review-queue.csv`, `review-sample.csv`다. 원래 split·positive/negative·다중 knife·count mismatch 층별 모집단/선택 수를 summary에 남겼다. 예를 들어 test의 다중 knife 15개를 모두 포함하고 train의 다중 knife는 43개 중 17개를 선택했다. 표본은 사람이 아직 검수하지 않았으며 좌표 미확정 상태의 크기 분포·camera/session 대표성도 증명하지 않는다.
 
 기본 coordinate convention은 `unknown`이고 모든 candidate YOLO lines는 빈 목록이다. 두 명시적 convention의 변환은 synthetic 좌표 fixture에서만 확인했다. 원본 이미지와 convention 근거를 확보하기 전 실제 학습 라벨을 생성하지 않았다. 상세 계약은 [모델·데이터 계획](../../../docs/model-data-plan.md#sohas-voc-source-specific-audit)에 있다. 권리 충돌, negative 진위, 누락 bbox, near duplicate/session grouping, 공통 tuning/final-test 및 R1/H1 승인은 계속 gate다. 실제 full training·Drive 업로드는 수행하지 않았다.
+
+## Windows 학습 PC 재검증 — 2026-10-02
+
+- 로컬→원격 SSH 연결을 확인하고 원격 main을 `0b51dd4`로 fast-forward했다. 기존 GPU 환경을 재사용했으며 전체 70 tests가 원격 0.554 s, 로컬 1.212 s에 통과했다.
+- 첫 audit는 `core.autocrlf=true` source checkout의 XML 4,686개에서 `Local source bytes differ from pinned Git blob`로 실패했다. clean Git status는 checkout byte identity를 보장하지 않는다. 실패 출력 `data/source-audit/sohas-voc-pc13-20261002/`와 기존 source를 보존했다.
+- 별도 `sohas-upstream-byte-exact/` staging을 clone-local `core.autocrlf=false`로 만들고 같은 upstream commit·label/XML-only sparse checkout을 사용했다. 원본·검사 코드·전역 설정은 수정하지 않았다.
+- `etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream-byte-exact --output-dir data/source-audit/sohas-voc-pc13-byte-exact-20261002`: exit 0, error 0, images 5,859 / VOC knife 2,349 / YOLO knife 2,277 / mismatch 58 / orphan 83 / case-only warning 181로 Cloud와 같은 집계다. 100개 review sample이 생성됐다.
+- 이미지 checkout 0, coordinate `unknown`, human review pending, training 승인 false 상태다. 실제 학습·Cloud SSH 복구·background job 지속·Drive 업로드는 이번 검사로 검증하지 않았다.
