@@ -2,6 +2,35 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-02 - 신규 knife detector 후보와 데이터 보관 경계 재정렬
+
+상태: 공식 Git image metadata 중복 `VERIFIED`; 후보 recipe `PROPOSAL`; Google Drive 폴더 `IMPLEMENTED`/목록 확인; raw source·CUDA 학습 `PLANNED`
+
+### Goal / Why
+
+- legacy 재현은 다른 팀원이 담당하고, 신규 detector 담당자는 source audit와 핵심 모델 제작을 독립적으로 진행한다.
+- 여러 GPU를 사용할 수 있어도 중복 데이터셋을 조합한 학습을 필수 실험으로 늘리지 않고, hard-negative 효과와 target CCTV 적응 효과를 분리한다.
+
+### Scope / Changed files
+
+- `dataset-source-strategy.md`에 R1(SOHAS 검수 양성+음성), H1(같은 양성만), T1(R1+직접 촬영 training session)을 우선 후보로, U1/S1/G1을 조건부 보강으로 기록했다. L0는 별도 트랙이다. 최종 recipe의 팀 승인 전까지 모두 `PROPOSAL`이다.
+- `project-plan.md`, `pre-orin-work-plan.md`, `open-decisions.md`, `model-data-plan.md`, `prior-work-and-dataset-review.md`, `verification.md`, README의 L0 선행 의존과 후보·증거 설명을 정합화했다. 코드·모델·raw data는 바꾸지 않았다.
+- 팀 Google Drive의 [모델개발_데이터셋·실험결과](https://drive.google.com/drive/folders/1tBI7EkxKLN41CwHWA60ENXCgOw_0iYiz)에 원본(권리확인 후)/검수·분할명세/학습결과/독립평가 폴더를 만들고 목록으로 확인했다. [metadata 보고서](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)만 [Drive 보관본](https://drive.google.com/file/d/1h10H-lSCS81TbUTP8epF0qotx5MVkzDy/view?usp=drivesdk)으로 업로드하고 metadata로 파일·부모 폴더를 재확인했다. 원본·자체 촬영 영상은 업로드하지 않았다. 10 GB 미만 로컬 staging을 허용한다.
+
+### Environment / Evidence / Limitations
+
+- Windows PowerShell과 GitHub REST Git tree metadata. 원본 저장소 `ari-dasci/OD-WeaponDetection`의 `master` commit `48860b990e4d4f57fe100248887fceb248475dc8`에서 SOHAS train/test image 5,002/857장, DaSCI image 2,078장을 집계했다. DaSCI 1,985장은 SOHAS와 basename 및 Git blob ID가 일치하고 93장만 byte-unique 후보이다. SOHAS image 5,859장 대비 XML 5,942개로 orphan XML 83개가 있다.
+- Git blob 일치는 바이트 동일성 근거지만, 남은 93장의 perceptual 중복·annotation·target 적합성과 SOHAS negative의 knife 부재는 검증하지 않았다. SOHAS README/License 표기 충돌과 ACF 원 저장소 404도 여전히 남아 있다. 공개 원본 다운로드·공유·학습은 이번 작업에서 수행하지 않았다.
+
+### Decision impact / Next action
+
+- SOHAS 사용 조건과 raw package를 확인하고 source/label/sample audit를 수행한다. 승인 전에는 R1/H1도 학습하지 않는다.
+- 공통 tuning/독립 test를 먼저 설계하고 R1/H1을 같은 모델·설정에서 비교한다. 직접 촬영 session이 준비되면 T1을 판단한다. L0 완료는 이 작업을 막지 않는다.
+
+### Git
+
+- Commit: 이 기록을 포함하는 commit
+
 ## 2026-09-29 - 수업 자료와 개발 저장소 폴더 통합
 
 상태: 로컬 폴더 구조 `IMPLEMENTED`; Git·submodule·Python import·CLI `VERIFIED`; Orin 실기기와 관련 없음

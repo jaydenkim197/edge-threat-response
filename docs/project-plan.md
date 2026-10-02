@@ -243,9 +243,9 @@ Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP
 
 2026-09-26 현재, 남은 선행 작업은 아래 순서로 진행한다. 세부 상태는 [Pre-Orin Work Plan](pre-orin-work-plan.md)과 [Verification Matrix](verification.md)를 따른다.
 
-1. legacy 128장 사람 검수와 L0 baseline 역할 결정
-2. 공개 source의 권리·표본·중복 audit과 dataset recipe 결정
-3. 승인된 recipe의 CUDA 학습·고정 detector evidence 확보
+1. 다른 팀원의 legacy 128장 사람 검수·L0 재현과 신규 detector source audit을 **병렬** 진행한다. L0 완료는 신규 detector의 선행 gate가 아니다.
+2. 신규 담당자는 공개 source의 권리·표본·중복 audit과 [dataset recipe 후보](dataset-source-strategy.md)를 검토한다.
+3. 승인된 신규 recipe의 CUDA 학습·고정 detector evidence 확보
 4. Orin Nano 입고 시 SKU·저장장치·JetPack 상태 inventory, runtime·카메라·GPIO 통합
 5. controlled scenario의 event 정답을 만들고 동일 조건 B0~B3 benchmark 착수
 

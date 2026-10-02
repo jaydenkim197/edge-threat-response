@@ -28,7 +28,7 @@
 | 후보 | 확인된 사실 | 현재 판단 |
 |---|---|---|
 | SOHAS / OD-WeaponDetection | official repository에 detection data와 similar handled object source가 있다. README의 CC BY-SA 4.0과 `License.md`의 CC BY 4.0 전문이 충돌 | 첫 public real-world source `PROPOSAL`; 실제 적용 권리와 stratified 표본 audit 후 채택 판단 |
-| DaSCI / OD-WeaponDetection Knife | knife detection source 후보. SOHAS와 source lineage/중복 가능성이 있음 | knife-appearance 보강 `PROPOSAL`; SOHAS와 동시 병합 전 cross-source dedup 필수 |
+| DaSCI / OD-WeaponDetection Knife | 2026-10-02 공식 Git image metadata에서 2,078장 중 1,985장이 SOHAS와 동일 basename·동일 blob; 나머지 최대 93장도 near-duplicate·품질 미검증 | 단독/합본 필수 run 아님. 실제 visual gap을 메우는 고유 이미지일 때만 선택적 보강 `PROPOSAL` |
 | ACF Knife | full-HD CCTV·small knife를 다룬 ACF 연구의 source. 논문이 제시한 저장소는 2026-09-26 접근 실패 | Dataset v1 training에는 0장; raw 파일·권리·라벨 확보 시 external **image/frame** holdout 후보 `PROPOSAL` |
 | US Mock Attack | 3 CCTV camera의 full-HD mock attack frames를 논문이 기술; knife label 수가 적고 sequential frame | Dataset v1 training에는 0장; 원본 시간 순서·event 정답 확인 시 camera/sequence 사건 평가 후보 `PROPOSAL` |
 | COCO | 80-class detection에 `person=0`, `knife=43`; COCO 2017 train 118,287 / val 5,000 | pretrained sanity baseline 후보. CCTV·small-knife 적합성은 sample 검수 필요 |
@@ -133,6 +133,6 @@ CUDA development profile, GPU-required preflight와 review-gated Colab notebook�
 2. 모형 knife, reflection, printed knife, 극소 객체와 심한 occlusion의 annotation 규칙
 3. 직접 촬영 데이터의 동의·보존·삭제 정책과 source/session ID 규칙
 4. detector topology와 primary/fallback model family
-5. 실제 데이터 저장 위치와 팀 접근 방식
+5. Google Drive [모델개발_데이터셋·실험결과](https://drive.google.com/drive/folders/1tBI7EkxKLN41CwHWA60ENXCgOw_0iYiz)를 승인 자료의 보관 위치로 정했다. 10 GB 미만은 로컬 staging 가능하며, source 권리와 자체 촬영물의 팀 접근 정책은 개별 자료를 올리기 전에 확인한다.
 
 위 결정 전에도 D1과 시스템 Increment A는 독립적으로 구현할 수 있다.

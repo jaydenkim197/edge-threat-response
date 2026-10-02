@@ -26,7 +26,7 @@ Camera
 
 - **설계:** MVP 범위와 B0~B3 비교 구조는 `DECISION`입니다. 기준 플랫폼은 Jetson Orin Nano Developer Kit / JetPack 7.2.1입니다.
 - **PC에서 검증됨:** 판단 core, replay, dataset audit/export/review tooling, detector/video/snapshot scaffold, CUDA training handoff가 구현·검증되었습니다.
-- **데이터 전략:** 약 3 m 고정형 실내 CCTV를 목표 domain으로 두고, 공개 data는 source·권리·중복·session 누수 audit 뒤에만 사용합니다. 첫 public real-data 후보는 SOHAS이며, ACF/Mock Attack은 초기 학습이 아닌 외부 CCTV 평가 후보로 보존합니다.
+- **데이터 전략:** 약 3 m 고정형 실내 CCTV를 목표 domain으로 둡니다. legacy 재현은 팀원 별도 트랙이고, 신규 detector는 SOHAS 감사 후 실사 기준(R1)·음성 데이터 효과(H1)를 우선 비교하는 제안 상태입니다. 자체 CCTV 적응(T1)은 독립 촬영 세션 확보 뒤 검토합니다. DaSCI는 SOHAS와 대부분 정확 중복되어 필수 합본이 아닙니다. ACF/Mock Attack은 외부 평가 후보로 보존합니다.
 - **아직 남음:** CUDA full training, 최종 detector 선택, Orin runtime·camera·GPIO·TensorRT·benchmark입니다.
 - **증거 원칙:** 기존 MIDAS 성능 수치는 재현 조건이 부족해 이번 프로젝트의 공식 결과로 사용하지 않습니다.
 - **일정 목표:** 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태를 확보합니다.
@@ -43,9 +43,9 @@ Camera
 
 - [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
 - [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
-- [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): 남은 legacy 검수·공개 source audit·CUDA/실기기 작업
+- [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): 병렬 legacy 재현·신규 source audit·CUDA/실기기 작업
 - [모델·데이터 준비 계획](docs/model-data-plan.md): 데이터 inventory, 라벨·분할 계약, 검증·학습 단계
-- [Dataset Source Strategy](docs/dataset-source-strategy.md): 공개 source별 역할, 적용 한계, audit·중복·누수 방지 gate
+- [Dataset Source Strategy](docs/dataset-source-strategy.md): 신규 detector 후보 recipe, 공개 source별 역할, Google Drive 보관 위치와 audit gate
 - [Dataset Evaluation Criteria](docs/dataset-evaluation-criteria.md): 공개 source와 legacy 128장 검수의 gate·판정 열
 - [선행연구·공개 데이터 검토](docs/prior-work-and-dataset-review.md): 확인된 연구 근거와 자료별 활용 경계
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계

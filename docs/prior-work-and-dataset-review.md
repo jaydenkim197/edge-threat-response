@@ -1,8 +1,8 @@
 # 선행연구와 공개 데이터셋 검토
 
-기준일: 2026-09-26
+최초 검토: 2026-09-26 / DaSCI–SOHAS image metadata 재검증: 2026-10-02
 
-상태: 공개 자료의 문헌·저장소 수준 확인. 원본 데이터 파일·라벨·중복·성능의 프로젝트 검증은 `PLANNED`.
+상태: 공개 자료의 문헌·저장소 수준 확인, SOHAS–DaSCI의 Git blob 정확 중복은 `VERIFIED`. 원본 image decode·라벨·near duplicate·성능의 프로젝트 검증은 `PLANNED`.
 
 ## 결론
 
@@ -29,7 +29,7 @@
 | 자료 | 지금 확인된 점 | 우선 역할 | 채택 전에 필요한 확인 |
 |---|---|---|---|
 | [OD-WeaponDetection의 SOHAS](https://github.com/ari-dasci/OD-WeaponDetection) | Knife와 유사한 handheld object를 포함한 detection source가 공식 저장소에 있다. | 첫 public real-data 학습 **후보** | 원본 package/version, knife 및 negative 라벨 완전성, target-view 표본, 권리 충돌, legacy/DaSCI 중복 |
-| [DaSCI Knife detection](https://github.com/ari-dasci/OD-WeaponDetection/tree/master/Knife_detection) | 같은 공식 저장소에서 별도 knife detection 자료로 제공한다. | knife appearance 보강 **후보** | SOHAS와 source lineage·exact/near duplicate, 라벨과 촬영 세션 |
+| [DaSCI Knife detection](https://github.com/ari-dasci/OD-WeaponDetection/tree/master/Knife_detection) | 같은 공식 저장소에서 제공된다. 2026-10-02 image Git tree의 basename·blob 비교에서 2,078장 중 1,985장이 SOHAS와 바이트 동일했다. | 남은 최대 93장의 knife appearance 보강 **후보**, 단독/합본 필수 run 아님 | 93장의 near duplicate, 라벨·촬영 세션·target-domain 적합성 |
 | [ACF Knife 논문](https://www.mdpi.com/1424-8220/22/19/7158) | 실제 CCTV small-weapon 평가와 데이터 설명이 있다. | 외부 **이미지** 평가 후보 | 공개 파일에 접근 가능한지, 권리·원본 라벨·촬영 단위. 영상·event 정답이 없으면 B0~B3 사건 지표 계산 불가 |
 | [US Mock Attack](https://github.com/Deepknowledge-US/US-Real-time-gun-detection-in-CCTV-An-open-problem-dataset) | 공식 저장소는 학술 이용 조건(CC BY-NC 4.0)을 명시한다. | 외부 CCTV sequence **후보** | knife-positive 분포, negative 장면, 시간 순서·촬영 단위·사건 정답, 원본 데이터 접근 |
 | [Simuletic CCTV Knife](https://huggingface.co/datasets/Simuletic/cctv-knife-detection-dataset) | 114장 공개 synthetic sample을 제시한다. | real-data 학습 뒤 별도 synthetic 보강 실험 후보 | 샘플 중복, 라벨, synthetic/real 성능 차이 |
@@ -41,16 +41,16 @@ ACF 논문은 [과거 GitHub 주소](https://github.com/iCUBE-Laboratory/The-Arm
 
 ## 3. 연구 비교에 적용하는 방식
 
-1. Detector 데이터 실험(L0, R1, R2, S1)은 source별 run ID·학습 recipe·detector weight를 구분한다. 기존 MIDAS 7,361장 export는 사람 검수 전 L0 학습 승인이 아니다.
+1. Detector 데이터 실험(L0, R1, H1, 이후 조건부 T1/U1/S1/G1)은 source별 run ID·학습 recipe·detector weight를 구분한다. 기존 MIDAS 7,361장 export는 사람 검수 전 L0 학습 승인이 아니며, L0 완료가 신규 detector source audit를 막지 않는다.
 2. B0~B3의 공간·시간 계층 비교에서는 **동일 detector, 동일 입력 영상, 동일 설정과 장비**를 사용한다. Detector를 바꾼 효과를 상황 판단의 효과로 해석하지 않는다.
 3. 공개 CCTV의 bbox 정답은 detector의 image/frame-level 외부 평가에 쓴다. B0~B3의 event precision/recall/alert latency에는 연속 영상, 양성·음성 사건, event start/end 정답이 필요하다.
 4. 최종 target-domain 사건 실험은 직접 촬영한 독립 recording session을 기준으로 설계한다. 실제 카메라·화각·관찰 거리가 정해지면 약 3 m CCTV라는 현재 가정을 측정값으로 갱신한다.
 
 ## 4. 다음 검수 순서
 
-1. 로컬 legacy 128장 review pack을 사람이 판정해 L0의 역할과 사용 가능 범위를 정한다.
-2. SOHAS의 공식 package/version·권리 충돌을 확인하고 knife positive와 no-knife hard-negative를 구분해 표본 검수한다.
-3. DaSCI를 독립 검수한 뒤 SOHAS·legacy와 cross-source exact/near duplicate를 검사한다.
+1. 팀원은 로컬 legacy 128장 review pack을 판정해 L0를 담당한다. 신규 detector source audit와 병렬이다.
+2. 신규 담당자는 SOHAS의 공식 package/version·권리 충돌을 확인하고 knife positive와 no-knife hard-negative를 구분해 표본 검수한다.
+3. DaSCI는 확인된 정확 중복 1,985장을 제외하고 최대 93장 후보의 near duplicate·라벨·목표 장면 적합성만 필요 시 검수한다.
 4. ACF와 US Mock Attack의 실제 데이터 접근·권리·정답 형태를 확인해 **이미지 평가** 또는 **사건 평가** 중 가능한 역할만 부여한다.
 
 이 문서는 문헌·저장소 수준의 조사 기록이다. Dataset source의 최종 채택과 실험 성능은 사람 검수, raw manifest, run evidence가 나온 뒤 기록한다.

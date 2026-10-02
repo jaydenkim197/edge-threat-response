@@ -1,6 +1,6 @@
 # Pre-Orin Work Plan
 
-기준일: 2026-09-26
+기준일: 2026-10-02
 
 상태: PC core·replay·dataset tooling·video adapter·CUDA handoff `IMPLEMENTED`/PC `VERIFIED`; legacy 사람 검수·외부 source audit·CUDA full training·Orin 통합 `PLANNED`
 
@@ -17,15 +17,15 @@
 
 ## 다음 작업과 완료 기준
 
-| 순서 | 작업 | 완료 증거 |
-|---:|---|---|
-| 1 | Legacy 128장 사람 검수 | [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)에 따라 `review.csv`를 판정하고 source/version·split·bbox-size 구간별 결과와 불확실 사례를 기록 |
-| 2 | L0 사용 범위 결정 | 표본 결과에 근거해 legacy 전체/선별/역사적 기준의 역할과 추가 검수 필요성을 결정. `open-decisions.md`에 근거 연결 |
-| 3 | 공개 source audit | SOHAS 권리 표기 충돌을 확인하고 접근 가능한 source를 표본·라벨·session·중복 검사. ACF는 원본 접근 가능성부터 확인 |
-| 4 | CUDA full-training 준비·실행 | 승인된 dataset recipe와 group-aware manifest, 고정 config·run ID·hash를 남기고 GPU에서 학습. [CUDA handoff](training-cuda-handoff.md) 준수 |
-| 5 | Orin 입고 시 inventory·통합 | SKU·전원·저장장치·JetPack 확인 후 native runtime, 모델, camera, GPIO, 자원 측정 순으로 실기기 검증 |
+| 트랙/순서 | 작업 | 완료 증거 |
+|---|---|---|
+| 팀원 L0-1 | Legacy 128장 사람 검수 | [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)에 따라 `review.csv`를 판정하고 source/version·split·bbox-size 구간별 결과와 불확실 사례를 기록 |
+| 팀원 L0-2 | L0 사용 범위·재현 결정 | 표본 결과에 근거해 legacy 전체/선별/역사적 기준의 역할과 추가 검수 필요성을 결정. `open-decisions.md`에 근거 연결 |
+| 신규 R-1 | 공개 source audit | SOHAS 권리 표기 충돌·image/XML pairing·양성/음성·group을 확인. DaSCI의 SOHAS와 동일한 1,985장 및 고유 후보 최대 93장을 별도 기록 |
+| 신규 R-2 | CUDA full-training 준비·실행 | 승인된 [R1/H1 후보](dataset-source-strategy.md)와 group-aware manifest, 고정 config·run ID·hash를 남기고 GPU에서 학습. [CUDA handoff](training-cuda-handoff.md) 준수 |
+| 공통 3 | Orin 입고 시 inventory·통합 | SKU·전원·저장장치·JetPack 확인 후 native runtime, 모델, camera, GPIO, 자원 측정 순으로 실기기 검증 |
 
-1~3은 보드 없이 진행할 수 있다. 4는 CUDA GPU, 5는 실제 Orin이 필요하다. 공개 source 채택은 [Dataset Source Strategy](dataset-source-strategy.md)의 후보 역할과 [검수 기준](dataset-evaluation-criteria.md)의 gate를 따른다. Detector topology는 [P0-05](open-decisions.md)에 남겨 두며, knife-only 학습 source에 person bbox가 없다는 이유만으로 unified 2-class 데이터에 병합하지 않는다.
+L0와 신규 R 트랙은 병렬이며 L0 검수 완료가 R-1/R-2의 선행 gate가 아니다. R-1은 보드 없이 진행할 수 있고 R-2는 CUDA GPU, 공통 3은 실제 Orin이 필요하다. 공개 source 채택은 [Dataset Source Strategy](dataset-source-strategy.md)의 후보 역할과 [검수 기준](dataset-evaluation-criteria.md)의 gate를 따른다. Detector topology는 [P0-05](open-decisions.md)에 남겨 두며, knife-only 학습 source에 person bbox가 없다는 이유만으로 unified 2-class 데이터에 병합하지 않는다.
 
 ## 검증 경계
 
