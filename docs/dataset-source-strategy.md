@@ -83,6 +83,8 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 
 ## 7. Immediate next actions
 
+2026-10-02 추가 실제 annotation 대조에서 SOHAS YOLO label은 knife 2,277 objects, 대응 VOC XML은 2,349 objects로 **58개 image에서 knife 개수 불일치**가 확인됐다. YOLO 배포본 image도 DaSCI와 1,985장이 동일하다. [후속 annotation 검증](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)에 기록했다. 따라서 GPT의 SOHAS→DaSCI→Combined 3연속 screening을 그대로 실행하지 않는다. R1/H1 우선 전략은 유지하며 **공식 YOLO label을 무검수 복사하지 않고 VOC 전체 knife bbox 재변환과 표본 확인**을 다음 준비 작업으로 둔다. 이 대조는 아직 source 채택 승인이 아니다.
+
 1. 다른 팀원은 legacy review CSV 128장을 [검수 기준](dataset-evaluation-criteria.md)에 따라 판정하고 L0를 담당한다. 이는 아래 신규 detector 작업의 선행 gate가 아니다.
 2. 신규 detector 담당자는 SOHAS의 실제 사용 조건과 원본 package를 확인하고, knife 양성·음성·bbox-size·camera/source-group별 표본을 검수한다. 현재 Drive에는 원본을 올리지 않는다.
 3. SOHAS의 image–XML pairing, class map, source-group, 정확·유사 중복을 확인하고 R1/H1에 공통인 group-aware split과 독립 CCTV 평가 후보를 설계한다. DaSCI의 93장 byte-unique 후보는 필요 시 별도 검수한다.

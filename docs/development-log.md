@@ -2,6 +2,20 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-02 - 3개 screening 제안 검토와 SOHAS 실제 라벨 대조
+
+상태: upstream metadata·실제 label/XML object count `VERIFIED`; recipe 채택·변환·human review·학습 `PLANNED`/기존 `PROPOSAL` 유지.
+
+- 목적: 사용자가 전달한 SOHAS/DaSCI/Combined 3연속 screening 제안을 현재 증거로 평가하고 안전한 준비 작업을 진행한다.
+- `search-first`/`verification-loop`를 사용해 기존 metadata 보고서와 source 정책을 재사용했다. 새로운 모델·다운로더·학습 framework는 추가하지 않았다.
+- GPT가 지정한 SOHAS YOLO 배포본의 image/label tree와 YAML을 확인했다. image 5,859장, label 5,859개, orphan label 0; DaSCI exact blob overlap 1,985장으로 기존 결과와 일치했다.
+- 원격 PC의 ignored `data/source-audit/sohas-upstream/`에 고정 upstream partial/sparse clone으로 license/README/YAML·YOLO label·VOC XML만 확보했다. image checkout·Drive 공유·실제 학습은 수행하지 않았다.
+- PowerShell로 5,859 label을 집계하고 같은 split/basename VOC와 비교했다. knife annotation positive 2,277 / no-knife candidate 3,582; YOLO knife objects 2,277 vs VOC 2,349, 58 images 불일치. label-only negative 진위·bbox 품질은 미검증이다. generated 집계 JSON은 원격 `data/source-audit/`에 있다.
+- raw root의 image 확인은 파일 확장자 필터로 0개임을 확인했다. sparse-checkout add의 잘못된 `--no-cone` 옵션은 실패했고, 기존 non-cone 설정에서 옵션 없이 재실행해 XML을 확보했다. 원본 파일을 수정하지 않았다.
+- [metadata 보고서](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md), source strategy와 verification에 결과·해석·한계를 추가했다. 코드 변경이 없어 코드 테스트는 생략하고 링크·diff를 검사한다.
+- 판단: 짧은 screening과 공통 tuning/오류 분석은 타당하지만 세 source가 독립적이라는 가정과 YOLO label 즉시 사용은 채택하지 않는다. R1/H1 우선, 고유 DaSCI는 조건부 U1을 유지한다. 다음은 권리 확인·VOC 전체 bbox 변환·표본 검수·cross-source group split이며, 승인 전에 training을 시작하지 않는다.
+- Git: 이 기록을 포함하는 commit.
+
 ## 2026-10-02 - 원격 RTX 3060 학습 환경 설정
 
 상태: 원격 clone·격리 ML 환경 `IMPLEMENTED`; CUDA/AMP 학습 plumbing `VERIFIED`; 실제 dataset full training `PLANNED`.
