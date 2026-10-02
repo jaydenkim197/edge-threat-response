@@ -48,7 +48,16 @@ python -m venv .venv-ml
 
 Cloud에서 학습 PC로 접근하려면 지원되는 private network/VPN 경로와 PC SSH 접근 설정이 필요하다. 연결이 복구된 뒤 기존 인증·GPU 점유·repo/config/dataset hash를 확인한다. 키 추출/복사나 별도 Tailscale 설치·방화벽 변경·공개 포트 개방·로컬 노트북 우회 실행을 기본으로 하지 않는다.
 
-실제 recipe 승인이 나면 먼저 작은 시험으로 SSH 종료 뒤에도 지속되는 독립 background job을 검증하고 실행한다. 고유 run ID와 commit/config/dataset hash, stdout/stderr, status/exit code, checkpoints를 보존하고 실행 중인 GPU job과 중복 launch하지 않는다. 재부팅/절전 지속성은 별도 확인해야 한다. 현재 그 시험·full training·Drive 인증/업로드는 수행하지 않았다.
+실제 recipe 승인이 나면 고유 run ID와 commit/config/dataset hash, stdout/stderr, status/exit code, checkpoints를 보존하고 실행 중인 GPU job과 중복 launch하지 않는다. 로컬 SSH 종료 후 생성 데이터 GPU 작업의 지속성은 아래의 작은 시험으로 확인했지만, full training·재부팅/절전 지속·Drive 인증/업로드는 미검증이다.
+
+### Windows SSH 종료 후 작업 지속 — 2026-10-03
+
+- `Start-Process powershell.exe -WindowStyle Hidden`만 사용한 첫 시험은 SSH 종료 후 사라졌으며 학습 summary/exit code가 생성되지 않았다. 이 PC에서 이를 detached 학습 실행 방법으로 쓰지 않는다.
+- 두 번째 시험은 `Invoke-CimMethod -ClassName Win32_Process -MethodName Create`로 `powershell.exe -NoProfile -WindowStyle Hidden -EncodedCommand ...`를 생성했다. 관리자 권한·예약 작업·서비스·방화벽 변경 없이 현재 계정에서 ReturnValue 0으로 실행됐다. 시작 SSH를 종료한 뒤 15초 지연을 거쳐 기존 CUDA smoke helper가 실행됐다.
+- 이 방식은 parent SSH 프로세스에 직접 매달리지 않는 실행 경로다. 실제 실행 body에는 repo 절대 경로, 고유 output, stdout/stderr redirect 및 `$LASTEXITCODE` 저장이 필요하다. UTF-16LE Base64는 인코딩일 뿐 비밀정보 보호 기능이 아니다. credential을 body에 넣지 않는다.
+- 신규 SSH에서 확인한 `runs/pc13-cim-smoke-20261002/exit-code.txt`는 0, `training/smoke-summary.json`은 passed였다. 생성 8 train/4 val, CUDA/AMP 1 epoch, validation·best/last·checkpoint reload GPU inference 통과, runner duration 5.875 s다. run 이름의 날짜는 시작 시 사용한 식별자이며 완료 확인은 10월 3일이다.
+- 원시 stdout/stderr·launcher PID·exit code·training evidence를 같은 ignored run에 보존했다. 첫 실패 run도 보존한다. 새 세션의 확인 명령은 종료된 launcher PID 조회 때문에 shell exit 1이었으나 학습 exit 0·summary passed와 구분했다.
+- 이번 시험은 단기 연결 종료만 검증했다. Windows 재부팅·절전·로그아웃·장시간 열 안정성·재시작/자동 resume는 확인하지 않았다. PC 전원이 꺼지면 학습은 계속되지 않는다. 실제 dataset 학습 승인 조건도 그대로다.
 
 ## Windows SOHAS staging 주의사항
 

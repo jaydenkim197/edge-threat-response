@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-03 - 남은 사용량으로 SSH 독립 GPU 실행 검증
+
+상태: 단기 SSH 종료 후 CUDA 작업 지속 `VERIFIED`; 실제 데이터 학습·장시간 안정성 `PLANNED`.
+
+- 목적/범위/완료 기준: 사용자가 남은 Plus 사용량을 효율적으로 배분해 작업하도록 요청했다. 긴 학습 전에 연결 종료 시 작업이 유지되는지 확인하는 범위로 한정했다. 기존 생성 데이터 helper를 재사용하고 exit code·summary·checkpoint 증거와 문서/Git 기록을 완료 기준으로 잡았다. source/recipe 승인 우회나 실제 full training은 제외했다.
+- search-first로 기존 helper와 Windows built-in을 선택하고 verification-loop로 실제 시작 SSH 종료와 새 연결 확인을 수행했다. 새 의존성/helper/서비스/예약 작업은 설치하지 않았다.
+- 기존 `Start-Process`+20초 지연 방식은 시작 SSH 종료 뒤 프로세스/summary/exit code가 남지 않았다. ignored `runs/pc13-detached-smoke-20261002/`는 실패 증거로 보존했다.
+- CIM `Win32_Process.Create`로 hidden PowerShell을 생성(ReturnValue 0, PID 12068), 15초 지연 후 생성 CUDA/AMP helper 실행. 시작 SSH는 학습 전에 종료됐다. 이후 새 SSH에서 exit-code 0 및 summary passed를 읽었다. 생성 8 train/4 val·1 epoch·validation·best/last·reload GPU inference 통과, runner duration 5.875 s. 확인 명령 exit 1은 이미 종료된 launcher PID 조회 때문이며 학습 exit와 별개다.
+- 원격 Windows/RTX 3060/torch 2.6.0+cu124 환경, 실행 소스 commit `1c176ae`. raw evidence는 `runs/pc13-cim-smoke-20261002/`; helper hash는 summary에 보존했다. 코드 변경 없이 handoff·verification·이 로그만 갱신했다.
+- 한계/결정 영향: 재부팅/절전/로그아웃·장시간 학습·재시작·Drive 업로드·모델 품질은 미검증. R1/H1 승인과 image/rights/coordinate/group gate는 유지한다. 다음은 dataset 권리 및 표본 검수이고, 사용량을 소진하기 위한 새 기능은 추가하지 않는다. Git: 이 기록을 포함하는 commit.
+
 ## 2026-10-02 - 로컬 SSH 작업 재개와 Windows SOHAS byte-exact audit
 
 상태: 로컬→학습 PC SSH·Windows label audit `VERIFIED`; 실제 이미지/권리/좌표/recipe 승인·full training `PLANNED`.
