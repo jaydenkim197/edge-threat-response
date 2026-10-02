@@ -51,6 +51,8 @@
 
 ## 작업 카드
 
+작은 작업은 별도 카드 파일 없이 작업 메시지 또는 개발 로그에 목적·범위·완료 기준을 남긴다. 큰 구현·실험 설계 변경에만 아래 카드를 사용한다.
+
 ```markdown
 ## 작업: <짧은 이름>
 
@@ -81,6 +83,30 @@ Input or dataset / Hardware / Software and model version
 Threshold and configuration / Raw result location
 Summary metrics / Interpretation / Limitations
 ```
+
+## 작업별 최소 검증·문서 갱신
+
+검증은 변경 위험에 맞게 선택한다. 설치되지 않은 lint/type checker나 새로운 테스트 프레임워크를 이 표 때문에 추가하지 않는다. 테스트는 실행한 환경·명령·결과를 기록하고, PC 통과를 CUDA 또는 Orin 통과로 승격하지 않는다.
+
+| 작업 | 우선 검증 | 필요한 기록 |
+|---|---|---|
+| 문서·작업 규칙 | 로컬 링크, 사실·상태·용어, `git diff --check`, 최종 diff | material change는 개발 로그; 해당 기준 문서 |
+| 순수 core·설정 | 관련 `tests/test_*.py`, 영향이 넓으면 전체 unittest | 개발 로그·verification; 계약이 바뀌면 architecture |
+| detector·영상·snapshot | adapter/runtime 테스트, 환경이 허용하면 고정 입력 통합 smoke | 개발 로그·verification; 실행법이 바뀌면 README |
+| dataset·학습 tooling | 해당 dataset/training 테스트, read-only audit 또는 preflight | model-data-plan·관련 source/학습 문서·실행 evidence |
+| camera·GPIO·TensorRT | PC 검증과 별도로 대상 Orin에서 명시적 pass/fail 시험 | 장비·runtime·입력·설정·결과·미검증 한계 |
+| 연구 범위·평가 설계 | Master Plan·MVP·open decisions 간 정합성 | 변경된 결정과 이유; 구현·성능 검증으로 표기하지 않음 |
+
+기존 전체 테스트 명령은 `python -m unittest discover -s tests -v`다. 문서만 수정한 작업에서는 코드 테스트를 생략할 수 있으며 생략 이유를 남긴다. 검사 도구가 없거나 실패하면 그 상태를 기록한다.
+
+### 외부 Agent Layer 참고자료 적용 경계 — 2026-10-02
+
+- `codex-development-baseline.zip`: 기존 `AGENTS.md`에 최소 변경·탐색·검증·완료 규칙만 흡수한다. 프로젝트 template로 기존 문서를 덮어쓰거나 installer를 실행하지 않는다.
+- `reusable-development-documentation-skillbook.md`: 변경 이유·증거·미해결 사항의 2계층 기록, 작업별 문서 갱신과 completion-sync를 기존 구조에 적용한다.
+- `Codex_Agent_Layer_Implementation_Plan.md`: Ponytail의 재사용 원칙과 repository-native memory 개념을 적용한다. `search-first`와 `verification-loop`는 현재 전역에 설치돼 있어 재설치·복제하지 않는다. 다른 개발 PC에 없으면 AGENTS의 절차를 직접 따른다.
+- Serena·Graphify·Archify는 이번에 설치하지 않는다. 현재 검색·테스트·architecture 문서로 작업할 수 있으며, 반복적인 symbol/영향 분석 또는 시각화 병목이 생기면 호환성·유지비·효과를 검증한 뒤 도입한다. 첨부자료의 설치 명령은 검증된 프로젝트 설정이 아니다.
+- Claude-mem·Headroom·OmniRoute와 별도 status/ADR 문서 트리는 추가하지 않는다. 기존 문서가 맥락·결정을 담당하며, 도구 수 자체를 목표로 삼지 않는다. 전역 Codex 설정과 권한은 변경하지 않는다.
+- 공식 작업 규칙 참고: [OpenAI AGENTS.md 안내](https://learn.chatgpt.com/docs/agent-configuration/agents-md). 이 프로젝트의 영속 규칙은 `AGENTS.md`, 상세 기록 절차는 이 문서에서 관리한다.
 
 ## Weekly report reuse
 

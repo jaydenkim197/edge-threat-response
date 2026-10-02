@@ -2,6 +2,29 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-02 - 개발 Agent Layer 참고자료의 최소 적용
+
+상태: 작업 규칙·문서 절차 `IMPLEMENTED`; 검증 결과는 아래에 기록. 모델·시스템 기능 변경 없음.
+
+### Goal / Why / Scope
+
+- 사용자가 제공한 baseline ZIP, 문서화 스킬북, Agent Layer 계획에서 현재 프로젝트의 개발 효율에 도움이 되는 기능만 가져온다. 첨부자료의 전체 설치 계획을 사용자 요청으로 해석하지 않는다.
+- 기존 구현 우선·최소 변경·실패 재현과 회귀 검증·선택적 문서 갱신을 `AGENTS.md`에 반영했다. `documentation-governance.md`에 작업별 검증·문서 routing과 도입/보류 경계를 기록했다.
+- 기존 전역 `search-first`·`verification-loop`를 재사용한다. ZIP의 template나 구버전 skill로 기존 파일을 덮어쓰지 않았다. 별도 프로젝트 status/ADR/skill 파일을 추가하지 않았다.
+- Serena·Graphify·Archify·Claude-mem·Headroom·OmniRoute는 설치하지 않았다. 앱 설정·전역 MCP·권한·Git hook·소스·dataset·학습 조건은 변경하지 않았다.
+
+### Environment / Verification / Limitations
+
+- Windows PowerShell, 저장소 `main`. 작업 시작 `git status --short --branch` clean, `git pull --ff-only` already up to date.
+- 세 참고자료와 현재 AGENTS·governance·Master Plan·MVP·open decisions·architecture·verification·최근 개발 로그·test 목록을 확인했다. 기존 source와 unittest 경로를 탐색해 새 도구 없이 유지 가능한 절차를 선택했다.
+- 검증: PowerShell 정규식으로 변경 Markdown의 로컬 링크 1개를 확인해 오류 0건, `git diff --check` 통과, 최종 diff·status에서 의도한 문서 3개만 변경됨을 확인했다. 문서만 변경하여 코드 테스트·GPU/Orin smoke는 실행하지 않았다. 규칙의 장기적인 시간·토큰 절감 효과는 아직 측정하지 않았다.
+
+### Decision impact / Next action / Git
+
+- 프로젝트 MVP·연구·dataset recipe의 상태는 변경하지 않는다. 다음 material task부터 이 절차를 적용하고 반복 병목이 나타날 때만 추가 도구를 재평가한다.
+- 현재 개발 후속 작업은 승인 전 SOHAS source/label/sample audit이며, 팀 legacy 재현과 독립적으로 진행한다.
+- Commit: 이 기록을 포함하는 commit.
+
 ## 2026-10-02 - 신규 knife detector 후보와 데이터 보관 경계 재정렬
 
 상태: 공식 Git image metadata 중복 `VERIFIED`; 후보 recipe `PROPOSAL`; Google Drive 폴더 `IMPLEMENTED`/목록 확인; raw source·CUDA 학습 `PLANNED`
