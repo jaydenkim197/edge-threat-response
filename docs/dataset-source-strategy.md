@@ -74,7 +74,7 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 
 ## 6. Evidence and caveats
 
-- [SOHAS / OD-WeaponDetection 공식 저장소](https://github.com/ari-dasci/OD-WeaponDetection)의 README는 CC BY-SA 4.0을 적지만 [`License.md`](https://github.com/ari-dasci/OD-WeaponDetection/blob/master/License.md)는 CC BY 4.0 전문이다. 실제 적용 범위를 확인하기 전에는 라이선스를 확정하지 않는다. Download package의 version·file manifest·annotation도 아직 audit하지 않았다.
+- [SOHAS / OD-WeaponDetection 공식 저장소](https://github.com/ari-dasci/OD-WeaponDetection)의 README는 CC BY-SA 4.0을 적지만 [`License.md`](https://github.com/ari-dasci/OD-WeaponDetection/blob/master/License.md)는 CC BY 4.0 전문이다. 실제 적용 범위를 확인하기 전에는 라이선스를 확정하지 않는다. 고정 Git snapshot의 metadata·label 구조 audit는 수행했지만 실제 이미지 package·decode·좌표와 시각적 annotation 완전성은 아직 검증하지 않았다.
 - 2026-10-02 공식 저장소 `master` commit `48860b990e4d4f57fe100248887fceb248475dc8`의 [DaSCI 이미지 Git tree](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/56fae9b20a3863051e510d001decd466847e9b60)와 [SOHAS train](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/e9bd454863bd05af3c534e803609189149dc51e0)·[test](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/8c1377c477bbd58c25d05f37b7a4c63ede1fcda1)의 image basename·Git blob ID를 비교했다. DaSCI 2,078장 중 1,985장은 SOHAS와 **동일 basename·동일 blob**이고, 나머지 93장은 byte-unique 후보일 뿐 perceptual uniqueness가 아니다. SOHAS는 5,859 image가 있으나 XML은 5,942개로 image 없는 annotation 83개가 남아 raw import에서 제외해야 한다. 방법과 원자료 링크는 [metadata 보고서](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)에 남겼다. 이 audit은 image decode·knife label 완전성·group 독립성 검증을 대체하지 않는다.
 - [ACF 논문](https://pmc.ncbi.nlm.nih.gov/articles/PMC9572610/)은 ACF Knife의 1920×1080 CCTV data와 small-object label 문제를 설명한다. 3,559 image와 3,618 knife label은 서로 다른 단위다. 논문이 제시한 [원 저장소](https://github.com/iCUBE-Laboratory/The-Armed-CCTV-Footage)는 2026-09-26 접근에 실패했으므로 raw inventory와 사용 가능성은 미확인이다.
 - 같은 논문은 [US Mock Attack source](https://github.com/Deepknowledge-US/US-Real-time-gun-detection-in-CCTV-An-open-problem-dataset)의 5,149 full-HD mock-attack frames와 knife 210 labels를 표기한다. 연속 frame/camera grouping은 raw package에서 다시 확인한다.
@@ -84,6 +84,8 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 ## 7. Immediate next actions
 
 2026-10-02 추가 실제 annotation 대조에서 SOHAS YOLO label은 knife 2,277 objects, 대응 VOC XML은 2,349 objects로 **58개 image에서 knife 개수 불일치**가 확인됐다. YOLO 배포본 image도 DaSCI와 1,985장이 동일하다. [후속 annotation 검증](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)에 기록했다. 따라서 GPT의 SOHAS→DaSCI→Combined 3연속 screening을 그대로 실행하지 않는다. R1/H1 우선 전략은 유지하며 **공식 YOLO label을 무검수 복사하지 않고 VOC 전체 knife bbox 재변환과 표본 확인**을 다음 준비 작업으로 둔다. 이 대조는 아직 source 채택 승인이 아니다.
+
+Cloud의 `sohas-voc-audit`가 모든 VOC knife 객체를 보존하는 변환 계약·read-only audit를 구현했고 metadata/label dry-run과 100개 검수 대기 목록을 준비했다. 실제 좌표 convention은 기본 `unknown`으로 보류하며 학습 라벨·split·recipe 승인은 생성하지 않았다. [Cloud dry-run](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md#cloud-voc-dry-run--2026-10-02)과 [source-specific 계약](model-data-plan.md#sohas-voc-source-specific-audit)을 기준으로 실제 이미지·bbox-size·negative·session 검수를 이어간다.
 
 1. 다른 팀원은 legacy review CSV 128장을 [검수 기준](dataset-evaluation-criteria.md)에 따라 판정하고 L0를 담당한다. 이는 아래 신규 detector 작업의 선행 gate가 아니다.
 2. 신규 detector 담당자는 SOHAS의 실제 사용 조건과 원본 package를 확인하고, knife 양성·음성·bbox-size·camera/source-group별 표본을 검수한다. 현재 Drive에는 원본을 올리지 않는다.

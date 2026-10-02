@@ -58,3 +58,33 @@
 - 후보와 threshold를 고르는 자료는 tuning set이며 final test가 아니다. 두 source가 크게 겹치므로 SOHAS↔DaSCI 성능 차이를 독립 domain generalization으로 주장하지 않는다.
 - 동일 50 epochs·auto batch·patience만으로 학습 예산이 같아지지 않는다. screening 설정은 전체 annotation·split·dataset size가 확정된 뒤 명시적 optimizer/batch와 step budget·schedule을 함께 정한다.
 - 우선 R1/H1, 이후 U1/T1/S1을 조건부로 검토하는 현행 전략을 유지한다. 권리·image/label·human review·split gate를 통과하기 전 학습은 시작하지 않았다.
+
+## Cloud VOC dry-run — 2026-10-02
+
+- 환경: Linux x86_64 Cloud, Python 3.12.14, pure/review `.venv`. 작업 시작에 clean `work` branch를 `git pull --ff-only origin main`으로 `0d9ce87`까지 갱신했다.
+- 공식 upstream은 `--filter=blob:none --no-checkout --depth=1` clone 후 README/license/YAML·VOC XML·YOLO label만 non-cone sparse checkout했다. HEAD는 `48860b990e4d4f57fe100248887fceb248475dc8`, staging 59 MB, image checkout 0개다. source checkout `git status --short`는 clean이다.
+- 신규 `etr-dataset sohas-voc-audit`는 image Git tree를 기준으로 split-local pairing하고 XML/YOLO bytes의 blob과 SHA-256을 기록한다. 이미지 decode 또는 실제 bbox 품질을 증명하는 검사가 아니다.
+
+```bash
+.venv/bin/python -m unittest discover -s tests -q
+.venv/bin/etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --output-dir data/source-audit/sohas-voc-cloud-final
+```
+
+| 관찰 | 결과 |
+|---|---:|
+| 전체 기존+신규 테스트 | 70 passed, 실패/skip 0 |
+| paired image Git metadata | 5,859 |
+| VOC knife objects / YOLO knife objects | 2,349 / 2,277 |
+| knife-positive candidate / negative-unverified | 2,277 / 3,582 |
+| knife object count mismatch | 58 images |
+| 제외된 orphan XML | 83 |
+| XML filename의 대소문자만 다른 항목 | 181 warnings |
+| 최종 구조 error / CLI exit | 0 / 0 |
+| 원본 이미지 checkout / decode | 0 / 미수행 |
+| 검수 대기 초기 표본 | 100 |
+
+초기 점검의 181 filename 불일치를 조사한 결과 전부 `.JPG`/`.jpg` 등 대소문자만 달랐다. split/stem으로 유일하게 짝맞춘 파일에 한해 대소문자 차이를 warning으로 허용하고 raw spelling을 보존했다. 진짜 filename 불일치·중복 pairing은 계속 보류한다. `knife_108`의 2개, `knife_1162`의 3개 객체 보존과 모든 5,859행의 `training_approved=false`, 빈 `reviewer`를 generated JSON으로 검증했다.
+
+원시 출력은 ignored `data/source-audit/sohas-voc-cloud-final/`의 `voc-candidates.jsonl`, `issues.jsonl`, `summary.json`, `review-queue.csv`, `review-sample.csv`다. 원래 split·positive/negative·다중 knife·count mismatch 층별 모집단/선택 수를 summary에 남겼다. 예를 들어 test의 다중 knife 15개를 모두 포함하고 train의 다중 knife는 43개 중 17개를 선택했다. 표본은 사람이 아직 검수하지 않았으며 좌표 미확정 상태의 크기 분포·camera/session 대표성도 증명하지 않는다.
+
+기본 coordinate convention은 `unknown`이고 모든 candidate YOLO lines는 빈 목록이다. 두 명시적 convention의 변환은 synthetic 좌표 fixture에서만 확인했다. 원본 이미지와 convention 근거를 확보하기 전 실제 학습 라벨을 생성하지 않았다. 상세 계약은 [모델·데이터 계획](../../../docs/model-data-plan.md#sohas-voc-source-specific-audit)에 있다. 권리 충돌, negative 진위, 누락 bbox, near duplicate/session grouping, 공통 tuning/final-test 및 R1/H1 승인은 계속 gate다. 실제 full training·Drive 업로드는 수행하지 않았다.

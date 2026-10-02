@@ -2,6 +2,36 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-02 - Cloud 장시간 작업 인계와 SOHAS VOC 승인 전 준비
+
+상태: source-specific 변환·audit `IMPLEMENTED`, synthetic 좌표 계약·Cloud label dry-run `VERIFIED`; 실제 이미지/좌표/권리/recipe 승인·full training `PLANNED`; Cloud→학습 PC SSH `BLOCKED`.
+
+### Goal / Why / Scope / Changed files
+
+- 사용자의 로컬 채팅 인계를 받아 이 Cloud에서 bounded dataset 준비·검증을 수행한다. 준비된 YOLO label의 72개 knife 객체 누락 차이를 그대로 학습에 반영하지 않기 위해 VOC의 모든 knife 객체를 보존한다.
+- 작업 카드: 목적은 source-specific 변환/audit 및 검수 대기 파일 준비; 범위는 raw read-only metadata/label과 pure Python; 완료 기준은 기존+오류경로 테스트, 실제 dry-run, 관련 문서 및 commit/push; 위험은 좌표 convention·negative 누락·권리·group 미확정이다. full training, 이미지 source 채택, Drive 업로드, 네트워크/방화벽 변경은 이번 작업 범위 밖이다.
+- `rg`로 기존 dataset tooling을 검색해 `parse_yolo_label`, `ValidationIssue`, review `size_bucket`을 재사용했다. 이 Cloud에는 별도 search-first/verification-loop skill이 제공되지 않아 AGENTS의 절차를 직접 따랐다. XML·Git inventory·CSV 처리는 표준 라이브러리를 사용하며 추가 dependency는 없다.
+- 변경: `src/edge_threat_response/dataset/sohas.py`, CLI, `tests/test_sohas_voc.py`; README, model-data-plan, dataset-source-strategy, verification, 기존 SOHAS metadata report, training-cuda-handoff, 이 로그. 원본·generated 출력·model/venv는 Git에 넣지 않는다.
+- 사용자에게 명시적으로 위임된 코드 작업이며 onboarding의 설치 작업과 구분한다. 기존 clean checkout을 그대로 사용하고 새 worktree는 만들지 않았다.
+
+### Environment / Commands / Result / Verification
+
+- Linux x86_64 Cloud / Python 3.12.14, 기존 pure/review `.venv`. `work` branch에서 clean 상태를 확인하고 `git pull --ff-only origin main`으로 `0d9ce87`까지 반영했다. `/dev/nvidia*`와 `nvidia-smi`가 없으므로 CUDA GPU를 확인하지 못했으며 CPU full training을 실행하지 않았다.
+- 환경 config read는 onboarding draft의 존재를 확인할 뿐 publication 상태를 제공하지 않았다. 현재 shell/코드 실행은 확인했지만 published 환경·새 task restoration·장시간 프로세스 수명을 확인했다고 주장하지 않는다. 설정 초안 저장은 publication이 아니다.
+- 원격 SSH는 BatchMode/5초 timeout/1회 연결/StrictHostKeyChecking=yes로 안전하게 확인했다. 초기 system SSH include의 ownership/permission 오류 후, 파일을 수정하지 않고 관련 없는 systemd local-host 설정을 제외하는 `-F /dev/null`로 다시 확인했다. 사용자가 제공한 사설 PC 주소의 TCP/22가 `Connection refused`를 반환했으며 인증 전에 실패했다. raw key 추출·복사, Tailscale 설치, 방화벽/포트 개방 또는 로컬 노트북 우회 실행을 하지 않았다.
+- 공식 upstream의 pinned partial/sparse clone은 ignored `data/source-audit/sohas-upstream/`에 59 MB이며 XML·YOLO label·README/license/YAML만 checkout했다. 이미지 0개, source status clean. Git regular-file executable mode도 포함하는 inventory로 image metadata 5,859개를 사용하고 source bytes의 blob/SHA-256을 확인했다.
+- `.venv/bin/python -m unittest discover -s tests -q`: 기존 56 + 신규 14 = **70 passed**, 실패/skip 0. 신규 테스트는 모든 knife bbox와 raw map, 두 좌표 convention, unknown 보류, malformed/entity/filename/dimension/unknown-class/범위 오류, 부분-label 차단, input immutability, pinned inventory, orphan/negative 대기, CLI exit 및 표본 재현성을 확인한다.
+- `.venv/bin/etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --output-dir data/source-audit/sohas-voc-cloud-final`: exit 0, VOC knife 2,349 / YOLO 2,277, count mismatch 58 images, orphan XML 83, filename 대소문자 warning 181. 초기 엄격 filename 검사에서 나온 181 항목은 모두 대소문자만 다른 것을 확인한 뒤 unique pairing의 case-only warning으로 처리했다. 다른 identity 오류는 계속 보류한다.
+- `voc-candidates.jsonl`에 `knife_108`의 2개/`knife_1162`의 3개 객체가 보존되고, 모든 행이 미승인·빈 reviewer·변환 lines 없음임을 assertion으로 확인했다. 전체 review queue 및 seed 20261002의 100개 층화 sample CSV를 생성하고 층별 n/N을 summary에 기록했다. 원시 출력은 ignored `data/source-audit/sohas-voc-cloud-final/`이다.
+- 최종 코드로 `sohas-voc-cloud-repeat/`에 다시 실행해 exit 0과 기존 candidate JSONL·sample CSV의 byte-identical 재현성을 확인했다. 문서 로컬 링크·`git diff --check`를 확인하고 최종 status에서 의도한 code/test/docs만 변경됐음을 검토했다.
+- 단위 테스트의 explicit-convention geometry는 synthetic 계약 증거다. SOHAS convention 자체는 미확정이며 기본 `unknown`으로 실제 training label·split·학습을 생성하지 않았다. 이미지 decode/시각적 bbox 완전성·negative 진위는 미수행이다.
+
+### Decision impact / Next action / Git
+
+- R1/H1 우선 제안과 gate를 유지한다. 다음은 권리·좌표 근거 확인, 승인된 이미지 검수, near duplicate/session grouping, 공통 tuning/final-test 및 명시적 batch/optimizer-step 예산 결정이다. 100개 sample은 전체 source 승인이 아니다.
+- 원격 GPU 작업에는 Cloud에서 사설/Tailscale 대상까지의 지원되는 네트워크 경로와 PC SSH service/접근 정책이 필요하다. TCP 연결이 가능해진 뒤 기존 SSH 인증을 재확인한다. 기존 PC CUDA smoke 근거는 유효하지만 이 Cloud의 연결·background 지속성을 증명하지 않는다.
+- Git: 이 기록을 포함하는 commit. 의도한 code/test/docs만 stage하며 non-force push 결과를 확인한다.
+
 ## 2026-10-02 - 3개 screening 제안 검토와 SOHAS 실제 라벨 대조
 
 상태: upstream metadata·실제 label/XML object count `VERIFIED`; recipe 채택·변환·human review·학습 `PLANNED`/기존 `PROPOSAL` 유지.

@@ -11,6 +11,7 @@ from .registry import RegistryError, load_registry
 from .review import generate_review_pack
 from .split import parse_ratios, plan_manifest_file
 from .audit import read_manifest
+from .sohas import CONVENTIONS, audit_sohas_voc
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -75,6 +76,16 @@ def build_parser() -> argparse.ArgumentParser:
     review_parser.add_argument("--output-dir", type=Path, required=True)
     review_parser.add_argument("--per-stratum", type=int, default=8)
     review_parser.add_argument("--seed", type=int, required=True)
+
+    sohas_parser = subparsers.add_parser(
+        "sohas-voc-audit", help="Screen pinned SOHAS VOC boxes without admitting training data."
+    )
+    sohas_parser.add_argument("--source-root", type=Path, required=True)
+    sohas_parser.add_argument("--output-dir", type=Path, required=True)
+    sohas_parser.add_argument("--coordinate-convention", choices=CONVENTIONS, default="unknown")
+    sohas_parser.add_argument("--coordinate-evidence", help="Evidence/reference for an explicit convention; proposals still require review.")
+    sohas_parser.add_argument("--sample-count", type=int, default=100)
+    sohas_parser.add_argument("--seed", type=int, default=20261002)
     return parser
 
 
@@ -90,6 +101,14 @@ def main(argv: list[str] | None = None) -> int:
             return _run_materialize_knife_yolo(args)
         if args.command == "review-pack":
             return _run_review_pack(args)
+        if args.command == "sohas-voc-audit":
+            summary = audit_sohas_voc(
+                args.source_root, args.output_dir, convention=args.coordinate_convention,
+                coordinate_evidence=args.coordinate_evidence,
+                sample_count=args.sample_count, seed=args.seed,
+            )
+            print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+            return 1 if summary["error_count"] else 0
     except (RegistryError, OSError, RuntimeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2

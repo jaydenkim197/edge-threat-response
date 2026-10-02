@@ -103,6 +103,16 @@ etr-dataset materialize-knife-yolo --manifest data/work/legacy-development-split
 
 재현 결과는 [legacy visual review report](reports/datasets/legacy-visual-review-v1/report.md)에 있다. `review.csv`의 판정 열을 사람이 채우기 전까지 학습 승인은 완료되지 않은 상태다.
 
+## SOHAS VOC 승인 전 audit
+
+`etr-dataset sohas-voc-audit`는 고정 upstream의 image Git metadata와 XML을 split/basename으로 짝맞추고 모든 knife bbox를 보존한다. 원본이나 학습 dataset을 수정하지 않으며, 준비된 YOLO label을 그대로 채택하지 않는다.
+
+```bash
+etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --output-dir data/source-audit/sohas-voc-review --sample-count 100 --seed 20261002
+```
+
+입력은 upstream commit `48860b990e4d4f57fe100248887fceb248475dc8`의 Git checkout이며 XML·YOLO label이 로컬에 있어야 한다. 이미지가 없어도 metadata/label dry-run은 가능하지만 decode·시각 검수는 검증되지 않는다. 출력은 `voc-candidates.jsonl`, `issues.jsonl`, `summary.json`, 전체 `review-queue.csv`와 층화 `review-sample.csv`다. 좌표 convention 기본값 `unknown`은 raw 좌표만 보존하고 YOLO 초안을 만들지 않는다. 명시적인 convention·근거가 있는 변환도 검수 대기 초안이며 학습 승인이 아니다. 준비·좌표 규칙·gate는 [모델·데이터 계획](docs/model-data-plan.md#sohas-voc-source-specific-audit)과 [검증 보고서](reports/datasets/sohas-dasci-metadata-2026-10-02/report.md#cloud-voc-dry-run--2026-10-02)에 있다.
+
 ## Detector training smoke
 
 ML 환경은 일반 개발 환경과 분리한다. 아래 profile은 dataset·학습 배관 검사용이며 성능 학습이나 연구 파라미터가 아니다.

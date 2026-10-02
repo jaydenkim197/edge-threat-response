@@ -99,6 +99,20 @@ COCO/Open Images 전용 downloader를 일반화해 미리 만들지 않는다. �
 
 같은 날 visual-review pack 생성기를 구현하고 7,361장 전체 decode 오류 0, source/split/format/normalized-area별 128장 표본과 contact sheet 8장을 생성했다. 전 페이지 개발 확인에서 제품사진·주방·손/knife 클로즈업·워터마크·저해상도 장면 등 CCTV와 다른 domain 및 반복 인물·배경이 함께 보였다. 현재 split metric은 engineering baseline 외 일반화 근거로 사용하지 않는다. 사람의 CSV 판정이 끝날 때까지 dataset 품질 승인과 ambiguous annotation 규칙은 `PENDING`이다.
 
+#### SOHAS VOC source-specific audit
+
+`dataset/sohas.py`와 `etr-dataset sohas-voc-audit`는 승인 전 준비 경로다. 기존 `parse_yolo_label`, `ValidationIssue`, review의 `size_bucket`을 재사용하고 XML은 Python 표준 라이브러리로 읽는다. 추가 의존성이나 일반화된 downloader는 만들지 않는다.
+
+- 입력: 공식 upstream Git commit `48860b990e4d4f57fe100248887fceb248475dc8`. Git tree의 원래 train/test image 목록을 같은 split의 `annotations/xmls` / `annotations_test/xmls`와 basename으로 짝맞춘다. sparse checkout에 이미지가 없어도 metadata pairing은 가능하다. XML·비교용 YOLO label은 로컬 bytes의 Git blob 일치를 검사하고 SHA-256을 출력한다.
+- raw map: 공식 YAML의 `0=pistol, 1=smartphone, 2=knife, 3=monedero, 4=billete, 5=tarjeta`. VOC `name=knife` / raw `2` → runtime canonical `1=knife` → model-local `0=knife`. non-knife 객체와 모든 원본 bbox·difficult/truncated 값도 candidate JSON에 보존한다.
+- 기본 `--coordinate-convention unknown`: 좌표를 추정하지 않고 변환을 보류한다. `pixel-edges`는 `(xmin+xmax)/(2W)`, `(ymin+ymax)/(2H)`, `(xmax-xmin)/W`, `(ymax-ymin)/H`이며 좌표 범위는 `0≤min<max≤size`다. `voc-1based-inclusive`는 정수 `1≤min≤max≤size`를 검사한 뒤 left/top에서 1을 빼고 right/bottom을 유지한다. 이는 지원 가능한 두 **명시적 입력 계약**이지 SOHAS 전체의 convention 확정이 아니다. 둘 다 `--coordinate-evidence`가 필요하며 실제 원본/이미지에서 확인해야 한다.
+- 오류 bbox는 clip·교정·부분 삭제하지 않는다. 하나라도 잘못된 객체가 있거나 pairing/identity가 모호하면 전체 이미지의 변환 초안을 보류한다. 유일하게 짝맞춘 image의 `.JPG`/`.jpg` 차이는 warning으로 기록하고 원래 filename을 보존한다. 이미지 없는 XML 83개는 제외한다.
+- 출력: `voc-candidates.jsonl`은 원본 bbox와 선택적 `candidate_yolo_lines`를 가진 별도 검수 형식이다. 학습 `.txt`, data YAML, 자동 split, 표준 materialization manifest를 생성하지 않는다. 기존 `plan-split`/`materialize-knife-yolo`/`review-pack`에 바로 넘기는 입력이 아니다.
+- `review-queue.csv`와 `review-sample.csv`는 실제 사람의 판정을 위한 빈 열을 가진다. 원래 split·candidate role·다중 knife·YOLO 개수 차이를 층으로 두고 SHA-256/seed 순서와 round-robin으로 초기 표본을 선택한다. `summary.json`에 각 층의 선택/모집단 수를 남긴다. 좌표 미확정 상태에서는 size stratum을 추정하지 않으며 이미지 확보·좌표 확인 뒤 크기/scene/session 구간 검수를 보완해야 한다.
+- knife annotation이 없는 이미지는 항상 `negative_unverified`다. 권리·실제 knife 부재/라벨 완전성·좌표·decode·near duplicate·session grouping·공통 tuning/final-test·recipe 승인 전에는 R1/H1에 반입하지 않는다. `reviewer`는 비워 두며 AI 제안을 사람 판정으로 기록하지 않는다.
+
+실행은 repository root의 활성 Python 환경에서 위 README 명령을 사용한다. 새 출력 디렉터리가 필요하며 exit `0`은 구조 audit 실행 성공, `1`은 기록된 구조 오류, `2`는 입력/실행 오류다. exit `0`도 채택·권리·negative 진위·좌표 검증을 뜻하지 않는다. [Cloud dry-run 근거](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md#cloud-voc-dry-run--2026-10-02)와 검수 gate를 함께 확인한다.
+
 ### D3 — training runner/CPU smoke/CUDA handoff `IMPLEMENTED`, CUDA execution `PLANNED`
 
 - YOLO26n primary와 YOLO11n fallback을 development proposal로 둔 config-driven train/evaluate/infer command

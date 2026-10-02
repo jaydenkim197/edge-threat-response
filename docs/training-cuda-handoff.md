@@ -42,6 +42,14 @@ python -m venv .venv-ml
 
 검증 증거: [RTX 3060 CUDA smoke](../reports/training/pc13-cuda-smoke-2026-10-02/report.md). 설치 근거: [PyTorch 공식 CUDA wheel 조합](https://pytorch.org/get-started/previous-versions/), [Ultralytics 설치 안내](https://docs.ultralytics.com/quickstart/).
 
+## Cloud에서 장시간 작업을 이어받는 경우
+
+2026-10-02 Cloud 인계에서 pure/review Python 코드·테스트 실행은 가능했으나 published 환경인지 확인하는 도구/증거는 없었다. onboarding draft 저장을 publication으로 해석하지 않는다. GPU 장치는 확인되지 않았고 실제 full training을 Cloud CPU에서 실행하지 않았다. 사용자가 제공한 학습 PC 사설 주소의 SSH는 짧은 timeout·BatchMode·strict host-key check로 점검했으나 TCP/22 `Connection refused`로 인증 전에 실패했다. 이 결과만으로 PC의 SSH 서비스 상태나 Tailscale/VPN 상태를 확정하지 않는다.
+
+Cloud에서 학습 PC로 접근하려면 지원되는 private network/VPN 경로와 PC SSH 접근 설정이 필요하다. 연결이 복구된 뒤 기존 인증·GPU 점유·repo/config/dataset hash를 확인한다. 키 추출/복사나 별도 Tailscale 설치·방화벽 변경·공개 포트 개방·로컬 노트북 우회 실행을 기본으로 하지 않는다.
+
+실제 recipe 승인이 나면 먼저 작은 시험으로 SSH 종료 뒤에도 지속되는 독립 background job을 검증하고 실행한다. 고유 run ID와 commit/config/dataset hash, stdout/stderr, status/exit code, checkpoints를 보존하고 실행 중인 GPU job과 중복 launch하지 않는다. 재부팅/절전 지속성은 별도 확인해야 한다. 현재 그 시험·full training·Drive 인증/업로드는 수행하지 않았다.
+
 ## Colab 절차
 
 `notebooks/baseline-v1-colab.ipynb`를 Colab에서 열고 위에서 아래로 실행한다. notebook의 `REVIEW_APPROVED` 기본값은 `False`이며, review 결과를 팀이 확인한 뒤에만 직접 `True`로 바꾼다.
