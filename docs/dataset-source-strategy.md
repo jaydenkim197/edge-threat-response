@@ -19,7 +19,7 @@
 
 | 역할 | source | 지금 적용할 양 | 이후 허용 범위 | 이유 |
 |---|---|---:|---|---|
-| L0 legacy baseline | 기존 MIDAS 7,361장 development export | 신규 detector에는 0장 | 다른 팀원이 사람 review 후 별도 **legacy-only** baseline run을 담당 | L0의 검수·재현은 핵심 신규 detector 후보의 source audit·학습을 막지 않는다. |
+| L0 legacy baseline | 기존 MIDAS 7,361장 development export | 신규 1차 recipe에는 0장 | 다른 팀원이 사람 review 후 별도 **legacy-only** baseline run을 담당. 검수 통과 일부의 신규 보강은 별도 L1 후보 | L0의 검수·재현은 핵심 신규 detector 후보의 source audit·학습을 막지 않는다. |
 | P1 primary real-world candidate | SOHAS detection | audit 표본만: stratified 100장 | 권리 충돌 해결과 audit 통과 시 첫 public real-data training source 후보 | knife와 smartphone·wallet·card·banknote 등 similar handled object가 있어 hard negative를 다룰 수 있다. |
 | P2 knife-diversity candidate | DaSCI / OD-WeaponDetection knife detection | 필요 시 byte-unique 후보 최대 93장 검수 | 실제 visual gap을 메울 때만 SOHAS 보강 실험; 단독·합본 필수 run 아님 | 공식 이미지 파일 기준 2,078장 중 1,985장이 SOHAS와 동일 Git blob이다. 나머지 93장도 near-duplicate·품질·권리 미검증이다. |
 | E1 external CCTV test candidate | ACF Knife | 0장 — 논문의 원 저장소가 현재 접근되지 않음 | **Dataset v1 학습에는 0장**. 파일·권리·라벨 확보 시 외부 **이미지** 평가 후보 | 1920×1080 CCTV, small knife 문제와 직접 맞닿아 있다. 영상과 event 정답 확인 전에는 사건 지표를 계산할 수 없다. |
@@ -40,11 +40,12 @@ L0 재현은 팀원의 독립 트랙이다. 신규 knife detector의 첫 공개 
 | R1 | SOHAS의 audit-passed knife 양성 및 knife 부재를 확인한 음성 | 공개 실사 기준 detector | SOHAS 권리·annotation·group audit 통과 |
 | H1 | R1과 **같은 knife 양성**만 사용; 음성 이미지 제외 | 유사 handheld object 음성의 false-positive 억제 효과 | R1과 같은 split·설정·평가셋을 유지할 수 있을 때 병렬 run |
 | T1 | R1 + 직접 촬영한 3 m급 CCTV의 **training session** | 목표 설치 시점의 적응 효과 | 카메라·동의·라벨·독립 tuning/test session 확보 후 |
+| L1 | R1 + 팀 검수에서 선별한 legacy 이미지 | 기존 자료의 visual gap 보강 효과 | 팀의 128장 결과와 추가 검수로 적합·고유 이미지가 확인될 때만; 필수 아님 |
 | U1 | R1 + DaSCI의 실제 고유·적합 이미지 | 작은 칼/가림 등 확인된 visual gap 보강 | 최대 93장 후보의 near-duplicate·품질 검수 후에만; 필수 아님 |
 | S1 | R1 + Simuletic 검수 통과분(최대 114장) | synthetic viewpoint 보강 효과 | real-only R1과 동일한 real holdout을 사용할 때만; 선택 실험 |
 | G1 | R1 + 한 종류의 gap-filling source | R1/T1 오류 분석에서 확인된 약점 보강 | Dangerous Items의 권리 확인 또는 Open Images의 개별 image 권리·라벨 검수 후; 선택 실험 |
 
-**우선 학습은 R1과 H1**, 이후 카메라 자료가 준비되면 T1을 검토한다. U1/S1/G1은 GPU가 남는다는 이유로 자동 실행하지 않는다. 특히 U1의 기여는 93장 후보의 독립성·target relevance가 입증될 때만 평가한다. T1의 데이터량은 프레임 수로 미리 고정하지 않으며, 촬영 전 session·장면·참여자 단위의 train/tuning/final-test 경계를 정한다. L0와 신규 run은 같은 공통 holdout으로 비교하되, L0의 완료가 R1을 지연시키지는 않는다.
+**우선 학습은 R1과 H1**, 이후 카메라 자료가 준비되면 T1을 검토한다. L1/U1/S1/G1은 GPU가 남는다는 이유로 자동 실행하지 않는다. L1은 팀의 legacy 검수 결과가 긍정적일 때만 검토하며 L0 model의 성능과 별개의 데이터 보강 실험이다. 특히 U1의 기여는 93장 후보의 독립성·target relevance가 입증될 때만 평가한다. T1의 데이터량은 프레임 수로 미리 고정하지 않으며, 촬영 전 session·장면·참여자 단위의 train/tuning/final-test 경계를 정한다. L0와 신규 run은 같은 공통 holdout으로 비교하되, L0의 완료가 R1을 지연시키지는 않는다.
 
 모든 신규 run의 첫 비교에서는 model family/size, pretrained checkpoint, 입력 규격, optimizer·augmentation, seed, **optimizer step 기준의 학습 예산과 schedule**, 평가 threshold 선택 절차를 동일하게 한다. 데이터량이 다르므로 같은 epoch 수만 강제하지 않는다. H1–R1은 음성 포함 **recipe** 비교이지 음성 이미지 하나의 순수 인과효과 증명은 아니다. 공통 **tuning set**에서 후보와 threshold를 고르고 최종 test는 한 번만 사용한다. Detector 선택 뒤 B0~B3는 그 **동일한 최종 weight·detection JSONL**로 실행한다. R1과 H1의 차이가 작으면 상위 후보를 다른 seed로 재실행해 단일 run 우연성을 확인한다.
 

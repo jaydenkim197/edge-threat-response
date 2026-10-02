@@ -41,7 +41,7 @@ ACF 논문은 [과거 GitHub 주소](https://github.com/iCUBE-Laboratory/The-Arm
 
 ## 3. 연구 비교에 적용하는 방식
 
-1. Detector 데이터 실험(L0, R1, H1, 이후 조건부 T1/U1/S1/G1)은 source별 run ID·학습 recipe·detector weight를 구분한다. 기존 MIDAS 7,361장 export는 사람 검수 전 L0 학습 승인이 아니며, L0 완료가 신규 detector source audit를 막지 않는다.
+1. Detector 데이터 실험(L0, R1, H1, 이후 조건부 T1/L1/U1/S1/G1)은 source별 run ID·학습 recipe·detector weight를 구분한다. 기존 MIDAS 7,361장 export는 사람 검수 전 L0 학습 승인이 아니며, L0 완료가 신규 detector source audit를 막지 않는다. L1은 별도의 선별 legacy 보강 가능성만 남긴다.
 2. B0~B3의 공간·시간 계층 비교에서는 **동일 detector, 동일 입력 영상, 동일 설정과 장비**를 사용한다. Detector를 바꾼 효과를 상황 판단의 효과로 해석하지 않는다.
 3. 공개 CCTV의 bbox 정답은 detector의 image/frame-level 외부 평가에 쓴다. B0~B3의 event precision/recall/alert latency에는 연속 영상, 양성·음성 사건, event start/end 정답이 필요하다.
 4. 최종 target-domain 사건 실험은 직접 촬영한 독립 recording session을 기준으로 설계한다. 실제 카메라·화각·관찰 거리가 정해지면 약 3 m CCTV라는 현재 가정을 측정값으로 갱신한다.

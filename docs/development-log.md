@@ -13,7 +13,7 @@
 
 ### Scope / Changed files
 
-- `dataset-source-strategy.md`에 R1(SOHAS 검수 양성+음성), H1(같은 양성만), T1(R1+직접 촬영 training session)을 우선 후보로, U1/S1/G1을 조건부 보강으로 기록했다. L0는 별도 트랙이다. 최종 recipe의 팀 승인 전까지 모두 `PROPOSAL`이다.
+- `dataset-source-strategy.md`에 R1(SOHAS 검수 양성+음성), H1(같은 양성만), T1(R1+직접 촬영 training session)을 우선 후보로, L1(선별 legacy)/U1(고유 DaSCI)/S1/G1을 조건부 보강으로 기록했다. L0 model은 별도 트랙이며 그 데이터의 선별 활용 가능성까지 없애지 않았다. 최종 recipe의 팀 승인 전까지 모두 `PROPOSAL`이다.
 - `project-plan.md`, `pre-orin-work-plan.md`, `open-decisions.md`, `model-data-plan.md`, `prior-work-and-dataset-review.md`, `verification.md`, README의 L0 선행 의존과 후보·증거 설명을 정합화했다. 코드·모델·raw data는 바꾸지 않았다.
 - 팀 Google Drive의 [모델개발_데이터셋·실험결과](https://drive.google.com/drive/folders/1tBI7EkxKLN41CwHWA60ENXCgOw_0iYiz)에 원본(권리확인 후)/검수·분할명세/학습결과/독립평가 폴더를 만들고 목록으로 확인했다. [metadata 보고서](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)만 [Drive 보관본](https://drive.google.com/file/d/1h10H-lSCS81TbUTP8epF0qotx5MVkzDy/view?usp=drivesdk)으로 업로드하고 metadata로 파일·부모 폴더를 재확인했다. 원본·자체 촬영 영상은 업로드하지 않았다. 10 GB 미만 로컬 staging을 허용한다.
 
