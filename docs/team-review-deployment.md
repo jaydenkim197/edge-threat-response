@@ -1,10 +1,10 @@
 # PC13 팀 데이터셋 웹 검수
 
-상태: PC13 서버·시작 작업·로컬 인증 `VERIFIED`; 외부 HTTPS 주소는 Tailscale Funnel의 tailnet 관리자 승인 대기. 표본 검수 자체와 데이터 채택은 별도다.
+상태: PC13 서버·시작 작업 및 외부 HTTPS 로그인·목록·이미지 접근 통제 `VERIFIED`. 팀원 계정의 실제 판정 저장·재접속과 재부팅 후 자동 복구는 아직 `NOT VERIFIED`. 표본 검수 자체와 데이터 채택은 별도다.
 
 ## 팀원 사용법
 
-1. 관리자가 공유한 HTTPS 주소로 접속한다.
+1. [팀 검수 사이트](https://yu-desktop-97msr1i.tail37c267.ts.net/)에 접속한다.
 2. 본인에게 발급된 접속 코드로 로그인한다.
 3. 후보를 고른 뒤 CCTV형 장면인지와 칼 라벨이 정상인지 답한다. `문제 있음`은 메모를 쓴다.
 4. 저장 문구를 확인하고 `다음 미검수 받기`를 누른다. 배정은 PC13에서 관리하므로 같은 미검수 이미지를 여러 팀원에게 나눠주지 않는다.
@@ -33,7 +33,7 @@
 - 코드 checkout: `C:\Class6\edge-threat-response`. 원본 아카이브·검수 pack·DB는 ignored `data/`; 모델은 ignored `runs/`/`*.pt`에 둔다. GitHub에는 코드와 사용법만 올라간다.
 - 인증 앱: `edge_threat_response.dataset.team_review`, Flask 3.1.3 + Waitress 3.0.2. PC13 `127.0.0.1:8770`만 listen한다. Tailscale Funnel은 HTTPS를 앞단에서 종료한다. 공용 포트포워딩과 LAN bind는 필요 없다.
 - Windows 작업 스케줄러 `ETR-Team-Review`: 부팅 시 사용자 PC13 계정의 S4U 제한 권한으로 앱을 재시작한다. 2026-10-04 수동 작업 시작·로컬 로그인 HTTP 200을 확인했다. 실제 재부팅 시험은 아직 하지 않았다.
-- PC13 `tailscale set --unattended=true` 적용. Funnel 자체는 tailnet 관리자가 활성화한 뒤 `tailscale funnel --bg --yes 8770`로 지속 설정한다. `tailscale funnel status`와 외부 브라우저의 로그인 전 이미지 401을 확인하고 팀에 링크를 공유한다. 관리자 승인 전에는 공개 URL이 동작한다고 말하지 않는다.
+- PC13 `tailscale set --unattended=true` 적용. 2026-10-04 tailnet 관리자가 Funnel을 승인했고 `tailscale funnel --bg --yes 8770`로 HTTPS 주소를 활성화했다. `tailscale funnel status`에서 백그라운드 proxy를 확인했다. 실제 재부팅 후 Funnel·앱 복구는 아직 시험하지 않았다.
 - 설정·비밀값: ignored `data/review/team-server/config.json`, `secrets/team-review-session.key`, `secrets/team-review-admin.txt`. README나 명령 로그에 코드 값을 넣지 않는다. `tools/configure_team_review.py --public-url https://<actual-host>`는 기존 사용자·세션 secret·검수 DB를 덮어쓰지 않고 catalog만 갱신한다. 서버는 변경된 catalog를 재시작 후 읽는다.
 - DB: `data/review/team-server/team.sqlite3`는 계정/배정, 각 pack의 `human-review.sqlite3`는 판정/이력이다. 30분마다 SQLite backup API로 `data/review/team-server/backups/`에 일관된 사본을 추가한다. **같은 PC 디스크의 백업은 디스크 고장 대비가 아니다.** 승인된 별도 저장소에 주기적으로 복사하는 운영 절차는 아직 미설정이다.
 - 기존 SOHAS 이전은 `tools/migrate_review_db.py`로만 한다. 같은 pack hash와 비어 있는 목적지 DB를 검사하고 version/history를 그대로 옮기며, 어느 한쪽에도 판정이 있으면 자동 병합하지 않는다. 이 기록 이후 노트북의 이전 SOHAS URL에 새로 쓰면 PC13과 판정이 갈라진다. 중앙 사이트를 사용하기 시작하면 기존 로컬 URL은 사용하지 않는다.
@@ -43,5 +43,5 @@
 
 - PC13 Tailscale v1.102.4, C 여유 약 144.5 GiB(작업 전 관찰). Windows Python 3.12.4, RTX 3060 학습 venv의 optional review-server dependencies를 설치했다. 검수 자체는 GPU를 사용하지 않는다.
 - PC13 local `GET /login` 200, 인증 없는 `GET /api/catalog` 및 SOHAS/Dangerous 이미지 URL 401. 7/8 후보 pack으로 다시 설정하고 시작 작업을 재실행했다. 읽기 전용 실제 config smoke는 **관리자 로그인→7개 pack 목록/첫 이미지 200**과 SOHAS 기존 판정 6건을 확인했고, 판정·계정은 변경하지 않았다. 노트북과 PC13에서 team tests 4개, 전체 로컬 테스트 83개 통과. Session cookie, Host/Origin/CSRF, role·배정 충돌, history/backup을 fixture에서 검증했다.
-- Tailscale Funnel 공개가 계정의 관리자 enable gate를 요구한다: `https://login.tailscale.com/f/funnel?node=nWsQChVFgg11CNTRL`. 승인 전 `tailscale funnel status = No serve config`; 팀 브라우저 접속·외부 저장/reload는 `NOT VERIFIED`.
+- Funnel 승인 후 외부 `GET /login` 200, 비인증 catalog·Dangerous 이미지 401, 관리자 HTTPS 로그인 후 catalog의 준비 후보 7개와 Dangerous 첫 이미지 200/79,893 bytes를 확인했다. 관리자 로그인은 판정을 쓰지 않는다. 팀원 개인 계정의 실제 첫 판정 저장·새로고침/재접속은 첫 검수자가 수행할 때 확인해야 한다.
 - 원본 권리·좌표·중복/session gate, 사람 검수, 학습 채택은 별개다. User team accounts는 실제로 발급하기 전까지 관리자 1개뿐이다.
