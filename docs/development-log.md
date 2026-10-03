@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-03 - 버튼 기반 로컬 SOHAS 검수 화면
+
+- 요청/작업 카드: CSV 대신 사이트처럼 클릭하며 표본을 확인하도록 원본·raw knife 박스·판정 버튼·이동·자동 저장·CSV export를 구현한다. 완료 기준은 실제 100장 로딩·별도 테스트 DB의 저장/재개와 원본 보존·전체 tests·문서/Git 반영이다. 데이터 채택·인간 대리 판정·실제 학습·공개 배포/Drive 업로드는 범위 밖이다.
+- search-first로 기존 review CSV/evidence/VOC/Pillow helper를 재사용하고 원본 보존 output만 얇게 확장했다. 서버/저장은 Python stdlib `http.server`/SQLite, 화면은 HTML/CSS/JS이며 새 framework/dependency를 추가하지 않았다. Windows built-in launcher는 재사용/재개 시 반복 명령을 없애려는 사용자 UI 요구를 지원한다.
+- 변경: `review_web.py`, 정적 자산 3개, `etr-review` 및 package-data 설정, source image helper, Windows launcher, store/API tests; README·검수 기준·handoff·verification·이 로그. `domain`/품질/누락/처리 후보/검수자 필수, 음성의 실제 칼 부재 확인, 제외/보류 이유를 검증하며 권리/좌표 승인 입력은 제공하지 않는다.
+- 원격에서 기존 sample의 새 `sohas-click-review-20261003/` pack을 생성한 뒤 노트북으로 SCP 복사했다. 원본 100장 31,100,785 bytes와 knife 객체 103개·7 sheets를 보존했다. SQLite와 image/CSV는 ignored로 Git에 올리지 않는다. 기존 pack은 보존한다.
+- verification-loop: focused store/API 4 tests 후 전체 **76 tests 통과**(1.873 s 관찰), `compileall`·Node JS 문법 확인. 초기 SQLite connection context가 연결을 닫지 않아 Windows fixture cleanup이 실패한 것을 재현·수정하고 재검증했다. 저장은 transaction+version으로 오래된 탭 덮어쓰기를 차단하고 source hash가 바뀌면 DB 재사용을 거부한다. CSV formula 입력은 export에서만 neutralize한다.
+- 실제 브라우저에서는 **별도 QA DB**에 `UI_TEST_NOT_HUMAN` 1행을 저장해 다음 이동·새로고침 후 동일 값 재개·확대·박스 숨기기·음성 필터를 확인했다. browser warn/error 0개. 이는 UI 기능 확인이며 인간 검수 완료가 아니다. 실제 human DB는 0행임을 확인했다.
+- 현재 setuptools의 한글 경로 editable wheel `.pth` 생성(cp1252)과 초기 한국어 stdout 오류를 재현했다. startup 메시지를 ASCII로 바꾸고 launcher는 `PYTHONPATH=src`/UTF-8 모듈 실행으로 설치 없이 사용한다. editable install 성공을 주장하지 않는다. 일반 wheel build 성공·정적 자산 포함을 확인했다. Windows launcher 기존 서버 재사용 및 새 포트 시작도 통과했다.
+- 한계/영향: loopback 단일 PC 검수 도구이며 공유 계정/원격 다중 사용자/자동 Drive 백업/annotation 수정/학습은 없다. 미완성 입력은 browser-local draft다. Legacy L0와 recipe 승인 상태는 불변. 다음은 사용자가 이 UI에서 100장 검수 → 표본 오류/누락/negative·좌표·촬영 group 확인 → source/split/recipe 결정이다. Git: 이 기록을 포함하는 commit.
+
 ## 2026-10-03 - 비상용 내부 연구 범위의 SOHAS 이미지 검수 준비
 
 - 사용자 clarification: 상용 목적이 아닌 수업 연구이며 작업 진행을 요청했고 `C:\Class6` 보존도 확인했다. 메일 회신을 모든 데이터 확보의 필수 조건으로 둔 이전 설명을 수정한다. 공식 연구진의 public research 설명 및 CC BY/CC BY-SA의 복제·변형 허용을 확인해 제한된 로컬 sample 검수는 진행하고 외부 공개 조건은 분리한다. license 차이 해결·학습 채택을 주장하지 않는다.

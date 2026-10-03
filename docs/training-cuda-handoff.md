@@ -75,6 +75,12 @@ Windows의 `core.autocrlf=true` checkout은 XML 줄바꿈을 바꾸어 pinned Gi
 
 입력 sample CSV의 image paths만 pinned sparse checkout에 추가한 후 실행한다. helper는 다운로드/학습/label export를 하지 않고 기존 source blob 검사·VOC parser와 Pillow를 사용한다. output은 source 밖의 새 디렉터리여야 한다. 원본 dimension과 XML dimension이 다르거나 blob/annotation 검사가 실패하면 중단한다. CSV의 reviewer는 비워 두며 raw bbox overlay를 coordinate convention 승인으로 해석하지 않는다. 본 학습은 검수·split·recipe 승인 이후다.
 
+2026-10-03 이후 helper는 `images/`에 byte-exact 원본과 evidence의 `image_file`/`knife_boxes_xyxy_raw`도 저장한다. 기존 pack을 덮어쓰지 말고 새 output으로 생성한다. 원격에서 생성한 `sohas-click-review-20261003/` pack은 노트북에도 복사됐으며, 로컬 `tools/start_review.ps1`을 실행해 브라우저에서 검수할 수 있다. 이전 contact-sheet-only pack은 웹 입력으로 바로 사용할 수 없다.
+
+표준 CLI는 `etr-review --review-dir PATH`다. 설치하지 않고 실행하려면 저장소에서 `$env:PYTHONPATH = (Join-Path (Get-Location).Path 'src')`를 지정한 뒤 `python -X utf8 -m edge_threat_response.dataset.review_web --review-dir PATH`를 실행한다. Windows launcher가 이를 자동으로 처리한다. 현 로컬 setuptools의 editable install은 한글 경로의 `.pth` 생성에서 cp1252 오류가 났으므로 성공했다고 기록하지 않는다. 일반 wheel build와 정적 UI 자산 포함은 검증됐고 시스템 locale·전역 package는 변경하지 않았다.
+
+웹 서버/판정 저장은 노트북 내부에서만 동작하며 학습 PC의 full training을 시작하지 않는다. 테스트는 `--database`로 별도 DB를 지정하고 실제 사람 판정 DB를 사용하지 않는다. source·좌표·group/split 검토와 recipe 승인 절차는 불변이다.
+
 ## Colab 절차
 
 `notebooks/baseline-v1-colab.ipynb`를 Colab에서 열고 위에서 아래로 실행한다. notebook의 `REVIEW_APPROVED` 기본값은 `False`이며, review 결과를 팀이 확인한 뒤에만 직접 `True`로 바꾼다.

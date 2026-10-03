@@ -28,6 +28,8 @@ def render_sample(source: Path, sample_csv: Path, output: Path) -> dict:
     output.mkdir(parents=True)
     sheets = output / "contact-sheets"
     sheets.mkdir()
+    image_dir = output / "images"
+    image_dir.mkdir()
     evidence, tiles = [], []
     for index, row in enumerate(rows, 1):
         path = row["image_path"]
@@ -37,6 +39,8 @@ def render_sample(source: Path, sample_csv: Path, output: Path) -> dict:
             folder = "annotations/xmls" if row["original_split"] == "train" else "annotations_test/xmls"
             xml_path = f"Weapons and similar handled objects/Sohas_weapon-Detection/{folder}/{Path(path).stem}.xml"
         raw = _source_bytes(source, path, inventory[path])
+        image_file = f"images/{index:03d}{Path(path).suffix.lower()}"
+        (output / image_file).write_bytes(raw)
         annotation = parse_sohas_voc(_source_bytes(source, xml_path, inventory[xml_path]),
                                      image_name=Path(path).name)
         with Image.open(source / path) as original:
@@ -62,6 +66,9 @@ def render_sample(source: Path, sample_csv: Path, output: Path) -> dict:
                   fill="white")
         tiles.append(tile)
         evidence.append({"sample_no": index, "image_path": path,
+                         "image_file": image_file,
+                         "knife_boxes_xyxy_raw": [list(map(float, obj["bbox_xyxy_raw"]))
+                                                  for obj in annotation["objects"] if obj["raw_name"] == "knife"],
                          "image_sha256": hashlib.sha256(raw).hexdigest(),
                          "image_bytes": len(raw), "width": width, "height": height,
                          "knife_count": annotation["knife_count"], "reviewer": "",

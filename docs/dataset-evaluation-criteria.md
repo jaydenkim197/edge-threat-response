@@ -63,3 +63,18 @@ Composite person detector와 knife detector를 쓰는 현재 후보 구조에서
 128장 검수 결과는 source/version·split·bbox-size 구간별 `reviewed / bad / ambiguous / exclude / uncertain` 수와 장면 구성으로 집계한다. 이 표본만으로 나머지 7,233장을 일괄 삭제하거나 승인하지 않는다. 필요하면 문제 구간을 추가 검수한 뒤 L0의 전체/선별/역사적 baseline 중 역할을 결정한다.
 
 AI가 먼저 제안하는 경우 별도 초안으로 표시하고 사람이 원본을 확인해 `reviewer`와 최종 판정을 남긴다. 이 절차가 끝나기 전까지 L0 full training 승인은 `PLANNED`다.
+
+## 5. SOHAS 로컬 웹 검수
+
+`tools/sohas_review_images.py`가 생성한 원본 이미지·`review.csv`·`image-evidence.jsonl` pack을 `tools/start_review.ps1` 또는 `etr-review --review-dir PATH`로 연다. Python 표준 라이브러리 서버이며 loopback에만 바인딩한다. 이미지/판정의 외부 전송, 로그인·공개 배포, bbox 수정이나 학습 기능은 없다. 현재 100장 pack은 `data/review/sohas-click-review-20261003/`이다.
+
+- 검수자는 실제로 확인하는 사람의 이름/식별자를 직접 입력한다. 기본값은 빈칸이다.
+- `domain`, `label_quality`, `bbox_completeness`, `exclude`, `reviewer`는 저장 필수다. Knife 라벨 0개 표본은 `negative_knife_absence`도 직접 확인한다. `yes`는 칼이 없음을 확인했다는 의미이고 `no`는 실제 칼을 발견했다는 의미다. `unclear`는 보류 관찰이며 확정 negative가 아니다.
+- `bbox_completeness=yes/no/unclear`는 보이는 칼 라벨의 완전성 관찰이다. 칼 없는 표본에서는 실제 부재 여부와 함께 판단한다. 박스는 원본 XML raw 좌표의 시각화이고 좌표 convention 확정이 아니다.
+- `exclude=yes/uncertain`이면 이유를 남긴다. 버튼의 ‘유지 후보’도 source 전체나 해당 sample의 학습 채택 승인이 아니다. 모순/불확실 판정은 후속 집계에서 별도 확인한다.
+- `person_cooccurrence`, `small_or_distant_knife`, `occlusion`은 선택 관찰이다. 웹 UI는 가림 판단 불가를 `unclear`로 명시할 수 있다. 이 값들은 정량 size cutoff·행동/의도 판정이 아니다.
+- 빠른 정상/문제/불명확 버튼은 라벨 품질·처리 후보만 채운다. 장면·누락/부재 여부를 자동 추정하지 않는다. `1/2/3`은 빠른 판정, 좌우 화살표는 이전/다음이다.
+
+완성된 판정은 SQLite transaction으로 저장하고 수정마다 검수자·UTC 시간·version·이력을 남긴다. 서로 다른 탭에서 같은 행을 수정하면 오래된 version의 덮어쓰기를 차단한다. 원본 CSV·이미지는 보존하며 CSV 내려받기는 원본 출처 열과 최신 판정을 병합한 별도 파일이다. 라이선스·좌표 확인 열은 이 UI에서 승인할 수 없다. 브라우저 임시 입력과 SQLite 완료 기록을 구분하며 다른 PC/브라우저로 임시 입력이 동기화되지 않는다.
+
+검수 데이터는 ignored 로컬 파일이므로 Git push로 백업되지 않는다. 재개하려면 동일 pack과 `human-review.sqlite3`를 보존한다. 여러 사람의 원격 동시 검수/계정별 권한/자동 클라우드 동기화는 구현하지 않았다. 이 작업은 SOHAS 신규 후보의 준비이며 팀원의 Legacy L0 트랙을 대체하지 않는다.

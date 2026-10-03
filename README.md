@@ -113,6 +113,20 @@ etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --out
 
 입력은 upstream commit `48860b990e4d4f57fe100248887fceb248475dc8`의 Git checkout이며 XML·YOLO label이 로컬에 있어야 한다. 이미지가 없어도 metadata/label dry-run은 가능하지만 decode·시각 검수는 검증되지 않는다. 출력은 `voc-candidates.jsonl`, `issues.jsonl`, `summary.json`, 전체 `review-queue.csv`와 층화 `review-sample.csv`다. 좌표 convention 기본값 `unknown`은 raw 좌표만 보존하고 YOLO 초안을 만들지 않는다. 명시적인 convention·근거가 있는 변환도 검수 대기 초안이며 학습 승인이 아니다. 준비·좌표 규칙·gate는 [모델·데이터 계획](docs/model-data-plan.md#sohas-voc-source-specific-audit)과 [검증 보고서](reports/datasets/sohas-dasci-metadata-2026-10-02/report.md#cloud-voc-dry-run--2026-10-02)에 있다.
 
+### 버튼으로 이미지 검수하기
+
+SOHAS 표본은 **로컬 웹 화면에서 원본·칼 박스를 보고 버튼으로 판정**할 수 있다. 현재 준비된 100장 pack은 `data/review/sohas-click-review-20261003/`이며 이미지 원본은 약 31 MB다. 원본은 Git에 포함되지 않으므로 다른 PC에서는 pack도 별도로 가져와야 한다.
+
+Windows에서는 저장소 안에서 아래 명령을 실행한다. 기존 Python 환경을 사용하며 추가 설치·공개 서버·클라우드 업로드는 필요 없다.
+
+```powershell
+.\tools\start_review.ps1
+```
+
+브라우저가 열리면 검수자 이름을 입력하고 장면·라벨·누락 여부·유지/제외/보류를 고른 뒤 **저장하고 다음**을 누른다. 필수 항목을 채우면 자동 저장되며 확대·박스 숨기기·미검수/음성 필터·CSV 내려받기를 지원한다. 주소는 `http://127.0.0.1:8765`이고 이 PC에서만 접근할 수 있다. 탭을 닫아도 서버는 남으며 PC 재시작 뒤에는 명령을 다시 실행한다. 다른 pack은 `-ReviewDir PATH`, 다른 포트는 `-Port 8768`로 지정한다.
+
+판정과 수정 이력은 pack 안의 `human-review.sqlite3`에 저장하고 입력 `review.csv`/이미지는 수정하지 않는다. 미완성 입력은 같은 브라우저의 임시 보관본일 뿐 완료 기록이 아니다. 검수 기록은 dataset 채택·좌표 규칙·학습 승인을 자동으로 완료하지 않는다. 상세 규칙은 [검수 기준](docs/dataset-evaluation-criteria.md#5-sohas-로컬-웹-검수)에 있다. 기존 contact-sheet-only legacy pack은 이 화면의 입력 형식과 다르다.
+
 ## Detector training smoke
 
 ML 환경은 일반 개발 환경과 분리한다. 아래 profile은 dataset·학습 배관 검사용이며 성능 학습이나 연구 파라미터가 아니다.

@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SOHAS · 이미지 검수</title><link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="mark">E</span><div><strong>이미지 검수</strong><span>EDGE THREAT RESPONSE / SOHAS</span></div></div>
+    <div class="top-actions"><span class="local-badge">이 PC에서만 저장</span><a class="button subtle" href="/api/export">CSV 내려받기 ↗</a></div>
+  </header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">DATASET REVIEW · 01</p><h1>보고, 고르고, 다음으로.</h1><p>한 번에 한 장씩. 작은 칼과 누락된 라벨을 확인해주세요.</p></div><div class="progress-card"><strong id="progress-text">불러오는 중</strong><progress id="progress" max="100" value="0"></progress><span id="counts">사람 검수 대기</span></div></section>
+    <section class="workspace">
+      <article class="image-panel">
+        <div class="image-heading"><div><span id="sample-number" class="sample-pill">01 / 100</span><h2 id="filename">이미지 불러오는 중</h2></div><span id="kind" class="kind"></span></div>
+        <div class="image-tools"><label class="toggle"><input id="show-boxes" type="checkbox" checked> 칼 박스 표시</label><button id="zoom" class="small-button" type="button">확대 1×</button><a id="original" target="_blank" rel="noopener" class="small-button">원본 보기 ↗</a><span id="dimensions"></span></div>
+        <div id="image-view" class="image-view"><svg id="image-svg" role="img" aria-label="검수 원본과 knife 라벨" xmlns="http://www.w3.org/2000/svg"></svg></div>
+        <div class="image-note"><span class="green-dot"></span> 초록 박스 = 원본 XML의 칼 라벨 <span>좌표 규칙은 아직 미확정</span></div>
+        <nav class="navigation"><button id="previous" class="button" type="button">← 이전</button><div><select id="filter" aria-label="검수 목록 필터"><option value="all">모든 이미지</option><option value="pending">미검수만</option><option value="uncertain">보류만</option><option value="negative">음성 후보만</option></select><select id="jump" aria-label="이미지 바로 이동"></select></div><button id="next" class="button dark" type="button">다음 →</button></nav>
+      </article>
+      <aside class="review-panel">
+        <div class="review-title"><h2>이 이미지의 판정</h2><span id="saved-badge">미검수</span></div>
+        <label class="reviewer-label" for="reviewer">검수자 이름 / 식별자 <span>필수</span></label><input id="reviewer" type="text" maxlength="120" placeholder="실제 확인하는 사람의 이름">
+        <div class="quick-label">빠른 판정 <span>나머지 항목도 확인해주세요</span></div>
+        <div class="quick-actions"><button data-quick="keep" type="button">✓ 라벨 정상</button><button data-quick="reject" type="button">✕ 라벨 문제</button><button data-quick="hold" type="button">? 잘 모르겠음</button></div>
+        <div id="fields"></div>
+        <label for="notes" class="notes-label">메모 <span>제외·보류 시 이유 필수</span></label><textarea id="notes" rows="2" maxlength="2000" placeholder="예: 칼 하나가 빠짐 / 박스가 손 전체를 포함함"></textarea>
+        <div class="save-area"><span id="save-status" role="status" aria-live="polite">선택하면 자동 저장됩니다.</span><button id="save-next" class="button dark" type="button">저장하고 다음 →</button></div>
+        <details><summary>검수할 때 기억할 점</summary><p>제품·근접 사진도 정상 라벨이면 바로 제외하지 않습니다. 화면에 칼이 없다고 표시된 음성 후보도 직접 확인합니다. 애매하면 보류하고 이유를 적어주세요.</p><p>이 판정은 표본 검수 기록입니다. 전체 데이터나 학습 사용을 자동 승인하지 않습니다. 권리·좌표·중복·분할은 별도 확인합니다.</p><p>← → 이전·다음 / 1·2·3 빠른 판정 / 입력 중에는 단축키가 작동하지 않습니다.</p></details>
+      </aside>
+    </section>
+    <footer>원본 이미지와 CSV는 수정하지 않습니다. 판정·수정 이력은 검수 폴더의 SQLite 파일에 저장됩니다. 외부 전송 없음.</footer>
+  </main>
+</body>
+</html>
