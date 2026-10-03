@@ -10,7 +10,7 @@ const apiUrl=path=>path+(teamDataset?`?dataset=${encodeURIComponent(teamDataset)
 let team=false, signedReviewer="", teamAdmin=false;
 let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
-function draftKey() { return `etr-draft:${pack}:${current}`; }
+function draftKey() { return `etr-draft:${pack}:${team ? `${signedReviewer}:` : ""}${current}`; }
 function buildFields() {
   for (const [key,title,hint,choices] of specs) {
     const field = document.createElement("section"); field.className = "field"; field.id = `field-${key}`;
@@ -145,7 +145,7 @@ async function init() {
   if(data.review_schema!=="simple-v2") throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
-  if(team){document.title=`${teamDataset} · 팀 이미지 검수`;$("reviewer").readOnly=true;document.querySelector(".local-badge").textContent="PC13 중앙 저장";const back=document.querySelector(".top-actions a");back.href="/";back.textContent="후보 목록 ↗";document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";document.querySelector(".image-note").textContent="초록 박스 = source의 칼 라벨 · 좌표·완전성은 검수 중";$("next").textContent="다음 미검수 받기 →";}
+  if(team){document.title=`${teamDataset} · 팀 이미지 검수`;$("reviewer").readOnly=true;document.querySelector(".reviewer-label").textContent="검수자 · 로그인한 이름";document.querySelector(".local-badge").textContent="PC13 중앙 저장";const back=document.querySelector(".top-actions a");back.href="/";back.textContent="후보 목록 ↗";document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";document.querySelector(".image-note").textContent="초록 박스 = 원본의 칼 라벨 · 위치와 누락을 확인해주세요";$("next").textContent="다음 미검수 받기 →";}
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));

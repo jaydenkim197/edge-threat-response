@@ -2,12 +2,12 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SOHAS · 이미지 검수</title><link rel="stylesheet" href="/style.css">
+  <title>데이터셋 이미지 검수</title><link rel="stylesheet" href="/style.css">
   <script src="/app.js" defer></script>
 </head>
 <body>
   <header class="topbar">
-    <div class="brand"><span class="mark">E</span><div><strong>이미지 검수</strong><span>EDGE THREAT RESPONSE / SOHAS</span></div></div>
+    <div class="brand"><span class="mark">E</span><div><strong>이미지 검수</strong><span>EDGE THREAT RESPONSE</span></div></div>
     <div class="top-actions"><span class="local-badge">이 PC에서만 저장</span><a class="button subtle" href="/api/export">CSV 내려받기 ↗</a></div>
   </header>
   <main>
@@ -17,7 +17,7 @@
         <div class="image-heading"><div><span id="sample-number" class="sample-pill">01 / 100</span><h2 id="filename">이미지 불러오는 중</h2></div><span id="kind" class="kind"></span></div>
         <div class="image-tools"><label class="toggle"><input id="show-boxes" type="checkbox" checked> 칼 박스 표시</label><button id="zoom" class="small-button" type="button">확대 1×</button><a id="original" target="_blank" rel="noopener" class="small-button">원본 보기 ↗</a><span id="dimensions"></span></div>
         <div id="image-view" class="image-view"><svg id="image-svg" role="img" aria-label="검수 원본과 knife 라벨" xmlns="http://www.w3.org/2000/svg"></svg></div>
-        <div class="image-note"><span class="green-dot"></span> 초록 박스 = 원본 XML의 칼 라벨 <span>좌표 규칙은 아직 미확정</span></div>
+        <div class="image-note"><span class="green-dot"></span> 초록 박스 = 원본의 칼 라벨 <span>위치와 누락을 확인해주세요</span></div>
         <nav class="navigation"><button id="previous" class="button" type="button">← 이전</button><div><select id="filter" aria-label="검수 목록 필터"><option value="all">모든 이미지</option><option value="pending">미검수만</option><option value="uncertain">재확인만</option><option value="negative">음성 후보만</option></select><select id="jump" aria-label="이미지 바로 이동"></select></div><button id="next" class="button dark" type="button">다음 →</button></nav>
       </article>
       <aside class="review-panel">
