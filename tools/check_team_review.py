@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from pathlib import Path
 
 from edge_threat_response.dataset.team_review import create_app
@@ -25,9 +26,11 @@ def main() -> None:
     app = create_app(args.config)
     app.testing = True
     client = app.test_client()
-    assert client.get("/login", base_url=origin).status_code == 200
-    with client.session_transaction() as session:
-        token = session["csrf"]
+    page = client.get("/login", base_url=origin)
+    assert page.status_code == 200
+    token_match = re.search(r'name="csrf" value="([^"]+)"', page.get_data(as_text=True))
+    assert token_match, "Login CSRF field missing"
+    token = token_match.group(1)
     login = client.post("/login", base_url=origin, headers={"Origin": origin},
                         data={"code": code, "csrf": token})
     assert login.status_code == 302, "Admin login failed"

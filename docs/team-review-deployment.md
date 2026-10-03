@@ -42,6 +42,6 @@
 ## 배포·검증 기록
 
 - PC13 Tailscale v1.102.4, C 여유 약 144.5 GiB(작업 전 관찰). Windows Python 3.12.4, RTX 3060 학습 venv의 optional review-server dependencies를 설치했다. 검수 자체는 GPU를 사용하지 않는다.
-- PC13 local `GET /login` 200, 인증 없는 `GET /api/catalog` 및 SOHAS/Dangerous 이미지 URL 401. 7/8 후보 pack으로 다시 설정하고 시작 작업을 재실행했다. 노트북과 PC13에서 team tests 4개, 전체 로컬 테스트 83개 통과. Session cookie, Host/Origin/CSRF, role·배정 충돌, history/backup을 fixture에서 검증했다.
+- PC13 local `GET /login` 200, 인증 없는 `GET /api/catalog` 및 SOHAS/Dangerous 이미지 URL 401. 7/8 후보 pack으로 다시 설정하고 시작 작업을 재실행했다. 읽기 전용 실제 config smoke는 **관리자 로그인→7개 pack 목록/첫 이미지 200**과 SOHAS 기존 판정 6건을 확인했고, 판정·계정은 변경하지 않았다. 노트북과 PC13에서 team tests 4개, 전체 로컬 테스트 83개 통과. Session cookie, Host/Origin/CSRF, role·배정 충돌, history/backup을 fixture에서 검증했다.
 - Tailscale Funnel 공개가 계정의 관리자 enable gate를 요구한다: `https://login.tailscale.com/f/funnel?node=nWsQChVFgg11CNTRL`. 승인 전 `tailscale funnel status = No serve config`; 팀 브라우저 접속·외부 저장/reload는 `NOT VERIFIED`.
 - 원본 권리·좌표·중복/session gate, 사람 검수, 학습 채택은 별개다. User team accounts는 실제로 발급하기 전까지 관리자 1개뿐이다.
