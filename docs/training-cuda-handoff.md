@@ -67,6 +67,14 @@ Windows의 `core.autocrlf=true` checkout은 XML 줄바꿈을 바꾸어 pinned Gi
 
 원격 정상 staging은 `data/source-audit/sohas-upstream-byte-exact/`, 결과는 `data/source-audit/sohas-voc-pc13-byte-exact-20261002/`다. 초기 실패 staging/output도 원인 증거로 보존했다. `review-sample.csv`는 100개 **라벨 기준 검수 대기 목록**이며 이미지나 완료된 사람 판정이 아니다. 권리·좌표·이미지 검수·group/split 승인은 계속 필요하다.
 
+## SOHAS 이미지 표본 검수 실행
+
+```powershell
+.\.venv-ml\Scripts\python.exe tools/sohas_review_images.py --source-root data/source-audit/sohas-upstream-byte-exact --sample-csv data/source-audit/sohas-voc-pc13-byte-exact-20261002/review-sample.csv --output data/review/unique-sohas-review
+```
+
+입력 sample CSV의 image paths만 pinned sparse checkout에 추가한 후 실행한다. helper는 다운로드/학습/label export를 하지 않고 기존 source blob 검사·VOC parser와 Pillow를 사용한다. output은 source 밖의 새 디렉터리여야 한다. 원본 dimension과 XML dimension이 다르거나 blob/annotation 검사가 실패하면 중단한다. CSV의 reviewer는 비워 두며 raw bbox overlay를 coordinate convention 승인으로 해석하지 않는다. 본 학습은 검수·split·recipe 승인 이후다.
+
 ## Colab 절차
 
 `notebooks/baseline-v1-colab.ipynb`를 Colab에서 열고 위에서 아래로 실행한다. notebook의 `REVIEW_APPROVED` 기본값은 `False`이며, review 결과를 팀이 확인한 뒤에만 직접 `True`로 바꾼다.

@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-03 - 비상용 내부 연구 범위의 SOHAS 이미지 검수 준비
+
+- 사용자 clarification: 상용 목적이 아닌 수업 연구이며 작업 진행을 요청했고 `C:\Class6` 보존도 확인했다. 메일 회신을 모든 데이터 확보의 필수 조건으로 둔 이전 설명을 수정한다. 공식 연구진의 public research 설명 및 CC BY/CC BY-SA의 복제·변형 허용을 확인해 제한된 로컬 sample 검수는 진행하고 외부 공개 조건은 분리한다. license 차이 해결·학습 채택을 주장하지 않는다.
+- 작업 카드: 기존 100개 표본의 원본 확보·decode/hash/dimension 확인·raw knife overlay·빈 human CSV를 완료 기준으로 둔다. 전체 다운로드·학습·외부 공유·AI 판정의 human 대체는 제외하며 10 GB 한도를 유지한다.
+- search-first로 기존 SOHAS pinned inventory/blob 검사/VOC parser·Pillow를 재사용했다. 기존 legacy review-pack은 knife annotation 없는 negative 및 미확정 VOC 좌표를 입력으로 못 받으므로 작은 source-specific `tools/sohas_review_images.py`를 추가했다. 학습 label/manifest export나 downloader를 새로 만들지 않았다.
+- remote `git sparse-checkout add --stdin`에 기존 sample의 image path 100개만 전달해 원본을 확보했다. helper의 실제 실행 결과 100개 decode·blob·dimension 확인 성공, 총 31,100,785 bytes, knife 객체 103개, 7 contact sheets. 첫 생성 CSV의 image_present는 이전 audit 시점 값이라 최종 helper에서 현재 True로 갱신하고 `sohas-100-20261003-final/`로 별도 재생성했다. reviewer는 빈칸, training 승인 false다.
+- 노트북에는 작은 pack만 SCP로 복사했다. 첫 sheet를 육안 개발 확인해 caption/overlay가 표시되는 것을 확인했다. 제품/클로즈업·워터마크·반복 촬영 장면도 보여 무검수 전체 승인하지 않는다. 사람의 100장 판정 또는 coordinate convention 확정으로 기록하지 않는다.
+- verification-loop: 신규 fixture 2개 통과, 전체 72 tests 통과(0.822 s), helper actual integration 성공. 초기 단일 테스트 module 경로 호출은 tests가 package가 아니어서 실패했고 `unittest discover -s tests -p test_sohas_review_images.py`로 올바르게 재실행했다. initial SCP cwd 누락은 경로를 지정해 재실행했으며 원본 삭제 없음.
+- 변경: helper/test, source strategy/evaluation criteria/handoff/verification/이 로그. 코드·문서만 Git에 넣고 raw/pack은 ignored. source/model recipe는 미승인이고 메일·Drive 업로드·실제 학습은 수행하지 않았다. 다음은 인간 표본 검수·좌표 근거·negative 누락·near duplicate/session split이다. Git: 이 기록을 포함하는 commit.
+
 ## 2026-10-03 - 외장 저장장치 없는 데이터 준비·권리 확인 초안
 
 - 사용자 요청: SOHAS 준비를 진행하고 필요한 정보를 요청하되 GPU PC/노트북에 외장 저장장치를 상시 연결하지 않는 저장 방식을 정한다.

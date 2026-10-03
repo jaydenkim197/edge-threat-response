@@ -81,6 +81,15 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 - Google Drive는 권리 확인된 원본·manifest/검수표·config·checkpoint/결과의 보관본이다. 학습 중 Drive mount/sync 폴더를 읽지 않고 PC 내장 드라이브를 사용한다. 실제 업로드/자동 백업은 아직 설정하지 않았다.
 - 원본·processed·Git partial-clone cache·결과를 합쳐 로컬 dataset 작업 자료가 10 GB를 넘게 되면 기존 사용자의 저장 한도에 맞춰 보관 방식을 다시 승인받는다. full package 용량은 아직 측정하지 않았으며 여유 공간이 있다는 이유로 무제한 다운로드하지 않는다.
 - 사용자 확인 필요: 학습 PC의 `C:\Class6`가 재부팅/수업 후 초기화되지 않고 프로젝트 기간 보존 가능한지. 확인 전에는 PC 로컬 자료를 유일한 장기 보관본으로 삼지 않는다.
+- 2026-10-03 사용자가 `C:\Class6` 보존 가능을 확인했다. 그래도 디스크 장애에 대비한 별도 보관본은 필요하며 Drive 실제 업로드 여부와 구분한다.
+
+### SOHAS 내부 연구 준비 범위 — 2026-10-03
+
+사용자가 상용 목적이 아닌 수업·학술 연구임을 명시하고 준비 진행을 요청했다. 공식 [연구진 페이지](https://sci2s.ugr.es/weapons-detection)는 public research purpose를 설명하며 [CC BY](https://creativecommons.org/licenses/by/4.0/)와 [CC BY-SA](https://creativecommons.org/licenses/by-sa/4.0/) 모두 조건 준수 아래 복제·변형을 허용한다. 이 근거로 **pinned 원본의 제한된 로컬 이미지 확보·내부 검수**는 메일 회신 대기 없이 진행한다. 비상용이라는 사실만으로 모든 권리 문제가 면제되는 것은 아니다.
+
+README/License.md 차이는 해결됐다고 기록하지 않는다. 저자·논문·원본 URL·두 license notice를 보존하고, raw/가공 이미지·trained weight의 외부 공개 또는 Drive 재배포 조건은 별도 확인한다. 권리 확인 메일은 해당 배포 범위를 확인할 선택 수단으로 남긴다. 이미지 label·좌표·negative 진위·group/split/human review gate와 recipe 채택은 그대로다.
+
+기존 deterministic sample 100개만 sparse checkout했고 `tools/sohas_review_images.py`로 decode·Git blob·SHA-256·image/XML dimensions 및 모든 raw knife bbox를 확인/표시했다. 출력은 원격 `data/review/sohas-100-20261003-final/`이며 노트북에는 CSV·evidence·contact sheets만 복사했다. 원본 100장 31,100,785 bytes, knife 객체 103개, contact sheets 7개다. overlay는 raw 좌표의 검수 시각화이며 convention 확정이나 학습 label 생성이 아니다.
 
 - [SOHAS / OD-WeaponDetection 공식 저장소](https://github.com/ari-dasci/OD-WeaponDetection)의 README는 CC BY-SA 4.0을 적지만 [`License.md`](https://github.com/ari-dasci/OD-WeaponDetection/blob/master/License.md)는 CC BY 4.0 전문이다. 실제 적용 범위를 확인하기 전에는 라이선스를 확정하지 않는다. 고정 Git snapshot의 metadata·label 구조 audit는 수행했지만 실제 이미지 package·decode·좌표와 시각적 annotation 완전성은 아직 검증하지 않았다.
 - 2026-10-02 공식 저장소 `master` commit `48860b990e4d4f57fe100248887fceb248475dc8`의 [DaSCI 이미지 Git tree](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/56fae9b20a3863051e510d001decd466847e9b60)와 [SOHAS train](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/e9bd454863bd05af3c534e803609189149dc51e0)·[test](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/8c1377c477bbd58c25d05f37b7a4c63ede1fcda1)의 image basename·Git blob ID를 비교했다. DaSCI 2,078장 중 1,985장은 SOHAS와 **동일 basename·동일 blob**이고, 나머지 93장은 byte-unique 후보일 뿐 perceptual uniqueness가 아니다. SOHAS는 5,859 image가 있으나 XML은 5,942개로 image 없는 annotation 83개가 남아 raw import에서 제외해야 한다. 방법과 원자료 링크는 [metadata 보고서](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)에 남겼다. 이 audit은 image decode·knife label 완전성·group 독립성 검증을 대체하지 않는다.

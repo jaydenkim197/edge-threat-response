@@ -16,6 +16,8 @@
 
 첫 세 gate가 통과하지 않으면 채택을 보류한다. 마지막 두 gate는 **역할별** 판단이다. 예를 들어 이미지 학습에는 완전한 사건 정답이 필요하지 않지만, 최종 B0~B3 평가에는 필요하다. 확인 상태는 `LINK_CHECKED`, `PACKAGE_CHECKED`, `SAMPLE_REVIEWED`, `ADOPTED`로 구별해 증거 날짜와 함께 기록한다. 논문에 쓰인 수치와 우리 package inventory를 구별한다.
 
+SOHAS의 2026-10-03 [내부 연구 준비 범위](dataset-source-strategy.md#sohas-내부-연구-준비-범위--2026-10-03)는 제한된 원본 sample 확보·검수와 최종 채택/외부 배포를 분리한다. 두 공개 CC notice와 공식 연구 공개 설명을 보존해 sample 검수는 진행하지만, license 표기 차이 해결·human review·recipe 승인을 완료했다고 간주하지 않는다. 이전의 일괄 보류를 이 명시적 내부 준비 범위로 구체화한다.
+
 ## 2. 표본에서 기록할 관찰값
 
 Source/version과 group 단위로 표본을 뽑는다. 기존 계획의 **100장**은 첫 검수의 작업량 기준이며 통계적 채택 보증이나 최종 학습 수량이 아니다. Knife-positive와 no-knife negative를 따로 포함하고, 가능한 경우 카메라·세션, 원래 split, knife bbox 크기 구간을 걸쳐 뽑는다. 각 구간의 표본 수와 모집단 수를 함께 기록한다.
