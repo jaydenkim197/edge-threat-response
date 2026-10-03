@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-03 - 진행 중 저장 확인·검수 질문 최소화·팀 배포 점검
+
+- 작업 카드: 사용자 요청에 따라 실제 저장을 비파괴적으로 확인하고 중복 UI 항목을 줄인다. 완료 기준은 DB 무결성·백업, 기존 판정 보존, 2-question 저장·재개 테스트와 문서/Git 반영이다. 공개 배포·공유 권한 변경·훈련·사용자 대리 판정은 제외했다. 진행 중 탭/저장을 끊지 않는 것이 주요 위험 통제다.
+- 관찰: 실제 API/DB는 100장 중 5행, 수정 history 39건, `quick_check=ok`. read-only DB 연결에서 SQLite backup API로 `backup-before-simple-ui.sqlite3`에 일관된 snapshot을 남겼다. 초기 latest-time 조회 shell quoting 오류는 데이터 변경 없이 실패했고 JSON timestamp read로 재실행했다. 이는 관찰 시점 수치이며 완료된 전체 검수가 아니다. 사용자 이름·판정 내용은 Git/로그에 옮기지 않았다.
+- search-first로 기존 CSV/SQLite/version/history를 재사용했다. 기본 입력은 CCTV형/그 외/모르겠음과 라벨 정상/문제 있음/모르겠음 두 질문이다. 품질·박스 완전성·별도 처리 질문과 중복 빠른 버튼·선택적 사람/크기/가림을 제거했다. Normal의 의미에 모든 knife box와 음성 실제 부재 확인을 명시했다. 문제는 메모 후 재확인 후보이고 자동 제외하지 않는다.
+- `simple-v2` schema·coarse annotation verdict를 추가해 명시적 통합 답을 기존 export 열에 매핑한다. positive 문제를 누락으로 단정하지 않고 완전성 unclear로 둔다. 상세 기존 enum·판정은 일괄 변환하지 않으며 수정 전 payload는 history에 보존한다. 기존 client 저장 계약도 유지한다. 재검수 아닌 사람 이름 자동 채움/AI 승인 없음.
+- 사용 중 서버/탭을 재시작하지 않았다. 새 8768 서버가 동일 DB를 사용하며 기존 8765는 유지한다. launcher 기본을 8768로 변경하고 오래된 서버는 새 UI에서 오류 안내로 차단한다. 기존 창에서 저장 후 새 주소를 사용한다. 두 주소의 browser-local 미완성 draft는 서로 자동 이전되지 않는다.
+- verification-loop: 새 3 regression tests 포함 focused 7 tests 및 전체 **79 tests 통과**(1.940 s), compileall·JS 문법 정상. 첫 신규 테스트 삽입 위치 때문에 fixture `original`의 scope 오류가 나와 테스트 위치를 수정해 재검증했다. Computer Use로 별도 QA DB에만 테스트 판정을 입력해 화면 질문 2개, 저장/다음/새로고침 재개를 확인했다. 실제 검수 DB에 QA 값을 쓰지 않았다.
+- 배포 판단: 현재 listener 127.0.0.1이며 login/roles/담당 배정·remote HTTPS/backup은 없다. 로컬 pack + Python 배포와 비공개 인증 서비스 경로를 검수 기준에 기록했다. CSRF를 인증으로 오인하거나 정적 호스팅만으로 DB 저장을 제공한다고 주장하지 않는다. 팀원 접속·package 배포·인터넷 공개·Drive 업로드는 미수행이다.
+- 변경: review server, JS/HTML, Windows launcher, tests, README·검수 기준·verification·이 로그. raw/DB/backup은 ignored이고 recipe/MVP 불변이다. 다음은 사용자가 간단 UI에서 계속 검수하고 팀 배포 방식/접근 범위를 선택하는 것이다. Git: 이 기록을 포함하는 commit.
+
 ## 2026-10-03 - 버튼 기반 로컬 SOHAS 검수 화면
 
 - 요청/작업 카드: CSV 대신 사이트처럼 클릭하며 표본을 확인하도록 원본·raw knife 박스·판정 버튼·이동·자동 저장·CSV export를 구현한다. 완료 기준은 실제 100장 로딩·별도 테스트 DB의 저장/재개와 원본 보존·전체 tests·문서/Git 반영이다. 데이터 채택·인간 대리 판정·실제 학습·공개 배포/Drive 업로드는 범위 밖이다.

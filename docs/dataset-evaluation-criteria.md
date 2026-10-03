@@ -69,12 +69,24 @@ AI가 먼저 제안하는 경우 별도 초안으로 표시하고 사람이 원�
 `tools/sohas_review_images.py`가 생성한 원본 이미지·`review.csv`·`image-evidence.jsonl` pack을 `tools/start_review.ps1` 또는 `etr-review --review-dir PATH`로 연다. Python 표준 라이브러리 서버이며 loopback에만 바인딩한다. 이미지/판정의 외부 전송, 로그인·공개 배포, bbox 수정이나 학습 기능은 없다. 현재 100장 pack은 `data/review/sohas-click-review-20261003/`이다.
 
 - 검수자는 실제로 확인하는 사람의 이름/식별자를 직접 입력한다. 기본값은 빈칸이다.
-- `domain`, `label_quality`, `bbox_completeness`, `exclude`, `reviewer`는 저장 필수다. Knife 라벨 0개 표본은 `negative_knife_absence`도 직접 확인한다. `yes`는 칼이 없음을 확인했다는 의미이고 `no`는 실제 칼을 발견했다는 의미다. `unclear`는 보류 관찰이며 확정 negative가 아니다.
-- `bbox_completeness=yes/no/unclear`는 보이는 칼 라벨의 완전성 관찰이다. 칼 없는 표본에서는 실제 부재 여부와 함께 판단한다. 박스는 원본 XML raw 좌표의 시각화이고 좌표 convention 확정이 아니다.
-- `exclude=yes/uncertain`이면 이유를 남긴다. 버튼의 ‘유지 후보’도 source 전체나 해당 sample의 학습 채택 승인이 아니다. 모순/불확실 판정은 후속 집계에서 별도 확인한다.
-- `person_cooccurrence`, `small_or_distant_knife`, `occlusion`은 선택 관찰이다. 웹 UI는 가림 판단 불가를 `unclear`로 명시할 수 있다. 이 값들은 정량 size cutoff·행동/의도 판정이 아니다.
-- 빠른 정상/문제/불명확 버튼은 라벨 품질·처리 후보만 채운다. 장면·누락/부재 여부를 자동 추정하지 않는다. `1/2/3`은 빠른 판정, 좌우 화살표는 이전/다음이다.
+- 2026-10-03 사용자 요청으로 기본 화면은 **두 질문**으로 줄였다. `domain=target_cctv/non_target/unclear`는 CCTV형/그 외/모르겠음이고, `annotation_verdict=ok/problem/unclear`는 정상/문제 있음/모르겠음이다. `review_schema=simple-v2`로 구별한다. 실제 검수자와 두 답이 필수이며 문제 있음은 한 줄 메모가 필요하다. 모르겠음은 추가 메모 없이 보류할 수 있다.
+- 정상은 **모든 보이는 칼의 박스 위치와 누락 여부를 확인했다는 통합 답**이다. Knife 라벨 0개 표본에서는 실제 칼이 없음을 뜻한다. 이에 따라 기존 열에는 정상→`good/yes/no`(품질/완전성/제외), 음성 정상→`negative_knife_absence=yes`를 기록한다. 이는 사람이 누른 통합 답의 명시적 의미이며 AI 추정이 아니다.
+- 양성 문제 있음은 잘못된 박스 또는 누락을 뜻하지만 어느 쪽인지는 메모로 구별한다. `label_quality=bad`, `bbox_completeness=unclear`, `exclude=uncertain`으로 기록해 자동 삭제하지 않는다. 음성 문제 있음은 실제 칼을 발견한 경우이므로 부재 `no`·완전성 `no`다. 모르겠음은 ambiguous/unclear/uncertain이며 확정 negative가 아니다. Fine-grained minor issue는 이번 UI에서 별도 수집하지 않는다.
+- 사람 동반·작은 칼·가림과 독립된 처리 판정은 기본 화면에서 제외한다. 크기는 원본 evidence로 분석하고 필요할 때 특정 오류 구간만 추가 검수한다. ‘그 외’라고 자동 제외하지 않으며 2-question sample review가 전체 source/좌표/학습 승인을 대신하지 않는다. 박스는 계속 원본 XML raw 좌표의 시각화다.
+- 기존 상세 CSV enum·판정·이력은 보존하고 일괄 변환하지 않는다. 과거 일반 실사/제품/주방/웹사진은 화면에서 ‘그 외’로 표시하지만 편집 전 원래 값은 그대로다. 재판정한 행만 새 protocol로 저장한다. 수정 전 상세 payload는 history에 남는다. 두 protocol을 합산할 때 coarse verdict와 기존 상세 관찰을 같은 해상도의 정답으로 취급하지 않는다.
+- `1/2/3`은 정상/문제 있음/모르겠음, 좌우 화살표는 이전/다음이다. 질문을 중복하는 별도 빠른 판정 버튼은 제거했다.
 
 완성된 판정은 SQLite transaction으로 저장하고 수정마다 검수자·UTC 시간·version·이력을 남긴다. 서로 다른 탭에서 같은 행을 수정하면 오래된 version의 덮어쓰기를 차단한다. 원본 CSV·이미지는 보존하며 CSV 내려받기는 원본 출처 열과 최신 판정을 병합한 별도 파일이다. 라이선스·좌표 확인 열은 이 UI에서 승인할 수 없다. 브라우저 임시 입력과 SQLite 완료 기록을 구분하며 다른 PC/브라우저로 임시 입력이 동기화되지 않는다.
 
 검수 데이터는 ignored 로컬 파일이므로 Git push로 백업되지 않는다. 재개하려면 동일 pack과 `human-review.sqlite3`를 보존한다. 여러 사람의 원격 동시 검수/계정별 권한/자동 클라우드 동기화는 구현하지 않았다. 이 작업은 SOHAS 신규 후보의 준비이며 팀원의 Legacy L0 트랙을 대체하지 않는다.
+
+### 팀원 배포 가능 범위
+
+현재 서비스는 `127.0.0.1` 바인딩·로컬 Host/Origin 검사만 제공하므로 이 주소를 팀원에게 보내도 접속할 수 없다. CSRF token은 계정 인증이 아니고 reviewer는 self-reported 이름이다. `0.0.0.0` 변경이나 터널 공개만으로 안전한 팀 서비스를 만들었다고 간주하지 않는다. GitHub Pages와 같은 정적 파일 호스팅만으로 현재 SQLite/API 저장을 제공할 수 없다.
+
+두 방식이 가능하다. 아직 어느 쪽도 실제 팀 배포/사용을 검증하지 않았다.
+
+- **각 PC 로컬 패키지:** UI 코드·launcher·공통 100장 pack만 배포하고 Python 3.10+를 사용한다. `human-review.sqlite3`·백업·로그·다른 검수자 이름은 제외해 새 DB로 시작한다. 담당 이미지 번호를 겹치지 않게 지정하고 최신 CSV를 회수해 source/path 기준으로 취합한다. CSV 자동 병합/충돌 해결은 미구현이므로 마지막 파일로 덮어쓰지 않는다.
+- **팀 전용 웹 서비스:** 별도의 HTTPS/계정 인증/접근 권한/담당 표본 배정/영속 저장·백업을 설계한 후 배포한다. 현재 stdlib 개발 서버를 인터넷 공개 서비스로 그대로 쓰지 않는다. 비용·호스팅 계정·상시 운용 주체와 이미지 공유 범위는 배포 전에 선택한다.
+
+공개 image/검수 기록 업로드는 수행하지 않았다. 원본 URL·논문·두 license notice 등 provenance를 포함하고 [내부 준비와 재배포 범위](dataset-source-strategy.md#sohas-내부-연구-준비-범위--2026-10-03)를 구별한다. 팀 접근과 source 사용 조건 확인 없이 원본을 공개 GitHub/공개 웹에 올리지 않는다.

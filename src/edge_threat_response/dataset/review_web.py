@@ -17,7 +17,9 @@ from urllib.parse import urlsplit
 
 
 OPTIONS = {
-    "domain": ["target_cctv", "useful_real", "closeup_product", "kitchen", "web_misc", "unclear"],
+    "domain": ["target_cctv", "non_target", "useful_real", "closeup_product", "kitchen", "web_misc", "unclear"],
+    "annotation_verdict": ["ok", "problem", "unclear"],
+    "review_schema": ["simple-v2"],
     "label_quality": ["good", "minor_issue", "bad", "ambiguous"],
     "person_cooccurrence": ["yes", "no", "unclear"],
     "small_or_distant_knife": ["yes", "no", "unclear"],
@@ -104,12 +106,31 @@ class ReviewStore:
                 raise ValueError("Invalid field value.")
             if key in OPTIONS and value and value not in OPTIONS[key]:
                 raise ValueError(f"Invalid {key}.")
-        for key in ("domain", "label_quality", "exclude", "reviewer", "bbox_completeness"):
+        simple = values["review_schema"] == "simple-v2"
+        required = ("domain", "annotation_verdict", "reviewer") if simple else (
+            "domain", "label_quality", "exclude", "reviewer", "bbox_completeness")
+        for key in required:
             if not values[key].strip():
                 raise ValueError("장면·라벨·판정·검수자·누락 여부를 선택해주세요.")
-        if not self.evidence[sample]["knife_count"] and not values["negative_knife_absence"]:
+        if simple:
+            verdict = values["annotation_verdict"]
+            negative = not self.evidence[sample]["knife_count"]
+            if verdict == "problem" and not values["notes"].strip():
+                raise ValueError("문제가 있는 경우 한 줄 메모를 남겨주세요.")
+            # 'Normal' explicitly means all visible knives have correct boxes,
+            # or that no knife is present in an annotation-negative sample.
+            values["label_quality"] = {"ok": "good", "problem": "bad", "unclear": "ambiguous"}[verdict]
+            values["bbox_completeness"] = "yes" if verdict == "ok" else "unclear"
+            values["exclude"] = "no" if verdict == "ok" else "uncertain"
+            if negative:
+                values["negative_knife_absence"] = {"ok": "yes", "problem": "no", "unclear": "unclear"}[verdict]
+                if verdict == "problem":
+                    values["bbox_completeness"] = "no"
+            else:
+                values["negative_knife_absence"] = ""
+        if not simple and not self.evidence[sample]["knife_count"] and not values["negative_knife_absence"]:
             raise ValueError("음성 후보는 실제 칼 부재 여부도 확인해주세요.")
-        if values["exclude"] != "no" and not values["notes"].strip():
+        if not simple and values["exclude"] != "no" and not values["notes"].strip():
             raise ValueError("제외·보류 이유를 한 줄 남겨주세요.")
         values["reviewer"] = values["reviewer"].strip()
         values["reviewed_at"] = datetime.now(timezone.utc).isoformat()
@@ -173,7 +194,7 @@ def make_handler(store: ReviewStore, token: str):
                 return self.respond(200, file.read_bytes(), mimetypes.guess_type(file)[0] + "; charset=utf-8")
             if path == "/api/items":
                 return self.respond(200, {"items": store.items(), "csrf": token, "options": OPTIONS,
-                                          "pack_hash": store.pack_hash, "training_approved": False})
+                                          "pack_hash": store.pack_hash, "review_schema": "simple-v2", "training_approved": False})
             if path == "/api/export":
                 return self.respond(200, store.export_csv(), "text/csv; charset=utf-8", download=True)
             if path.startswith("/api/images/"):
@@ -215,7 +236,7 @@ def make_handler(store: ReviewStore, token: str):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--review-dir", type=Path, required=True)
-    parser.add_argument("--port", type=int, default=8765)
+    parser.add_argument("--port", type=int, default=8768)
     parser.add_argument("--database", type=Path, help="Optional separate database, e.g. for UI testing.")
     args = parser.parse_args()
     store = ReviewStore(args.review_dir, database=args.database)

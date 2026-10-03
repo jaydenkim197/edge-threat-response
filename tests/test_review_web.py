@@ -74,6 +74,48 @@ class ReviewWebTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             ReviewStore(self.root)
 
+    def test_simple_negative_verdict_and_legacy_compatibility(self):
+        self.store.save(0, 0, self.fields)
+        legacy = self.store.items()[0]["review"].copy()
+        self.assertEqual(legacy, ReviewStore(self.root).items()[0]["review"])
+        simple = {"review_schema": "simple-v2", "domain": "non_target",
+                  "annotation_verdict": "ok", "reviewer": "human-fixture"}
+        result = self.store.save(0, 1, simple)
+        self.assertEqual("yes", result["review"]["negative_knife_absence"])
+        self.assertEqual("yes", result["review"]["bbox_completeness"])
+        self.assertEqual("no", result["review"]["exclude"])
+        self.store.save(0, 2, {**simple, "annotation_verdict": "unclear"})
+        problem = {**simple, "annotation_verdict": "problem", "notes": "Visible knife without a box"}
+        result = self.store.save(0, 3, problem)
+        self.assertEqual("no", result["review"]["negative_knife_absence"])
+        self.assertEqual("no", result["review"]["bbox_completeness"])
+        self.assertEqual("uncertain", result["review"]["exclude"])
+        with self.store.connect() as connection:
+            first = json.loads(connection.execute("SELECT payload FROM history ORDER BY sequence LIMIT 1").fetchone()[0])
+        self.assertEqual(legacy, first)
+        self.assertIn("simple-v2", self.store.export_csv().decode("utf-8-sig"))
+
+    def test_simple_positive_problem_does_not_invent_missing_boxes(self):
+        evidence = json.loads(self.evidence.read_text(encoding="utf-8"))
+        evidence.update(knife_count=1, knife_boxes_xyxy_raw=[[1, 2, 10, 20]])
+        self.evidence.write_text(json.dumps(evidence), encoding="utf-8")
+        positive = ReviewStore(self.root, database=self.root / "positive.sqlite3")
+        fields = {"review_schema": "simple-v2", "domain": "target_cctv",
+                  "annotation_verdict": "problem", "reviewer": "human-fixture", "notes": "Incorrect box"}
+        result = positive.save(0, 0, fields)
+        self.assertEqual("unclear", result["review"]["bbox_completeness"])
+        self.assertEqual("", result["review"]["negative_knife_absence"])
+        result = positive.save(0, 1, {**fields, "annotation_verdict": "ok", "bbox_completeness": "no"})
+        self.assertEqual("yes", result["review"]["bbox_completeness"])
+
+    def test_simple_requires_two_answers_identity_and_problem_note(self):
+        fields = {"review_schema": "simple-v2", "domain": "non_target",
+                  "annotation_verdict": "ok", "reviewer": "human-fixture"}
+        for changes in ({"domain": ""}, {"annotation_verdict": ""}, {"reviewer": " "},
+                        {"annotation_verdict": "problem"}, {"rights_verified": "yes"}):
+            with self.subTest(changes=changes), self.assertRaises(ValueError):
+                self.store.save(0, 0, {**fields, **changes})
+
     def test_http_assets_save_export_and_security(self):
         server = ThreadingHTTPServer(("127.0.0.1", 0), make_handler(self.store, "fixture-token"))
         thread = threading.Thread(target=server.serve_forever, daemon=True)
@@ -86,6 +128,9 @@ class ReviewWebTests(unittest.TestCase):
                 self.assertEqual(200, response.status, path)
                 self.assertIn("frame-ancestors 'none'", response.getheader("Content-Security-Policy"))
                 response.read()
+            client.request("GET", "/api/items")
+            response = client.getresponse()
+            self.assertEqual("simple-v2", json.loads(response.read())["review_schema"])
             client.request("GET", "/api/items", headers={"Host": "attacker.example"})
             response = client.getresponse()
             self.assertEqual(403, response.status)

@@ -1,14 +1,8 @@
 "use strict";
 const $ = id => document.getElementById(id);
 const specs = [
-  ["domain", "어떤 장면인가요?", "필수", [["target_cctv","CCTV 시점"],["useful_real","일반 실사"],["closeup_product","제품·근접"],["kitchen","주방"],["web_misc","기타 웹사진"],["unclear","불명확"]]],
-  ["label_quality", "칼 박스가 정확한가요?", "필수", [["good","정상"],["minor_issue","작은 문제"],["bad","명백한 오류"],["ambiguous","판단 어려움"]]],
-  ["bbox_completeness", "보이는 칼이 모두 표시됐나요?", "필수 · 없으면 ‘칼 없음’ 확인", [["yes","모두 표시됨"],["no","누락 있음"],["unclear","불명확"]]],
-  ["negative_knife_absence", "실제로 칼이 없는 이미지인가요?", "음성 후보 필수", [["yes","칼 없음"],["no","칼이 있음!"],["unclear","불명확"]]],
-  ["exclude", "이 표본은 어떻게 처리할까요?", "필수 · 채택/학습 승인 아님", [["no","유지 후보"],["yes","제외 후보"],["uncertain","보류"]]],
-  ["person_cooccurrence", "사람 동반", "선택", [["yes","있음"],["no","없음"],["unclear","불명확"]]],
-  ["small_or_distant_knife", "작거나 먼 칼", "선택", [["yes","그렇다"],["no","아니다"],["unclear","불명확"]]],
-  ["occlusion", "칼 가림", "선택", [["none","없음"],["partial","일부"],["severe","심함"],["unclear","불명확"]]],
+  ["domain", "① CCTV형 장면인가요?", "위에서 비스듬히 · 넓은 시야", [["target_cctv","CCTV형"],["non_target","그 외"],["unclear","모르겠음"]]],
+  ["annotation_verdict", "② 칼 라벨은 정상인가요?", "박스 위치 + 칼 누락을 한 번에 확인", [["ok","정상"],["problem","문제 있음"],["unclear","모르겠음"]]],
 ];
 let items = [], current = 0, csrf = "", pack = "", values = {}, dirty = false, saving = false, timer;
 let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
@@ -31,22 +25,28 @@ function buildFields() {
 }
 function paintChoices() {
   document.querySelectorAll(".choices button").forEach(button => {
-    const active = values[button.dataset.field]===button.dataset.value;
+    const selected = button.dataset.field==="domain" && ["useful_real","closeup_product","kitchen","web_misc"].includes(values.domain) ? "non_target" : values[button.dataset.field];
+    const active = selected===button.dataset.value;
     button.classList.toggle("active",active); button.setAttribute("aria-pressed",String(active));
   });
 }
 function visibleItems() {
   const filter = $("filter").value;
   return items.filter(item => filter==="all" || (filter==="pending" && !item.version) ||
-    (filter==="uncertain" && item.review.exclude==="uncertain") || (filter==="negative" && !item.knife_count));
+    (filter==="uncertain" && item.version && verdictOf(item,item.review)!=="ok") || (filter==="negative" && !item.knife_count));
+}
+function verdictOf(item, review) {
+  if(review.annotation_verdict) return review.annotation_verdict;
+  if(review.label_quality==="good" && review.bbox_completeness==="yes" && review.exclude==="no" && (item.knife_count || review.negative_knife_absence==="yes")) return "ok";
+  if(["bad","minor_issue"].includes(review.label_quality) || review.bbox_completeness==="no" || review.negative_knife_absence==="no" || review.exclude==="yes") return "problem";
+  return "unclear";
 }
 function refreshProgress() {
   const reviewed = items.filter(item=>item.version).length;
-  const excluded = items.filter(item=>item.review.exclude==="yes").length;
-  const held = items.filter(item=>item.review.exclude==="uncertain").length;
+  const held = items.filter(item=>item.version && verdictOf(item,item.review)!=="ok").length;
   $("progress-text").textContent=`${reviewed} / ${items.length}장 검수 기록`;
   $("progress").max=items.length; $("progress").value=reviewed;
-  $("counts").textContent=`미검수 ${items.length-reviewed} · 제외 후보 ${excluded} · 보류 ${held}`;
+  $("counts").textContent=`미검수 ${items.length-reviewed} · 재확인 ${held}`;
   $("jump").replaceChildren();
   for (const item of visibleItems()) {
     const option = document.createElement("option"); option.value=item.id;
@@ -60,15 +60,19 @@ function show(index) {
   values={...item.review}; delete values.reviewed_at;
   const draft=localStorage.getItem(draftKey()); let restoredDraft=false;
   if (draft) { try { const saved=JSON.parse(draft); if(saved.version===item.version) {values={...saved.fields}; restoredDraft=true;} } catch {} }
+  if (!values.annotation_verdict && item.version && !restoredDraft) {
+    values.annotation_verdict=verdictOf(item,values);
+  }
+  values.review_schema="simple-v2";
   values.reviewer=values.reviewer || rememberReviewer;
   $("reviewer").value=values.reviewer || ""; $("notes").value=values.notes || "";
   $("sample-number").textContent=`${String(current+1).padStart(2,"0")} / ${items.length}`;
   $("filename").textContent=item.name;
-  $("kind").textContent=item.knife_count ? `칼 라벨 ${item.knife_count}개` : "칼 없음 · 음성 후보";
+  $("kind").textContent=item.knife_count ? `칼 라벨 ${item.knife_count}개` : "칼 라벨 0개 · 실제 부재 확인";
   $("kind").classList.toggle("negative",!item.knife_count);
   $("dimensions").textContent=`${item.width} × ${item.height}`;
   $("original").href=item.image_url;
-  $("field-negative_knife_absence").hidden=!!item.knife_count;
+  $("verdict-guide").textContent=item.knife_count ? "정상 = 보이는 칼이 모두 정확한 박스 안에 있음. 틀린 박스·칼 누락은 ‘문제 있음’." : "정상 = 실제 칼이 없음. 칼이 하나라도 보이면 ‘문제 있음’.";
   $("saved-badge").textContent=item.version ? "검수 기록 있음" : "미검수";
   $("image-svg").setAttribute("viewBox",`0 0 ${item.width} ${item.height}`);
   $("image-svg").replaceChildren();
@@ -87,9 +91,8 @@ function show(index) {
   status(item.version ? `자동 저장됨 · 수정 ${item.version}회` : "선택하면 자동 저장됩니다.",item.version?"saved":"");
 }
 function complete() {
-  return ["domain","label_quality","bbox_completeness","exclude","reviewer"].every(key=>(values[key]||"").trim()) &&
-    (items[current].knife_count || values.negative_knife_absence) &&
-    (values.exclude==="no" || (values.notes||"").trim());
+  return ["domain","annotation_verdict","reviewer"].every(key=>(values[key]||"").trim()) &&
+    (values.annotation_verdict!=="problem" || (values.notes||"").trim());
 }
 function changed() {
   dirty=true;
@@ -101,7 +104,7 @@ function changed() {
 async function save(force=false) {
   clearTimeout(timer);
   if (!dirty) return true;
-  if (!complete()) { if(force) status("장면·라벨·누락 여부·판정·검수자를 확인해주세요. 제외·보류 이유도 필요합니다.","error"); return false; }
+  if (!complete()) { if(force) status("이름과 두 질문을 확인해주세요. 문제 있음은 한 줄 메모가 필요합니다.","error"); return false; }
   if(saving) return false;
   saving=true; const id=current; const captured=JSON.stringify(values); let succeeded=false;
   $("save-next").disabled=true; status("저장 중…");
@@ -125,15 +128,15 @@ async function move(delta) {
 }
 async function jump(index) {if(saving)return; if(dirty && complete() && !await save())return; show(index);}
 function quick(kind) {
-  if(kind==="keep") {values.label_quality="good";values.exclude="no";}
-  if(kind==="reject") {values.label_quality="bad";values.exclude="yes";}
-  if(kind==="hold") {values.label_quality="ambiguous";values.exclude="uncertain";}
+  values.annotation_verdict={keep:"ok",reject:"problem",hold:"unclear"}[kind];
   paintChoices(); changed();
 }
 async function init() {
   buildFields();
   const response=await fetch("/api/items"); if(!response.ok)throw new Error("검수 자료를 읽지 못했습니다.");
-  const data=await response.json(); items=data.items; csrf=data.csrf; pack=data.pack_hash;
+  const data=await response.json();
+  if(data.review_schema!=="simple-v2") throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
+  items=data.items; csrf=data.csrf; pack=data.pack_hash;
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));

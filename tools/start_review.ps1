@@ -1,6 +1,6 @@
 param(
     [string]$ReviewDir = 'data/review/sohas-click-review-20261003',
-    [ValidateRange(1024, 65535)][int]$Port = 8765,
+    [ValidateRange(1024, 65535)][int]$Port = 8768,
     [switch]$NoBrowser
 )
 $ErrorActionPreference = 'Stop'
@@ -43,5 +43,6 @@ if (-not $reviewState) {
     if (-not $reviewState) { throw 'Review server did not become ready. Check the review folder logs.' }
 }
 if ($reviewState.pack_hash -ne $reviewHash) { throw "Port $Port serves a different review pack. Use another -Port." }
+if ($reviewState.review_schema -ne 'simple-v2') { throw 'Old review server. Choose a new -Port to start the simple UI.' }
 Write-Output "Review ready: $reviewUrl"
 if (-not $NoBrowser) { Start-Process $reviewUrl }

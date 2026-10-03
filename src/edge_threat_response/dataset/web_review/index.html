@@ -18,17 +18,16 @@
         <div class="image-tools"><label class="toggle"><input id="show-boxes" type="checkbox" checked> 칼 박스 표시</label><button id="zoom" class="small-button" type="button">확대 1×</button><a id="original" target="_blank" rel="noopener" class="small-button">원본 보기 ↗</a><span id="dimensions"></span></div>
         <div id="image-view" class="image-view"><svg id="image-svg" role="img" aria-label="검수 원본과 knife 라벨" xmlns="http://www.w3.org/2000/svg"></svg></div>
         <div class="image-note"><span class="green-dot"></span> 초록 박스 = 원본 XML의 칼 라벨 <span>좌표 규칙은 아직 미확정</span></div>
-        <nav class="navigation"><button id="previous" class="button" type="button">← 이전</button><div><select id="filter" aria-label="검수 목록 필터"><option value="all">모든 이미지</option><option value="pending">미검수만</option><option value="uncertain">보류만</option><option value="negative">음성 후보만</option></select><select id="jump" aria-label="이미지 바로 이동"></select></div><button id="next" class="button dark" type="button">다음 →</button></nav>
+        <nav class="navigation"><button id="previous" class="button" type="button">← 이전</button><div><select id="filter" aria-label="검수 목록 필터"><option value="all">모든 이미지</option><option value="pending">미검수만</option><option value="uncertain">재확인만</option><option value="negative">음성 후보만</option></select><select id="jump" aria-label="이미지 바로 이동"></select></div><button id="next" class="button dark" type="button">다음 →</button></nav>
       </article>
       <aside class="review-panel">
         <div class="review-title"><h2>이 이미지의 판정</h2><span id="saved-badge">미검수</span></div>
         <label class="reviewer-label" for="reviewer">검수자 이름 / 식별자 <span>필수</span></label><input id="reviewer" type="text" maxlength="120" placeholder="실제 확인하는 사람의 이름">
-        <div class="quick-label">빠른 판정 <span>나머지 항목도 확인해주세요</span></div>
-        <div class="quick-actions"><button data-quick="keep" type="button">✓ 라벨 정상</button><button data-quick="reject" type="button">✕ 라벨 문제</button><button data-quick="hold" type="button">? 잘 모르겠음</button></div>
         <div id="fields"></div>
-        <label for="notes" class="notes-label">메모 <span>제외·보류 시 이유 필수</span></label><textarea id="notes" rows="2" maxlength="2000" placeholder="예: 칼 하나가 빠짐 / 박스가 손 전체를 포함함"></textarea>
+        <p id="verdict-guide">정상은 박스 위치와 칼 누락까지 확인한 판정입니다.</p>
+        <label for="notes" class="notes-label">메모 <span>문제 있을 때만 필수</span></label><textarea id="notes" rows="2" maxlength="2000" placeholder="예: 칼 하나가 빠짐 / 박스가 손 전체를 포함함"></textarea>
         <div class="save-area"><span id="save-status" role="status" aria-live="polite">선택하면 자동 저장됩니다.</span><button id="save-next" class="button dark" type="button">저장하고 다음 →</button></div>
-        <details><summary>검수할 때 기억할 점</summary><p>제품·근접 사진도 정상 라벨이면 바로 제외하지 않습니다. 화면에 칼이 없다고 표시된 음성 후보도 직접 확인합니다. 애매하면 보류하고 이유를 적어주세요.</p><p>이 판정은 표본 검수 기록입니다. 전체 데이터나 학습 사용을 자동 승인하지 않습니다. 권리·좌표·중복·분할은 별도 확인합니다.</p><p>← → 이전·다음 / 1·2·3 빠른 판정 / 입력 중에는 단축키가 작동하지 않습니다.</p></details>
+        <details><summary>검수할 때 기억할 점</summary><p>CCTV형인지와 라벨 품질만 판단합니다. 제품·근접 장면이라고 자동 제외하지 않습니다. 문제가 있으면 메모를 남기고, 애매하면 모르겠음을 선택하세요.</p><p>‘문제 있음’은 재확인 후보이며 자동 삭제가 아닙니다. 칼 라벨 0개 이미지도 실제 칼이 없는지 확인합니다. 전체 source·좌표·학습 승인은 별도입니다.</p><p>← → 이전·다음 / 1 정상 · 2 문제 있음 · 3 모르겠음 / 입력 중에는 단축키가 작동하지 않습니다.</p></details>
       </aside>
     </section>
     <footer>원본 이미지와 CSV는 수정하지 않습니다. 판정·수정 이력은 검수 폴더의 SQLite 파일에 저장됩니다. 외부 전송 없음.</footer>
