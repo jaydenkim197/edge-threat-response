@@ -49,6 +49,7 @@
 - **촬영 절차**: P1~P4/N1~N5, Near/Medium/Far, inclusive frame/half-open time, source-level GT와 세션/group 분리 양식이 준비됐다. N5는 positive dropout robustness로 정리했다. 실제 촬영·동의·거리·허용 오차·반복 수 동결은 미수행이다.
 - **학습 준비**: 기존 training 4 + pair 5 tests에서 공통 양성/val/test·draw budget·pending 승인 차단·batch override·bytes 변조·group split·fake runner evidence/비교를 확인했다. fake fixture는 실제 모델이나 사람 승인 근거가 아니다. 실제 YOLODataset(로컬 Ultralytics 8.4.152)에서도 생성 이미지의 반복 목록 길이를 보존했다(R1 6/5 unique/3 backgrounds, H1 6/2 unique/0 backgrounds). GPU 학습은 실행하지 않았다.
 - **개발 PC**: Python 3.11.9에서 `python -m unittest discover -s tests -q` **101 tests 통과**. 실제 CPU/GPU full training·Orin·GPIO 지연은 미검증이다. 원시 runtime 출력은 ignored `runs/event-evaluation-synthetic-v1/`에 있다.
+- **PC13**: commit `9833a72`, Python 3.12.4에서도 전체 101 tests·compileall·editable install·pip check·신규 CLI help와 실제 가상 replay→평가가 통과했다. readiness에서 CUDA RTX 3060·로컬 weight가 확인됐으나 승인된 SOHAS materialized manifest 부재를 탐지해 예상 exit 2 / blocked / training_started=false로 종료했다. raw: PC13 ignored `runs/sohas-pair-readiness-20261004/readiness.json`, `runs/event-evaluation-synthetic-v1/`. 실제 GPU full training은 미실행이다.
 
 ## Benchmark 최소 기록 항목
 
