@@ -127,6 +127,8 @@ CUDA development profile, GPU-required preflight와 review-gated Colab notebook�
 
 ### D4 — full training and evaluation
 
+2026-10-04 신규 R1/H1 준비에서는 승인 후보 materialized manifest → 공통 val/test·equal draw train 목록 → hash-bound human approval → CUDA-required runner → tuning 결과 비교까지 구현했다. H1의 양성 반복·batch/nbs·FP32·schedule 설정은 development 제안이며 실제 source 승인이나 학습 완료가 아니다. PC13에 승인된 SOHAS export가 아직 없으므로 full training을 시작하지 않는다. [실행·승인 절차](training-cuda-handoff.md#r1h1-실행-준비--2026-10-04)를 따른다.
+
 - development/tuning data로 학습·threshold 선택
 - 고정 holdout에서 detector 평가
 - 선택 detector를 Orin pipeline에 연결하고 동일 조건 B0~B3 수행

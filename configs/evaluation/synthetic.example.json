@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "policy_id": "synthetic-zero-tolerance-example",
+  "status": "synthetic_only",
+  "early_tolerance_s": 0.0,
+  "late_tolerance_s": 0.0
+}

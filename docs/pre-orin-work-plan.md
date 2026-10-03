@@ -1,6 +1,6 @@
 # Pre-Orin Work Plan
 
-기준일: 2026-10-02
+기준일: 2026-10-04
 
 상태: PC core·replay·dataset tooling·video adapter·CUDA handoff `IMPLEMENTED`/PC `VERIFIED`; legacy 사람 검수·외부 source audit·CUDA full training·Orin 통합 `PLANNED`
 
@@ -14,6 +14,8 @@
 - CUDA용 runner·config·GPU preflight·Colab notebook은 준비됐지만 full training은 실행하지 않았다.
 - W4 review pack은 128행 CSV와 8개 contact sheet가 준비됐다. 사람 판정과 L0 학습 승인은 아직 없다.
 - 선택 detector의 CUDA/Orin 성능, 카메라, GPIO와 TensorRT 동작은 실기기에서 검증되지 않았다.
+- 사건 평가기·가상 B0~B3 end-to-end와 촬영/수동 정답/세션 분리 양식을 준비했다. 실제 거리·matching tolerance·반복 규모는 pilot 후 확정한다([통제 실험](controlled-experiment-protocol.md)).
+- R1/H1의 공통 평가 목록·matched draw budget·hash-bound approval gate·결과 비교 코드는 준비됐다. 승인된 SOHAS export가 없어 full training은 차단 상태다([학습 준비](training-cuda-handoff.md)).
 
 ## 다음 작업과 완료 기준
 
@@ -24,6 +26,7 @@
 | 신규 R-1 | 공개 source audit | SOHAS 권리 표기 충돌·image/XML pairing·양성/음성·group을 확인. DaSCI의 SOHAS와 동일한 1,985장 및 고유 후보 최대 93장을 별도 기록 |
 | 신규 R-2 | CUDA full-training 준비·실행 | 승인된 [R1/H1 후보](dataset-source-strategy.md)와 group-aware manifest, 고정 config·run ID·hash를 남기고 GPU에서 학습. [CUDA handoff](training-cuda-handoff.md) 준수 |
 | 공통 3 | Orin 입고 시 inventory·통합 | SKU·전원·저장장치·JetPack 확인 후 native runtime, 모델, camera, GPIO, 자원 측정 순으로 실기기 검증 |
+| 공통 실험 | Pilot 촬영·주석·동결 | 준비된 촬영표/사건 정답으로 거리·허용 오차·반복 수를 정하고 tuning/final-test 세션을 분리. 가상 평가기 성공을 실제 실험 결과로 취급하지 않음 |
 
 L0와 신규 R 트랙은 병렬이며 L0 검수 완료가 R-1/R-2의 선행 gate가 아니다. R-1은 보드 없이 진행할 수 있고 R-2는 CUDA GPU, 공통 3은 실제 Orin이 필요하다. 공개 source 채택은 [Dataset Source Strategy](dataset-source-strategy.md)의 후보 역할과 [검수 기준](dataset-evaluation-criteria.md)의 gate를 따른다. Detector topology는 [P0-05](open-decisions.md)에 남겨 두며, knife-only 학습 source에 person bbox가 없다는 이유만으로 unified 2-class 데이터에 병합하지 않는다.
 

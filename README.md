@@ -168,6 +168,12 @@ etr-replay --input tests/fixtures/replay/basic.jsonl --config configs/replay/dev
 
 각 mode 폴더에는 frame별 판단, event JSONL, summary가 생성된다. replay에는 원본 frame이 없으므로 event의 snapshot 상태는 `not_captured`다. 예제의 confidence, 거리, bbox 확장, K/N, rearm 값은 계약·CLI 검증용이며 연구 최종값이 아니다. 커밋된 smoke 결과는 [Increment A replay report](reports/replay/increment-a-smoke/report.md)에 정리했다.
 
+## 사건 평가와 촬영 준비
+
+수동 사건 정답과 동일 detection JSONL의 B0~B3 replay를 `etr-evaluate`로 비교한다. 사건 precision/recall/F1, 반복·배경 오경보, 영상 시간축의 판단 지연과 원시 매칭·입력 hash를 기록한다. 구현·가상 검증은 완료됐으며 실제 시스템 성능이나 GPIO 지연을 측정한 결과는 아니다.
+
+[통제 촬영·평가 절차](docs/controlled-experiment-protocol.md)에 실행 명령, P1~P4/N1~N5 촬영표, start/end 정답 양식과 세션별 pilot/tuning/final-test 분리가 있다. 실제 거리·허용 오차·반복 횟수는 첫 pilot 후 확정한다. [R1/H1 학습 준비](docs/training-cuda-handoff.md#r1h1-실행-준비--2026-10-04)는 검수·source/recipe 승인 전 전체 학습을 차단한다.
+
 ## Non-goals (현재 단계)
 
 - 단순히 YOLO 버전만 교체하는 작업

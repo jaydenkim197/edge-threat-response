@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "policy_id": "controlled-v1-draft",
+  "status": "development",
+  "early_tolerance_s": null,
+  "late_tolerance_s": null
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "recordings": [
+    {
+      "recording_id": "REPLACE-recording-id",
+      "detections": "detections/REPLACE-recording-id/detections.jsonl",
+      "pipeline_config": "frozen/pipeline.json",
+      "replay_dir": "replay/REPLACE-recording-id"
+    }
+  ]
+}

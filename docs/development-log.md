@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-04 - 사건 평가기·통제 촬영·R1/H1 학습 실행 준비
+
+- 목적·이유: 사용자가 지정한 순서로 ①수동 사건 GT에 대한 B0~B3 평가 ②촬영/주석/세션 분리 ③데이터 승인 전 PC13 학습 실행 준비를 진행했다. 중단 뒤 dirty 변경·최근 commit을 확인하고 이어서 검증했다. 데이터 검수 사이트와 실제 full training은 이 작업의 구현 범위가 아니다.
+- 선택: 기존 replay/metadata·training runner·manifest/label parser를 재사용하고 stdlib evaluator와 얇은 paired-preparation CLI를 추가했다(`search-first`). 신규 dependency는 없다. 동일 epoch만으로 다른 크기 dataset의 학습량을 통제할 수 없어, R1/H1 train draw 수를 맞추는 H1 positive oversampling을 development 제안으로 구현했다.
+- 변경 파일: `evaluation.py`, `evaluate_cli.py`, replay module entry point·pyproject CLI, training/paired preparation, evaluation/training configs, fixture/tests, 촬영·GT·binding templates, controlled-experiment guide, 가상 report 및 관련 README/architecture/계획/verification. metadata+snapshot/GPIO runtime 범위는 변경하지 않았다.
+- 결과: 일대일 event TP/FP/FN·중복/배경 FP·영상시간 분모·signed 판단 지연·ignore·partition micro 지표와 raw matching/hash를 기록한다. N5는 실제 positive가 유지되는 dropout robustness로 바로잡았다. frame0-based inclusive annotation과 half-open 시간, session/파생 group 분리, pilot→tuning→freeze→final-test를 정리했다.
+- 학습 준비: R1에는 양성+검증된 음성, H1에는 같은 고유 양성만 넣고 common val/test·같은 planned draw/update schedule을 기록한다. 승인 gate·config/manifest/list/checkpoint/image/label bytes 검사에 실패하면 모델 생성 전에 중단한다. 결과 비교는 common tuning validation이지 detector 자동 선정이나 final-test 평가가 아니다. 권리·음성 부재·near duplicate·좌표·split을 코드가 대신 승인하지 않는다.
+- 환경·명령·검증: 개발 PC `.venv-ml` Python 3.11.9, `PYTHONPATH=src`, `unittest discover -s tests -q` 101 tests 통과. 평가기 8 tests, training/pair 9 tests 포함. 실제 module replay→evaluation CLI 성공; 가상 TP/FP/FN B0=1/1/1, B1~B3=2/0/0. raw: ignored `runs/event-evaluation-synthetic-v1/`; [요약](../reports/evaluation/event-evaluator-synthetic-2026-10-04/report.md). Ultralytics 8.4.152 YOLODataset의 생성 이미지 목록 확인에서 R1/H1 각 6 draws, 고유 5/2, backgrounds 3/0으로 반복 길이 보존을 확인했다. temp fixture는 정리됐고 원본 데이터는 수정하지 않았다.
+- 한계·다음 작업: 위 결과는 배관/산식 검증이다. 실제 거리·matching tolerance·반복 횟수는 첫 pilot 후 확정하고 승인된 SOHAS materialized export가 준비돼야 full training을 시작한다. Orin camera/GPIO·실시간 지연·실제 detector 품질은 미검증이다. 구현 commit은 이 항목을 포함한 Git history로 추적하고 PC13 readiness 증거는 후속 검증에 기록한다.
+
 ## 2026-10-04 - 공개 이름 선택과 모바일 홈 화면 검수
 
 - 사용자 결정: 개인 코드 대신 공개 링크에서 본인 이름을 드롭다운으로 선택한다. 이름은 self-declared identity이며 본인 인증의 증거가 아니다. 기존 계정·배정·판정 DB를 보존하고 관리자 기능은 별도 코드 접속으로 유지한다. 이전 개인 코드 사용 안내는 이 기록으로 `SUPERSEDED`다.

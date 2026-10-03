@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "annotation_version": "synthetic-fixture-v1",
+  "data_kind": "synthetic",
+  "recordings": [
+    {
+      "recording_id": "fixture-recording",
+      "session_id": "fixture-session",
+      "source_id": "fixture-camera",
+      "partition": "pilot",
+      "scenario_id": "P3",
+      "start_s": 0.0,
+      "end_s": 0.9,
+      "events": [
+        {"event_id": "first", "start_s": 0.1, "end_s": 0.3, "start_frame": 1, "end_frame": 2},
+        {"event_id": "second", "start_s": 0.7, "end_s": 0.9, "start_frame": 7, "end_frame": 8}
+      ],
+      "ignore_intervals": []
+    }
+  ]
+}

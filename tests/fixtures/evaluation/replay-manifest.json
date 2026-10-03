@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "recordings": [
+    {
+      "recording_id": "fixture-recording",
+      "detections": "../replay/basic.jsonl",
+      "pipeline_config": "../../../configs/replay/development-v2.example.json",
+      "replay_dir": "../../../runs/event-evaluation-synthetic-v1/replay"
+    }
+  ]
+}

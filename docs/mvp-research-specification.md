@@ -80,6 +80,8 @@ associated = knife_center in expanded_person_box(α)
 | N4 | weapon-like object 또는 짧은 false detection | 순간 오탐 억제 |
 | N5 | event 중 일시적 detection dropout | K-of-N 누락 내성 |
 
+N5는 ID를 유지하되 **positive robustness trial**로 취급한다. 검출 누락으로 실제 positive 사건 정답을 끊지 않는다. 촬영표·source-level 사건 합치기·세션 분리와 평가기 계약은 [통제 실험 규칙](controlled-experiment-protocol.md)을 따른다.
+
 거리(Near/Medium/Far)는 필수 환경 변수다. 조도(Normal/Low-light)는 baseline·촬영 여력에 따라 선택하며, 선택하지 않은 조도 일반화는 주장하지 않는다.
 
 ### Ground truth
@@ -87,6 +89,8 @@ associated = knife_center in expanded_person_box(α)
 - **Event start**: 사람이 안전한 모형 knife를 들거나 소지하기 시작한 첫 frame.
 - **Event end**: knife를 내려놓거나 해당 person–knife association이 명확히 종료된 frame.
 - 각 event는 수동 annotation으로 `[start_frame, end_frame]`, scenario ID, 환경 조건, annotation 담당·규칙 버전을 기록한다.
+
+frame 번호는 0-based 포함 구간이며 end_frame은 마지막 positive frame이다. 평가기의 시간 구간은 첫 positive frame timestamp부터 첫 non-positive frame timestamp까지 `[start_s, end_s)`로 기록한다. 실제 거리·허용 오차와 annotation 합의는 pilot 후 동결한다.
 
 정확한 prediction-to-ground-truth 매칭 허용 구간, ambiguous frame 처리와 annotation 합의 절차는 첫 scenario 샘플을 본 뒤 별도 결정한다.
 

@@ -43,6 +43,13 @@
 | 성능·자원 기록 | 고정 입력, 해상도, 런타임으로 benchmark | Orin Nano, 선택적으로 legacy Nano | 미수행 | - | `PLANNED` |
 | 개인정보·보존 정책 | 수집 전 정책·기관 요구사항 확인 | 프로젝트 운영 환경 | 미수행 | - | `PLANNED` |
 
+## 2026-10-04 사건 평가·촬영·R1/H1 준비 검증
+
+- **평가기**: 단위/통합 8 tests에서 일대일 매칭·반복/배경 FP·FN·허용 창 경계·음수 지연·ignore 분모·undefined 지표·session/group leakage·replay hash 변조·출력 덮어쓰기 거부를 확인했다. 가상 JSONL→B0~B3→평가에서 B0 TP/FP/FN=1/1/1, B1~B3=2/0/0. 이는 가상 계약 검증이며 모델 성능이 아니다. [가상 보고서](../reports/evaluation/event-evaluator-synthetic-2026-10-04/report.md).
+- **촬영 절차**: P1~P4/N1~N5, Near/Medium/Far, inclusive frame/half-open time, source-level GT와 세션/group 분리 양식이 준비됐다. N5는 positive dropout robustness로 정리했다. 실제 촬영·동의·거리·허용 오차·반복 수 동결은 미수행이다.
+- **학습 준비**: 기존 training 4 + pair 5 tests에서 공통 양성/val/test·draw budget·pending 승인 차단·batch override·bytes 변조·group split·fake runner evidence/비교를 확인했다. fake fixture는 실제 모델이나 사람 승인 근거가 아니다. 실제 YOLODataset(로컬 Ultralytics 8.4.152)에서도 생성 이미지의 반복 목록 길이를 보존했다(R1 6/5 unique/3 backgrounds, H1 6/2 unique/0 backgrounds). GPU 학습은 실행하지 않았다.
+- **개발 PC**: Python 3.11.9에서 `python -m unittest discover -s tests -q` **101 tests 통과**. 실제 CPU/GPU full training·Orin·GPIO 지연은 미검증이다. 원시 runtime 출력은 ignored `runs/event-evaluation-synthetic-v1/`에 있다.
+
 ## Benchmark 최소 기록 항목
 
 - 날짜, Git commit 또는 소스 버전, 장비, JetPack/OS, 전원 모드

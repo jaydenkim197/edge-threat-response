@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "annotation_version": "controlled-v1-draft",
+  "data_kind": "controlled",
+  "recordings": [
+    {
+      "recording_id": "REPLACE-recording-id",
+      "session_id": "REPLACE-session-id",
+      "leakage_group_id": "REPLACE-related-recording-group",
+      "source_id": "REPLACE-detection-source-id",
+      "partition": "pilot",
+      "scenario_id": "P1",
+      "distance_bin": "REPLACE-Near-Medium-Far",
+      "distance_m": null,
+      "lighting": "Normal",
+      "video_sha256": "REPLACE-source-video-hash",
+      "annotator_id": "REPLACE-alias",
+      "boundary_check_id": "REPLACE-alias",
+      "start_s": null,
+      "end_s": null,
+      "events": [
+        {"event_id": "REPLACE-event-id", "start_frame": null, "end_frame": null, "start_s": null, "end_s": null}
+      ],
+      "ignore_intervals": []
+    }
+  ]
+}

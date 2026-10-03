@@ -8,6 +8,55 @@ legacy development dataset을 사용하는 아래 Baseline v1 절차는 다른 �
 
 `configs/training/cuda-baseline-v1.json`의 epochs, patience, imgsz, batch와 seed는 첫 development baseline용 기본값이다. 연구 최종 파라미터나 모델 채택 결정이 아니다.
 
+## R1/H1 실행 준비 — 2026-10-04
+
+**준비 코드와 승인 차단은 구현됐고, 실제 SOHAS 전체 학습은 아직 시작하지 않았다.** 아래는 신규 detector 트랙이다. 기존 legacy/Colab 절차와 혼용하지 않는다.
+
+- R1: 승인된 SOHAS knife 양성 + 실제 knife 부재를 검수한 음성.
+- H1: R1과 **같은 고유 train 양성**만 사용. 음성은 train에서 제외한다.
+- 두 조건은 공통 tuning validation과 공통 final-test 목록을 쓴다. 최종 test를 후보 선택이나 threshold 튜닝에 사용하지 않는다.
+- 입력은 원본 VOC candidate나 웹 표본 pack이 아니라, 권리·좌표·knife 누락·음성·중복·group split 검토를 끝낸 `materialized-manifest.jsonl`이다. `source_dataset=sohas`, model-local class `0=knife`, 올바른 images/labels 대응 경로가 필요하다. 이 승인된 SOHAS export는 현재 미준비다.
+
+`configs/training/sohas-pair.pc13.json`은 **development 제안값**이다. YOLO26n의 같은 로컬 pretrained weight, 640px, batch/nbs 16, 50 epochs, 명시적 SGD·seed, FP32, warmup 0, early stop 비활성화를 사용한다. batch/해상도/optimizer/augmentation은 pilot 이후 두 조건을 함께 재생성·재승인하며 연구 최종값으로 간주하지 않는다.
+
+데이터량 차이를 통제하기 위해 train 목록을 batch 배수 길이로 맞추고 H1 양성을 균형 반복한다. 같은 epoch마다 같은 sample draw 수와 계획된 optimizer update 수를 사용한다. 고유 이미지 수·반복 횟수는 manifest에 별도 남긴다. 이는 **음성 포함 recipe 비교**이며 음성 하나의 순수 인과효과가 아니다. 실제 완료 epochs·trainer 로그·LR schedule은 실행 후 다시 확인한다. `amp=false`는 초기 budget 통제를 위한 설정이지 Orin 추론 정밀도 결정이 아니다. 로컬 Ultralytics 8.4.152의 실제 YOLODataset에서 합성 입력 반복 목록 길이 보존을 확인했다(R1 6 draws/5 unique/3 backgrounds, H1 6 draws/2 unique/0 backgrounds). 실제 SOHAS loader·학습 검증을 대신하지 않는다.
+
+PC13 저장소에서 먼저 **학습을 하지 않는** readiness를 실행한다. 출력은 항상 새 경로를 사용한다.
+
+```powershell
+$env:PYTHONPATH = 'src'
+.\.venv-ml\Scripts\python.exe -m edge_threat_response.training_pair check --plan configs/training/sohas-pair.pc13.json --manifest data/processed/sohas-approved-v1/materialized-manifest.jsonl --checkpoint yolo26n.pt --output-dir runs/sohas-pair-readiness-NEW-ID
+```
+
+CUDA 또는 입력 부재는 exit 2 / `blocked`, 입력이 있어도 `inputs_present_approval_pending`일 뿐 승인 완료가 아니다. 이 명령은 모델을 로드하거나 다운로드하거나 학습하지 않는다.
+
+승인 가능한 materialized export와 로컬 checkpoint가 준비되면:
+
+```powershell
+.\.venv-ml\Scripts\python.exe -m edge_threat_response.training_pair prepare --plan configs/training/sohas-pair.pc13.json --manifest data/processed/sohas-approved-v1/materialized-manifest.jsonl --checkpoint yolo26n.pt --output-dir data/processed/sohas-pair-v1
+```
+
+출력은 R1/H1별 data YAML·train 목록·고유-image manifest·training config, 공통 val/test 목록, `pair-preparation.json`, **모든 gate=false인 `approval.pending.json`**이다. prepare 성공은 source 승인이나 학습 성공이 아니다. 원본 이미지는 복사·수정하지 않는다.
+
+담당자가 근거를 확인한 뒤 pending 파일을 별도 `approval.approved.json`으로 복사해 `status=approved`, 승인 ID·검수자 별칭·날짜와 gate를 기록한다. `rights/human_review/labels_coordinates/negative_absence/duplicates_groups/split/recipe`가 전부 승인되어야 한다. 이름·credential 대신 별칭을 사용하고 파일은 ignored 데이터 공간에 둔다. 자동으로 true를 채우지 않는다. 승인 파일은 config/YAML/manifest/초기 weight/세 목록의 SHA-256을 묶으며, runner는 이미지·label bytes와 목록 반복 횟수까지 재검사한다. 승인 후 파일을 바꾸면 다시 승인한다.
+
+승인 뒤 R1 preflight 예시이며 H1도 같은 방식으로 진행한다:
+
+```powershell
+$env:CUBLAS_WORKSPACE_CONFIG = ':4096:8'
+.\.venv-ml\Scripts\python.exe -m edge_threat_response.training --config data/processed/sohas-pair-v1/R1-training.json --data data/processed/sohas-pair-v1/R1-data.yaml --dataset-manifest data/processed/sohas-pair-v1/R1-manifest.jsonl --approval data/processed/sohas-pair-v1/approval.approved.json --output-dir runs/R1-preflight-NEW-ID --preflight-only --require-cuda
+```
+
+실제 실행은 preflight 확인 후 **`--require-cuda`를 유지하고 `--preflight-only`만 제거**한다. 고유 `--run-name`과 output root를 지정하며 batch 단독 override는 금지한다. 장시간 실행은 아래 SSH 종료 지속 방식에 stdout/stderr·exit code를 남기고 기존 GPU job과 중복 launch하지 않는다. 이번 작업에서는 이 실제 실행을 하지 않았다.
+
+완료 후 비교:
+
+```powershell
+.\.venv-ml\Scripts\python.exe -m edge_threat_response.training_pair compare --r1 runs/training/R1-NEW-ID-invocation.json --h1 runs/training/H1-NEW-ID-invocation.json --output-dir runs/R1-H1-comparison-NEW-ID
+```
+
+비교기는 동일 checkpoint·공통 평가 목록·계획 budget·설정·package 버전을 검사하고 공통 validation 지표 차이를 기록한다. invocation에는 commit/config/manifest/승인 hash, 환경, duration, metrics, checkpoint hash가 남는다. 이 요약만으로 detector를 선정하지 않는다. 같은 tuning 자료에서 small/distant knife recall, threshold를 명시한 hard-negative FP, CCTV 오류와 필요 시 다른 seed를 확인한다. 이후 최종 holdout은 한 번 평가하고, 선택 weight를 동일하게 고정해 B0~B3 사건 실험으로 넘어간다. Orin/GPIO 검증은 별도다.
+
 ## Windows RTX 3060 원격 학습 PC — 2026-10-02
 
 - 작업 경로: `C:\Class6\edge-threat-response`; Python: `.venv-ml\Scripts\python.exe`.
@@ -106,7 +155,7 @@ etr-train \
   --preflight-only --require-cuda
 ```
 
-preflight가 `passed`인 경우에만 `--preflight-only --require-cuda`를 제거해 실제 학습을 시작한다.
+preflight가 `passed`인 경우에만 `--preflight-only`를 제거해 실제 학습을 시작한다. `--require-cuda`는 유지한다.
 
 ## 결과 반입
 

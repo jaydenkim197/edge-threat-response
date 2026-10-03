@@ -107,3 +107,7 @@ def _file_sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
