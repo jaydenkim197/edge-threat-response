@@ -1,6 +1,6 @@
 # PC13 팀 데이터셋 웹 검수
 
-상태: 이름 선택·공통 두 질문·모바일 화면·홈 화면 추가 metadata `IMPLEMENTED`. Chrome/Android 화면 및 WebKit/iPhone 화면의 합성 fixture 저장·재접속·이어하기 `VERIFIED`; PC13 이름 선택 배포와 실제 휴대폰 홈 화면 설치는 별도 확인한다. 표본 검수 자체와 데이터 채택은 별도다.
+상태: PC13 공개 이름 선택·공통 두 질문·모바일 화면·홈 화면 추가 metadata `VERIFIED`(외부 HTTPS·browser). Chrome/Android 화면 및 WebKit/iPhone 화면의 합성 fixture 저장·재접속·이어하기 `VERIFIED`; 실제 휴대폰 홈 화면 설치와 PC13 재부팅 복구는 미검증이다. 표본 검수 자체와 데이터 채택은 별도다.
 
 ## 팀원 사용법
 
@@ -58,3 +58,4 @@
 - 2026-10-04 개인 계정 5개를 PC13에 발급하고 관리자 노트북의 ignored `secrets/`에 코드 사본을 옮겼다. 새 서비스로 재시작 후 **공개 HTTPS에서 5/5 계정 로그인·본인 이름 표시**, 첫 계정으로 7개 준비 후보의 공통 `simple-v2` schema·계정 연동을 읽기 전용으로 확인했다. 개발 PC 전체 84 tests, PC13 관련 5 tests와 JS 문법 검사를 통과했다. 이 확인에서 새 판정 0건. 실제 팀원 브라우저의 저장·재개는 미검증이다.
 - 원본 권리·좌표·중복/session gate, 사람 검수, 학습 채택은 별개다. 후보마다 질문을 추가하지 않고 공통 `simple-v2` 두 질문을 유지한다. 공유 브라우저의 저장 전 임시 입력은 로그인한 검수자별로 분리한다. 웹 검수 표본의 판정은 source 승인이나 최종 학습 채택이 아니다.
 - 이름 선택 변경의 개발 검증: 검수 관련 21 tests, JS 문법·compileall 통과. 합성 fixture에서 Pixel 7/Chrome(412px)과 iPhone 13/WebKit(390px)의 native form 접속·자동 저장·다음·이름 선택 유지·최근 후보 이어하기·미완성 문제 메모 복원을 확인했다. 버튼 높이 46px·가로 overflow 0. 지속형 Chrome profile의 manifest/설치 가능성 검사 오류 0. QA 기록은 로컬 ignored `data/review/mobile-qa-20261004/`에 둔다. 실제 팀원의 판정은 이 테스트에서 쓰지 않았다. 실제 iOS/Android 설치·PC13 재부팅은 미검증이다.
+- PC13에 구현 commit `26af97f`를 배포하고 전체 88 tests를 통과했다. 전환 전 SQLite consistent backup을 `data/review/team-server/backups/before-name-login-20261004/`에 작성한 뒤 `reviewer_login=name`으로 전환·시작 작업을 재실행했다. 관리자 actual-config smoke의 전후 SOHAS 판정 6건 및 다른 pack 0건이 일치했다. 외부 HTTPS native form으로 5/5 이름 선택·7개 준비 후보를 확인하고, 본인 계정으로 Chrome/Android·WebKit/iPhone의 실제 SOHAS 화면·이미지를 열었다. 이 과정은 본인의 미검수 배정 1건을 이어받으며 실제 판정은 0건이다. 외부 HTTPS의 Chrome manifest/설치 가능성 오류도 0건이었다. 실제 휴대폰의 설치 UI·홈 화면 아이콘 실행은 아직 확인하지 않았다.

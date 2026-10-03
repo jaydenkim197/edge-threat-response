@@ -9,7 +9,8 @@
 - 변경 파일: `team_review.py`, 공통 웹 UI·install assets, local review asset routing, configure/check helpers, team tests, README·architecture·팀 배포 사용법·verification. 신규 dependency는 runtime에 추가하지 않았다. 브라우저 QA는 기존 bundled Playwright와 격리 WebKit을 사용하고 결과는 ignored `data/review/mobile-qa-20261004/`에 보관한다.
 - 발견·수정: 기존 `Referrer-Policy: no-referrer`는 Chrome native form POST에 `Origin: null`을 만들어 server의 Origin guard가 정상 접속을 403으로 막았다. 실제 browser 재현 뒤 `same-origin`으로 수정해 외부 referrer는 보내지 않으면서 내부 form 접속을 허용했다.
 - 개발 검증: 관련 21 tests, JS 문법·compileall·diff 확인 통과. 합성 fixture의 Pixel 7/Chrome 412px와 iPhone 13/WebKit 390px에서 이름 선택→자동 배정→두 질문 저장→다음→재접속·recent candidate·문제 메모 draft 복원 모두 통과했다. 가로 overflow 0, 질문 버튼 46px. 지속형 Chrome profile의 manifest/설치 가능성 오류 0. 실제 source에 새 사람 판정은 쓰지 않았다.
-- 한계·다음 작업: PC13 배포·외부 HTTPS 이름 선택은 후속 검증하고, 실제 iOS/Android 홈 화면 설치와 reboot recovery는 물리 장비에서 확인한다. 기록은 현재 작업의 구현 커밋 및 후속 배포 검증 커밋에 연결한다.
+- 배포·검증: 구현 commit `26af97f`를 PC13에 반영하고 전체 88 tests 통과. SQLite consistent backup 후 `reviewer_login=name` 전환·시작 작업 재실행. 외부 HTTPS native form의 이름 선택 5/5·7개 준비 후보·Chrome/Android와 WebKit/iPhone 실제 화면/이미지·manifest 및 설치 가능성 오류 0을 확인했다. 전후 SOHAS 기존 판정 6건 및 나머지 pack 0건을 보존했고 실제 데이터 판정은 추가하지 않았다. 본인의 미검수 배정 1건은 재접속 테스트에 사용했다. 결과는 ignored `public-result.json`에 있고 구현 및 후속 배포 기록 커밋으로 보존한다.
+- 한계·다음 작업: 실제 iOS/Android 홈 화면 설치·아이콘 실행과 reboot recovery는 물리 장비에서 확인한다. 이름 선택은 본인 인증이 아니므로 검수 provenance에 그 한계를 유지한다.
 
 ## 2026-10-04 - 개인 계정 발급과 후보 공통 검수 흐름
 
