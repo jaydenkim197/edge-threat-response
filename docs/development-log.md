@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-03 - 외장 저장장치 없는 데이터 준비·권리 확인 초안
+
+- 사용자 요청: SOHAS 준비를 진행하고 필요한 정보를 요청하되 GPU PC/노트북에 외장 저장장치를 상시 연결하지 않는 저장 방식을 정한다.
+- 범위/완료 기준: 내장 디스크 여유·기존 ignore·공식 pinned license/contact를 확인하고 기존 전략/report에 작업 위치·백업 경계·권리 확인 초안을 추가한다. 신규 source 채택·메일 발송·전체 image 다운로드·학습은 제외했다.
+- Windows `Get-PSDrive C` 관찰: 학습 PC 144.5 GiB, 노트북 16.4 GiB 여유. GPU PC의 기존 `data/`와 `runs/`를 사용하고 노트북은 코드·소형 검수 pack 위주로 둔다. Drive 실제 연결/업로드는 미수행이며 로컬 dataset 10 GB 한도와 권리 gate를 유지한다.
+- 고정 upstream의 README CC BY-SA 4.0과 License.md CC BY 4.0 및 공개 기관 연락처를 재확인했다. 사용 조건·제한 공유 백업·weight 공개·VOC 좌표·group metadata를 묻는 영문 메일 초안을 기존 SOHAS report에 작성했다. 외부 연락을 보내지 않았다.
+- package 크기 측정을 위해 partial clone에서 `git ls-tree -r -l`을 시도했으나 lazy blob fetch/auto maintenance가 유발되어 해당 크기 조회 프로세스만 중단했다. 파일 삭제·원본 변경 없이 보존했으며 체크아웃된 이미지 0개를 확인했다. Git cache 일부 반입은 있었으므로 metadata만 읽었다고 주장하지 않는다. 이 조회의 0 count/size 출력은 유효한 package 용량이 아니며 사용하지 않는다. 이후 크기 조회는 공식 tree API의 size 등 blob fetch 없는 방식으로 수행한다.
+- 변경: dataset-source-strategy, 기존 SOHAS report, 이 로그. verification-loop 기준 문서 diff/ignore를 확인하며 코드 변경이 없어 코드 테스트는 생략한다. recipe 승인 상태 불변.
+- 필요한 사용자 정보: `C:\Class6`의 기간 중 보존/초기화 정책, 권리 확인 메일 발송 담당. 다음은 회신 근거 또는 명확한 공식 사용 조건 확보 후 이미지 검수다. Git: 이 기록을 포함하는 commit.
+
 ## 2026-10-03 - 남은 사용량으로 SSH 독립 GPU 실행 검증
 
 상태: 단기 SSH 종료 후 CUDA 작업 지속 `VERIFIED`; 실제 데이터 학습·장시간 안정성 `PLANNED`.

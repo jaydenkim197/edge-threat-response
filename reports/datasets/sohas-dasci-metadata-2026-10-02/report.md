@@ -96,3 +96,24 @@
 - 별도 `sohas-upstream-byte-exact/` staging을 clone-local `core.autocrlf=false`로 만들고 같은 upstream commit·label/XML-only sparse checkout을 사용했다. 원본·검사 코드·전역 설정은 수정하지 않았다.
 - `etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream-byte-exact --output-dir data/source-audit/sohas-voc-pc13-byte-exact-20261002`: exit 0, error 0, images 5,859 / VOC knife 2,349 / YOLO knife 2,277 / mismatch 58 / orphan 83 / case-only warning 181로 Cloud와 같은 집계다. 100개 review sample이 생성됐다.
 - 이미지 checkout 0, coordinate `unknown`, human review pending, training 승인 false 상태다. 실제 학습·Cloud SSH 복구·background job 지속·Drive 업로드는 이번 검사로 검증하지 않았다.
+
+## 사용 권리 확인 요청 초안 — 2026-10-03
+
+고정 upstream README의 공개 기관 연락처는 `fperezhernandez@ugr.es`, `albertocl@ugr.es`다. 이 snapshot에 기재된 주소이며 현재 수신 가능성은 미확인이다. 아래는 사용자가 보낼 수 있는 초안이고 **메일/issue를 실제 발송하지 않았다**.
+
+Subject: SOHAS detection dataset — license and VOC coordinate clarification
+
+Dear SOHAS dataset authors,
+
+We are preparing a university capstone research project on knife detection and spatial/temporal alert confirmation. We plan to use the SOHAS detection images and VOC annotations from repository commit `48860b990e4d4f57fe100248887fceb248475dc8` for non-commercial academic training and evaluation.
+
+The repository README states CC BY-SA 4.0, while License.md contains CC BY 4.0. Could you clarify which license applies to the SOHAS detection images and annotations? May our team keep private working copies and a restricted Google Drive backup, and publish evaluation results, conversion scripts and trained weights? We do not plan to publicly redistribute the raw images before clarification.
+
+Could you also confirm whether the VOC bbox coordinates use zero-based pixel edges or one-based inclusive coordinates, and whether camera/video/session grouping metadata is available? We found 2,349 knife objects in the paired VOC annotations versus 2,277 in the YOLO distribution, so we plan to preserve all VOC knife boxes after visual verification.
+
+Thank you. We will cite the SOHAS paper and dataset as requested.
+
+Best regards,
+[Your name and university]
+
+회신/공식 설명을 source evidence로 보존하고 실제 이미지 표본 확보·좌표 overlay·negative 누락 검수·group split을 이어간다. 사용자 개인 정보는 초안에 자동 기입하지 않았다.

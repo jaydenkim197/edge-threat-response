@@ -74,6 +74,14 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 
 ## 6. Evidence and caveats
 
+### 외장 저장장치 없는 운영 — 2026-10-03
+
+- 학습 PC 내장 C드라이브의 `C:\Class6\edge-threat-response\data\`를 작업용 raw/audit/processed 저장 위치로, `runs\`를 학습 결과 위치로 사용한다. 바탕화면에 별도 데이터 사본을 만들지 않는다. 현재 C 여유 공간은 학습 PC 약 144.5 GiB, 노트북 약 16.4 GiB로 확인했다.
+- 노트북에는 Git 코드·문서와 필요한 소형 검수 pack만 두고 전체 원본·학습용 복제는 피한다. GitHub는 raw/weight 보관소가 아니며 기존 `data/`, `runs/`, `*.pt` ignore를 유지한다.
+- Google Drive는 권리 확인된 원본·manifest/검수표·config·checkpoint/결과의 보관본이다. 학습 중 Drive mount/sync 폴더를 읽지 않고 PC 내장 드라이브를 사용한다. 실제 업로드/자동 백업은 아직 설정하지 않았다.
+- 원본·processed·Git partial-clone cache·결과를 합쳐 로컬 dataset 작업 자료가 10 GB를 넘게 되면 기존 사용자의 저장 한도에 맞춰 보관 방식을 다시 승인받는다. full package 용량은 아직 측정하지 않았으며 여유 공간이 있다는 이유로 무제한 다운로드하지 않는다.
+- 사용자 확인 필요: 학습 PC의 `C:\Class6`가 재부팅/수업 후 초기화되지 않고 프로젝트 기간 보존 가능한지. 확인 전에는 PC 로컬 자료를 유일한 장기 보관본으로 삼지 않는다.
+
 - [SOHAS / OD-WeaponDetection 공식 저장소](https://github.com/ari-dasci/OD-WeaponDetection)의 README는 CC BY-SA 4.0을 적지만 [`License.md`](https://github.com/ari-dasci/OD-WeaponDetection/blob/master/License.md)는 CC BY 4.0 전문이다. 실제 적용 범위를 확인하기 전에는 라이선스를 확정하지 않는다. 고정 Git snapshot의 metadata·label 구조 audit는 수행했지만 실제 이미지 package·decode·좌표와 시각적 annotation 완전성은 아직 검증하지 않았다.
 - 2026-10-02 공식 저장소 `master` commit `48860b990e4d4f57fe100248887fceb248475dc8`의 [DaSCI 이미지 Git tree](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/56fae9b20a3863051e510d001decd466847e9b60)와 [SOHAS train](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/e9bd454863bd05af3c534e803609189149dc51e0)·[test](https://api.github.com/repos/ari-dasci/OD-WeaponDetection/git/trees/8c1377c477bbd58c25d05f37b7a4c63ede1fcda1)의 image basename·Git blob ID를 비교했다. DaSCI 2,078장 중 1,985장은 SOHAS와 **동일 basename·동일 blob**이고, 나머지 93장은 byte-unique 후보일 뿐 perceptual uniqueness가 아니다. SOHAS는 5,859 image가 있으나 XML은 5,942개로 image 없는 annotation 83개가 남아 raw import에서 제외해야 한다. 방법과 원자료 링크는 [metadata 보고서](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)에 남겼다. 이 audit은 image decode·knife label 완전성·group 독립성 검증을 대체하지 않는다.
 - [ACF 논문](https://pmc.ncbi.nlm.nih.gov/articles/PMC9572610/)은 ACF Knife의 1920×1080 CCTV data와 small-object label 문제를 설명한다. 3,559 image와 3,618 knife label은 서로 다른 단위다. 논문이 제시한 [원 저장소](https://github.com/iCUBE-Laboratory/The-Armed-CCTV-Footage)는 2026-09-26 접근에 실패했으므로 raw inventory와 사용 가능성은 미확인이다.
