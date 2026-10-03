@@ -116,7 +116,7 @@ etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --out
 
 ### 버튼으로 이미지 검수하기
 
-팀원 공동 검수는 [PC13 중앙 웹 검수](docs/team-review-deployment.md)를 사용한다. 팀원은 개인 코드로 사이트에 로그인해 SOHAS·DaSCI 고유 이미지·Simuletic·US Mock Attack·Dangerous Items·Open Images·Legacy 표본을 고르고 두 질문에 답한다. 이미지와 판정은 PC13에만 저장하며, CSV·개발 환경은 필요 없다. 외부 HTTPS의 관리자 로그인·이미지 접근 통제는 확인했고 팀원 첫 판정의 저장·재접속은 아직 확인해야 한다. ACF는 원본 접근 장애로 잠겨 있고 Dangerous Items의 칼 class 매핑은 임시 판정이므로 학습에 쓰지 않는다.
+팀원 공동 검수는 [PC13 팀 검수 사이트](https://yu-desktop-97msr1i.tail37c267.ts.net/)에서 한다([운영 안내](docs/team-review-deployment.md)). 각자 개인 코드로 로그인해 후보를 고르면 첫 이미지가 자동 배정된다. **모든 후보에서 같은 두 질문**—CCTV형 장면인지, 칼 라벨이 정상인지—만 답하면 자동 저장되며 `문제 있음`일 때만 메모가 필요하다. CSV·개발 환경은 필요 없다. 외부 HTTPS에서 개인 계정 5개 로그인과 7개 후보의 공통 양식을 확인했고, 실제 팀원 첫 판정의 저장·재접속은 아직 확인해야 한다. 이미지와 판정은 PC13에만 저장한다. ACF는 원본 접근 장애로 잠겨 있고 Dangerous Items의 칼 class 매핑은 임시 판정이므로 학습에 쓰지 않는다.
 
 아래 명령은 기존 **단일 PC 로컬 SOHAS 검수 도구**가 필요한 경우에만 사용한다. 중앙 서비스 사용을 시작한 뒤 같은 표본을 로컬 DB에서 병행 수정하면 판정이 갈라진다. 현재 로컬 100장 pack은 `data/review/sohas-click-review-20261003/`이며 Git에는 이미지가 포함되지 않는다.
 
