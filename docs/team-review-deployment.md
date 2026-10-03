@@ -1,6 +1,6 @@
 # PC13 팀 데이터셋 웹 검수
 
-상태: PC13 서버·시작 작업 및 외부 HTTPS 로그인·목록·이미지 접근 통제 `VERIFIED`. 개인 계정 5개 발급·로그인은 별도 확인한다. 팀원의 실제 판정 저장·재접속과 재부팅 후 자동 복구는 아직 `NOT VERIFIED`. 표본 검수 자체와 데이터 채택은 별도다.
+상태: PC13 서버·시작 작업 및 외부 HTTPS 로그인·목록·이미지 접근 통제, 개인 계정 5개 발급·로그인 `VERIFIED`. 팀원의 실제 판정 저장·재접속과 재부팅 후 자동 복구는 아직 `NOT VERIFIED`. 표본 검수 자체와 데이터 채택은 별도다.
 
 ## 팀원 사용법
 
@@ -44,4 +44,5 @@
 - PC13 Tailscale v1.102.4, C 여유 약 144.5 GiB(작업 전 관찰). Windows Python 3.12.4, RTX 3060 학습 venv의 optional review-server dependencies를 설치했다. 검수 자체는 GPU를 사용하지 않는다.
 - PC13 local `GET /login` 200, 인증 없는 `GET /api/catalog` 및 SOHAS/Dangerous 이미지 URL 401. 7/8 후보 pack으로 다시 설정하고 시작 작업을 재실행했다. 읽기 전용 실제 config smoke는 **관리자 로그인→7개 pack 목록/첫 이미지 200**과 SOHAS 기존 판정 6건을 확인했고, 판정·계정은 변경하지 않았다. 노트북과 PC13에서 team tests 4개, 전체 로컬 테스트 83개 통과. Session cookie, Host/Origin/CSRF, role·배정 충돌, history/backup을 fixture에서 검증했다.
 - Funnel 승인 후 외부 `GET /login` 200, 비인증 catalog·Dangerous 이미지 401, 관리자 HTTPS 로그인 후 catalog의 준비 후보 7개와 Dangerous 첫 이미지 200/79,893 bytes를 확인했다. 관리자 로그인은 판정을 쓰지 않는다. 팀원 개인 계정의 실제 첫 판정 저장·새로고침/재접속은 첫 검수자가 수행할 때 확인해야 한다.
+- 2026-10-04 개인 계정 5개를 PC13에 발급하고 관리자 노트북의 ignored `secrets/`에 코드 사본을 옮겼다. 새 서비스로 재시작 후 **공개 HTTPS에서 5/5 계정 로그인·본인 이름 표시**, 첫 계정으로 7개 준비 후보의 공통 `simple-v2` schema·계정 연동을 읽기 전용으로 확인했다. 개발 PC 전체 84 tests, PC13 관련 5 tests와 JS 문법 검사를 통과했다. 이 확인에서 새 판정 0건. 실제 팀원 브라우저의 저장·재개는 미검증이다.
 - 원본 권리·좌표·중복/session gate, 사람 검수, 학습 채택은 별개다. 후보마다 질문을 추가하지 않고 공통 `simple-v2` 두 질문을 유지한다. 공유 브라우저의 저장 전 임시 입력은 로그인한 검수자별로 분리한다. 웹 검수 표본의 판정은 source 승인이나 최종 학습 채택이 아니다.
