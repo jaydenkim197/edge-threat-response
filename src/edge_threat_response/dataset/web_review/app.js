@@ -5,6 +5,9 @@ const specs = [
   ["annotation_verdict", "② 칼 라벨은 정상인가요?", "박스 위치 + 칼 누락을 한 번에 확인", [["ok","정상"],["problem","문제 있음"],["unclear","모르겠음"]]],
 ];
 let items = [], current = 0, csrf = "", pack = "", values = {}, dirty = false, saving = false, timer;
+const teamDataset=location.pathname.startsWith("/review/")?location.pathname.split("/")[2]:"";
+const apiUrl=path=>path+(teamDataset?`?dataset=${encodeURIComponent(teamDataset)}`:"");
+let team=false, signedReviewer="";
 let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
 function draftKey() { return `etr-draft:${pack}:${current}`; }
@@ -65,6 +68,7 @@ function show(index) {
   }
   values.review_schema="simple-v2";
   values.reviewer=values.reviewer || rememberReviewer;
+  if(team) values.reviewer=signedReviewer;
   $("reviewer").value=values.reviewer || ""; $("notes").value=values.notes || "";
   $("sample-number").textContent=`${String(current+1).padStart(2,"0")} / ${items.length}`;
   $("filename").textContent=item.name;
@@ -87,6 +91,7 @@ function show(index) {
   }
   $("image-view").classList.remove("zoom2","zoom3"); $("image-view").scrollTop=0; $("image-view").scrollLeft=0; $("zoom").textContent="확대 1×";
   dirty=restoredDraft; paintChoices(); refreshProgress();
+  if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=!item.editable;$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
   $("previous").disabled=current===0; $("next").disabled=current===items.length-1;
   status(item.version ? `자동 저장됨 · 수정 ${item.version}회` : "선택하면 자동 저장됩니다.",item.version?"saved":"");
 }
@@ -109,13 +114,13 @@ async function save(force=false) {
   saving=true; const id=current; const captured=JSON.stringify(values); let succeeded=false;
   $("save-next").disabled=true; status("저장 중…");
   try {
-    const response=await fetch("/api/review",{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id,version:items[id].version,fields:values})});
+    const response=await fetch(apiUrl("/api/review"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id,version:items[id].version,fields:values})});
     const result=await response.json(); if(!response.ok) throw new Error(result.error || "저장 실패");
     items[id].version=result.version; items[id].review=result.review;
     succeeded=true;
     if(id===current && captured===JSON.stringify(values)) {dirty=false; localStorage.removeItem(draftKey());}
     else if(id===current) {localStorage.setItem(draftKey(),JSON.stringify({version:result.version,fields:values}));}
-    $("saved-badge").textContent="검수 기록 있음"; refreshProgress(); status("자동 저장됨 · 이 PC에 안전하게 기록했습니다.","saved");
+    $("saved-badge").textContent="검수 기록 있음"; refreshProgress(); status(team?"자동 저장됨 · PC13에 기록했습니다.":"자동 저장됨 · 이 PC에 안전하게 기록했습니다.","saved");
     return !dirty;
   } catch(error) {status(error.message,"error"); return false;}
   finally {saving=false; $("save-next").disabled=false; if(succeeded && dirty && complete()) timer=setTimeout(()=>save(),500);}
@@ -123,9 +128,11 @@ async function save(force=false) {
 async function move(delta) {
   if(saving) return;
   if(dirty && complete() && !await save()) return;
+  if(team&&delta>0){await claimNext();return;}
   const visible=visibleItems(); const next=delta>0 ? visible.find(item=>item.id>current) : [...visible].reverse().find(item=>item.id<current);
   if(next) show(next.id); else status("이 필터의 마지막 이미지입니다.");
 }
+async function claimNext(){const response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:"{}"});if(!response.ok){status("담당 배정 실패 · 새로고침 후 다시 시도해주세요.","error");return;}const result=await response.json();if(result.id===null){status("배정 가능한 미검수가 없습니다. 후보 목록에서 다른 데이터셋을 선택하세요.","saved");return;}items[result.id].editable=true;show(result.id);}
 async function jump(index) {if(saving)return; if(dirty && complete() && !await save())return; show(index);}
 function quick(kind) {
   values.annotation_verdict={keep:"ok",reject:"problem",hold:"unclear"}[kind];
@@ -133,10 +140,12 @@ function quick(kind) {
 }
 async function init() {
   buildFields();
-  const response=await fetch("/api/items"); if(!response.ok)throw new Error("검수 자료를 읽지 못했습니다.");
+  const response=await fetch(apiUrl("/api/items")); if(!response.ok){if(teamDataset&&response.status===401)location.href="/login";throw new Error("검수 자료를 읽지 못했습니다.");}
   const data=await response.json();
   if(data.review_schema!=="simple-v2") throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
+  team=Boolean(data.team);signedReviewer=data.reviewer||"";
+  if(team){document.title=`${teamDataset} · 팀 이미지 검수`;$("reviewer").readOnly=true;document.querySelector(".local-badge").textContent="PC13 중앙 저장";const back=document.querySelector(".top-actions a");back.href="/";back.textContent="후보 목록 ↗";document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";document.querySelector(".image-note").textContent="초록 박스 = source의 칼 라벨 · 좌표·완전성은 검수 중";$("next").textContent="다음 미검수 받기 →";}
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));
@@ -148,5 +157,6 @@ async function init() {
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});
   const first=items.find(item=>!item.version); show(first?first.id:0);
+  if(team)await claimNext();
 }
 init().catch(error=>status(error.message,"error"));

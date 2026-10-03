@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-03 - PC13 중앙 팀 검수 구현 (배포 검증 전)
+
+- 사용자 결정: PC13 상시 운용·팀 웹서비스 운영 가능, 대용량 자료는 PC13에 두고 브라우저만으로 후보 검수한다. CSV 회수·각 PC Python 설치 방식은 채택하지 않는다.
+- 작업 카드: 기존 두 질문 UI·SQLite/history를 재사용해 다중 후보, 개인 코드 로그인, 관리자 초대/해제, 미검수 자동 배정, 동시 수정 차단, 백업을 구현한다. 완료 기준은 인증 없는 이미지 차단·권한/CSRF/Host·저장/재개·원격 HTTPS 확인과 기존 인간 판정 보존이다. 학습·source 자동 승인·전체 PC 공유는 제외한다.
+- search-first 선택: stdlib 개발 HTTP 서버의 직접 공개 대신 Windows 지원 Flask 3.1.3 + Waitress 3.0.2를 별도 review-server requirements로 채택한다. Core의 무의존성과 로컬 검수 서버는 유지한다. 공식 Flask deployment/waitress 문서를 확인했다.
+- 구현: signed Secure/HttpOnly/SameSite cookie, 8시간 세션, 개인 고엔트로피 접속 코드의 scrypt hash, 접근 해제 시 세션 무효화, origin·CSRF·명시적 Host 경계, 계정 기반 reviewer, 배정 중복 방지와 review version 유지. 관리자만 계정을 발급·해제한다. 코드·키·원본·개인 판정은 Git 제외다.
+- Source preparation: SOHAS 100 기존 pack, DaSCI byte-unique 93(98 knife), Simuletic 114(99 knife), US camera/positive strata 100(47 knife), Open Images validation 첫 표본 30(40 knife), 기존 legacy 표본 128(147 knife) 준비. 표본은 source 채택이나 전체 구성비의 증거가 아니다. ACF upstream 404 유지. Dangerous Items official Zenodo record는 현재 CC BY 4.0이며 과거 권리 보류를 갱신하지만 다운로드·실제 pack 검증은 진행 중이다.
+- PC13의 US 원본 archive 1,485,019,798 bytes와 SHA-256 `558f5baa109abe8fba57b61fa177c75358001f5499f5e78178f4bf7dc9f55e8c`를 확인했다. 원본은 PC13에만 두며 full dataset import/training은 하지 않았다. Simuletic HF snapshot `c71bb6186c9849edf2216909febffb979b89b838`, US HF `07ced721cd90973f66806c0b3ee01e80c439ba90`을 기록한다.
+- 검증: Windows Python 3.11 전체 83 tests 통과, compileall/JS check. 신규 테스트에서 Flask trusted Host의 400 거부와 SQLite context manager가 close하지 않는 Windows file-lock을 재현했고 fail-closed assertion·explicit closing으로 수정했다. local pip console 인코딩 경고는 설치 후 import/test로 확인했다.
+- 기존 SOHAS human DB 관찰: 6행/history 40건의 consistent migration snapshot 작성, 원본과 실행 중 로컬 탭은 그대로 보존. 원격 import·서비스 자동 실행·Funnel 공개·브라우저 통합은 아직 이 항목 시점 NOT VERIFIED이며 후속 기록으로 갱신한다. 관리자 bootstrap 코드 파일은 ignored secrets에만 생성한다.
+
 ## 2026-10-03 - 진행 중 저장 확인·검수 질문 최소화·팀 배포 점검
 
 - 작업 카드: 사용자 요청에 따라 실제 저장을 비파괴적으로 확인하고 중복 UI 항목을 줄인다. 완료 기준은 DB 무결성·백업, 기존 판정 보존, 2-question 저장·재개 테스트와 문서/Git 반영이다. 공개 배포·공유 권한 변경·훈련·사용자 대리 판정은 제외했다. 진행 중 탭/저장을 끊지 않는 것이 주요 위험 통제다.

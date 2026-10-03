@@ -1,0 +1,5 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>팀 데이터셋 검수 · 로그인</title><link rel="stylesheet" href="/style.css"></head>
+<body><main class="portal"><p class="eyebrow">EDGE THREAT RESPONSE · TEAM REVIEW</p><h1>접속 코드로 시작하세요.</h1><p>관리자가 개인별로 발급한 코드입니다. 팀원에게 설치나 CSV 제출을 요구하지 않습니다.</p>
+<form action="/login" method="post" class="progress-card"><input type="hidden" name="csrf" value="{{ csrf }}"><label for="code">개인 접속 코드</label><input id="code" name="code" type="password" autocomplete="current-password" required maxlength="120"><button class="button dark" type="submit">로그인 →</button><p class="error" role="alert">{{ error }}</p></form>
+<p>검수용 원본과 판정은 PC13에 보관합니다. 승인된 팀원만 접근할 수 있으며, 이 화면의 검수는 학습·배포 승인이 아닙니다.</p></main></body></html>
