@@ -7,7 +7,7 @@ const specs = [
 let items = [], current = 0, csrf = "", pack = "", values = {}, dirty = false, saving = false, timer;
 const teamDataset=location.pathname.startsWith("/review/")?location.pathname.split("/")[2]:"";
 const apiUrl=path=>path+(teamDataset?`?dataset=${encodeURIComponent(teamDataset)}`:"");
-let team=false, signedReviewer="";
+let team=false, signedReviewer="", teamAdmin=false;
 let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
 function draftKey() { return `etr-draft:${pack}:${current}`; }
@@ -132,7 +132,7 @@ async function move(delta) {
   const visible=visibleItems(); const next=delta>0 ? visible.find(item=>item.id>current) : [...visible].reverse().find(item=>item.id<current);
   if(next) show(next.id); else status("이 필터의 마지막 이미지입니다.");
 }
-async function claimNext(){const response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:"{}"});if(!response.ok){status("담당 배정 실패 · 새로고침 후 다시 시도해주세요.","error");return;}const result=await response.json();if(result.id===null){status("배정 가능한 미검수가 없습니다. 후보 목록에서 다른 데이터셋을 선택하세요.","saved");return;}items[result.id].editable=true;show(result.id);}
+async function claimNext(){if(teamAdmin){status("관리자 계정은 현황 확인용입니다. 개인 검수 계정으로 로그인해주세요.");return;}const response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:"{}"});if(!response.ok){status("담당 배정 실패 · 새로고침 후 다시 시도해주세요.","error");return;}const result=await response.json();if(result.id===null){status("배정 가능한 미검수가 없습니다. 후보 목록에서 다른 데이터셋을 선택하세요.","saved");return;}items[result.id].editable=true;show(result.id);}
 async function jump(index) {if(saving)return; if(dirty && complete() && !await save())return; show(index);}
 function quick(kind) {
   values.annotation_verdict={keep:"ok",reject:"problem",hold:"unclear"}[kind];
@@ -144,7 +144,7 @@ async function init() {
   const data=await response.json();
   if(data.review_schema!=="simple-v2") throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
-  team=Boolean(data.team);signedReviewer=data.reviewer||"";
+  team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
   if(team){document.title=`${teamDataset} · 팀 이미지 검수`;$("reviewer").readOnly=true;document.querySelector(".local-badge").textContent="PC13 중앙 저장";const back=document.querySelector(".top-actions a");back.href="/";back.textContent="후보 목록 ↗";document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";document.querySelector(".image-note").textContent="초록 박스 = source의 칼 라벨 · 좌표·완전성은 검수 중";$("next").textContent="다음 미검수 받기 →";}
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
@@ -157,6 +157,6 @@ async function init() {
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});
   const first=items.find(item=>!item.version); show(first?first.id:0);
-  if(team)await claimNext();
+  if(team&&!teamAdmin)await claimNext();
 }
 init().catch(error=>status(error.message,"error"));

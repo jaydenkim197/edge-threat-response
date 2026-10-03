@@ -340,15 +340,24 @@ class RangeReader(io.RawIOBase):
             if start not in self.cache:
                 stop = min(self.size-1, start+262143)
                 # Isolate cache keys: some upstream caches do not vary on Range.
-                request = urllib.request.Request(self.url + f"&review_range={start}-{stop}", headers={"Range": f"bytes={start}-{stop}", "User-Agent": "ETR academic review/1.0"})
-                with urllib.request.urlopen(request, timeout=45) as response:
-                    if response.status != 206:
-                        raise ValueError("Server did not honor bounded Range request")
-                    if response.headers.get("Content-Range") != f"bytes {start}-{stop}/{self.size}":
-                        raise ValueError("Unexpected HTTP Content-Range")
-                    chunk = response.read(stop-start+2)
+                parts, offset = [], start
+                for _ in range(4):
+                    request = urllib.request.Request(self.url + f"&review_range={offset}-{stop}", headers={"Range": f"bytes={offset}-{stop}", "User-Agent": "ETR academic review/1.0"})
+                    with urllib.request.urlopen(request, timeout=45) as response:
+                        if response.status != 206:
+                            raise ValueError("Server did not honor bounded Range request")
+                        if response.headers.get("Content-Range") != f"bytes {offset}-{stop}/{self.size}":
+                            raise ValueError("Unexpected HTTP Content-Range")
+                        part = response.read(stop-offset+2)
+                    if not part or len(part) > stop-offset+1:
+                        raise ValueError("Invalid range response length")
+                    parts.append(part)
+                    offset += len(part)
+                    if offset == stop+1:
+                        break
+                chunk = b"".join(parts)
                 if len(chunk) != stop-start+1:
-                    raise ValueError(f"Incomplete range: got {len(chunk)}, expected {stop-start+1}, offset {start}")
+                    raise ValueError("Incomplete source range after bounded retries")
                 self.downloaded += len(chunk)
                 if self.downloaded > 200_000_000:
                     raise ValueError("Source review range budget exceeded")
@@ -372,11 +381,46 @@ def dangerous_inventory():
         configs = {name: archive.read(name).decode("utf-8-sig") for name in names if Path(name).suffix.lower() in {".yaml", ".yml"}}
         result = {"first_paths": names[:12], "configs": configs, "files": len(names),
                   "first_labels": [name for name in names if name.endswith(".txt")][:6], "range_bytes": reader.downloaded}
+        result["other_paths"] = [name for name in names if name and not name.endswith("/") and "/images/" not in name and "/labels/" not in name][:30]
     (RAW / "dangerous-range-inventory.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
     return result
 
 
-def dangerous_items():
+def dangerous_probe():
+    from PIL import ImageDraw
+    record = json.loads((RAW / "dangerous-items-record.json").read_text())
+    reader = RangeReader("https://zenodo.org/records/16422779/files/Dangerous%20Items.zip?download=1", record["files"][0]["size"])
+    by_class = defaultdict(list)
+    with zipfile.ZipFile(reader) as archive:
+        names = set(archive.namelist())
+        for label in sorted(name for name in names if "/labels/" in name and name.endswith(".txt")):
+            classes = {int(line.split()[0]) for line in archive.read(label).decode("utf-8-sig").splitlines() if line.strip()}
+            path = str(Path(label).with_suffix(".jpg")).replace("\\", "/").replace("/labels/", "/images/")
+            if path not in names:
+                continue
+            for class_id in classes:
+                if len(by_class[class_id]) < 3:
+                    by_class[class_id].append(path)
+            if len(by_class) >= 5 and all(len(paths) >= 3 for paths in by_class.values()):
+                break
+        sheet = Image.new("RGB", (960, 5*210), "white")
+        for row, (class_id, paths) in enumerate(sorted(by_class.items())):
+            for col, path in enumerate(paths):
+                with Image.open(io.BytesIO(archive.read(path))) as opened:
+                    opened.thumbnail((315, 175))
+                    tile = opened.convert("RGB")
+                x, y = col*320, row*210
+                sheet.paste(tile, (x, y))
+                ImageDraw.Draw(sheet).text((x+3, y+177), f"raw class {class_id} · {Path(path).name[:20]}", fill="black")
+        output = RAW / "dangerous-class-probe.jpg"
+        sheet.save(output)
+    result = {"class_samples": {str(key): paths for key, paths in by_class.items()}, "range_bytes": reader.downloaded,
+              "contact_sheet": str(output), "mapping_status": "visual inference only; not training-approved"}
+    (RAW / "dangerous-class-probe.json").write_text(json.dumps(result, indent=2))
+    return result
+
+
+def dangerous_items(knife_class_override=None):
     import yaml  # Already installed by the training environment; offline prep only.
     record = json.loads((RAW / "dangerous-items-record.json").read_text())
     if record["metadata"]["license"]["id"] != "cc-by-4.0":
@@ -386,16 +430,35 @@ def dangerous_items():
     with zipfile.ZipFile(reader) as archive:
         names = archive.namelist()
         configs = [name for name in names if name.lower().endswith((".yaml", ".yml"))]
-        if len(configs) != 1:
-            raise ValueError("Ambiguous Dangerous Items class config")
-        config = yaml.safe_load(archive.read(configs[0]))
-        classes = config["names"]
-        if isinstance(classes, list):
-            classes = dict(enumerate(classes))
-        knife_class = next(int(key) for key, value in classes.items() if value.lower() == "knife")
+        if configs:
+            if len(configs) != 1:
+                raise ValueError("Ambiguous Dangerous Items class config")
+            config = yaml.safe_load(archive.read(configs[0]))
+            classes = config["names"]
+            if isinstance(classes, list):
+                classes = dict(enumerate(classes))
+            knife_class = next(int(key) for key, value in classes.items() if value.lower() == "knife")
+            mapping_status = "source YAML"
+        else:
+            if knife_class_override is None or not (RAW / "dangerous-class-probe.json").exists():
+                raise ValueError("Missing source class map; make visual class probe before review")
+            knife_class = knife_class_override
+            classes = {knife_class: "knife (visual working hypothesis)"}
+            mapping_status = "review overlay working hypothesis; human class-map confirmation required"
         annotations = {}
-        labels = [name for name in names if name.lower().endswith(".txt") and "/labels/" in name]
-        for label in labels:
+        labels_by_split = defaultdict(list)
+        for name in names:
+            if name.lower().endswith(".txt") and "/labels/" in name:
+                split = next((part for part in Path(name).parts if part in {"train", "valid", "val", "test"}), "unknown")
+                labels_by_split[split].append(name)
+        # A first-review pack is not an inventory of every label. Reading all
+        # ~8k labels through a remote ZIP wastes bandwidth and makes the site
+        # wait for hours. Inspect a small, seeded subset per original split.
+        labels = [name for split in sorted(labels_by_split)
+                  for name in seeded(labels_by_split[split])[:40]]
+        for scanned, label in enumerate(labels, 1):
+            if scanned % 20 == 0:
+                print(f"Dangerous Items label probe {scanned}/{len(labels)}", flush=True)
             text = archive.read(label).decode("utf-8-sig")
             image_prefix = str(Path(label).with_suffix("")).replace("\\", "/").replace("/labels/", "/images/")
             images = [image_prefix+ext for ext in (".jpg", ".png", ".jpeg", ".JPG") if image_prefix+ext in names]
@@ -415,19 +478,24 @@ def dangerous_items():
         samples = [{"image_path": path, "bytes": archive.read(path), "yolo": annotations[path][0],
                     "knife_class": knife_class, "original_split": annotations[path][1]} for path in chosen]
     return write_pack("dangerous-items", samples, {"license": "CC BY 4.0; Zenodo record 16422779", "class_map": classes,
+                                                   "class_mapping_status": mapping_status,
                                                    "archive_checksum_declared": record["files"][0]["checksum"], "full_archive_checksum_verified": False,
                                                    "source_url": reader.url, "range_bytes": reader.downloaded,
-                                                   "population_strata": {str(key): len(value) for key, value in groups.items()},
-                                                   "selection": "100 original split x knife-positive strata; no training import"})
+                                                   "source_label_counts_by_split": {split: len(paths) for split, paths in labels_by_split.items()},
+                                                   "scanned_label_strata": {str(key): len(value) for key, value in groups.items()},
+                                                   "selection": "up to 40 seeded labels per original split, then up to 100 original split x knife-positive review samples; not representative of full source; no training import"})
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("source", choices=["archives", "simuletic", "dasci", "legacy", "us_mock", "open_images", "dangerous_inventory", "dangerous_items"])
+    parser.add_argument("source", choices=["archives", "simuletic", "dasci", "legacy", "us_mock", "open_images", "dangerous_inventory", "dangerous_probe", "dangerous_items"])
     parser.add_argument("--legacy-csv", type=Path)
+    parser.add_argument("--knife-class", type=int)
     args = parser.parse_args()
     if args.source == "archives":
         archives()
+    elif args.source == "dangerous_items":
+        print(json.dumps(dangerous_items(args.knife_class)))
     elif args.source == "legacy":
         print(json.dumps(legacy(args.legacy_csv)))
     else:

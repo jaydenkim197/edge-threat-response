@@ -25,7 +25,7 @@
 | E1 external CCTV test candidate | ACF Knife | 0장 — 논문의 원 저장소가 현재 접근되지 않음 | **Dataset v1 학습에는 0장**. 파일·권리·라벨 확보 시 외부 **이미지** 평가 후보 | 1920×1080 CCTV, small knife 문제와 직접 맞닿아 있다. 영상과 event 정답 확인 전에는 사건 지표를 계산할 수 없다. |
 | E2 sequential CCTV test candidate | US Mock Attack | audit 표본만: camera/sequence별 표본 | **Dataset v1 학습에는 0장**. 데이터·시간 순서·event 정답 확인 시 외부 sequence 평가 후보 | 공개 설명상 knife label 수가 적고 연속 frame이라 random image split은 누수 위험이 크다. |
 | S1 synthetic viewpoint check | Simuletic CCTV Knife | 필요 시 전체 114장 검수 | primary recipe에는 0장. real-data baseline 이후 별도 synthetic augmentation ablation에만 최대 114장 | target viewpoint에는 가깝지만 synthetic-to-real gap과 작은 표본을 본 결과와 혼동하지 않는다. |
-| D1 deferred candidate | Dangerous Items | 0장 | license와 manifest가 확인된 뒤에만 재검토 | small/blur/occlusion 설명은 유망하지만 현재 공개 record의 권리 표시가 충분히 확인되지 않았다. |
+| D1 deferred candidate | Dangerous Items | 검수 표본 준비 중; 학습 0장 | 공식 Zenodo 기록은 2026-10-04 CC BY 4.0로 확인. ZIP 내부에 class YAML이 없어 knife raw ID·라벨 완전성과 source group을 검수한 뒤에만 재검토 | small/blur/occlusion 보강 가능성이 있지만, 검수용 시각 추정은 학습용 class map 승인이 아니다. |
 | G1 gap-filling candidate | Open Images V7 | 0장 | source audit 후 필요한 visual gap만 제한적으로 선정 | web-image domain이고 image별 license·annotation density 확인이 필요하다. |
 | person detector | COCO pretrained model | 별도 custom data import 없음 | person detector sanity/composite adapter의 pretrained source | COCO person pretrained model은 사용 가능하되, COCO knife data를 본 project의 knife training corpus로 자동 채택하지 않는다. |
 
@@ -68,8 +68,8 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 
 ## 5. 데이터 보관 방식
 
-- Google Drive의 [모델개발_데이터셋·실험결과](https://drive.google.com/drive/folders/1tBI7EkxKLN41CwHWA60ENXCgOw_0iYiz)를 승인된 원본·검수/분할 명세·학습 결과·독립 평가의 보관 위치로 사용한다. 폴더 구조는 확인했으며 현재 공개 원본 dataset은 업로드하지 않았다.
-- **10 GB 미만의 작업용 자료는 로컬 staging 가능**하다. 학습은 Drive 직접 경로가 아니라 로컬/학습 PC에 고정된 사본에서 수행하고, 원본 checksum·manifest·run ID·checkpoint hash와 Drive 보관 위치를 기록한다. transient cache와 중복 사본은 Git에 넣지 않는다.
+- 대용량 원본·검수 자료·학습 결과의 현재 기준 보관 위치는 사용자가 지정한 **PC13 내장 디스크**다. 학습은 PC13의 고정된 사본에서 수행하고 원본 checksum·manifest·run ID·checkpoint hash를 기록한다. transient cache와 중복 사본은 Git에 넣지 않는다. 노트북에는 코드와 필요한 작은 판정 이전본만 둔다.
+- Google Drive의 [모델개발_데이터셋·실험결과](https://drive.google.com/drive/folders/1tBI7EkxKLN41CwHWA60ENXCgOw_0iYiz) 폴더는 이미 준비돼 있으나 현재 자동 동기화·오프사이트 백업은 **설정하지 않았다**. 권리·개인정보 조건을 확인한 자료에 한해 별도 보관본으로 사용할 수 있다. PC13의 같은 디스크 SQLite backup은 디스크 고장 대비가 아니다.
 - 사용 권리 미확정 공개자료 및 동의·접근정책 미확정 자체 CCTV 영상은 팀 공유 Drive 폴더에 올리지 않는다. Google Drive 사용은 source 권리, 개인정보, 데이터 독립성 gate를 면제하지 않는다.
 
 ## 6. Evidence and caveats
@@ -78,8 +78,8 @@ ACF Knife와 US Mock Attack은 primary training source가 아니라 **외부 CCT
 
 - 학습 PC 내장 C드라이브의 `C:\Class6\edge-threat-response\data\`를 작업용 raw/audit/processed 저장 위치로, `runs\`를 학습 결과 위치로 사용한다. 바탕화면에 별도 데이터 사본을 만들지 않는다. 현재 C 여유 공간은 학습 PC 약 144.5 GiB, 노트북 약 16.4 GiB로 확인했다.
 - 노트북에는 Git 코드·문서와 필요한 소형 검수 pack만 두고 전체 원본·학습용 복제는 피한다. GitHub는 raw/weight 보관소가 아니며 기존 `data/`, `runs/`, `*.pt` ignore를 유지한다.
-- Google Drive는 권리 확인된 원본·manifest/검수표·config·checkpoint/결과의 보관본이다. 학습 중 Drive mount/sync 폴더를 읽지 않고 PC 내장 드라이브를 사용한다. 실제 업로드/자동 백업은 아직 설정하지 않았다.
-- 원본·processed·Git partial-clone cache·결과를 합쳐 로컬 dataset 작업 자료가 10 GB를 넘게 되면 기존 사용자의 저장 한도에 맞춰 보관 방식을 다시 승인받는다. full package 용량은 아직 측정하지 않았으며 여유 공간이 있다는 이유로 무제한 다운로드하지 않는다.
+- Google Drive는 권리 확인된 자료의 **선택적** 외부 보관 후보이다. 학습 중 Drive mount/sync 폴더를 읽지 않고 PC 내장 드라이브를 사용한다. 실제 업로드/자동 백업은 아직 설정하지 않았다.
+- 앞서 기록한 `10 GB` 로컬 한도는 사용자의 새 결정으로 PC13에는 적용하지 않는다. PC13의 실제 여유 공간, source별 archive 크기와 작업량은 계속 확인한다. 검수용으로 필요 없는 원본을 무제한 내려받지는 않는다.
 - 사용자 확인 필요: 학습 PC의 `C:\Class6`가 재부팅/수업 후 초기화되지 않고 프로젝트 기간 보존 가능한지. 확인 전에는 PC 로컬 자료를 유일한 장기 보관본으로 삼지 않는다.
 - 2026-10-03 사용자가 `C:\Class6` 보존 가능을 확인했다. 그래도 디스크 장애에 대비한 별도 보관본은 필요하며 Drive 실제 업로드 여부와 구분한다.
 

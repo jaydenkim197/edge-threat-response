@@ -209,7 +209,7 @@ def create_app(config_path: Path):
         result = store.items()
         for item in result:
             item["image_url"] = f"/api/packs/{pack}/images/{item['id']}"
-            item["editable"] = bool(g.user["admin"] or owners.get(item["id"]) == g.user["id"])
+            item["editable"] = bool(not g.user["admin"] and owners.get(item["id"]) == g.user["id"])
             item["assigned_elsewhere"] = item["id"] in owners and owners[item["id"]] != g.user["id"]
             item["coordinate_status"] = store.evidence[item["id"]].get("coordinate_status", "unconfirmed")
         return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema="simple-v2", team=True,
@@ -217,6 +217,8 @@ def create_app(config_path: Path):
 
     @app.post("/api/claim")
     def claim():
+        if g.user["admin"]:
+            abort(403)
         pack, store = current_store()
         result = store.items()
         with team.connect() as connection:
@@ -240,7 +242,7 @@ def create_app(config_path: Path):
         if type(sample) is not int or not 0 <= sample < len(store.rows):
             raise ValueError("Unknown sample")
         owners = owner_map(pack)
-        if not g.user["admin"] and owners.get(sample) != g.user["id"]:
+        if g.user["admin"] or owners.get(sample) != g.user["id"]:
             abort(403)
         fields = {**body["fields"], "reviewer": g.user["name"], "review_schema": "simple-v2"}
         return jsonify(store.save(sample, body.get("version"), fields))

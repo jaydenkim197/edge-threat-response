@@ -45,8 +45,9 @@ Camera
 - [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
 - [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): 병렬 legacy 재현·신규 source audit·CUDA/실기기 작업
 - [모델·데이터 준비 계획](docs/model-data-plan.md): 데이터 inventory, 라벨·분할 계약, 검증·학습 단계
-- [Dataset Source Strategy](docs/dataset-source-strategy.md): 신규 detector 후보 recipe, 공개 source별 역할, Google Drive 보관 위치와 audit gate
+- [Dataset Source Strategy](docs/dataset-source-strategy.md): 신규 detector 후보 recipe, 공개 source별 역할, PC13 원본 저장 원칙과 audit gate
 - [Dataset Evaluation Criteria](docs/dataset-evaluation-criteria.md): 공개 source와 legacy 128장 검수의 gate·판정 열
+- [PC13 팀 웹 검수](docs/team-review-deployment.md): 팀원 접속·후보 표본·관리자 운영·검증 상태
 - [선행연구·공개 데이터 검토](docs/prior-work-and-dataset-review.md): 확인된 연구 근거와 자료별 활용 경계
 - [개발 기록](docs/development-log.md): 시간순 변경·결정·검증·한계
 - [미결정 사항](docs/open-decisions.md): 확정 전 선택지와 판단 기준
@@ -115,7 +116,9 @@ etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --out
 
 ### 버튼으로 이미지 검수하기
 
-SOHAS 표본은 **로컬 웹 화면에서 원본·칼 박스를 보고 버튼으로 판정**할 수 있다. 현재 준비된 100장 pack은 `data/review/sohas-click-review-20261003/`이며 이미지 원본은 약 31 MB다. 원본은 Git에 포함되지 않으므로 다른 PC에서는 pack도 별도로 가져와야 한다.
+팀원 공동 검수는 [PC13 중앙 웹 검수](docs/team-review-deployment.md)를 사용한다. 팀원은 개인 코드로 사이트에 로그인해 SOHAS·DaSCI 고유 이미지·Simuletic·US Mock Attack·Open Images·Legacy 표본을 고르고 두 질문에 답한다. 이미지와 판정은 PC13에만 저장하며, CSV·개발 환경은 필요 없다. 현재 외부 HTTPS 주소는 Tailscale Funnel 관리자 승인 대기로 팀 브라우저 접속은 아직 검증되지 않았다. ACF는 원본 접근 장애, Dangerous Items는 임시 knife class 매핑 검증 단계다.
+
+아래 명령은 기존 **단일 PC 로컬 SOHAS 검수 도구**가 필요한 경우에만 사용한다. 중앙 서비스 사용을 시작한 뒤 같은 표본을 로컬 DB에서 병행 수정하면 판정이 갈라진다. 현재 로컬 100장 pack은 `data/review/sohas-click-review-20261003/`이며 Git에는 이미지가 포함되지 않는다.
 
 Windows에서는 저장소 안에서 아래 명령을 실행한다. 기존 Python 환경을 사용하며 추가 설치·공개 서버·클라우드 업로드는 필요 없다.
 

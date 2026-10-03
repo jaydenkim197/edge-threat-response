@@ -38,7 +38,7 @@ python -m venv .venv-ml
 
 `requirements-pc13.txt`는 핵심 의존성 pin이며 모든 전이 의존성 lock은 아니다. 실제 전체 설치 목록은 원격 `runs/pc13-cuda-amp-smoke-20261002/environment-freeze.txt`에 보존했다. smoke output 경로는 새 이름을 사용하며 기존 run을 덮어쓰지 않는다. rectangle 8 train/4 val은 비민감 생성 입력이며 knife 품질·성능을 평가하는 데이터가 아니다.
 
-실제 학습은 승인한 dataset과 manifest를 PC 로컬에 둔 후 기존 `etr-train --preflight-only --require-cuda`로 확인하고 시작한다. Windows 초기 설정은 `device=0`, `workers=0`, `cache=false`, 명시적 batch를 사용하고, 최종 batch/해상도/학습 budget은 별도 결정한다. 학습 중 데이터 I/O는 로컬, 승인 데이터·결과의 보관은 팀 Google Drive를 따른다. Drive 연결이나 자동 업로드는 이번에 설정하지 않았다.
+실제 학습은 승인한 dataset과 manifest를 PC13 내장 디스크에 둔 후 기존 `etr-train --preflight-only --require-cuda`로 확인하고 시작한다. Windows 초기 설정은 `device=0`, `workers=0`, `cache=false`, 명시적 batch를 사용하고, 최종 batch/해상도/학습 budget은 별도 결정한다. 학습 중 데이터 I/O와 run 결과의 기준 위치는 PC13이다. Drive 연결이나 자동 업로드는 설정하지 않았으므로 오프사이트 백업 완료로 간주하지 않는다.
 
 검증 증거: [RTX 3060 CUDA smoke](../reports/training/pc13-cuda-smoke-2026-10-02/report.md). 설치 근거: [PyTorch 공식 CUDA wheel 조합](https://pytorch.org/get-started/previous-versions/), [Ultralytics 설치 안내](https://docs.ultralytics.com/quickstart/).
 

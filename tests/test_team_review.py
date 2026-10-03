@@ -90,6 +90,7 @@ class TeamReviewTests(unittest.TestCase):
         self.post(ca, ha, "/api/claim?dataset=fixture", {})
         self.assertEqual(403, self.post(ca, ha, "/api/users", {"name": "No"}).status_code)
         admin, headers = self.login(self.admin)
+        self.assertEqual(403, self.post(admin, headers, "/api/claim?dataset=fixture", {}).status_code)
         invited = self.post(admin, headers, "/api/users", {"name": "fixture-new"})
         self.assertEqual(200, invited.status_code)
         self.assertGreater(len(invited.json["code"]), 20)
@@ -100,8 +101,10 @@ class TeamReviewTests(unittest.TestCase):
 
     def test_validation_blocked_pack_and_consistent_backup(self):
         from edge_threat_response.dataset.team_review import backup_databases
-        client, headers = self.login(self.admin)
-        self.assertEqual(404, client.get("/api/items?dataset=blocked", base_url=self.url).status_code)
+        admin, admin_headers = self.login(self.admin)
+        self.assertEqual(404, admin.get("/api/items?dataset=blocked", base_url=self.url).status_code)
+        client, headers = self.login(self.a)
+        self.post(client, headers, "/api/claim?dataset=fixture", {})
         invalid = {"id": 0, "version": 0, "fields": {"domain": "target_cctv", "annotation_verdict": "problem"}}
         self.assertEqual(400, self.post(client, headers, "/api/review?dataset=fixture", invalid).status_code)
         backup_databases(self.app, self.root / "backups")

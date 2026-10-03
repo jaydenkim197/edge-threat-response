@@ -33,7 +33,7 @@
 | [ACF Knife 논문](https://www.mdpi.com/1424-8220/22/19/7158) | 실제 CCTV small-weapon 평가와 데이터 설명이 있다. | 외부 **이미지** 평가 후보 | 공개 파일에 접근 가능한지, 권리·원본 라벨·촬영 단위. 영상·event 정답이 없으면 B0~B3 사건 지표 계산 불가 |
 | [US Mock Attack](https://github.com/Deepknowledge-US/US-Real-time-gun-detection-in-CCTV-An-open-problem-dataset) | 공식 저장소는 학술 이용 조건(CC BY-NC 4.0)을 명시한다. | 외부 CCTV sequence **후보** | knife-positive 분포, negative 장면, 시간 순서·촬영 단위·사건 정답, 원본 데이터 접근 |
 | [Simuletic CCTV Knife](https://huggingface.co/datasets/Simuletic/cctv-knife-detection-dataset) | 114장 공개 synthetic sample을 제시한다. | real-data 학습 뒤 별도 synthetic 보강 실험 후보 | 샘플 중복, 라벨, synthetic/real 성능 차이 |
-| [Dangerous Items](https://zenodo.org/records/16422779) | 작은/흐린/가려진 위험물체를 설명하는 범용 자료다. | visual gap 확인 후 재검토 | Zenodo record에서 license 표시가 비어 있어 권리 확인 전 사용 보류 |
+| [Dangerous Items](https://zenodo.org/records/16422779) | 작은/흐린/가려진 위험물체를 설명하는 범용 자료다. 2026-10-04 공식 Zenodo record는 CC BY 4.0을 표시한다. | visual gap 확인 후 재검토 | ZIP에 class YAML이 없어 원본 knife class ID는 공식 문서로 검증되지 않았다. 시각 표본의 임시 매핑은 학습 승인 아님 |
 
 SOHAS 저장소의 **README는 CC BY-SA 4.0**, [`License.md` 본문은 CC BY 4.0](https://github.com/ari-dasci/OD-WeaponDetection/blob/master/License.md)으로 서로 다르다. 원본 배포 파일의 적용 범위 또는 제공자의 확인 전에는 하나로 단정하지 않는다.
 
