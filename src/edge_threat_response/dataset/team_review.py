@@ -67,6 +67,7 @@ def create_app(config_path: Path):
     from flask import Flask, abort, g, jsonify, redirect, render_template, request, send_file, session
     config_path = config_path.resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
+    name_login = config.get("reviewer_login", "code") == "name"
     origin = config["public_url"].rstrip("/")
     parsed = urlsplit(origin)
     local = parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1"}
@@ -81,7 +82,7 @@ def create_app(config_path: Path):
     app = Flask(__name__, static_folder=None, template_folder=str(assets))
     app.config.update(SECRET_KEY=secret, SESSION_COOKIE_SECURE=not local,
                       SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Strict",
-                      SESSION_COOKIE_NAME="etr_review_session", PERMANENT_SESSION_LIFETIME=timedelta(hours=8),
+                      SESSION_COOKIE_NAME="etr_review_session", PERMANENT_SESSION_LIFETIME=timedelta(days=30) if name_login else timedelta(hours=8),
                       MAX_CONTENT_LENGTH=16384, TRUSTED_HOSTS=[parsed.hostname])
     team = TeamDatabase(Path(config["database"]))
     catalog, stores = config["datasets"], {}
@@ -112,9 +113,13 @@ def create_app(config_path: Path):
             supplied = request.headers.get("X-Review-Token") or request.form.get("csrf", "")
             if not supplied or not secrets.compare_digest(supplied, session.get("csrf", "")):
                 abort(403)
-        if request.path in {"/login", "/style.css", "/portal.js"}:
+        if request.path in {"/login", "/admin/login", "/style.css", "/portal.js", "/install.js", "/manifest.webmanifest",
+                            "/icon-192.png", "/icon-512.png", "/apple-touch-icon.png", "/favicon.ico"}:
             return None
         g.user = team.user(session.get("user", ""))
+        if g.user and g.user["admin"] and time.time() - session.get("admin_login_at", 0) > 8 * 3600:
+            session.clear()
+            g.user = None
         if not g.user:
             return (jsonify(error="로그인이 필요합니다."), 401) if request.path.startswith("/api/") else redirect("/login")
 
@@ -122,8 +127,9 @@ def create_app(config_path: Path):
     def security(response):
         response.headers["Cache-Control"] = "no-store"
         response.headers["X-Content-Type-Options"] = "nosniff"
-        response.headers["Referrer-Policy"] = "no-referrer"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
+        # Native form POST needs its same-origin Origin header for the CSRF guard.
+        response.headers["Referrer-Policy"] = "same-origin"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; img-src 'self'; style-src 'self'; script-src 'self'; manifest-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'"
         if not local:
             response.headers["Strict-Transport-Security"] = "max-age=31536000"
         return response
@@ -137,7 +143,15 @@ def create_app(config_path: Path):
         return jsonify(error=str(error)), 400
 
     @app.route("/login", methods=["GET", "POST"])
+    @app.route("/admin/login", methods=["GET", "POST"])
     def login():
+        admin_login = request.path == "/admin/login"
+        use_names = name_login and not admin_login
+        with team.connect() as connection:
+            reviewers = [dict(row) for row in connection.execute("SELECT id,name FROM users WHERE active=1 AND admin=0 ORDER BY rowid")]
+        def page(error="", status=200):
+            return render_template("login.html", csrf=csrf(), error=error, use_names=use_names,
+                                   admin_login=admin_login, reviewers=reviewers), status
         error = ""
         if request.method == "POST":
             with rate_lock:
@@ -145,17 +159,26 @@ def create_app(config_path: Path):
                 while attempts and attempts[0] < now - 60:
                     attempts.popleft()
                 if len(attempts) >= 12:
-                    return render_template("login.html", csrf=csrf(), error="시도가 많습니다. 잠시 후 다시 시도해주세요."), 429
+                    return page("시도가 많습니다. 잠시 후 다시 시도해주세요.", 429)
                 attempts.append(now)
-            user = team.login(request.form.get("code", ""))
+            if use_names:
+                user = team.user(request.form.get("reviewer", ""))
+                if user and user["admin"]:
+                    user = None
+            else:
+                user = team.login(request.form.get("code", ""))
+                if admin_login and user and not user["admin"]:
+                    user = None
             if user:
                 session.clear()
                 session["user"] = user["id"]
                 session.permanent = True
+                if user["admin"]:
+                    session["admin_login_at"] = time.time()
                 csrf()
-                return redirect("/")
-            error = "접속 코드가 올바르지 않거나 비활성 계정입니다."
-        return render_template("login.html", csrf=csrf(), error=error)
+                return redirect("/?resume=1" if use_names else "/")
+            error = "본인 이름을 선택해주세요." if use_names else "관리자 코드가 올바르지 않거나 비활성 계정입니다."
+        return page(error)
 
     @app.post("/api/logout")
     def logout():
@@ -176,8 +199,15 @@ def create_app(config_path: Path):
     @app.get("/style.css")
     @app.get("/portal.js")
     @app.get("/app.js")
+    @app.get("/install.js")
+    @app.get("/manifest.webmanifest")
+    @app.get("/icon-192.png")
+    @app.get("/icon-512.png")
+    @app.get("/apple-touch-icon.png")
+    @app.get("/favicon.ico")
     def asset():
-        return send_file(assets / request.path[1:])
+        filename = "icon-192.png" if request.path == "/favicon.ico" else request.path[1:]
+        return send_file(assets / filename, mimetype="application/manifest+json" if request.path == "/manifest.webmanifest" else None)
 
     @app.get("/api/catalog")
     def get_catalog():
@@ -190,7 +220,7 @@ def create_app(config_path: Path):
                 "available": bool(store), "total": len(items), "reviewed": len(reviewed),
                 "held": sum(item["review"].get("annotation_verdict") != "ok" for item in reviewed),
                 "mine": sum(item["review"].get("reviewer") == g.user["name"] for item in reviewed)})
-        return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])}, csrf=csrf())
+        return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])}, csrf=csrf(), name_login=name_login)
 
     def current_store():
         pack = request.args.get("dataset", "")
@@ -213,7 +243,7 @@ def create_app(config_path: Path):
             item["assigned_elsewhere"] = item["id"] in owners and owners[item["id"]] != g.user["id"]
             item["coordinate_status"] = store.evidence[item["id"]].get("coordinate_status", "unconfirmed")
         return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema="simple-v2", team=True,
-                       reviewer=g.user["name"], admin=bool(g.user["admin"]), training_approved=False)
+                       reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False)
 
     @app.post("/api/claim")
     def claim():

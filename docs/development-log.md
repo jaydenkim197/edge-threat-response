@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-04 - 공개 이름 선택과 모바일 홈 화면 검수
+
+- 사용자 결정: 개인 코드 대신 공개 링크에서 본인 이름을 드롭다운으로 선택한다. 이름은 self-declared identity이며 본인 인증의 증거가 아니다. 기존 계정·배정·판정 DB를 보존하고 관리자 기능은 별도 코드 접속으로 유지한다. 이전 개인 코드 사용 안내는 이 기록으로 `SUPERSEDED`다.
+- 작업 카드·범위: 기존 Flask/Waitress·두 질문·SQLite를 재사용해 이름 선택, 30일 검수 session, 관리자 8시간 session, 모바일 큰 버튼·메모 조건 표시, manifest/192·512 icon/Apple icon, 설치 안내와 최근 후보 이어하기를 구현한다. 완료 기준은 실제 native form·저장·재접속·임시 입력 복원, install metadata, PC13 HTTPS 접속 확인이다. 이는 데이터 준비 도구이며 Jetson runtime MVP 범위는 변경하지 않는다.
+- 변경 파일: `team_review.py`, 공통 웹 UI·install assets, local review asset routing, configure/check helpers, team tests, README·architecture·팀 배포 사용법·verification. 신규 dependency는 runtime에 추가하지 않았다. 브라우저 QA는 기존 bundled Playwright와 격리 WebKit을 사용하고 결과는 ignored `data/review/mobile-qa-20261004/`에 보관한다.
+- 발견·수정: 기존 `Referrer-Policy: no-referrer`는 Chrome native form POST에 `Origin: null`을 만들어 server의 Origin guard가 정상 접속을 403으로 막았다. 실제 browser 재현 뒤 `same-origin`으로 수정해 외부 referrer는 보내지 않으면서 내부 form 접속을 허용했다.
+- 개발 검증: 관련 21 tests, JS 문법·compileall·diff 확인 통과. 합성 fixture의 Pixel 7/Chrome 412px와 iPhone 13/WebKit 390px에서 이름 선택→자동 배정→두 질문 저장→다음→재접속·recent candidate·문제 메모 draft 복원 모두 통과했다. 가로 overflow 0, 질문 버튼 46px. 지속형 Chrome profile의 manifest/설치 가능성 오류 0. 실제 source에 새 사람 판정은 쓰지 않았다.
+- 한계·다음 작업: PC13 배포·외부 HTTPS 이름 선택은 후속 검증하고, 실제 iOS/Android 홈 화면 설치와 reboot recovery는 물리 장비에서 확인한다. 기록은 현재 작업의 구현 커밋 및 후속 배포 검증 커밋에 연결한다.
+
 ## 2026-10-04 - 개인 계정 발급과 후보 공통 검수 흐름
 
 - 목적·이유: 다섯 팀원이 데이터셋마다 다른 양식을 익히거나 CSV를 주고받지 않도록, 기존 `simple-v2` 두 질문·자동 배정·자동 저장을 공통 사용한다. 화면은 기존 구현을 재사용하고 source별 특수 양식은 추가하지 않았다.

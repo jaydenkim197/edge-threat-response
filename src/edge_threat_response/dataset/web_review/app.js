@@ -27,6 +27,8 @@ function buildFields() {
   }
 }
 function paintChoices() {
+  const showNotes=values.annotation_verdict==="problem" || Boolean((values.notes||"").trim());
+  $("notes").hidden=!showNotes;document.querySelector(".notes-label").hidden=!showNotes;
   document.querySelectorAll(".choices button").forEach(button => {
     const selected = button.dataset.field==="domain" && ["useful_real","closeup_product","kitchen","web_misc"].includes(values.domain) ? "non_target" : values[button.dataset.field];
     const active = selected===button.dataset.value;
@@ -94,6 +96,7 @@ function show(index) {
   if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=!item.editable;$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
   $("previous").disabled=current===0; $("next").disabled=current===items.length-1;
   status(item.version ? `자동 저장됨 · 수정 ${item.version}회` : "선택하면 자동 저장됩니다.",item.version?"saved":"");
+  if(window.matchMedia("(max-width: 750px)").matches)window.scrollTo(0,0);
 }
 function complete() {
   return ["domain","annotation_verdict","reviewer"].every(key=>(values[key]||"").trim()) &&
@@ -145,7 +148,11 @@ async function init() {
   if(data.review_schema!=="simple-v2") throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
-  if(team){document.title=`${teamDataset} · 팀 이미지 검수`;$("reviewer").readOnly=true;document.querySelector(".reviewer-label").textContent="검수자 · 로그인한 이름";document.querySelector(".local-badge").textContent="PC13 중앙 저장";const back=document.querySelector(".top-actions a");back.href="/";back.textContent="후보 목록 ↗";document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";document.querySelector(".image-note").textContent="초록 박스 = 원본의 칼 라벨 · 위치와 누락을 확인해주세요";$("next").textContent="다음 미검수 받기 →";}
+  if(team){
+    document.body.classList.add("team-review");
+    if(!teamAdmin && data.reviewer_id)localStorage.setItem(`etr-last-pack:${data.reviewer_id}`,teamDataset);
+    document.title=`${teamDataset} · 팀 이미지 검수`;$("reviewer").readOnly=true;document.querySelector(".reviewer-label").textContent="검수자 · 선택한 이름";document.querySelector(".brand strong").textContent=`${signedReviewer} · 검수`;document.querySelector(".local-badge").textContent="PC13 중앙 저장";const back=document.querySelector(".top-actions a");back.href="/";back.textContent="후보 목록 ↗";document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";document.querySelector(".image-note").textContent="초록 박스 = 원본의 칼 라벨 · 위치와 누락을 확인해주세요";$("next").textContent="다음 미검수 받기 →";
+  }
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));

@@ -26,12 +26,12 @@ def main() -> None:
     app = create_app(args.config)
     app.testing = True
     client = app.test_client()
-    page = client.get("/login", base_url=origin)
+    page = client.get("/admin/login", base_url=origin)
     assert page.status_code == 200
     token_match = re.search(r'name="csrf" value="([^"]+)"', page.get_data(as_text=True))
     assert token_match, "Login CSRF field missing"
     token = token_match.group(1)
-    login = client.post("/login", base_url=origin, headers={"Origin": origin},
+    login = client.post("/admin/login", base_url=origin, headers={"Origin": origin},
                         data={"code": code, "csrf": token})
     assert login.status_code == 302, "Admin login failed"
 

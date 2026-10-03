@@ -189,9 +189,10 @@ def make_handler(store: ReviewStore, token: str):
             if not self.allowed_host():
                 return self.respond(403, {"error": "Loopback host required."})
             path = urlsplit(self.path).path
-            if path in {"/", "/app.js", "/style.css"}:
+            if path in {"/", "/app.js", "/style.css", "/manifest.webmanifest", "/apple-touch-icon.png", "/icon-192.png", "/icon-512.png"}:
                 file = assets / ({"/": "index.html"}.get(path, path[1:]))
-                return self.respond(200, file.read_bytes(), mimetypes.guess_type(file)[0] + "; charset=utf-8")
+                mime = "application/manifest+json" if path == "/manifest.webmanifest" else mimetypes.guess_type(file)[0] or "application/octet-stream"
+                return self.respond(200, file.read_bytes(), mime)
             if path == "/api/items":
                 return self.respond(200, {"items": store.items(), "csrf": token, "options": OPTIONS,
                                           "pack_hash": store.pack_hash, "review_schema": "simple-v2", "training_approved": False})

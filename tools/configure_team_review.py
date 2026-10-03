@@ -9,9 +9,12 @@ from edge_threat_response.dataset.team_review import TeamDatabase
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def configure(public_url: str):
+def configure(public_url: str, reviewer_login: str | None = None):
     folder = ROOT / "data/review/team-server"
     folder.mkdir(parents=True, exist_ok=True)
+    config_path = folder / "config.json"
+    previous = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
+    reviewer_login = reviewer_login or previous.get("reviewer_login", "code")
     secret_dir = ROOT / "secrets"
     secret_dir.mkdir(exist_ok=True)
     secret_file = secret_dir / "team-review-session.key"
@@ -48,7 +51,8 @@ def configure(public_url: str):
         else:
             entry["reason"] = outcomes.get(key, "원본/라벨 확보·검증 대기" if key != "acf" else "공식 원 저장소 404 · 파일 확보 필요")
         entries.append(entry)
-    config = {"public_url": public_url, "secret_file": str(secret_file), "database": str(database), "datasets": entries}
+    config = {"public_url": public_url, "secret_file": str(secret_file), "database": str(database), "datasets": entries,
+              "reviewer_login": reviewer_login}
     (folder / "config.json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"ready": sum("review_dir" in e for e in entries), "listed": len(entries),
                       "config": str(folder / "config.json"), "admin_code_file": str(secret_dir / "team-review-admin.txt")}))
@@ -57,4 +61,6 @@ def configure(public_url: str):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--public-url", required=True)
-    configure(parser.parse_args().public_url)
+    parser.add_argument("--reviewer-login", choices=("name", "code"))
+    args = parser.parse_args()
+    configure(args.public_url, args.reviewer_login)
