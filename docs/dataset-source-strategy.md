@@ -25,7 +25,7 @@
 | E1 external CCTV test candidate | ACF Knife | 0장 — 논문의 원 저장소가 현재 접근되지 않음 | **Dataset v1 학습에는 0장**. 파일·권리·라벨 확보 시 외부 **이미지** 평가 후보 | 1920×1080 CCTV, small knife 문제와 직접 맞닿아 있다. 영상과 event 정답 확인 전에는 사건 지표를 계산할 수 없다. |
 | E2 sequential CCTV test candidate | US Mock Attack | audit 표본만: camera/sequence별 표본 | **Dataset v1 학습에는 0장**. 데이터·시간 순서·event 정답 확인 시 외부 sequence 평가 후보 | 공개 설명상 knife label 수가 적고 연속 frame이라 random image split은 누수 위험이 크다. |
 | S1 synthetic viewpoint check | Simuletic CCTV Knife | 필요 시 전체 114장 검수 | primary recipe에는 0장. real-data baseline 이후 별도 synthetic augmentation ablation에만 최대 114장 | target viewpoint에는 가깝지만 synthetic-to-real gap과 작은 표본을 본 결과와 혼동하지 않는다. |
-| D1 deferred candidate | Dangerous Items | 검수 표본 준비 중; 학습 0장 | 공식 Zenodo 기록은 2026-10-04 CC BY 4.0로 확인. ZIP 내부에 class YAML이 없어 knife raw ID·라벨 완전성과 source group을 검수한 뒤에만 재검토 | small/blur/occlusion 보강 가능성이 있지만, 검수용 시각 추정은 학습용 class map 승인이 아니다. |
+| D1 deferred candidate | Dangerous Items | 초기 웹 검수 100장; 학습 0장 | 공식 Zenodo API는 2026-10-04 CC BY 4.0. ZIP 내부에 class YAML이 없어 knife raw ID·라벨 완전성과 source group을 검수한 뒤에만 재검토 | small/blur/occlusion 보강 가능성이 있지만, 검수용 시각 추정은 학습용 class map 승인이 아니다. |
 | G1 gap-filling candidate | Open Images V7 | 0장 | source audit 후 필요한 visual gap만 제한적으로 선정 | web-image domain이고 image별 license·annotation density 확인이 필요하다. |
 | person detector | COCO pretrained model | 별도 custom data import 없음 | person detector sanity/composite adapter의 pretrained source | COCO person pretrained model은 사용 가능하되, COCO knife data를 본 project의 knife training corpus로 자동 채택하지 않는다. |
 

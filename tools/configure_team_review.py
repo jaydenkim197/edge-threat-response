@@ -33,7 +33,7 @@ def configure(public_url: str):
         ("dasci-unique", "DaSCI · 고유 후보", base / "dasci-unique", "SOHAS에 없는 byte-unique 이미지 검수", "https://github.com/ari-dasci/OD-WeaponDetection", "중복 1,985장은 반복 검수하지 않음. Near duplicate 여부는 아직 미확정."),
         ("simuletic", "Simuletic CCTV", base / "simuletic", "Synthetic viewpoint 보조 후보", "https://huggingface.co/datasets/Simuletic/cctv-knife-detection-dataset", "최대 114장 전체. 합성자료이며 실사 성능을 증명하지 않음."),
         ("us-mock", "US Mock Attack", base / "us-mock", "외부 CCTV 평가 후보 · 학습에는 넣지 않음", "https://deepknowledge-us.github.io/US-Real-time-gun-detection-in-CCTV-An-open-problem-dataset/", "카메라·sequence 기반 첫 표본. 이미지 검수만으로 event ground truth가 생기지 않음."),
-        ("dangerous-items", "Dangerous Items", base / "dangerous-items", "작은 칼·가림 등 gap-filling 후보", "https://zenodo.org/records/16422779", "2026-10-03 official record: CC BY 4.0. 원래 random split은 최종 연구 분할이 아님."),
+        ("dangerous-items", "Dangerous Items", base / "dangerous-items", "작은 칼·가림 등 gap-filling 후보", "https://zenodo.org/records/16422779", "공식 API CC BY 4.0. raw class 1=knife는 3장씩 본 임시 추정이며 공식 class map·학습 승인이 아님. 원래 random split도 최종 연구 분할이 아님."),
         ("open-images", "Open Images", base / "open-images", "웹 이미지 기반 제한적 보강 후보", "https://storage.googleapis.com/openimages/web/index.html", "개별 source URL·license를 보존한 첫 표본. CCTV 주력으로 자동 채택하지 않음."),
         ("legacy", "Legacy MIDAS", base / "legacy", "팀원 L0 재현·기존 128장 검수", "https://github.com/YEOUL0520/Crime_Prediction", "기존 표본을 웹으로 제공. 다른 팀원의 독립 L0 트랙."),
         ("acf", "ACF Knife", base / "acf", "외부 CCTV 이미지 평가 후보", "https://github.com/iCUBE-Laboratory/The-Armed-CCTV-Footage", "원 저장소 404. 대체 배포본의 provenance를 임의로 인정하지 않음."),

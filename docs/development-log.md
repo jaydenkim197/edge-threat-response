@@ -7,7 +7,7 @@
 - 사용자 운영 결정: PC13을 상시 켜고 대용량 원본·검수 pack·DB를 해당 PC에 둔다. 팀원은 브라우저와 개인 코드만 사용하고 CSV 수동 회수·각 PC 설치는 요구하지 않는다. GitHub에는 코드/절차만 동기화한다.
 - 2026-10-03 구현된 인증 서비스를 PC13에 배치하고 기존 SOHAS SQLite 백업의 인간 판정 6건·수정 이력 40건을 pack hash 검증 뒤 이전했다. 기존 노트북 DB는 보존하지만 중앙 시작 이후 병행 저장하면 분기하므로 사용하지 않는다. 관리자 bootstrap 파일은 ignored secrets에만 두고 실제 판정은 개인 계정으로만 수행하게 바꿨다.
 - PC13 `ETR-Team-Review` 부팅 작업이 실행 중이고 앱은 `127.0.0.1:8770`만 수신한다. `tailscale set --unattended=true`를 적용했다. 루프백 `/login` 200, 인증 없는 catalog·이미지 401, backup integrity를 확인했다. 실제 재부팅과 외부 브라우저 저장은 아직 검증하지 않았다.
-- SOHAS 100, DaSCI byte-unique 93, Simuletic 114, US Mock Attack 100, Open Images validation 30, Legacy 128을 PC13 팀 catalog에 준비했다. ACF 원 source 404는 임의 mirror로 대체하지 않는다. Dangerous Items 공식 Zenodo CC BY 4.0 확인; ZIP에 YAML class map이 없어 3장/클래스 visual probe 결과 `raw ID 1 = knife`를 **표본 화면의 작업 가설**로만 사용한다. 이 가설로 학습·성능 주장하지 않는다. 전체 1.4 GB 직접 다운로드가 지연되어 고정 크기 HTTP Range 기반 표본 추출로 전환했다.
+- SOHAS 100, DaSCI byte-unique 93, Simuletic 114, US Mock Attack 100, Open Images validation 30, Legacy 128, Dangerous Items 100을 PC13 팀 catalog에 준비했다. ACF 원 source 404는 임의 mirror로 대체하지 않는다. Dangerous Items 공식 Zenodo API CC BY 4.0 확인; ZIP에 YAML class map이 없어 3장/클래스 visual probe 결과 `raw ID 1 = knife`를 **표본 화면의 작업 가설**로만 사용한다. 이 가설로 학습·성능 주장하지 않는다. 전체 1.4 GB 직접 다운로드가 지연되어 고정 크기 HTTP Range 45,209,628 bytes로 120 label을 조사하고 100장·임시 knife 19개 표본을 준비했다. 전체 archive checksum은 아직 검증하지 못했다.
 - 검증: 신규 팀 service 4 tests 및 개발 PC 전체 83 tests 통과. 검수 DB/이미지·원본은 ignored, source 채택·라벨 검증·모델 학습은 진행하지 않았다. Tailscale Funnel은 tailnet의 관리자 enable gate를 반환했고 현재 `No serve config`이므로 외부 URL은 아직 `NOT VERIFIED`다. 승인 후 HTTPS 로그인/이미지 차단/팀원 저장·재개를 따로 확인해야 한다. 상세 운영·source별 범위는 [PC13 팀 웹 검수](team-review-deployment.md)에 둔다.
 
 ## 2026-10-03 - PC13 중앙 팀 검수 구현 (배포 검증 전)

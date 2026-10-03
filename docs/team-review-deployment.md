@@ -23,10 +23,10 @@
 | US Mock Attack | 100 | Cam1/Cam5/Cam7 및 knife annotation 유무 층화. 연속 영상의 사건 정답을 대신하지 않음 |
 | Open Images | 30 | validation metadata에서 knife positive만. 원본 개별 이미지 권리·라벨 완전성 재검수 필요 |
 | Legacy MIDAS | 128 | 팀원의 독립 L0 검수 표본. 신규 source 승인과 별개 |
-| Dangerous Items | 준비 중 | 공식 Zenodo CC BY 4.0, 원 ZIP 1.4 GB. ZIP에 class YAML이 없어 visual probe에서 raw ID `1=knife`를 작업 가설로 둔다. 박스 검수는 임시 매핑이며 학습 전 사람의 class-map 확인 필요 |
+| Dangerous Items | 100 | 공식 Zenodo API CC BY 4.0. 120개 label을 seeded split별로 살펴 뽑은 100장·임시 knife 객체 19개. ZIP에 class YAML이 없어 visual probe에서 raw ID `1=knife`를 작업 가설로 둔다. 박스 검수는 임시 매핑이며 학습 전 사람의 class-map 확인 필요 |
 | ACF Knife | 접근 대기 | 논문이 가리킨 원 저장소가 404. 제3자 재배포본을 원본으로 대체하지 않음 |
 
-첫 표본은 source 품질을 보는 작업량 단위다. 이를 근거로 전체 source를 채택하거나 10월 말 실험 데이터로 승인하지 않는다. Danger `raw ID 1`은 2026-10-04 임시 visual probe 3장의 관찰 결과이며 공식 class map을 뜻하지 않는다. 현재 표본 인벤토리와 각 이미지 SHA-256/원 경로·원 split은 PC13의 `data/review/` 및 `data/source-audit/team-review-20261003/`에 있다.
+현재 **8후보 중 7개 표본 화면 준비**, ACF만 원본 부재로 잠겨 있다. 첫 표본은 source 품질을 보는 작업량 단위다. 이를 근거로 전체 source를 채택하거나 10월 말 실험 데이터로 승인하지 않는다. Dangerous `raw ID 1`은 2026-10-04 임시 visual probe 3장의 관찰 결과이며 공식 class map을 뜻하지 않는다. Dangerous 전체 1.4 GB ZIP은 내려받지 않고 공식 archive의 HTTP Range 45,209,628 bytes만 읽었다. 전체 archive checksum은 미검증이고, 표본의 자체 SHA-256·원 경로·원 split은 보존했다. 현재 표본 인벤토리는 PC13의 `data/review/` 및 `data/source-audit/team-review-20261003/`에 있다.
 
 ## PC13 운영
 
@@ -37,10 +37,11 @@
 - 설정·비밀값: ignored `data/review/team-server/config.json`, `secrets/team-review-session.key`, `secrets/team-review-admin.txt`. README나 명령 로그에 코드 값을 넣지 않는다. `tools/configure_team_review.py --public-url https://<actual-host>`는 기존 사용자·세션 secret·검수 DB를 덮어쓰지 않고 catalog만 갱신한다. 서버는 변경된 catalog를 재시작 후 읽는다.
 - DB: `data/review/team-server/team.sqlite3`는 계정/배정, 각 pack의 `human-review.sqlite3`는 판정/이력이다. 30분마다 SQLite backup API로 `data/review/team-server/backups/`에 일관된 사본을 추가한다. **같은 PC 디스크의 백업은 디스크 고장 대비가 아니다.** 승인된 별도 저장소에 주기적으로 복사하는 운영 절차는 아직 미설정이다.
 - 기존 SOHAS 이전은 `tools/migrate_review_db.py`로만 한다. 같은 pack hash와 비어 있는 목적지 DB를 검사하고 version/history를 그대로 옮기며, 어느 한쪽에도 판정이 있으면 자동 병합하지 않는다. 이 기록 이후 노트북의 이전 SOHAS URL에 새로 쓰면 PC13과 판정이 갈라진다. 중앙 사이트를 사용하기 시작하면 기존 로컬 URL은 사용하지 않는다.
+- 서비스 변경·재시작 후 PC13 저장소에서 `$env:PYTHONPATH="src"; .\.venv-ml\Scripts\python.exe tools\check_team_review.py`를 실행하면 **실제 pack 각각**의 관리자 로그인·목록·첫 이미지 로딩을 판정 변경 없이 점검하고 건수만 출력한다. 접속 코드는 출력하지 않는다. 이는 PC13 내부 앱 테스트이지 외부 HTTPS 브라우저 검증을 대체하지 않는다.
 
 ## 배포·검증 기록
 
 - PC13 Tailscale v1.102.4, C 여유 약 144.5 GiB(작업 전 관찰). Windows Python 3.12.4, RTX 3060 학습 venv의 optional review-server dependencies를 설치했다. 검수 자체는 GPU를 사용하지 않는다.
-- PC13 local `GET /login` 200, 인증 없는 `GET /api/catalog` 및 이미지 URL 401. 노트북과 PC13에서 team tests 4개, 전체 로컬 테스트 83개 통과. Session cookie, Host/Origin/CSRF, role·배정 충돌, history/backup을 fixture에서 검증했다.
+- PC13 local `GET /login` 200, 인증 없는 `GET /api/catalog` 및 SOHAS/Dangerous 이미지 URL 401. 7/8 후보 pack으로 다시 설정하고 시작 작업을 재실행했다. 노트북과 PC13에서 team tests 4개, 전체 로컬 테스트 83개 통과. Session cookie, Host/Origin/CSRF, role·배정 충돌, history/backup을 fixture에서 검증했다.
 - Tailscale Funnel 공개가 계정의 관리자 enable gate를 요구한다: `https://login.tailscale.com/f/funnel?node=nWsQChVFgg11CNTRL`. 승인 전 `tailscale funnel status = No serve config`; 팀 브라우저 접속·외부 저장/reload는 `NOT VERIFIED`.
 - 원본 권리·좌표·중복/session gate, 사람 검수, 학습 채택은 별개다. User team accounts는 실제로 발급하기 전까지 관리자 1개뿐이다.
