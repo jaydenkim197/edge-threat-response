@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "status": "synthetic",
+  "partition": "synthetic",
+  "images": [
+    {"source_id": "synthetic-boxes", "frame_index": 0, "width": 100, "height": 100,
+     "knife_boxes_xyxy": [[10, 10, 20, 20], [50, 50, 90, 90], [0, 0, 5, 5]]},
+    {"source_id": "synthetic-boxes", "frame_index": 1, "width": 100, "height": 100,
+     "knife_boxes_xyxy": [], "knife_absence_verified": true}
+  ]
+}

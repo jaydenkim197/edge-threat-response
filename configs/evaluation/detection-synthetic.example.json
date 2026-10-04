@@ -1,0 +1,7 @@
+{
+  "schema_version": 1,
+  "status": "development",
+  "confidence": 0.5,
+  "iou": 0.5,
+  "small_area_max": 0.02
+}

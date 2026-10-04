@@ -112,3 +112,20 @@ Open Images는 현재 표본의 원본 validation split을 train으로 옮기지
 raw bbox의 normalized area는 진단값일 뿐, 작은 칼의 최종 cutoff나 학습용 좌표 변환 승인이 아니다. 모든 후보에 source rights·좌표·전체 annotation audit·near duplicate·실제 session group·group split·recipe 승인이 남는다. 이 JSONL은 `training_pair`가 받는 materialized YOLO manifest가 아니며 바로 학습에 넣을 수 없다. 다음 단계에서 승인 범위를 정하고 raw annotation→YOLO export를 연결한다.
 
 각 DB의 snapshot은 일관되지만 여러 live DB 전체가 한 시점의 atomic snapshot은 아니다. UTC 시작/종료 시간과 DB별 table row count/logical hash를 기록한다. 진행 중 사람 판정이 늘면 새 output ID로 다시 집계하며 기존 보고를 덮어쓰지 않는다. CLI exit 0은 읽기/출력 성공, exit 2는 입력/무결성 오류이며 학습 승인/성과가 아니다.
+
+## 7. 사람 검수 전 가능한 이미지 자동 검사
+
+`dataset.image_screening`은 기존 Pillow와 pinned SOHAS parser를 재사용한다. 다운로드·DB write·판정 변경·학습·split을 하지 않고, 입력 밖의 새 ignored output에만 결과를 쓴다.
+
+```powershell
+# 공식 VOC audit manifest + 확보된 pinned 원본 전체
+python -m edge_threat_response.dataset.image_screening --manifest data/source-audit/sohas-voc-full-images-20261004/voc-candidates.jsonl --source-root data/source-audit/sohas-upstream-byte-exact --output-dir data/work/image-screening/sohas-NEW-ID
+# 운영 판정 snapshot에 연결된 현재 후보 pack
+python -m edge_threat_response.dataset.image_screening --manifest data/work/review-candidates/20261004-v1/review-linked-manifest.jsonl --output-dir data/work/image-screening/review-NEW-ID
+```
+
+SOHAS는 Git inventory·image/XML blob·XML SHA-256을 검사하고 재파싱한다. Image는 SHA-256·decode·annotation dimension을 확인한다. EXIF orientation을 기록하지만 annotation을 바꾸지 않도록 자동 회전하지 않는다. 손상·변조·dimension 불일치는 `issues.jsonl`에 보류하며 정상 이미지만 유사도 계산에 들어간다. `image-integrity.jsonl`, `similarity-pairs.jsonl`, `summary.json`은 PC13에 보관한다.
+
+64-bit grayscale dHash의 Hamming distance 기본 4, aspect ratio 10% 범위는 **development screening heuristic**이다. 저정보량 thumbnail(stddev<5)의 비정확 유사 pair는 생략하고 exact SHA-256 pair는 남긴다. Crop/flip·다른 시점·조도·배경 변화와 실제 camera/session identity를 보장하지 않는다. Pair는 수동 확인 후보이며 자동 삭제·동일 session 선언·split 변경·human verdict 대체에 쓰지 않는다. Exact pair와 visual pair, cross-source·원 split 교차를 별도 기록한다.
+
+두 VOC 좌표 규약의 compatibility를 검사하지만 호환 개수의 다수결로 규약을 결정하지 않는다. 양쪽 모두 호환할 수 있으며 zero 경계 등의 수치 근거만으로 전체 source의 의미를 확정하지 않는다. CLI exit 0은 image 검사 성공, 1은 기록된 개별 오류, 2는 입력/실행 오류다. 모두 `training_approved=false`를 유지한다.

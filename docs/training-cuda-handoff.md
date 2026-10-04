@@ -163,3 +163,20 @@ preflight가 `passed`인 경우에만 `--preflight-only`를 제거해 실제 학
 - invocation JSON에 기록된 Git commit, config/dataset manifest hash와 artifact SHA-256을 보존한다.
 - Git에는 민감하거나 대용량인 run 원본 대신 검토된 요약 report만 추가한다.
 - Baseline v1은 detector pipeline 통합과 외부-data v2 비교 기준이며, controlled scenario의 최종 연구 결과가 아니다.
+
+## Knife bbox 후보 평가 — 2026-10-04
+
+`edge_threat_response.detection_evaluation`은 canonical detection JSONL을 source_id/frame_index로 image truth에 연결해 confidence-first greedy IoU 일대일 대응을 계산한다. 같은 truth·policy를 모든 후보에 사용한다. Duplicate detection은 FP이며 confidence 이상 knife만 계산한다. Person은 이 knife-only 평가에서 제외한다. 실제 mAP는 기존 Ultralytics validation을 별도 사용한다.
+
+```powershell
+$env:PYTHONPATH = 'src'
+.\.venv-ml\Scripts\python.exe -m edge_threat_response.detection_evaluation --ground-truth tests/fixtures/evaluation/detection-truth.json --detections tests/fixtures/evaluation/detection-predictions.jsonl --policy configs/evaluation/detection-synthetic.example.json --output-dir runs/detection-evaluation-synthetic-NEW-ID
+```
+
+가상 fixture는 TP2/FP2/FN1·작은 bbox TP1/GT2·음성 image FP1을 확인하는 계약 검사다. 실제 detector 결과가 아니다. 예시 confidence=.5/IoU=.5/normalized area cutoff=.02는 연구 최종값이 아니다. 실제 tuning policy에 명시적으로 선택·기록하고 최종평가 전에 `status=frozen`으로 동결한다.
+
+실제 image truth schema는 fixture 구조를 재사용하되 `status=approved`, `partition=tuning` 또는 `final_test`, image마다 `image_sha256`(SHA-256)·`source_group`·원본 pixel width/height·완전한 `knife_boxes_xyxy`를 기록한다. 음성은 빈 box 배열과 `knife_absence_verified=true`가 필수다. `final_test`는 frozen policy만 받는다. 웹 후보 manifest는 승인 truth가 아니며 그대로 입력할 수 없다. approved/frozen 표시는 선언이지 사용자 신원이나 권리를 자동 인증하는 기능이 아니다.
+
+Prediction이 없거나 중복/추가되거나 missing/detector_error이면 평가를 거부한다. 이는 실행 오류를 silently FN/정상 음성으로 섞는 것을 막는다. 모든 image에 canonical `valid` row(미검출은 detections=[])를 생성하고 입력 failure는 별도 보고·수정한다. 실제 `etr-detect` summary의 input/model/config SHA-256을 함께 보관하며, 이 평가기만으로 동일 모델·동일 image inference를 증명하지 않는다.
+
+출력 `summary.json`에는 micro TP/FP/FN·precision/recall/F1, GT normalized bbox area 기준 small_box_recall, 검증된 음성 image 중 FP가 있는 비율과 FP box/image·분모, 세 입력 hash·commit이 남는다. `image-matches.jsonl`에 TP IoU·FP prediction index·FN GT index를 남긴다. 분모0은 null이다. 작은 bbox는 실제 거리와 동의어가 아니고, image FP는 event 오경보/h 또는 GPIO 지연과 다르다. 본 사건 지표에는 기존 사건 평가기와 수동 start/end 정답을 사용한다.

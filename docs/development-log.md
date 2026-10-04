@@ -2,6 +2,14 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-04 - 검수와 독립적인 SOHAS 전체 이미지 준비·검출 평가 기반
+
+- 목적/작업 카드: 사용자가 물리 작업·팀 판정이 선행되지 않는 준비를 위임했다. (1) PC13 pinned SOHAS 전체 image 확보·구조/byte/decode 검사, (2) 후보 간 heuristic 유사 pair 진단, (3) 고정 threshold knife bbox·small recall·negative FP 평가기를 완료 기준으로 둔다. 사이트/DB/판정 수정·미승인 source 채택·full training·촬영/Orin은 제외한다. 원본·개인자료 외부 공유를 하지 않는다.
+- search-first 선택: 기존 SOHAS parser/blob/inventory·canonical detection parser/BBox·Pillow·JSONL/evidence helpers를 조합했다. 새 dependency/서비스/계정이나 일반 downloader를 추가하지 않았다. screening은 output-only이며 정확/유사 중복·원 split 교차를 분리하고 좌표 compatibility를 approval로 사용하지 않는다. bbox 평가는 confidence-first 일대일 IoU이며 event 평가기와 분리한다.
+- 확보: 공식 pinned Git tree API image size 1,861,407,276 bytes·5,859장 확인, PC13 free 약151.7GB에서 기존 byte-exact non-cone staging의 두 image directory만 추가했다. Git sparse-checkout add의 --no-cone 옵션은 지원되지 않아 기존 non-cone 설정 확인 후 옵션 없이 재실행했고 전체5859장을 확보했다. 노트북 전체 복사/Drive 업로드 없음. 새 VOC audit 구조 오류0·knife2349·YOLO2277·불일치58·orphan83·좌표 unknown·approval false를 재확인했다.
+- 변경: `dataset/image_screening.py`, `detection_evaluation.py`, fixture/tests와 검수 기준·CUDA handoff. Decode/변조/dimension·출력 보호·exact/visual/low-info/aspect gate·pinned XML identity, bbox TP/FP/FN·small/음성 FP·분모0·status/partition/완전성·missing/error row 거부를 검사한다. 검증/실제 실행 결과와 aggregate 증거는 후속 기록으로 연결한다.
+- 한계/다음: 유사 pair는 동일 scene/session 증명이 아니며 crop/flip 탐지를 보장하지 않는다. 권리 충돌·원 좌표 의미·전체 visual completeness·session/group split·recipe 승인이 남는다. 가상 평가를 모델 품질·실기기 결과로 보고하지 않는다. human gate가 완료된 뒤 source materialization·R1/H1 실행으로 간다. Git은 이 항목 포함 commit으로 추적한다.
+
 ## 2026-10-04 - 웹 판정 read-only snapshot과 학습 후보 연결
 
 - 목적·작업 카드: 검수 사이트의 실제 판정을 학습 준비에 연결하는 1단계를 진행한다. 운영 DB/이미지/배정/history를 쓰지 않고, 초기/추가 batch ID와 image hash를 판정에 연결한 미승인 후보 및 aggregate 보고를 만드는 것이 완료 기준이다. 사이트 UI·배포·실제 학습은 범위 밖이다.

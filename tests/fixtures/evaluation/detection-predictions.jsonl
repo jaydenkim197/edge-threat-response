@@ -1,0 +1,2 @@
+{"source_id":"synthetic-boxes","frame_index":0,"timestamp_s":0,"status":"valid","detections":[{"label":"knife","confidence":0.9,"bbox_xyxy":[10,10,20,20]},{"label":"knife","confidence":0.8,"bbox_xyxy":[10,10,20,20]},{"label":"knife","confidence":0.7,"bbox_xyxy":[50,50,90,90]},{"label":"person","confidence":0.9,"bbox_xyxy":[0,0,100,100]}]}
+{"source_id":"synthetic-boxes","frame_index":1,"timestamp_s":1,"status":"valid","detections":[{"label":"knife","confidence":0.8,"bbox_xyxy":[10,10,20,20]},{"label":"knife","confidence":0.3,"bbox_xyxy":[30,30,40,40]}]}

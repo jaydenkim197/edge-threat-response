@@ -101,6 +101,8 @@ COCO/Open Images 전용 downloader를 일반화해 미리 만들지 않는다. �
 
 #### SOHAS VOC source-specific audit
 
+2026-10-04 자율 준비 위임 후 PC13의 pinned byte-exact staging에 SOHAS VOC 원본 image 5,859장(공식 tree size 1,861,407,276 bytes)을 확보했다. 노트북/Drive에는 전량 복사하지 않는다. source-specific 전체 image screening과 후보 pack 유사 pair 진단은 [자동 검사 계약](dataset-evaluation-criteria.md#7-사람-검수-전-가능한-이미지-자동-검사)을 따른다. 고정 threshold knife bbox·작은 bbox recall·음성 FP 평가 기반은 [후보 평가](training-cuda-handoff.md#knife-bbox-후보-평가--2026-10-04)에 있다. 확보·구조 검사·가상 평가 성공은 좌표·권리·visual completeness·session group·recipe 채택·실제 학습을 승인하지 않는다.
+
 `dataset/sohas.py`와 `etr-dataset sohas-voc-audit`는 승인 전 준비 경로다. 기존 `parse_yolo_label`, `ValidationIssue`, review의 `size_bucket`을 재사용하고 XML은 Python 표준 라이브러리로 읽는다. 추가 의존성이나 일반화된 downloader는 만들지 않는다.
 
 - 입력: 공식 upstream Git commit `48860b990e4d4f57fe100248887fceb248475dc8`. Git tree의 원래 train/test image 목록을 같은 split의 `annotations/xmls` / `annotations_test/xmls`와 basename으로 짝맞춘다. sparse checkout에 이미지가 없어도 metadata pairing은 가능하다. XML·비교용 YOLO label은 로컬 bytes의 Git blob 일치를 검사하고 SHA-256을 출력한다.

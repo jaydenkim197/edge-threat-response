@@ -16,7 +16,8 @@
 - 선택 detector의 CUDA/Orin 성능, 카메라, GPIO와 TensorRT 동작은 실기기에서 검증되지 않았다.
 - 사건 평가기·가상 B0~B3 end-to-end와 촬영/수동 정답/세션 분리 양식을 준비했다. 실제 거리·matching tolerance·반복 규모는 pilot 후 확정한다([통제 실험](controlled-experiment-protocol.md)).
 - R1/H1의 공통 평가 목록·matched draw budget·hash-bound approval gate·결과 비교 코드는 준비됐다. 승인된 SOHAS export가 없어 full training은 차단 상태다([학습 준비](training-cuda-handoff.md)).
-- 웹 판정의 read-only batch/image-hash 연결·source별 집계·미승인 실사/합성/평가/보류 후보 도구를 구현·PC fixture 검증했다([검수→후보](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot)). 다음 gate는 승인 범위·좌표/group/권리 확인과 실제 YOLO materialization이다.
+- 웹 판정의 read-only batch/image-hash 연결·source별 집계·미승인 실사/합성/평가/보류 후보 도구를 구현·실제 PC13 765개/판정309개 snapshot을 검증했다([검수→후보](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot)). 다음 gate는 승인 범위·좌표/group/권리 확인과 실제 YOLO materialization이다.
+- 팀 판정과 독립적인 원본 decode/hash/XML dimension·유사 pair screening, 고정 threshold knife bbox/small recall/negative FP 평가 기반을 구현했다. 유사 pair는 session 확정이 아니고 image 지표는 사건 지표와 다르다. 실제 실행 증거는 verification에 기록한다.
 
 ## 다음 작업과 완료 기준
 
@@ -25,7 +26,7 @@
 | 팀원 L0-1 | Legacy 128장 사람 검수 | [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)에 따라 `review.csv`를 판정하고 source/version·split·bbox-size 구간별 결과와 불확실 사례를 기록 |
 | 팀원 L0-2 | L0 사용 범위·재현 결정 | 표본 결과에 근거해 legacy 전체/선별/역사적 기준의 역할과 추가 검수 필요성을 결정. `open-decisions.md`에 근거 연결 |
 | 신규 R-1 | 공개 source audit | SOHAS 권리 표기 충돌·image/XML pairing·양성/음성·group을 확인. DaSCI의 SOHAS와 동일한 1,985장 및 고유 후보 최대 93장을 별도 기록 |
-| 공통 데이터 검수 확대 | 준비된 7개 후보를 모두 검수하고 유망 구간의 미검수 고유 image를 단계적으로 추가 | [후보 전체 검수 계획](dataset-source-strategy.md#후보-전체-검수와-단계적-확대--2026-10-04-작업-추가). 현재 첫 표본 665장, ACF 접근 대기. 공통 두 질문·기존 판정 보존, source별 승인 범위 기록. 확대 배포는 아직 미실행 |
+| 공통 데이터 검수 확대 | 준비된 7개 후보를 모두 검수하고 유망 구간의 미검수 고유 image를 단계적으로 추가 | [후보 전체 검수 계획](dataset-source-strategy.md#후보-전체-검수와-단계적-확대--2026-10-04-작업-추가). SOHAS100장 추가로 현재765장 배포됨, ACF 접근 대기. 공통 두 질문·기존 판정 보존, source별 승인 범위는 별도 |
 | 신규 R-2 | CUDA full-training 준비·실행 | 승인된 [R1/H1 후보](dataset-source-strategy.md)와 group-aware manifest, 고정 config·run ID·hash를 남기고 GPU에서 학습. [CUDA handoff](training-cuda-handoff.md) 준수 |
 | 공통 3 | Orin 입고 시 inventory·통합 | SKU·전원·저장장치·JetPack 확인 후 native runtime, 모델, camera, GPIO, 자원 측정 순으로 실기기 검증 |
 | 공통 실험 | Pilot 촬영·주석·동결 | 준비된 촬영표/사건 정답으로 거리·허용 오차·반복 수를 정하고 tuning/final-test 세션을 분리. 가상 평가기 성공을 실제 실험 결과로 취급하지 않음 |

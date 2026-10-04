@@ -58,6 +58,11 @@
 - PC13/Python3.12.4 commit `8cd14d9`: 전체113 tests/compileall 통과. 실제 ready source7개/pack8개/765개 표본/309개 판정 snapshot의 이미지 bytes·pack fingerprint·registry를 검증했다. 실사 후보180·합성36·외부평가21·보류72·미검수456·학습승인0, ready pack 간 exact duplicate0그룹. 모든manifest765행 approval=false, 각 pack DB writes=0, tracked remote checkout clean을 확인했다. 서비스 restart/DB write 없이 실행했고 private raw는 PC13 ignored `data/work/review-candidates/20261004-v1/`. [aggregate 증거](../reports/datasets/review-candidates-2026-10-04/report.md).
 - 구현은 read-only snapshot/미승인 후보까지이며 실제 SOHAS 좌표·권리·source 전체 품질·near duplicate·실제 session/group split·학습·Orin은 검증하지 않았다. [실행 계약](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot).
 
+## 2026-10-04 이미지 자동 검사·knife bbox 평가 기반
+
+- Python3.11.9: 신규 이미지 검사4/bbox 평가6 및 전체123 tests 통과, compileall 통과. 원 bytes/출력 보호·변조/손상/dimension·exact/visual pair 구분·low-info/aspect·pinned XML identity·coordinate compatibility 미승격, bbox 일대일 TP/FP/FN·small recall·음성 FP·분모0·approval/partition·missing/error prediction 거부를 검사했다.
+- PC13에서 pinned SOHAS image5,859장 확보와 새 VOC audit 구조오류0·knife2349/YOLO2277·count 차이58/orphan83을 확인했다. 전체 decode/유사 pair·실제 CLI 결과는 실행 후 별도 evidence로 기록한다. 실제 human gate/full training/Orin은 미검증이다.
+
 ## Benchmark 최소 기록 항목
 
 - 날짜, Git commit 또는 소스 버전, 장비, JetPack/OS, 전원 모드
