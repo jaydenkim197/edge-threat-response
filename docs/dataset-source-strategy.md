@@ -26,12 +26,37 @@
 | E2 sequential CCTV test candidate | US Mock Attack | audit 표본만: camera/sequence별 표본 | **Dataset v1 학습에는 0장**. 데이터·시간 순서·event 정답 확인 시 외부 sequence 평가 후보 | 공개 설명상 knife label 수가 적고 연속 frame이라 random image split은 누수 위험이 크다. |
 | S1 synthetic viewpoint check | Simuletic CCTV Knife | 필요 시 전체 114장 검수 | primary recipe에는 0장. real-data baseline 이후 별도 synthetic augmentation ablation에만 최대 114장 | target viewpoint에는 가깝지만 synthetic-to-real gap과 작은 표본을 본 결과와 혼동하지 않는다. |
 | D1 deferred candidate | Dangerous Items | 초기 웹 검수 100장; 학습 0장 | 공식 Zenodo API는 2026-10-04 CC BY 4.0. ZIP 내부에 class YAML이 없어 knife raw ID·라벨 완전성과 source group을 검수한 뒤에만 재검토 | small/blur/occlusion 보강 가능성이 있지만, 검수용 시각 추정은 학습용 class map 승인이 아니다. |
-| G1 gap-filling candidate | Open Images V7 | 0장 | source audit 후 필요한 visual gap만 제한적으로 선정 | web-image domain이고 image별 license·annotation density 확인이 필요하다. |
+| G1 gap-filling candidate | Open Images V7 | 초기 웹 검수 30장; 학습 0장 | source audit 후 필요한 visual gap만 제한적으로 선정 | web-image domain이고 image별 license·annotation density 확인이 필요하다. |
 | person detector | COCO pretrained model | 별도 custom data import 없음 | person detector sanity/composite adapter의 pretrained source | COCO person pretrained model은 사용 가능하되, COCO knife data를 본 project의 knife training corpus로 자동 채택하지 않는다. |
 
 `stratified 100장`은 source 규모가 100장보다 작으면 전체를 뜻한다. 표본은 knife positive와 no-knife negative, source/version·camera/session 및 knife bbox normalized-size 구간을 가능한 범위에서 나누어 뽑는다. 이 수는 **초기 검수 작업량**이며 전체 source의 정확한 구성비, 최종 학습량 또는 연구 표본 수를 보증하지 않는다.
 
 ## 3. 신규 detector 후보 recipe — `PROPOSAL`
+
+### 후보 전체 검수와 단계적 확대 — 2026-10-04 작업 추가
+
+사용자는 후보의 사용 가능한 자료를 폭넓게 검수하도록 작업 추가를 요청했다. **검수 pool 확대와 학습 corpus 승인은 별개**이며, 아래의 추가 표본 수·혼합 학습은 `PROPOSAL`이다. 기존 source별 권리·중복·역할 gate와 공통 두 질문 UI를 유지한다. 자료가 많다는 이유만으로 모든 source를 학습에 연결하지 않는다.
+
+| 후보 | 현재 준비된 첫 웹 검수량 | 추가 검수 작업 / 승인 후 역할 |
+|---|---:|---|
+| SOHAS | 100 | 첫 결과 이후 미검수 고유 image를 확장. knife 양성·knife 부재 후보·작은 bbox·서로 다른 source group을 포함. 주력 실사 학습 후보 |
+| DaSCI unique | 93 | 준비된 고유 후보 전체 검수; SOHAS와의 near-duplicate를 추가 확인. 통과한 실사 자료는 보강 후보 |
+| Dangerous Items | 100 | **knife class map 확인을 먼저** 하고, 해당 annotation 검토 뒤 작은 칼·blur·가림·유사 물체 구간 확대. 임시 class map의 정상 판정을 학습 승인으로 사용하지 않음 |
+| Open Images | 30 | 현재 표본이 validation source임을 보존. 추가 학습 후보는 별도 train source에서 권리·knife annotation을 확인해 선정하며, 기존 평가 자료를 무조건 train으로 이동하지 않음 |
+| Legacy | 128 | 팀원의 L0 검수를 유지. source/권리·중복 확인 뒤 고유·적합 실사만 신규 보강 후보로 별도 선정 |
+| Simuletic | 114 | 공개 표본 전체 검수. synthetic flag를 유지하고 실사 혼합 pool과 분리하여 S1 비교에만 사용 |
+| US Mock Attack | 100 | camera/sequence별 annotation·knife 부재·독립성 확인을 우선. 외부 평가 후보로 보존하고 train에 반입하지 않음 |
+| ACF | 0 | 공식 원본 접근·권리·annotation 확보 후 검수에 추가. 접근 실패 자료를 확보했다고 기록하지 않음 |
+
+첫 준비량은 합계 **665장**이며 준비 수와 실제 완료 판정 수는 다르다. 첫 표본만으로 source 전체의 모든 image가 승인된 것으로 취급하지 않는다. 표본 수준 관찰과 개별 image 승인 범위를 구분한다.
+
+큰 source의 확대는 한 번에 약 **100장 내외의 미검수 고유 image**를 제안 단위로 하되, 이 숫자는 팀 작업량 관리용이며 연구 표본 규모가 아니다. 작은 source는 남은 전량, 문제가 몰린 구간은 우선 재검수한다. source/version·group·원 split·bbox-size·양성/음성 분포와 선정 seed를 기록한다. AI/구조 검사는 문제 후보를 추릴 수 있지만 human verdict를 채우지 않는다. 문제/모르겠음은 수정·재검수 queue로 남긴다. 정상인 비-CCTV image는 appearance 보강 가치가 있을 수 있으므로 자동 제외하지 않는다.
+
+추가 pack 준비 시 기존 pack/DB/배정/history를 덮어쓰지 않고 새 batch ID와 image hash로 추적한다. 같은 image를 새 미검수 image처럼 재배정하지 않는다. 팀원에게 추가 질문이나 CSV 제출을 요구하지 않으며, 데이터/판정의 기준 위치는 PC13이다. 이 항목은 **작업 계획**이고 추가 image 다운로드·사이트 배포·DB 변경을 실행한 기록이 아니다.
+
+학습은 승인된 SOHAS로 R1/H1을 먼저 진행해 기준을 얻는다. 모든 후보 검수 완료를 기다려 첫 학습을 지연하지 않는다. 이후 필요하면 **M1 = R1 + 승인된 고유 실사 보강분(DaSCI/Dangerous/Open Images/Legacy)**을 한 개의 혼합 후보로 비교하는 것을 제안한다. source별 이미지·객체·group·draw 비중을 명시하고 중복이나 특정 close-up source의 양으로 CCTV 장면이 압도되지 않도록 sampling을 검토한다. 정확한 비중은 audit/pilot 후 결정한다. M1 비교는 혼합 recipe 전체의 효과이며 source 하나의 기여 증명이 아니다. synthetic은 S1, 독립 CCTV 평가 자료는 holdout으로 분리하고 model/budget/공통 tuning 평가를 통제한다. M1용 multi-source preparation/approval 연결은 아직 구현·승인되지 않았으며 현재 SOHAS R1/H1 runner에 임의로 source를 끼워 넣지 않는다.
+
+원 출처 재확인(2026-10-04): [DaSCI 공식 저장소](https://github.com/ari-dasci/OD-WeaponDetection)는 서로 다른 task의 자료를 구분하고 README/license notice 차이가 여전히 있어 기존 gate를 유지한다. [Simuletic 공식 카드](https://huggingface.co/datasets/Simuletic/cctv-knife-detection-dataset)는 114장 synthetic CCTV sample을 제공한다. 공개 여부가 곧 source별 학습·재배포 승인은 아니다.
 
 L0 재현은 팀원의 독립 트랙이다. 신규 knife detector의 첫 공개 source는 SOHAS로 두되, 출처·권리·라벨·group audit 통과 전에는 학습 recipe를 승인하지 않는다. GPU가 여러 대여도 같은 이미지가 대부분인 DaSCI-only와 SOHAS+DaSCI를 필수 run으로 늘리지 않는다.
 

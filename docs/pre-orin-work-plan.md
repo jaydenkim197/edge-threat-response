@@ -24,6 +24,7 @@
 | 팀원 L0-1 | Legacy 128장 사람 검수 | [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)에 따라 `review.csv`를 판정하고 source/version·split·bbox-size 구간별 결과와 불확실 사례를 기록 |
 | 팀원 L0-2 | L0 사용 범위·재현 결정 | 표본 결과에 근거해 legacy 전체/선별/역사적 기준의 역할과 추가 검수 필요성을 결정. `open-decisions.md`에 근거 연결 |
 | 신규 R-1 | 공개 source audit | SOHAS 권리 표기 충돌·image/XML pairing·양성/음성·group을 확인. DaSCI의 SOHAS와 동일한 1,985장 및 고유 후보 최대 93장을 별도 기록 |
+| 공통 데이터 검수 확대 | 준비된 7개 후보를 모두 검수하고 유망 구간의 미검수 고유 image를 단계적으로 추가 | [후보 전체 검수 계획](dataset-source-strategy.md#후보-전체-검수와-단계적-확대--2026-10-04-작업-추가). 현재 첫 표본 665장, ACF 접근 대기. 공통 두 질문·기존 판정 보존, source별 승인 범위 기록. 확대 배포는 아직 미실행 |
 | 신규 R-2 | CUDA full-training 준비·실행 | 승인된 [R1/H1 후보](dataset-source-strategy.md)와 group-aware manifest, 고정 config·run ID·hash를 남기고 GPU에서 학습. [CUDA handoff](training-cuda-handoff.md) 준수 |
 | 공통 3 | Orin 입고 시 inventory·통합 | SKU·전원·저장장치·JetPack 확인 후 native runtime, 모델, camera, GPIO, 자원 측정 순으로 실기기 검증 |
 | 공통 실험 | Pilot 촬영·주석·동결 | 준비된 촬영표/사건 정답으로 거리·허용 오차·반복 수를 정하고 tuning/final-test 세션을 분리. 가상 평가기 성공을 실제 실험 결과로 취급하지 않음 |
@@ -36,3 +37,4 @@ L0와 신규 R 트랙은 병렬이며 L0 검수 완료가 R-1/R-2의 선행 gate
 - PC smoke와 실기기 성능을 별도 기록한다. Orin Nano의 FPS·지연·메모리·온도는 실제 장비에서만 측정한다.
 - TensorRT/FP16은 PyTorch 또는 선택 runtime의 기준 성능을 얻은 뒤 필요성과 효과를 판단하는 Stretch다.
 - 동일 detector·입력·설정의 B0~B3 사건 비교에는 시간 순서와 수동 event start/end 정답이 필요하다.
+- 검수 후보 전체의 결과를 기다리느라 승인된 R1/H1 첫 학습을 지연하지 않는다. 사용 가능한 실사 보강분을 합친 M1은 후속 제안이며 source별 중복/권리/분할 gate, common tuning 평가와 budget을 유지한다. Synthetic과 독립 평가 source를 전량 train으로 합치지 않는다.
