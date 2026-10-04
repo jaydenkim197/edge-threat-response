@@ -16,6 +16,7 @@
 - 선택 detector의 CUDA/Orin 성능, 카메라, GPIO와 TensorRT 동작은 실기기에서 검증되지 않았다.
 - 사건 평가기·가상 B0~B3 end-to-end와 촬영/수동 정답/세션 분리 양식을 준비했다. 실제 거리·matching tolerance·반복 규모는 pilot 후 확정한다([통제 실험](controlled-experiment-protocol.md)).
 - R1/H1의 공통 평가 목록·matched draw budget·hash-bound approval gate·결과 비교 코드는 준비됐다. 승인된 SOHAS export가 없어 full training은 차단 상태다([학습 준비](training-cuda-handoff.md)).
+- 웹 판정의 read-only batch/image-hash 연결·source별 집계·미승인 실사/합성/평가/보류 후보 도구를 구현·PC fixture 검증했다([검수→후보](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot)). 다음 gate는 승인 범위·좌표/group/권리 확인과 실제 YOLO materialization이다.
 
 ## 다음 작업과 완료 기준
 

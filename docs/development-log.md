@@ -2,6 +2,14 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-04 - 웹 판정 read-only snapshot과 학습 후보 연결
+
+- 목적·작업 카드: 검수 사이트의 실제 판정을 학습 준비에 연결하는 1단계를 진행한다. 운영 DB/이미지/배정/history를 쓰지 않고, 초기/추가 batch ID와 image hash를 판정에 연결한 미승인 후보 및 aggregate 보고를 만드는 것이 완료 기준이다. 사이트 UI·배포·실제 학습은 범위 밖이다.
+- 선택: `search-first`로 기존 ReviewStore와 팀 registry/판정 해석을 확인했다. constructor는 DB migration을 쓰므로 호출하지 않고 기존 `review_verdict`와 stdlib SQLite read-only transaction을 재사용했다. 별도 service/dependency/계정/CSV 제출을 추가하지 않았다.
+- 변경: `dataset/review_candidates.py`, source-role/mapping policy, fixture tests, 검수 기준·architecture·pre-Orin·verification. 현재 ready pack의 bytes/fingerprint/ID/배치 registry를 확인하고 source별 domain/양성·음성·판정과 원 split을 집계한다. 정상 비-CCTV는 자동 제외하지 않는다. 불완전 음성 근거·Dangerous mapping·cross-source exact duplicate는 보류하고 synthetic/external 후보를 실사 train 목록에서 분리한다. 모든 결과는 `training_approved=false`이며 materialized 학습 manifest가 아니다.
+- 개발 검증: Windows/Python3.11.9에서 신규 6 tests와 전체113 tests 통과. 원 입력 전체 bytes 보존·SQLite 쓰기 거부·missing DB 비생성·pack hash/registry/image 변조·추가 offset·legacy/v2 해석·negative 충돌·external 중복·출력 덮어쓰기/입력 directory 보호·이름/credential/메모 미출력을 확인했다. 초기 fixture 수정용 SQLite 연결이 닫히지 않아 Windows cleanup 오류가 났으며 테스트 연결을 명시적으로 close해 해결했다. production 코드의 read-only 연결은 처음부터 finally-close였다.
+- 한계·다음: 여러 DB의 snapshot은 DB별 transaction이고 하나의 전역 atomic 시점이 아니다. 전체 source/near duplicate/권리/좌표/group split/recipe 승인과 YOLO export는 남는다. 원시 목록은 PC13 ignored 데이터 공간에 보관하며 human 판정·사이트·DB를 변경하지 않는다. PC13 실제 실행·결과는 후속 증거로 기록하고 commit은 이 항목을 포함한 이력으로 추적한다.
+
 ## 2026-10-04 - SOHAS 추가 검수 배치와 보존형 연결 구현
 
 - 목적·작업 카드: 사용자가 인계 메모를 기준으로 검수 확대를 요청했다. 공통 두 질문·이름 선택을 유지하고 기존 image/판정/version/history/배정을 보존하면서 SOHAS부터 100장을 추가한다. 완료 기준은 consistent backup·추가형 registry·고정 ID·중복 차단·fixture 저장/재접속·모바일·PC13 배포다. 원본·학습 source 자동 병합과 학습 실행은 제외한다.

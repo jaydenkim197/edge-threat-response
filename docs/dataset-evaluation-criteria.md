@@ -82,6 +82,33 @@ AI가 먼저 제안하는 경우 별도 초안으로 표시하고 사람이 원�
 
 ### 팀원 배포 가능 범위
 
-2026-10-04부터 팀원 공동 작업의 기본 경로는 [PC13 중앙 웹 검수 서비스](team-review-deployment.md)다. PC13의 Python/SQLite 서버가 이미지·개인 코드 인증·중복 없는 배정·판정 이력을 관리한다. 팀원은 사이트와 개인 코드만 사용하며 Python·CSV·Git 설치가 필요 없다. 이전 localhost 도구는 기존 기록 확인용으로 보존하되, 중앙 사용 시작 후 그 DB에 새 판정을 병행 기록하지 않는다.
+2026-10-04부터 팀원 공동 작업의 기본 경로는 [PC13 중앙 웹 검수 서비스](team-review-deployment.md)다. PC13의 Python/SQLite 서버가 이미지·이름 선택 session·중복 없는 배정·판정 이력을 관리한다. 팀원은 링크에서 본인 이름만 선택하며 Python·CSV·Git 설치가 필요 없다. 이름은 자기신고이고 관리자 기능은 별도 코드로 보호한다. 이전 localhost 도구는 기존 기록 확인용으로 보존하되, 중앙 사용 시작 후 그 DB에 새 판정을 병행 기록하지 않는다.
 
-PC13의 루프백 서버와 시작 작업, 외부 HTTPS의 관리자 로그인·이미지 로딩은 검증했다. 팀원 개인 계정의 실제 판정 저장·재접속은 첫 검수 시 확인한다. 인증이 없으면 원본 이미지/API는 반환하지 않으며, 공개 GitHub에는 이미지·DB·접속 코드를 넣지 않는다. 중앙 서비스도 두 질문의 표본 검수만 제공할 뿐 원본 권리, 좌표, 전체 source, 학습 채택을 승인하지 않는다.
+PC13의 루프백 서버·시작 작업, 외부 HTTPS와 이름 선택·저장·재접속은 검증했다. 실제 휴대폰 홈 화면 실행·재부팅 자동 복구 등 남은 운영 확인은 운영 안내를 따른다. 검수 session이 없으면 원본 이미지/API는 반환하지 않으며, 공개 GitHub에는 이미지·DB·접속 코드를 넣지 않는다. 중앙 서비스도 두 질문의 표본 검수만 제공할 뿐 원본 권리, 좌표, 전체 source, 학습 채택을 승인하지 않는다.
+
+## 6. 웹 판정 → 미승인 학습 후보 snapshot
+
+`edge_threat_response.dataset.review_candidates`는 운영 config의 초기/추가 immutable pack을 읽고 source·batch·global/local sample ID·image hash·review version을 연결한다. 서버나 ReviewStore를 초기화하지 않고 SQLite `mode=ro`/`query_only`와 DB별 read transaction으로 metadata/reviews/history·배치 registry를 확인한다. 계정·배정·판정을 쓰지 않는다. 기존 UI와 같은 `review_verdict`로 상세/두 질문 판정을 해석하며, CSV/evidence fingerprint·배치 offset/count·원 image bytes와 bbox를 검증한다.
+
+PC13 repository root에서 실행한다. 출력은 항상 새 경로를 쓰며 기존 pack이나 server config directory 안에 쓰지 않는다.
+
+```powershell
+$env:PYTHONPATH = 'src'
+.\.venv-ml\Scripts\python.exe -m edge_threat_response.dataset.review_candidates --config data/review/team-server/config.json --policy configs/datasets/review-candidate-policy.json --output-dir data/work/review-candidates/NEW-ID
+```
+
+출력은 ignored PC13 데이터 공간에 보관한다. Git에는 aggregate 보고만 올리고 image paths/hash별 판정 원본·DB·개인 정보는 올리지 않는다.
+
+- `summary.json` / `report.md`: source별 준비·판정·정상/문제/모름·미검수, domain×verdict×annotation 양성/음성, 원 split, candidate 수와 snapshot provenance. 실제 source 전체가 아닌 현재 pack 범위의 결과다.
+- `review-linked-manifest.jsonl`: 모든 표본과 최신 snapshot 판정의 연결. 검수자 이름·자유 메모·credential은 내보내지 않고 payload hash/version으로 참조한다. 자기신고 검수의 본인 인증을 증명하지 않는다.
+- `training-candidates.jsonl`: 정상 판정과 완전성 근거가 있는 실사 양성/knife 부재 후보만. **모든 행은 `training_approved=false`**다. 원본 train/test 표시는 보존하지만 신규 학습 split으로 자동 승격하지 않는다. Negative는 실제 부재 `yes`가 있어야 한다. 비-CCTV 정상은 appearance 보강 후보로 남긴다.
+- `held.jsonl`: 문제/모름·불완전하거나 충돌하는 판정·knife mapping 미확정·원 split 제한·exact duplicate. 웹 global sample ID로 찾아 별도 확인하며 자동 삭제/수정하지 않는다.
+- `duplicates.jsonl`: 현재 ready pack 사이의 exact SHA-256 중복과 record ID. 동일 source/batch 내부 중복은 오류, cross-source 중복은 보류한다. 외부 평가와 겹친 실사 자료는 학습 후보에서 빠진다. 전체 원 source의 중복·near-duplicate 검사를 대신하지 않는다.
+
+`review-candidate-policy.json`은 source별 실사/legacy/합성/외부 평가와 knife mapping의 의미를 명시한다. source-defined mapping은 package를 해석할 수 있다는 뜻이지 권리·좌표·학습 승인이 아니다. Dangerous Items는 mapping 미확정으로 보류한다. Simuletic 정상은 synthetic 후보, US/ACF는 평가 후보로 분리되어 실사 training-candidates에 들어가지 않는다. 이 정책을 바꿔 source를 승인한 척하지 않는다.
+
+Open Images는 현재 표본의 원본 validation split을 train으로 옮기지 않도록 `training_original_splits=[train]`을 둔다. 정상이어도 현재 validation 표본은 `hold_source_split`로 남으며 별도 train 자료를 확보해야 학습 후보가 될 수 있다. 다른 source도 원 split을 보존하고 실제 group-aware 재분할은 별도 승인한다.
+
+raw bbox의 normalized area는 진단값일 뿐, 작은 칼의 최종 cutoff나 학습용 좌표 변환 승인이 아니다. 모든 후보에 source rights·좌표·전체 annotation audit·near duplicate·실제 session group·group split·recipe 승인이 남는다. 이 JSONL은 `training_pair`가 받는 materialized YOLO manifest가 아니며 바로 학습에 넣을 수 없다. 다음 단계에서 승인 범위를 정하고 raw annotation→YOLO export를 연결한다.
+
+각 DB의 snapshot은 일관되지만 여러 live DB 전체가 한 시점의 atomic snapshot은 아니다. UTC 시작/종료 시간과 DB별 table row count/logical hash를 기록한다. 진행 중 사람 판정이 늘면 새 output ID로 다시 집계하며 기존 보고를 덮어쓰지 않는다. CLI exit 0은 읽기/출력 성공, exit 2는 입력/무결성 오류이며 학습 승인/성과가 아니다.

@@ -115,6 +115,8 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 
 ## 사건 평가·학습 승인 경계
 
+웹 검수와 학습 사이의 `dataset/review_candidates.py`는 운영 config/immutable packs/판정 DB를 read-only로 snapshot하고 source·batch·image hash·review version을 연결한다. 서버/ReviewStore constructor는 호출하지 않으며 DB별 transaction·fingerprint·registry를 검사한다. 역할 정책에 따라 실사/합성/외부 평가와 mapping 보류를 분리하고 모든 row의 학습 승인을 false로 유지한다. 이 목록은 승인된 materialized manifest와 다르다. [검수→후보 계약](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot)을 따른다.
+
 `evaluation.py`/`etr-evaluate`는 source-level 수동 start/end 정답과 B0~B3 replay metadata를 비교한다. 시간 허용 창의 일대일 대응, 중복/배경 FP, FN, ignore와 영상시간 분모, partition별 micro 지표를 표준 라이브러리로 계산한다. session·관련 group의 partition 교차와 replay 입력/config/frame/version 불일치를 거부한다. 지연은 원본 영상 시간축의 CONFIRMED 판단 지연이며 실제 GPIO 지연이 아니다. 동시 사건은 source-level 합집합으로 주석화한다. [통제 실험 계약](controlled-experiment-protocol.md)을 따른다.
 
 `training_pair.py`는 승인 가능한 SOHAS materialized manifest에서 R1/H1의 동일 양성·공통 val/test와 같은 draw budget 목록을 준비한다. H1은 양성을 반복하며 이미지를 추가 복제하지 않는다. 기존 training runner를 확장해 승인 파일·입력 bytes/hash가 맞지 않으면 모델 로드 전에 차단한다. 자동 권리 판정·사람 검수·raw VOC 반입·full training launch는 하지 않는다. [CUDA handoff](training-cuda-handoff.md)에 development 설정·승인·실행/비교 절차가 있다.

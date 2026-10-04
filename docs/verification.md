@@ -52,6 +52,11 @@
 - **개발 PC**: Python 3.11.9에서 `python -m unittest discover -s tests -q` **101 tests 통과**. 실제 CPU/GPU full training·Orin·GPIO 지연은 미검증이다. 원시 runtime 출력은 ignored `runs/event-evaluation-synthetic-v1/`에 있다.
 - **PC13**: commit `9833a72`, Python 3.12.4에서도 전체 101 tests·compileall·editable install·pip check·신규 CLI help와 실제 가상 replay→평가가 통과했다. readiness에서 CUDA RTX 3060·로컬 weight가 확인됐으나 승인된 SOHAS materialized manifest 부재를 탐지해 예상 exit 2 / blocked / training_started=false로 종료했다. raw: PC13 ignored `runs/sohas-pair-readiness-20261004/readiness.json`, `runs/event-evaluation-synthetic-v1/`. 실제 GPU full training은 미실행이다.
 
+## 2026-10-04 검수 판정의 학습 후보 연결
+
+- 신규6 tests/전체113 tests(Python3.11.9) 통과. DB와 image/CSV/evidence 원 bytes 보존, ro 쓰기 차단/missing DB 비생성, pack hash·image·registry 검증, 기존/추가 sample ID 연결과 legacy/v2 verdict, 불완전 음성·mapping 미확정·외부 exact duplicate 보류, 모든 approval=false·개인 정보/credential 미출력을 확인했다.
+- 구현은 read-only snapshot/미승인 후보까지이며 실제 SOHAS 좌표·권리·source 전체 품질·near duplicate·실제 session/group split·학습·Orin은 검증하지 않았다. [실행 계약](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot). 실제 PC13 실행 결과는 후속 검증에 기록한다.
+
 ## Benchmark 최소 기록 항목
 
 - 날짜, Git commit 또는 소스 버전, 장비, JetPack/OS, 전원 모드

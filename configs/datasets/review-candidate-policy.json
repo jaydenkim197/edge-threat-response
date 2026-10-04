@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "policy_id": "review-linked-candidates-v1",
+  "sources": {
+    "sohas": {"role": "real_training", "knife_mapping": "source_defined"},
+    "dasci-unique": {"role": "real_training", "knife_mapping": "source_defined"},
+    "legacy": {"role": "baseline_or_real_augmentation", "knife_mapping": "source_defined"},
+    "open-images": {"role": "real_training", "knife_mapping": "source_defined", "training_original_splits": ["train"]},
+    "dangerous-items": {"role": "real_training", "knife_mapping": "unconfirmed"},
+    "simuletic": {"role": "synthetic_ablation", "knife_mapping": "source_defined"},
+    "us-mock": {"role": "external_evaluation", "knife_mapping": "source_defined"},
+    "acf": {"role": "external_evaluation", "knife_mapping": "unconfirmed"}
+  }
+}
