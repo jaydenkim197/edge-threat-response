@@ -62,6 +62,7 @@
 
 - Python3.11.9: 신규 이미지 검사4/bbox 평가6 및 전체123 tests 통과, compileall 통과. 원 bytes/출력 보호·변조/손상/dimension·exact/visual pair 구분·low-info/aspect·pinned XML identity·coordinate compatibility 미승격, bbox 일대일 TP/FP/FN·small recall·음성 FP·분모0·approval/partition·missing/error prediction 거부를 검사했다.
 - PC13에서 pinned SOHAS image5,859장 확보와 새 VOC audit 구조오류0·knife2349/YOLO2277·count 차이58/orphan83을 확인했다. 전체 decode/유사 pair·실제 CLI 결과는 실행 후 별도 evidence로 기록한다. 실제 human gate/full training/Orin은 미검증이다.
+- 후속 `f774a1a`/`b86a5a6`: 양 PC 전체124 tests/compileall 통과. 실제 full SOHAS5859·review765 decode/hash/dimension 오류0, source exact1쌍·두 좌표 해석 모두호환·비기본 EXIF1장. Full source+다른 표본6424 cached signature 비교에서 exact5쌍(그중SOHAS–Dangerous4)/visual5756/cross-source34를 기록했다. 가상 bbox CLI TP2/FP2/FN1·small1/2·negative FP1 확인, 성능 주장이 아니다. site/DB/판정 변경·full training 없이 public login HTTP200 확인. [aggregate 증거와 한계](../reports/datasets/image-screening-2026-10-04/report.md).
 
 ## Benchmark 최소 기록 항목
 

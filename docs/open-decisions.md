@@ -4,7 +4,7 @@
 
 | ID | 우선순위 | 결정 사항 | 현재 권장안 | 선택 기준 / 필요한 증거 | 결정 시점 | 상태 |
 |---|---|---|---|---|---|---|
-| P0-01 | P0 | Orin Nano 실기기 inventory와 설치 경로 | JetPack 7.2.1 기준, UEFI/QSPI 확인 후 NVMe 우선 검토 | 정확한 SKU·RAM, 장비 수령 여부, firmware, microSD/NVMe, 카메라, GPIO, 냉각 | 실기기 통합 전 | `PLANNED` |
+| P0-01 | P0 | Orin Nano 실기기 inventory와 설치 경로 | JetPack 7.2.1 기준, UEFI/QSPI 확인 후 NVMe 우선 검토 | 2026-10-04 사용자: Orin 보유/원격 미설정/카메라·GPIO 미확보(`USER_REPORTED`). 정확한 SKU·RAM·부팅 OS/JetPack·firmware·microSD/NVMe·냉각은 미확인 | 원격 접속·실기기 통합 전 | `PLANNED`; 실기기 미검증 |
 | P0-02 | P0 | 기존 소스의 기준 저장소 | 현재 저장소와 고정된 legacy submodule을 기준으로 사용 | 비밀값·라이선스·재현 환경은 계속 별도 확인 | 완료 | `DECISION` / `IMPLEMENTED` |
 | P0-03 | P0 | 2026-2 MVP 기능 | knife only + geometry association + K-of-N + 4-state + GPIO + metadata/snapshot + B0~B3 ablation | core/replay는 PC 검증 완료; detector·snapshot·GPIO는 실기기 증거 필요 | 완료 | `DECISION`; core `IMPLEMENTED` |
 | P1-01 | P1 | 상황 인식 범위 | geometry-only association과 K-of-N을 MVP로, tracking·movement는 stretch | B0~B3 결과와 Orin 성능 | 완료 | `DECISION` |

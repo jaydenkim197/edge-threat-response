@@ -14,6 +14,8 @@
 - 기준 저장소: `jaydenkim197/edge-threat-response`
 - 개발 동결 목표: 2026-10-31
 
+2026-10-04 사용자 최신 확인: **Orin Nano는 보유 중**이며 원격 접속은 설정하지 않았다. 카메라·GPIO 기기는 아직 확보하지 않았다. 이는 `USER_REPORTED` 장비 준비 상태이며 실제 SKU/RAM·저장장치·부팅 OS/JetPack·firmware·CUDA 동작은 원격/실물 inventory 전까지 미검증이다. 다음 실물 gate는 수령 대기가 아니라 부팅 상태 확인·원격 접속 설정이고, 주변장치 확보 전에도 runtime/image GPU smoke는 접속 후 진행할 수 있다.
+
 ### Target deployment and data-domain assumption
 
 - camera 모델·화각은 미정이지만, dataset 검수와 controlled scenario는 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 비스듬히 보는 환경을 기준으로 한다.
