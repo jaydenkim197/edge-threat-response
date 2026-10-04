@@ -5,13 +5,14 @@ import argparse
 import hashlib
 import io
 import json
+import re
 import sys
 from collections import Counter, defaultdict
 from datetime import datetime, timezone
 from pathlib import Path
 
 from .sohas import _inventory, _source_bytes, parse_sohas_voc
-from ..training import _git_commit, _write_json
+from ..training import _git_commit, _sha256_file, _write_json
 from ..replay import write_jsonl
 
 
@@ -142,20 +143,80 @@ def screen_images(manifest: Path, output: Path, *, source_root: Path | None = No
     return summary
 
 
+def compare_integrity(files: list[Path], output: Path, distance: int = 4) -> dict:
+    """Compose previously verified screening outputs, without redecoding images."""
+    similarity_pairs([], distance)
+    if output.exists() or not files or len({path.resolve() for path in files}) != len(files):
+        raise ValueError("Use unique integrity inputs and a fresh comparison output")
+    if any(output.resolve().is_relative_to(path.parent.resolve()) for path in files):
+        raise ValueError("Comparison output cannot be inside an input screening directory")
+    records, previous_sources, aliases, identities = [], set(), 0, set()
+    input_hashes = {str(path.resolve()): _sha256_file(path) for path in files}
+    for path in files:
+        current = set()
+        for line in path.read_text(encoding="utf-8-sig").splitlines():
+            if not line.strip():
+                continue
+            row = json.loads(line)
+            if (not isinstance(row, dict) or row.get("training_approved") is not False
+                    or any(not isinstance(row.get(k), str) or not row[k] for k in ("record_id", "dataset_id", "original_split"))
+                    or any(type(row.get(k)) is not int or row[k] <= 0 for k in ("width", "height"))
+                    or not re.fullmatch(r"[a-f0-9]{64}", str(row.get("image_sha256", "")))
+                    or not re.fullmatch(r"[a-f0-9]{16}", str(row.get("dhash64", "")))
+                    or type(row.get("low_information")) is not bool):
+                raise ValueError("Input is not an unapproved image integrity record")
+            key = row["dataset_id"], row["image_sha256"]
+            current.add(key)
+            if key in previous_sources:
+                aliases += 1  # Review copy already represented by the full source input.
+                continue
+            identity = row["dataset_id"], row["record_id"]
+            if identity in identities:
+                raise ValueError("Duplicate integrity record identity")
+            identities.add(identity)
+            records.append(row)
+        # Keep distinct duplicate files inside the first source input; only skip aliases in later inputs.
+        previous_sources.update(current)
+    if not records or input_hashes != {str(path.resolve()): _sha256_file(path) for path in files}:
+        raise ValueError("Empty or changed integrity inputs")
+    pairs = similarity_pairs(records, distance)
+    summary = {"schema_version": 1, "status": "screened_not_approved", "git_commit": _git_commit(),
+               "finished_at": datetime.now(timezone.utc).isoformat(), "integrity_input_sha256": input_hashes,
+               "images": len(records), "source_counts": dict(Counter(row["dataset_id"] for row in records)),
+               "shared_source_hash_aliases_skipped": aliases, "hamming_distance": distance,
+               "pair_counts": dict(Counter(row["kind"] for row in pairs)),
+               "cross_source_pairs": sum(row["cross_source"] for row in pairs),
+               "cross_original_split_pairs": sum(row["cross_original_split"] for row in pairs),
+               "training_approved": False, "limits": ["cached screening signatures, not a fresh raw image verification",
+                                                       "same-source review copies skipped across inputs only",
+                                                       "similarity is not confirmed duplicate/session; no split/exclusion"]}
+    output.mkdir(parents=True)
+    write_jsonl(output / "similarity-pairs.jsonl", pairs)
+    _write_json(output / "summary.json", summary)
+    return summary
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--manifest", required=True, type=Path)
+    inputs = parser.add_mutually_exclusive_group(required=True)
+    inputs.add_argument("--manifest", type=Path)
+    inputs.add_argument("--integrity", nargs="+", type=Path, help="Compare cached image-integrity.jsonl outputs")
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--source-root", type=Path, help="Pinned SOHAS VOC source; omit for review-linked manifest")
     parser.add_argument("--hamming-distance", type=int, default=4)
     args = parser.parse_args(argv)
     try:
-        result = screen_images(args.manifest, args.output_dir, source_root=args.source_root, distance=args.hamming_distance)
+        if args.integrity:
+            if args.source_root:
+                raise ValueError("--source-root applies only to a SOHAS manifest")
+            result = compare_integrity(args.integrity, args.output_dir, args.hamming_distance)
+        else:
+            result = screen_images(args.manifest, args.output_dir, source_root=args.source_root, distance=args.hamming_distance)
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(result))
-    return 1 if result["errors"] else 0
+    return 1 if result.get("errors") else 0
 
 
 if __name__ == "__main__":

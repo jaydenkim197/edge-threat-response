@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from edge_threat_response.dataset.image_screening import image_signature, screen_images, similarity_pairs
+from edge_threat_response.dataset.image_screening import compare_integrity, image_signature, screen_images, similarity_pairs
 
 
 class ImageScreeningTests(unittest.TestCase):
@@ -88,3 +88,23 @@ class ImageScreeningTests(unittest.TestCase):
             self.manifest.write_text(json.dumps(row), encoding="utf-8")
             with self.assertRaises(ValueError):
                 screen_images(self.manifest, self.root / "wrong", source_root=source)
+
+    def test_cached_cross_source_comparison_skips_review_aliases_not_source_duplicates(self):
+        signature = image_signature(self.image)
+        a = {"record_id": "full-a", "dataset_id": "one", "original_split": "train",
+             **signature, "training_approved": False}
+        b = {**a, "record_id": "full-b", "original_split": "test"}
+        c = {**a, "record_id": "review-copy"}
+        d = {**a, "record_id": "external", "dataset_id": "two"}
+        files = [self.root / "inputs/full.jsonl", self.root / "inputs/review.jsonl"]
+        for path, rows in zip(files, ([a, b], [c, d])):
+            path.write_text("\n".join(json.dumps(row) for row in rows), encoding="utf-8")
+        summary = compare_integrity(files, self.root / "compare")
+        self.assertEqual((3, 1, 2), (summary["images"], summary["shared_source_hash_aliases_skipped"], summary["cross_source_pairs"]))
+        self.assertEqual(3, summary["pair_counts"]["exact"])
+        self.assertFalse(summary["training_approved"])
+        with self.assertRaises(ValueError):
+            compare_integrity(files, self.root / "compare")
+        files[1].write_text('{"training_approved":true}', encoding="utf-8")
+        with self.assertRaises(ValueError):
+            compare_integrity(files, self.root / "bad")

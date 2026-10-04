@@ -122,6 +122,8 @@ raw bbox의 normalized area는 진단값일 뿐, 작은 칼의 최종 cutoff나 
 python -m edge_threat_response.dataset.image_screening --manifest data/source-audit/sohas-voc-full-images-20261004/voc-candidates.jsonl --source-root data/source-audit/sohas-upstream-byte-exact --output-dir data/work/image-screening/sohas-NEW-ID
 # 운영 판정 snapshot에 연결된 현재 후보 pack
 python -m edge_threat_response.dataset.image_screening --manifest data/work/review-candidates/20261004-v1/review-linked-manifest.jsonl --output-dir data/work/image-screening/review-NEW-ID
+# 이미 decode한 full source와 후보 pack 사이 비교; 동일 source/hash의 후속 검수 사본은 생략
+python -m edge_threat_response.dataset.image_screening --integrity data/work/image-screening/sohas-NEW-ID/image-integrity.jsonl data/work/image-screening/review-NEW-ID/image-integrity.jsonl --output-dir data/work/image-screening/cross-NEW-ID
 ```
 
 SOHAS는 Git inventory·image/XML blob·XML SHA-256을 검사하고 재파싱한다. Image는 SHA-256·decode·annotation dimension을 확인한다. EXIF orientation을 기록하지만 annotation을 바꾸지 않도록 자동 회전하지 않는다. 손상·변조·dimension 불일치는 `issues.jsonl`에 보류하며 정상 이미지만 유사도 계산에 들어간다. `image-integrity.jsonl`, `similarity-pairs.jsonl`, `summary.json`은 PC13에 보관한다.
@@ -129,3 +131,5 @@ SOHAS는 Git inventory·image/XML blob·XML SHA-256을 검사하고 재파싱한
 64-bit grayscale dHash의 Hamming distance 기본 4, aspect ratio 10% 범위는 **development screening heuristic**이다. 저정보량 thumbnail(stddev<5)의 비정확 유사 pair는 생략하고 exact SHA-256 pair는 남긴다. Crop/flip·다른 시점·조도·배경 변화와 실제 camera/session identity를 보장하지 않는다. Pair는 수동 확인 후보이며 자동 삭제·동일 session 선언·split 변경·human verdict 대체에 쓰지 않는다. Exact pair와 visual pair, cross-source·원 split 교차를 별도 기록한다.
 
 두 VOC 좌표 규약의 compatibility를 검사하지만 호환 개수의 다수결로 규약을 결정하지 않는다. 양쪽 모두 호환할 수 있으며 zero 경계 등의 수치 근거만으로 전체 source의 의미를 확정하지 않는다. CLI exit 0은 image 검사 성공, 1은 기록된 개별 오류, 2는 입력/실행 오류다. 모두 `training_approved=false`를 유지한다.
+
+`--integrity`는 기존 screening signature와 input hash로 교차 비교하며 원본을 새로 읽은 검사라고 주장하지 않는다. 먼저 나오는 source input 안의 서로 다른 duplicate 파일은 유지하고, 이후 input에서 같은 source/hash의 review copy만 alias로 생략한다. 별도 source의 exact duplicate는 그대로 남긴다. input 순서·hash·source별 수·생략 사본 수를 summary에 기록한다.
