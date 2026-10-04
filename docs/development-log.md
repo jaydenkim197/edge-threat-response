@@ -13,6 +13,7 @@
 - 상태·다음: 구현/표본 준비·PC browser 검증 완료, 실제 PC13 migration/외부 HTTPS 배포는 후속 기록으로 확인한다. 새 준비량·웹 배포·사람 판정·학습 승인을 혼동하지 않는다. 코드·문서 commit은 본 항목을 포함한 Git 이력으로 추적한다.
 - 배포 후속: 구현 `88067d3`를 PC13에 반영했고 전체106 tests·clone DB preflight가 통과했다. 약3초의 서비스 정지 구간에서 `before-expansion-deploy-20261004/` consistent backup 후 config를 연결했다. 기존 모든 DB의 reviews/history/metadata와 team users/assignments의 row count·SHA-256이 정확히 일치했고 registry8행만 추가됐다. 새 batch 판정/history는0이다. 외부 HTTPS의 Chrome/Android·WebKit/iPhone native form 접속과 기존0/새100 ID 이미지 표시, 200장·두 질문·overflow0을 읽기 전용으로 확인했다. production QA 판정/배정은0건. 실제 휴대폰 설치·재부팅은 여전히 미검증이다.
 - 집계 보완: 외부 화면 점검에서 SOHAS의 옛 상세 정상 판정2건이 portal/status에서는 held로 집계되고 UI에서는 정상으로 해석되는 차이를 확인했다. 기존 payload/version/history를 변경하지 않고 UI와 같은 legacy/v2 verdict 해석을 재사용해 집계를 맞췄다. 양성·음성 상세 정상 및 v2 unclear의 회귀 test를 추가한다. 이 보완 뒤 실제 실행 결과·배포 commit은 후속 기록으로 확인한다.
+- 최종 확인: `f046520` 집계 보완까지 PC13에 배포하고 개발 PC/PC13 전체107 tests 통과. 최종 snapshot은 765장·307판정·32재확인(SOHAS200/98/14), SOHAS 신규100장 판정0이다. 공개 HTTPS 두 모바일 browser의 정상 form 로그인·기존/추가 이미지·동일 질문·가로 overflow0을 다시 확인했다. production QA의 판정·배정0건이며 최종 원시 상태는 PC13 ignored `final-status.json`, browser evidence는 로컬 ignored `public-result.json`에 있다. code/config/raw/DB 경계를 유지하고 docs만 후속 commit/push한다. 이후 후보의 class-map·권리·중복/sequence gate에 따라 추가 배치를 준비하되 검수 확대가 R1/H1 학습 승인을 대신하지 않는다.
 
 ## 2026-10-04 - 사이트 담당 채팅용 검수 확대 인계
 

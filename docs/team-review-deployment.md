@@ -26,9 +26,9 @@
 
 ## 후보 화면과 한계
 
-| 후보 | 첫 웹 검수 표본 | 용도·현재 제한 |
+| 후보 | 현재 웹 검수 표본 | 용도·현재 제한 |
 |---|---:|---|
-| SOHAS | 100 | 주력 실사 후보. 기존 인간 판정 6장/history 40건을 일관된 DB 백업으로 PC13에 이전. CC 표기 충돌·원본 좌표 확인 필요 |
+| SOHAS | 200 | 기존100장+추가100장. 판정·history·배정은 보존. CC 표기 충돌·원본 좌표·negative 진위 확인 필요 |
 | DaSCI unique | 93 | SOHAS와 byte-identical 1,985장은 제외. Near-duplicate와 권리 gate는 남음 |
 | Simuletic | 114 | 합성 CCTV 시점. 실사 성능 증거가 아님 |
 | US Mock Attack | 100 | Cam1/Cam5/Cam7 및 knife annotation 유무 층화. 연속 영상의 사건 정답을 대신하지 않음 |
@@ -44,6 +44,22 @@
 ### 표본 확대와 이력 보존 — 2026-10-04
 
 SOHAS 신규 `20261004-b01` 100장을 준비했다. 기존 100장과 별도 immutable pack이며 knife-positive 76 / annotation-negative-unverified 24, 원본 train 48 / test 52, 30,987,546 image bytes다. 원본 commit은 `48860b990e4d4f57fe100248887fceb248475dc8`, seed는 `20261004`다. 기존 7후보 665개 고유 SHA-256과 중복 0, image Git blob·XML hash·원 split·filename group proxy·selection/audit hash를 보존했다. raw bbox area 구간은 표본 선정용이며 좌표 convention·세션 독립성·negative 진위·학습 승인이 아니다. 실제 배포 여부와 관찰 시점 판정 수는 아래 후속 배포 기록으로 구분한다.
+
+2026-10-04에 실제 PC13과 외부 HTTPS에 배포했다(구현 `88067d3`, legacy 집계 보완 `f046520`). 전체107 tests가 개발 PC/PC13에서 통과했고, Chrome/Android와 WebKit/iPhone native form 접속·기존/추가 이미지 표시·두 질문·overflow0을 확인했다. 합성 fixture에서 추가 ID의 저장/재접속을 검증했고 production QA 판정/배정은0건이다. 서비스 정지 최종 백업은 `data/review/team-server/backups/before-expansion-deploy-20261004/`, 집계 보완 직전은 `backups/before-count-fix-20261004/`다. 기존 모든 reviews/history/metadata/users/assignments의 전후 테이블 hash가 동일했고 registry8행만 추가했다. 옛 상세 정상 판정2건의 held 집계는 payload 수정 없이 UI와 같은 규칙으로 바로잡았다.
+
+| 후보 | 준비량 | 판정 저장 | 그중 재확인 |
+|---|---:|---:|---:|
+| SOHAS | 200 | 98 | 14 |
+| DaSCI unique | 93 | 71 | 0 |
+| Simuletic | 114 | 42 | 6 |
+| US Mock Attack | 100 | 25 | 4 |
+| Dangerous Items | 100 | 30 | 6 |
+| Open Images | 30 | 17 | 1 |
+| Legacy | 128 | 24 | 1 |
+| ACF | 0 | 0 | 원본 대기 |
+| 합계 | 765 | 307 | 32 |
+
+이 표는 배포 직후 snapshot이며 실시간 수치는 사이트를 따른다. 판정 저장은 `문제 있음/모르겠음`도 포함한다. 새100장은 아직 판정0이며 정상 판정/학습 승인을 뜻하지 않는다. 원시 보존 비교·최종 상태는 PC13 ignored `data/review/expansion-work-20261004/`, 모바일 fixture/외부 QA는 개발 PC ignored `data/review/expansion-qa-20261004/`다. 실제 물리 휴대폰의 홈 화면 설치와 재부팅 복구는 이번 범위에서 미검증이다.
 
 - 기존 CSV/evidence/images와 `human-review.sqlite3`는 덧붙이거나 재생성하지 않는다. config의 같은 후보에 `review_batches: [{"id": "20261004-b01", "review_dir": "<new immutable pack>"}]`를 추가한다. 기본 pack ID 0~99는 그대로이고 새 pack은 100~199로 연결된다.
 - 최초 시작 시 team DB에 batch registry만 추가한다. 계정·배정·기존 판정/version/history는 그대로다. 이후 배치 목록의 재정렬·삭제·fingerprint/offset 변경은 startup에서 거부한다. 각각의 pack은 자기 DB를 사용하며 periodic SQLite backup은 모든 배치를 포함한다.
