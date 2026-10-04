@@ -31,6 +31,19 @@ OPTIONS = {
 EDITABLE = {*OPTIONS, "reviewer", "notes"}
 
 
+def review_verdict(review: dict, knife_count: int) -> str:
+    """Match the UI's legacy/v2 interpretation without rewriting old payloads."""
+    if review.get("annotation_verdict"):
+        return review["annotation_verdict"]
+    if (review.get("label_quality") == "good" and review.get("bbox_completeness") == "yes"
+            and review.get("exclude") == "no" and (knife_count or review.get("negative_knife_absence") == "yes")):
+        return "ok"
+    if (review.get("label_quality") in {"bad", "minor_issue"} or review.get("bbox_completeness") == "no"
+            or review.get("negative_knife_absence") == "no" or review.get("exclude") == "yes"):
+        return "problem"
+    return "unclear"
+
+
 class ConflictError(ValueError):
     pass
 

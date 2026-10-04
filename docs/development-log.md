@@ -11,6 +11,8 @@
 - 검증: 개발 PC Python3.11에서 전체106 tests·compileall·JS 문법 통과. 기존 판정/history/미완료 배정·기존 cookie·draft hash, 추가형 migration·재정렬/제거/hash duplicate 거부, old/new ID·권한·stale version·전 배치 backup을 fixture에서 확인했다. 합성 확대 fixture의 Chrome/Android412px·WebKit/iPhone390px에서 추가 ID 자동 배정/저장·새로고침·재접속·문제 메모 draft 복원 성공, overflow0·버튼46px. ignored `data/review/expansion-qa-20261004/`에 증거를 둔다. production에 QA 판정은 쓰지 않았다.
 - 발견·수정: `git sparse-checkout add`의 지원되지 않는 `--no-cone`를 제거하고 기존 non-cone 설정을 확인하도록 했다. lean CSV에 `image_present`가 없을 때 renderer 오류를 재현해 출력 열을 명시적으로 추가하고 회귀검증했다. 미완성 pack은 공개하지 않고 새 완성 경로로 재실행해 보존했다.
 - 상태·다음: 구현/표본 준비·PC browser 검증 완료, 실제 PC13 migration/외부 HTTPS 배포는 후속 기록으로 확인한다. 새 준비량·웹 배포·사람 판정·학습 승인을 혼동하지 않는다. 코드·문서 commit은 본 항목을 포함한 Git 이력으로 추적한다.
+- 배포 후속: 구현 `88067d3`를 PC13에 반영했고 전체106 tests·clone DB preflight가 통과했다. 약3초의 서비스 정지 구간에서 `before-expansion-deploy-20261004/` consistent backup 후 config를 연결했다. 기존 모든 DB의 reviews/history/metadata와 team users/assignments의 row count·SHA-256이 정확히 일치했고 registry8행만 추가됐다. 새 batch 판정/history는0이다. 외부 HTTPS의 Chrome/Android·WebKit/iPhone native form 접속과 기존0/새100 ID 이미지 표시, 200장·두 질문·overflow0을 읽기 전용으로 확인했다. production QA 판정/배정은0건. 실제 휴대폰 설치·재부팅은 여전히 미검증이다.
+- 집계 보완: 외부 화면 점검에서 SOHAS의 옛 상세 정상 판정2건이 portal/status에서는 held로 집계되고 UI에서는 정상으로 해석되는 차이를 확인했다. 기존 payload/version/history를 변경하지 않고 UI와 같은 legacy/v2 verdict 해석을 재사용해 집계를 맞췄다. 양성·음성 상세 정상 및 v2 unclear의 회귀 test를 추가한다. 이 보완 뒤 실제 실행 결과·배포 commit은 후속 기록으로 확인한다.
 
 ## 2026-10-04 - 사이트 담당 채팅용 검수 확대 인계
 

@@ -10,6 +10,8 @@ from collections import Counter
 from contextlib import closing
 from pathlib import Path
 
+from edge_threat_response.dataset.review_web import review_verdict
+
 
 def inspect(config_path: Path, backup: Path | None = None) -> dict:
     config = json.loads(config_path.read_text(encoding="utf-8"))
@@ -17,7 +19,7 @@ def inspect(config_path: Path, backup: Path | None = None) -> dict:
         backup.mkdir(parents=True, exist_ok=False)
         (backup / "config.json").write_bytes(config_path.read_bytes())
     report = {"datasets": {}, "databases": {}}
-    paths = [("team", Path(config["database"]))]
+    paths, knife_counts = [("team", Path(config["database"]))], {}
     for entry in config["datasets"]:
         if not entry.get("review_dir"):
             report["datasets"][entry["id"]] = {"prepared": 0, "blocked": True}
@@ -32,7 +34,9 @@ def inspect(config_path: Path, backup: Path | None = None) -> dict:
                     raise ValueError("Evidence/CSV alignment failure")
             details.append({"batch": batch["id"], "offset": offset, "prepared": len(evidence)})
             offset += len(evidence)
-            paths.append((entry["id"] if batch["id"] == "initial" else entry["id"]+"--"+batch["id"], root / "human-review.sqlite3"))
+            key = entry["id"] if batch["id"] == "initial" else entry["id"]+"--"+batch["id"]
+            paths.append((key, root / "human-review.sqlite3"))
+            knife_counts[key] = [item["knife_count"] for item in evidence]
         report["datasets"][entry["id"]] = {"prepared": offset, "batches": details}
     for name, path in paths:
         with closing(sqlite3.connect(f"{path.resolve().as_uri()}?mode=ro", uri=True)) as connection:
@@ -45,7 +49,7 @@ def inspect(config_path: Path, backup: Path | None = None) -> dict:
                 rows = list(connection.execute(f'SELECT * FROM "{table}" ORDER BY 1'))
                 result["tables"][table] = {"count": len(rows), "sha256": hashlib.sha256(json.dumps(rows, ensure_ascii=False).encode()).hexdigest()}
             if name != "team":
-                verdicts = Counter(json.loads(row[0]).get("annotation_verdict", "legacy") for row in connection.execute("SELECT payload FROM reviews"))
+                verdicts = Counter(review_verdict(json.loads(payload), knife_counts[name][sample]) for sample, payload in connection.execute("SELECT sample,payload FROM reviews"))
                 result["verdicts"] = dict(verdicts)
             if backup:
                 with closing(sqlite3.connect(backup / f"{name}.sqlite3")) as target:

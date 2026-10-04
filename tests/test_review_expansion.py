@@ -6,6 +6,15 @@ from pathlib import Path
 
 
 class ReviewExpansionTests(unittest.TestCase):
+    def test_legacy_normal_reviews_are_not_miscounted_as_held(self):
+        from edge_threat_response.dataset.review_web import review_verdict
+        normal = {"label_quality": "good", "bbox_completeness": "yes", "exclude": "no"}
+        self.assertEqual("ok", review_verdict(normal, 1))
+        self.assertEqual("unclear", review_verdict(normal, 0))
+        self.assertEqual("ok", review_verdict({**normal, "negative_knife_absence": "yes"}, 0))
+        self.assertEqual("problem", review_verdict({**normal, "bbox_completeness": "no"}, 1))
+        self.assertEqual("unclear", review_verdict({"annotation_verdict": "unclear"}, 1))
+
     def test_seeded_strata_exclude_old_paths_cross_source_hashes_and_error_labels(self):
         folder = Path(__file__).resolve().parents[1] / "tools"
         sys.path.insert(0, str(folder))

@@ -14,7 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from .review_web import BatchReviewStore, ConflictError, ReviewStore
+from .review_web import BatchReviewStore, ConflictError, ReviewStore, review_verdict
 
 
 class TeamDatabase:
@@ -245,7 +245,7 @@ def create_app(config_path: Path):
             reviewed = [item for item in items if item["version"]]
             entries.append({key: value for key, value in entry.items() if key not in {"review_dir", "review_batches"}} | {
                 "available": bool(store), "total": len(items), "reviewed": len(reviewed),
-                "held": sum(item["review"].get("annotation_verdict") != "ok" for item in reviewed),
+                "held": sum(review_verdict(item["review"], item["knife_count"]) != "ok" for item in reviewed),
                 "mine": sum(item["review"].get("reviewer") == g.user["name"] for item in reviewed),
                 "batch_count": len(store.parts) if isinstance(store, BatchReviewStore) else int(bool(store))})
         return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])}, csrf=csrf(), name_login=name_login)
