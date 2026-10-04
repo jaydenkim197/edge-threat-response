@@ -55,7 +55,8 @@
 ## 2026-10-04 검수 판정의 학습 후보 연결
 
 - 신규6 tests/전체113 tests(Python3.11.9) 통과. DB와 image/CSV/evidence 원 bytes 보존, ro 쓰기 차단/missing DB 비생성, pack hash·image·registry 검증, 기존/추가 sample ID 연결과 legacy/v2 verdict, 불완전 음성·mapping 미확정·외부 exact duplicate 보류, 모든 approval=false·개인 정보/credential 미출력을 확인했다.
-- 구현은 read-only snapshot/미승인 후보까지이며 실제 SOHAS 좌표·권리·source 전체 품질·near duplicate·실제 session/group split·학습·Orin은 검증하지 않았다. [실행 계약](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot). 실제 PC13 실행 결과는 후속 검증에 기록한다.
+- PC13/Python3.12.4 commit `8cd14d9`: 전체113 tests/compileall 통과. 실제 ready source7개/pack8개/765개 표본/309개 판정 snapshot의 이미지 bytes·pack fingerprint·registry를 검증했다. 실사 후보180·합성36·외부평가21·보류72·미검수456·학습승인0, ready pack 간 exact duplicate0그룹. 모든manifest765행 approval=false, 각 pack DB writes=0, tracked remote checkout clean을 확인했다. 서비스 restart/DB write 없이 실행했고 private raw는 PC13 ignored `data/work/review-candidates/20261004-v1/`. [aggregate 증거](../reports/datasets/review-candidates-2026-10-04/report.md).
+- 구현은 read-only snapshot/미승인 후보까지이며 실제 SOHAS 좌표·권리·source 전체 품질·near duplicate·실제 session/group split·학습·Orin은 검증하지 않았다. [실행 계약](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot).
 
 ## Benchmark 최소 기록 항목
 
