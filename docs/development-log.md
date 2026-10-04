@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-04 - SOHAS 추가 검수 배치와 보존형 연결 구현
+
+- 목적·작업 카드: 사용자가 인계 메모를 기준으로 검수 확대를 요청했다. 공통 두 질문·이름 선택을 유지하고 기존 image/판정/version/history/배정을 보존하면서 SOHAS부터 100장을 추가한다. 완료 기준은 consistent backup·추가형 registry·고정 ID·중복 차단·fixture 저장/재접속·모바일·PC13 배포다. 원본·학습 source 자동 병합과 학습 실행은 제외한다.
+- 선택·변경: `search-first`로 기존 ReviewStore·Flask·준비 renderer·SQLite backup을 재사용했다. 별도 새 서비스/의존성 없이 BatchReviewStore와 team registry, stale client 목록 보호, 기존 configure의 batch 보존·check helper의 배치별 이미지 확인을 추가했다. 기존 immutable pack은 그대로이고 새 pack이 동일 source 뒤로 연결된다. 원래 pack hash와 ID를 유지해 draft·session·기존 배정을 보존한다.
+- 데이터 준비: SOHAS 고정 `48860b9`, seed 20261004로 source split×knife role×normalized bbox area 구간에서 100장(76 knife positive/24 negative-unverified; train48/test52, 30,987,546 bytes)을 확보했다. 기존 665개 고유 hash와 SHA-256 중복 0. image/XML Git blob·SHA-256·원 경로·split·filename group proxy·selection/audit hash를 새 pack에 보존한다. 원본 VOC 좌표·negative 진위·session/near duplicate·권리·학습 승인은 여전히 별도다.
+- 사전 보존: PC13 app 생성 없이 DB read-only integrity/count·SQLite backup API snapshot을 `data/review/team-server/backups/before-expansion-preparation-20261004/`에 보관했다. 당시 완료 판정은 307/665이고 SOHAS는98, 기존 SOHAS history157이다. 실제 판정/메모/이름/DB/raw는 Git에 넣지 않는다.
+- 검증: 개발 PC Python3.11에서 전체106 tests·compileall·JS 문법 통과. 기존 판정/history/미완료 배정·기존 cookie·draft hash, 추가형 migration·재정렬/제거/hash duplicate 거부, old/new ID·권한·stale version·전 배치 backup을 fixture에서 확인했다. 합성 확대 fixture의 Chrome/Android412px·WebKit/iPhone390px에서 추가 ID 자동 배정/저장·새로고침·재접속·문제 메모 draft 복원 성공, overflow0·버튼46px. ignored `data/review/expansion-qa-20261004/`에 증거를 둔다. production에 QA 판정은 쓰지 않았다.
+- 발견·수정: `git sparse-checkout add`의 지원되지 않는 `--no-cone`를 제거하고 기존 non-cone 설정을 확인하도록 했다. lean CSV에 `image_present`가 없을 때 renderer 오류를 재현해 출력 열을 명시적으로 추가하고 회귀검증했다. 미완성 pack은 공개하지 않고 새 완성 경로로 재실행해 보존했다.
+- 상태·다음: 구현/표본 준비·PC browser 검증 완료, 실제 PC13 migration/외부 HTTPS 배포는 후속 기록으로 확인한다. 새 준비량·웹 배포·사람 판정·학습 승인을 혼동하지 않는다. 코드·문서 commit은 본 항목을 포함한 Git 이력으로 추적한다.
+
 ## 2026-10-04 - 사이트 담당 채팅용 검수 확대 인계
 
 - 사용자 요청: 사이트 이미지/판정 DB 확대는 별도 검수 사이트 채팅에 맡기고 PC13에 실행 가능한 인계 메모를 남긴다.

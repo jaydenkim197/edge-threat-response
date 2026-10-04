@@ -44,7 +44,10 @@ def main() -> None:
         items = client.get(f"/api/items?dataset={pack}", base_url=origin)
         assert items.status_code == 200
         assert len(items.json["items"]) == entry["total"] and entry["total"] > 0
-        assert client.get(f"/api/packs/{pack}/images/0", base_url=origin).status_code == 200
+        store = app.extensions["review_stores"][pack]
+        offsets = [offset for _, offset, _ in store.parts] if hasattr(store, "parts") else [0]
+        for offset in offsets:
+            assert client.get(f"/api/packs/{pack}/images/{offset}", base_url=origin).status_code == 200
 
     print(json.dumps({"ready": len(ready), "listed": len(catalog),
                       "samples": {entry["id"]: entry["total"] for entry in ready},

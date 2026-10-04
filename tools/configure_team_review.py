@@ -50,6 +50,9 @@ def configure(public_url: str, reviewer_login: str | None = None):
             entry["review_dir"] = str(path)
         else:
             entry["reason"] = outcomes.get(key, "원본/라벨 확보·검증 대기" if key != "acf" else "공식 원 저장소 404 · 파일 확보 필요")
+        old_entry = next((old for old in previous.get("datasets", []) if old["id"] == key), {})
+        if old_entry.get("review_batches"):
+            entry["review_batches"] = old_entry["review_batches"]
         entries.append(entry)
     config = {"public_url": public_url, "secret_file": str(secret_file), "database": str(database), "datasets": entries,
               "reviewer_login": reviewer_login}

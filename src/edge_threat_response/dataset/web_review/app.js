@@ -76,7 +76,7 @@ function show(index) {
   $("filename").textContent=item.name;
   $("kind").textContent=item.knife_count ? `칼 라벨 ${item.knife_count}개` : "칼 라벨 0개 · 실제 부재 확인";
   $("kind").classList.toggle("negative",!item.knife_count);
-  $("dimensions").textContent=`${item.width} × ${item.height}`;
+  $("dimensions").textContent=`${item.width} × ${item.height}${item.batch_id ? ` · ${item.batch_id}` : ""}`;
   $("original").href=item.image_url;
   $("verdict-guide").textContent=item.knife_count ? "정상 = 보이는 칼이 모두 정확한 박스 안에 있음. 틀린 박스·칼 누락은 ‘문제 있음’." : "정상 = 실제 칼이 없음. 칼이 하나라도 보이면 ‘문제 있음’.";
   $("saved-badge").textContent=item.version ? "검수 기록 있음" : "미검수";
@@ -135,7 +135,21 @@ async function move(delta) {
   const visible=visibleItems(); const next=delta>0 ? visible.find(item=>item.id>current) : [...visible].reverse().find(item=>item.id<current);
   if(next) show(next.id); else status("이 필터의 마지막 이미지입니다.");
 }
-async function claimNext(){if(teamAdmin){status("관리자 계정은 현황 확인용입니다. 개인 검수 계정으로 로그인해주세요.");return;}const response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:"{}"});if(!response.ok){status("담당 배정 실패 · 새로고침 후 다시 시도해주세요.","error");return;}const result=await response.json();if(result.id===null){status("배정 가능한 미검수가 없습니다. 후보 목록에서 다른 데이터셋을 선택하세요.","saved");return;}items[result.id].editable=true;show(result.id);}
+async function claimNext(){
+  if(teamAdmin){status("관리자 계정은 현황 확인용입니다. 개인 검수 계정으로 로그인해주세요.");return;}
+  const response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({known_total:items.length})});
+  if(!response.ok){status("담당 배정 실패 · 새로고침 후 다시 시도해주세요.","error");return;}
+  const result=await response.json();
+  if(result.refresh_required){
+    const refreshed=await fetch(apiUrl("/api/items"));
+    if(!refreshed.ok){status("새 표본을 불러오지 못했습니다. 새로고침해주세요.","error");return;}
+    const data=await refreshed.json();
+    if(data.items.length<=items.length){status("새 표본 준비 중입니다. 잠시 후 새로고침해주세요.");return;}
+    items=data.items;csrf=data.csrf;await claimNext();return;
+  }
+  if(result.id===null){status("배정 가능한 미검수가 없습니다. 후보 목록에서 다른 데이터셋을 선택하세요.","saved");return;}
+  items[result.id].editable=true;show(result.id);
+}
 async function jump(index) {if(saving)return; if(dirty && complete() && !await save())return; show(index);}
 function quick(kind) {
   values.annotation_verdict={keep:"ok",reject:"problem",hold:"unclear"}[kind];

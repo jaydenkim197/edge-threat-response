@@ -14,7 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from .review_web import ConflictError, ReviewStore
+from .review_web import BatchReviewStore, ConflictError, ReviewStore
 
 
 class TeamDatabase:
@@ -63,6 +63,25 @@ class TeamDatabase:
         return None
 
 
+    def register_batches(self, stores):
+        """Additive registry migration. A deployed prefix can never be reordered."""
+        with self.connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            connection.execute("CREATE TABLE IF NOT EXISTS review_batches (pack TEXT NOT NULL, batch TEXT NOT NULL, offset INTEGER NOT NULL, count INTEGER NOT NULL, pack_hash TEXT NOT NULL, PRIMARY KEY(pack,batch), UNIQUE(pack,offset))")
+            old_packs = {row[0] for row in connection.execute("SELECT DISTINCT pack FROM review_batches")}
+            if old_packs - set(stores):
+                raise ValueError("Previously deployed dataset cannot be removed implicitly")
+            for pack, store in stores.items():
+                parts = store.parts if isinstance(store, BatchReviewStore) else [("initial", 0, store)]
+                expected = [(batch, offset, len(part.rows), part.pack_hash) for batch, offset, part in parts]
+                previous = [tuple(row) for row in connection.execute(
+                    "SELECT batch,offset,count,pack_hash FROM review_batches WHERE pack=? ORDER BY offset", (pack,))]
+                if previous != expected[:len(previous)]:
+                    raise ValueError("Review batch registry mismatch; preserve the deployed prefix")
+                for batch, offset, count, digest in expected[len(previous):]:
+                    connection.execute("INSERT INTO review_batches VALUES (?,?,?,?,?)", (pack, batch, offset, count, digest))
+
+
 def create_app(config_path: Path):
     from flask import Flask, abort, g, jsonify, redirect, render_template, request, send_file, session
     config_path = config_path.resolve()
@@ -85,14 +104,22 @@ def create_app(config_path: Path):
                       SESSION_COOKIE_NAME="etr_review_session", PERMANENT_SESSION_LIFETIME=timedelta(days=30) if name_login else timedelta(hours=8),
                       MAX_CONTENT_LENGTH=16384, TRUSTED_HOSTS=[parsed.hostname])
     team = TeamDatabase(Path(config["database"]))
-    catalog, stores = config["datasets"], {}
+    catalog, stores, dataset_ids = config["datasets"], {}, set()
     for entry in catalog:
         if not re.fullmatch(r"[a-z0-9-]{1,60}", entry["id"]):
             raise ValueError("Invalid dataset identifier")
-        if entry["id"] in stores:
+        if entry["id"] in dataset_ids:
             raise ValueError("Duplicate dataset identifier")
+        dataset_ids.add(entry["id"])
         if entry.get("review_dir"):
-            stores[entry["id"]] = ReviewStore(Path(entry["review_dir"]))
+            base = ReviewStore(Path(entry["review_dir"]))
+            batches = []
+            for batch in entry.get("review_batches", []):
+                if not re.fullmatch(r"[a-z0-9-]{1,60}", batch["id"]):
+                    raise ValueError("Invalid batch identifier")
+                batches.append((batch["id"], ReviewStore(Path(batch["review_dir"]))))
+            stores[entry["id"]] = BatchReviewStore(base, batches) if batches else base
+    team.register_batches(stores)
     app.extensions["review_team"] = team
     app.extensions["review_stores"] = stores
     attempts = deque()
@@ -216,10 +243,11 @@ def create_app(config_path: Path):
             store = stores.get(entry["id"])
             items = store.items() if store else []
             reviewed = [item for item in items if item["version"]]
-            entries.append({key: value for key, value in entry.items() if key != "review_dir"} | {
+            entries.append({key: value for key, value in entry.items() if key not in {"review_dir", "review_batches"}} | {
                 "available": bool(store), "total": len(items), "reviewed": len(reviewed),
                 "held": sum(item["review"].get("annotation_verdict") != "ok" for item in reviewed),
-                "mine": sum(item["review"].get("reviewer") == g.user["name"] for item in reviewed)})
+                "mine": sum(item["review"].get("reviewer") == g.user["name"] for item in reviewed),
+                "batch_count": len(store.parts) if isinstance(store, BatchReviewStore) else int(bool(store))})
         return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])}, csrf=csrf(), name_login=name_login)
 
     def current_store():
@@ -250,6 +278,12 @@ def create_app(config_path: Path):
         if g.user["admin"]:
             abort(403)
         pack, store = current_store()
+        body = request.get_json() or {}
+        if not isinstance(body, dict):
+            raise ValueError("Expected claim object")
+        known_total = body.get("known_total")
+        if known_total is not None and (type(known_total) is not int or known_total < 1):
+            raise ValueError("Invalid client sample count")
         result = store.items()
         with team.connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -259,6 +293,11 @@ def create_app(config_path: Path):
                 candidate = next((item for item in result if not item["version"] and item["id"] not in owners), None)
             if candidate is None:
                 return jsonify(id=None)
+            # Old open tabs know only the original IDs. Do not assign an ID
+            # their cached item array cannot display; old saves remain valid.
+            client_count = known_total if known_total is not None else len(store.parts[0][2].rows) if isinstance(store, BatchReviewStore) else len(store.rows)
+            if candidate["id"] >= client_count:
+                return jsonify(id=None, refresh_required=True)
             connection.execute("INSERT OR IGNORE INTO assignments VALUES (?,?,?)", (pack, candidate["id"], g.user["id"]))
         return jsonify(id=candidate["id"])
 
@@ -327,7 +366,10 @@ def backup_databases(app, directory: Path):
     stamp = time.strftime("%Y%m%d-%H%M%S", time.gmtime())
     directory.mkdir(parents=True, exist_ok=True)
     paths = {"team": app.extensions["review_team"].path}
-    paths.update({name: store.database for name, store in app.extensions["review_stores"].items()})
+    for name, store in app.extensions["review_stores"].items():
+        parts = store.parts if isinstance(store, BatchReviewStore) else [("initial", 0, store)]
+        for batch_id, _, part in parts:
+            paths[name if batch_id == "initial" else f"{name}--{batch_id}"] = part.database
     for name, source in paths.items():
         target = directory / f"{stamp}-{name}.sqlite3"
         if target.exists():

@@ -7,7 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from edge_threat_response.dataset.sohas import _inventory, _source_bytes, parse_sohas_voc
+from edge_threat_response.dataset.sohas import UPSTREAM_COMMIT, _inventory, _source_bytes, parse_sohas_voc
 
 
 def render_sample(source: Path, sample_csv: Path, output: Path) -> dict:
@@ -72,7 +72,12 @@ def render_sample(source: Path, sample_csv: Path, output: Path) -> dict:
                          "image_sha256": hashlib.sha256(raw).hexdigest(),
                          "image_bytes": len(raw), "width": width, "height": height,
                          "knife_count": annotation["knife_count"], "reviewer": "",
-                         "coordinate_status": "unconfirmed", "training_approved": False})
+                         "coordinate_status": "unconfirmed", "training_approved": False,
+                         "source_revision": UPSTREAM_COMMIT, "image_git_blob": inventory[path],
+                         "xml_path": xml_path, "xml_git_blob": inventory[xml_path],
+                         "xml_sha256": hashlib.sha256(_source_bytes(source, xml_path, inventory[xml_path])).hexdigest(),
+                         "original_split": row["original_split"],
+                         "group_id": row.get("group_id", ""), "group_status": "filename-proxy-unverified"})
     for start in range(0, len(tiles), 16):
         sheet = Image.new("RGB", (1440, 1040), "white")
         for offset, tile in enumerate(tiles[start:start + 16]):
@@ -81,7 +86,7 @@ def render_sample(source: Path, sample_csv: Path, output: Path) -> dict:
     (output / "image-evidence.jsonl").write_text(
         "".join(json.dumps(row) + "\n" for row in evidence), encoding="utf-8")
     with (output / "review.csv").open("w", encoding="utf-8-sig", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=list(rows[0]))
+        writer = csv.DictWriter(handle, fieldnames=[*rows[0], *([] if "image_present" in rows[0] else ["image_present"])])
         writer.writeheader()
         for row in rows:
             row["image_present"] = True

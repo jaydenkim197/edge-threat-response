@@ -18,6 +18,7 @@ async function initPortal(){
     card.append(node("h2",item.name),node("p",item.available?`${item.reviewed} / ${item.total}장 완료 · 내 검수 ${item.mine}장`:`준비 중: ${item.reason||"확인 필요"}`));
     if(item.available){const link=node("a",data.user.admin?"검수 현황 보기 →":item.reviewed===item.total?"검수 완료 · 기록 보기 →":"검수 시작 →");link.className="button dark";link.href=`/review/${item.id}`;card.append(link);}
     const info=node("details","");info.append(node("summary","데이터셋 정보"),node("p",item.role),node("p",item.note||""));
+    if(item.batch_count>1)info.append(node("p",`${item.batch_count}개 표본 묶음 · 기존 기록을 유지하며 이어서 검수합니다.`));
     const provenance=node("a","출처·이용 조건 ↗");provenance.href=item.source_url;provenance.target="_blank";provenance.rel="noopener";info.append(provenance);card.append(info);
     el("datasets").append(card);
   }

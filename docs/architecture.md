@@ -125,6 +125,8 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 
 모바일은 같은 웹 페이지에 responsive layout·manifest·Apple touch icon을 추가한다. 홈 화면 start URL에서 브라우저가 보관한 최근 후보를 찾아 서버의 남은 담당 배정을 이어간다. 판정 완료는 PC13 SQLite 응답으로 확인하고, 미완성 입력은 검수자별 localStorage draft로만 보관한다. 원본·판정 오프라인 캐시는 없다. 상세 사용·접근 경계와 검증은 [팀 검수 운영](team-review-deployment.md)을 따른다.
 
+검수 확대는 immutable pack을 `review_batches`로 같은 후보 뒤에 연결한다. 기존 pack의 CSV/evidence/images/판정 DB는 수정하지 않는다. `BatchReviewStore`는 기존 global ID를 유지하고 새 pack의 local ID를 고정 offset으로 변환해 각 원래 DB에 저장한다. team DB의 추가형 `review_batches` registry가 batch ID·offset·count·fingerprint의 기존 prefix를 검증하며 재정렬·제거·다른 pack 대입을 거부한다. 원래 pack hash를 draft identity로 유지하고 catalog에 파일 경로는 노출하지 않는다. 기존 탭은 원래 ID의 저장이 가능하며, 새 범위에 진입할 때 client 목록을 갱신한다. 이전 JS 탭에는 범위 밖 ID를 배정하지 않는다.
+
 ## 실패와 fallback
 
 - 카메라 입력이 끊기면 재시도를 수행하고, 복구 실패 상태를 명시한다.

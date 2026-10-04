@@ -41,6 +41,21 @@
 
 ## PC13 운영
 
+### 표본 확대와 이력 보존 — 2026-10-04
+
+SOHAS 신규 `20261004-b01` 100장을 준비했다. 기존 100장과 별도 immutable pack이며 knife-positive 76 / annotation-negative-unverified 24, 원본 train 48 / test 52, 30,987,546 image bytes다. 원본 commit은 `48860b990e4d4f57fe100248887fceb248475dc8`, seed는 `20261004`다. 기존 7후보 665개 고유 SHA-256과 중복 0, image Git blob·XML hash·원 split·filename group proxy·selection/audit hash를 보존했다. raw bbox area 구간은 표본 선정용이며 좌표 convention·세션 독립성·negative 진위·학습 승인이 아니다. 실제 배포 여부와 관찰 시점 판정 수는 아래 후속 배포 기록으로 구분한다.
+
+- 기존 CSV/evidence/images와 `human-review.sqlite3`는 덧붙이거나 재생성하지 않는다. config의 같은 후보에 `review_batches: [{"id": "20261004-b01", "review_dir": "<new immutable pack>"}]`를 추가한다. 기본 pack ID 0~99는 그대로이고 새 pack은 100~199로 연결된다.
+- 최초 시작 시 team DB에 batch registry만 추가한다. 계정·배정·기존 판정/version/history는 그대로다. 이후 배치 목록의 재정렬·삭제·fingerprint/offset 변경은 startup에서 거부한다. 각각의 pack은 자기 DB를 사용하며 periodic SQLite backup은 모든 배치를 포함한다.
+- 같은 데이터셋 선택·같은 두 질문으로 검수한다. 새 batch 때문에 후보 카드나 질문을 추가하지 않는다. 진행 중 탭의 기존 판정 저장은 유지한다. **기존에 열어둔 탭은 저장 완료를 확인하고 한 번 새로고침**하면 확대량을 볼 수 있다. 신규 client는 stale 목록이면 자동 갱신한다. 서버 판정과 원래 draft 키·ID는 유지한다.
+- `tools/configure_team_review.py`를 다시 실행해도 등록된 batches를 보존한다. registry와 어긋난 catalog를 자동으로 초기화하지 않는다.
+- 확대 준비: `tools/expand_sohas_review.py --config ... --audit .../voc-candidates.jsonl --source .../sohas-upstream-byte-exact --output <new-pack> --proposed-config <new-config> --batch-id <id> --count 100 --fetch-images`. 기존 non-cone sparse checkout에 선택 image만 추가하고 실제 config는 수정하지 않는다. SHA-256·Git blob으로 기존 source의 같은 이미지와 새 배치 내부 중복을 막는다. near-duplicate와 동일 촬영 group 판단은 별도다.
+- 상태/백업: `tools/team_review_status.py --config ... --backup <new-backup-dir> --output <snapshot.json>`. app를 만들지 않고 읽기 전용으로 counts·verdict 집계·테이블 hash·quick_check를 관찰하며 SQLite backup API로 config/DB/snapshot을 보관한다. 출력에는 이름·접속 코드·판정 메모를 포함하지 않는다. DB간 시점을 정확히 고정할 최종 백업은 서비스의 짧은 정지 구간에 수행한다.
+- 첫 준비 전 consistent backup: PC13 `data/review/team-server/backups/before-expansion-preparation-20261004/`. 관찰 시점 준비/완료는 SOHAS 100/98, DaSCI 93/71, Simuletic 114/42, Mock 100/25, Dangerous 100/30, Open Images 30/17, Legacy 128/24(합계 665/307). 이 수치는 실시간 진행률이 아닌 당시 snapshot이다.
+- Dangerous는 임시 class-map 해소 전 확대 보류, Open Images는 validation 30장을 train으로 옮기지 않고 별도 train subset/권리 확인 뒤 확대, DaSCI/Simuletic은 확보한 고유/공개 표본 전체 유지, Legacy는 현재 L0 결과 뒤 gap 기준 추가, Mock은 외부 평가 역할과 sequence 독립성을 유지, ACF는 공식 원본 대기다. 인력 여유가 있다는 이유로 중복·출처 미확인 자료를 재배정하지 않는다.
+
+되돌림은 이전 코드·config와 backup 위치를 먼저 확인하고 수행한다. 새 판정이 생긴 뒤 예전 DB를 복원하면 새 이력을 잃으므로 **자동 rollback/registry 삭제를 하지 않는다**. 실패한 준비 산출물은 catalog에 연결하지 않고 보존한다. 이번 첫 rendering 시 CSV presence 열 누락과 Git `add` 옵션 오류를 수정했고 정상 완성 pack은 `data/review/sohas-expansion-20261004-b01-final/`이다.
+
 - 코드 checkout: `C:\Class6\edge-threat-response`. 원본 아카이브·검수 pack·DB는 ignored `data/`; 모델은 ignored `runs/`/`*.pt`에 둔다. GitHub에는 코드와 사용법만 올라간다.
 - 인증 앱: `edge_threat_response.dataset.team_review`, Flask 3.1.3 + Waitress 3.0.2. PC13 `127.0.0.1:8770`만 listen한다. Tailscale Funnel은 HTTPS를 앞단에서 종료한다. 공용 포트포워딩과 LAN bind는 필요 없다.
 - Windows 작업 스케줄러 `ETR-Team-Review`: 부팅 시 사용자 PC13 계정의 S4U 제한 권한으로 앱을 재시작한다. 2026-10-04 수동 작업 시작·로컬 로그인 HTTP 200을 확인했다. 실제 재부팅 시험은 아직 하지 않았다.

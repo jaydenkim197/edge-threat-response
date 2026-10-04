@@ -49,6 +49,13 @@ class SohasImageReviewTests(unittest.TestCase):
                 row = next(csv.DictReader(handle))
             self.assertEqual("True", row["image_present"])
             self.assertEqual("", row["reviewer"])
+            # Lean expansion CSVs need not carry the audit-only presence flag.
+            sample.write_text("image_path,original_split,reviewer\n"
+                              f"{image.relative_to(root).as_posix()},train,\n", encoding="utf-8")
+            with patch("tools.sohas_review_images._inventory", return_value=inventory):
+                render_sample(root, sample, Path(temporary) / "lean-review")
+            lean = json.loads((Path(temporary) / "lean-review/image-evidence.jsonl").read_text())
+            self.assertEqual(hashlib.sha256(xml.read_bytes()).hexdigest(), lean["xml_sha256"])
 
     def test_source_output_overlap_rejected(self):
         with tempfile.TemporaryDirectory() as temporary:

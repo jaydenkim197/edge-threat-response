@@ -200,3 +200,109 @@ class TeamReviewTests(unittest.TestCase):
         for path in backups:
             with closing(sqlite3.connect(path)) as connection:
                 self.assertEqual("ok", connection.execute("PRAGMA quick_check").fetchone()[0])
+
+    def append_fixture(self, batch_id="batch-1", duplicate=False):
+        from edge_threat_response.dataset.team_review import create_app
+        pack = self.root / batch_id
+        pack.mkdir()
+        raw = b"image fixture" if duplicate else batch_id.encode()
+        (pack / "image.jpg").write_bytes(raw)
+        (pack / "review.csv").write_text(f"image_path,original_split\n{batch_id}.jpg,train\n")
+        row = {"sample_no": 1, "image_path": batch_id+".jpg", "image_file": "image.jpg", "width": 100, "height": 100,
+               "image_sha256": hashlib.sha256(raw).hexdigest(), "knife_count": 0, "knife_boxes_xyxy_raw": []}
+        (pack / "image-evidence.jsonl").write_text(json.dumps(row))
+        config = json.loads(self.config.read_text())
+        config["datasets"][0].setdefault("review_batches", []).append({"id": batch_id, "review_dir": str(pack)})
+        self.config.write_text(json.dumps(config))
+        self.app = create_app(self.config)
+        self.app.testing = True
+
+    def test_append_preserves_reviews_history_ids_pending_assignment_cookie_and_draft_identity(self):
+        self.enable_name_login()
+        client, headers = self.select_name(self.a)
+        other, other_headers = self.select_name(self.b)
+        self.post(client, headers, "/api/claim?dataset=fixture", {})
+        self.post(other, other_headers, "/api/claim?dataset=fixture", {})
+        payload = {"id": 0, "version": 0, "fields": {"domain": "target_cctv", "annotation_verdict": "ok"}}
+        self.assertEqual(200, self.post(client, headers, "/api/review?dataset=fixture", payload).status_code)
+        payload["version"] = 1
+        self.assertEqual(200, self.post(client, headers, "/api/review?dataset=fixture", payload).status_code)
+        base = self.app.extensions["review_stores"]["fixture"]
+        with base.connect() as connection:
+            before = [list(connection.execute("SELECT * FROM " + table)) for table in ("reviews", "history", "metadata")]
+        with self.team.connect() as connection:
+            assignments = list(connection.execute("SELECT * FROM assignments ORDER BY sample"))
+        pack_hash = base.pack_hash
+        cookie = other.get_cookie("etr_review_session", domain="review.example.test").value
+        self.append_fixture()
+        with base.connect() as connection:
+            self.assertEqual(before, [list(connection.execute("SELECT * FROM " + table)) for table in ("reviews", "history", "metadata")])
+        with self.team.connect() as connection:
+            self.assertEqual([tuple(r) for r in assignments], [tuple(r) for r in connection.execute("SELECT * FROM assignments ORDER BY sample")])
+        reconnect = self.app.test_client()
+        reconnect.set_cookie("etr_review_session", cookie, domain="review.example.test")
+        data = reconnect.get("/api/items?dataset=fixture", base_url=self.url).json
+        self.assertEqual(pack_hash, data["pack_hash"])
+        self.assertEqual(2, data["items"][0]["version"])
+        self.assertEqual([0, 1, 2], [item["id"] for item in data["items"]])
+        self.assertTrue(data["items"][1]["editable"])
+        self.assertEqual(1, self.post(reconnect, other_headers, "/api/claim?dataset=fixture", {"known_total": 3}).json["id"])
+        # Original open-tab update keeps old global IDs and conflict semantics.
+        payload["id"], payload["version"] = 1, 0
+        self.assertEqual(200, self.post(reconnect, other_headers, "/api/review?dataset=fixture", payload).status_code)
+        self.assertEqual(409, self.post(reconnect, other_headers, "/api/review?dataset=fixture", payload).status_code)
+        legacy = self.post(reconnect, other_headers, "/api/claim?dataset=fixture", {}).json
+        self.assertEqual({"id": None, "refresh_required": True}, legacy)
+        self.assertEqual(2, self.post(reconnect, other_headers, "/api/claim?dataset=fixture", {"known_total": 3}).json["id"])
+        payload["id"] = 2
+        self.assertEqual(200, self.post(reconnect, other_headers, "/api/review?dataset=fixture", payload).status_code)
+        self.assertEqual(409, self.post(reconnect, other_headers, "/api/review?dataset=fixture", payload).status_code)
+        self.assertEqual(403, self.post(*self.select_name(self.a), "/api/review?dataset=fixture", payload).status_code)
+        self.app = __import__("edge_threat_response.dataset.team_review", fromlist=["create_app"]).create_app(self.config)
+        resumed, _ = self.select_name(self.b)
+        self.assertEqual(1, resumed.get("/api/items?dataset=fixture", base_url=self.url).json["items"][2]["version"])
+
+    def test_append_rejects_duplicate_hash_and_registry_reordering_removal(self):
+        from edge_threat_response.dataset.team_review import create_app
+        with self.assertRaisesRegex(ValueError, "Duplicate image"):
+            self.append_fixture("duplicate", duplicate=True)
+        config = json.loads(self.config.read_text())
+        config["datasets"][0].pop("review_batches")
+        self.config.write_text(json.dumps(config))
+        self.append_fixture("one")
+        self.append_fixture("two")
+        config = json.loads(self.config.read_text())
+        config["datasets"][0]["review_batches"].reverse()
+        self.config.write_text(json.dumps(config))
+        with self.assertRaisesRegex(ValueError, "registry mismatch"):
+            create_app(self.config)
+        config["datasets"][0]["review_batches"] = []
+        self.config.write_text(json.dumps(config))
+        with self.assertRaisesRegex(ValueError, "registry mismatch"):
+            create_app(self.config)
+
+    def test_append_backups_include_each_batch_and_catalog_never_exposes_paths(self):
+        from edge_threat_response.dataset.team_review import backup_databases
+        self.append_fixture()
+        admin, _ = self.login(self.admin)
+        response = admin.get("/api/catalog", base_url=self.url)
+        self.assertEqual(2, response.json["datasets"][0]["batch_count"])
+        self.assertEqual(3, response.json["datasets"][0]["total"])
+        self.assertNotIn(str(self.root), response.get_data(as_text=True))
+        self.assertNotIn("review_batches", response.get_data(as_text=True))
+        backup_databases(self.app, self.root / "expanded-backups")
+        self.assertEqual(3, len(list((self.root / "expanded-backups").glob("*.sqlite3"))))
+
+    def test_readonly_status_backup_preserves_all_tables_and_counts_each_batch(self):
+        spec = importlib.util.spec_from_file_location("team_status", Path(__file__).resolve().parents[1] / "tools/team_review_status.py")
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        self.append_fixture()
+        first = module.inspect(self.config)
+        second = module.inspect(self.config, self.root / "status-backup")
+        self.assertEqual(first, second)
+        self.assertEqual(3, second["datasets"]["fixture"]["prepared"])
+        self.assertEqual(0, second["datasets"]["fixture"]["reviewed"])
+        for key in second["databases"]:
+            with closing(sqlite3.connect(self.root / "status-backup" / (key+".sqlite3"))) as connection:
+                self.assertEqual("ok", connection.execute("PRAGMA quick_check").fetchone()[0])

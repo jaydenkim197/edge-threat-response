@@ -160,6 +160,45 @@ class ReviewStore:
         return ("\ufeff" + stream.getvalue()).encode("utf-8")
 
 
+class BatchReviewStore:
+    """Append immutable packs without moving old IDs, reviews or draft keys."""
+
+    def __init__(self, base: ReviewStore, batches: list[tuple[str, ReviewStore]]):
+        self.root, self.database, self.pack_hash = base.root, base.database, base.pack_hash
+        self.parts = [("initial", 0, base)]
+        self.rows, self.evidence, self.images = list(base.rows), list(base.evidence), list(base.images)
+        seen = {item["image_sha256"] for item in base.evidence}
+        identifiers = {"initial"}
+        for batch_id, store in batches:
+            if batch_id in identifiers:
+                raise ValueError("Duplicate batch identifier")
+            identifiers.add(batch_id)
+            for item in store.evidence:
+                if item["image_sha256"] in seen:
+                    raise ValueError("Duplicate image in appended review batch")
+                seen.add(item["image_sha256"])
+            self.parts.append((batch_id, len(self.rows), store))
+            self.rows.extend(store.rows)
+            self.evidence.extend(store.evidence)
+            self.images.extend(store.images)
+
+    def items(self):
+        result = []
+        for batch_id, offset, store in self.parts:
+            for item in store.items():
+                item["id"] += offset
+                item["batch_id"] = batch_id
+                result.append(item)
+        return result
+
+    def save(self, sample, version, fields):
+        if type(sample) is not int or not 0 <= sample < len(self.rows):
+            raise ValueError("Unknown sample.")
+        for _, offset, store in reversed(self.parts):
+            if sample >= offset:
+                return store.save(sample - offset, version, fields)
+
+
 def make_handler(store: ReviewStore, token: str):
     assets = Path(__file__).parent / "web_review"
 
