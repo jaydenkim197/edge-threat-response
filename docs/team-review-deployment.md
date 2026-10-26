@@ -4,6 +4,14 @@
 
 ## 팀원 사용법
 
+### 2026-10-26 신규 후보304장 추가
+
+[검수 사이트](https://yu-desktop-97msr1i.tail37c267.ts.net/)에서 이름 선택 후 기존 두 질문으로 진행한다. **Catargiu17장 / Simuletic ATM 합성237장 / Dangerous Items 추가50장**, 전체1,219장이다. Catargiu와 ATM은 후보 선택 화면에 따로 표시되고, Dangerous는 기존100장 뒤에 이어진다(화면101–150). CSV 작성이나 새 질문은 없다.
+
+Catargiu는 확보75장 중 보호/중복 proxy 후보38장과 제품 모음·게임/도해 등20장을 이번 배치에서 제외한 **사람·칼 동반 후보17장**이다. 전부 CCTV 시점이라는 뜻은 아니며 첫 질문에서 판단한다. ATM의 `knife` 파일명 이미지3장에는 knife 라벨이 없다. 빨간 박스가 없어도 칼이 보이면 `문제 있음`+메모, 애매하면 `모르겠음`으로 기록한다. 총기 장면도 확정 knife-negative로 간주하지 않는다. 전체304장은 검수 대기·학습 미승인이다.
+
+변경 전 DB/config 백업, 기존 판정·ID·배정·history의 row count/hash 보존, 격리 DB의 저장·재접속·이어가기·모바일 QA 및 공개 HTTPS를 확인했다. [확보·선별·중복·검증 상세](../reports/datasets/additional-review-2026-10-26/report.md). 원본·큰 파일은 PC13에 보관하며 기존 val/test와 학습 승인은 바꾸지 않았다.
+
 ### 2026-10-26 추가 검수150장 배포
 
 기존 SOHAS 안에서 바로 이어서 검수한다. 이름 선택과 공통 두 질문은 같고 CSV 작성/추가 질문은 없다. 기존 탭은 `자동 저장됨` 확인 후 새로고침하면350장을 볼 수 있다.
@@ -53,10 +61,12 @@ SOHAS는200→350장, 전체 준비량은765→915장이다. 작은 knife bbox �
 | US Mock Attack | 100 | Cam1/Cam5/Cam7 및 knife annotation 유무 층화. 연속 영상의 사건 정답을 대신하지 않음 |
 | Open Images | 30 | validation metadata에서 knife positive만. 원본 개별 이미지 권리·라벨 완전성 재검수 필요 |
 | Legacy MIDAS | 128 | 팀원의 독립 L0 검수 표본. 신규 source 승인과 별개 |
-| Dangerous Items | 100 | 공식 Zenodo API CC BY 4.0. 120개 label을 seeded split별로 살펴 뽑은 100장·임시 knife 객체 19개. ZIP에 class YAML이 없어 visual probe에서 raw ID `1=knife`를 작업 가설로 둔다. 박스 검수는 임시 매핑이며 학습 전 사람의 class-map 확인 필요 |
+| Dangerous Items | 150 | 기존100장+공식 VOC의 작은 칼50장. 동일 이미지55장의 기존 overlay가 VOC Knife와 일치했고 클래스별5쌍씩25개 실제 YOLO–VOC 라벨로5개 map을 대조했다. 전체 라벨·실제 session·학습 승인은 별도이며 새50장은 semantic Knife 이름을 직접 사용 |
+| Catargiu | 17 | 작은 knife·사람 동반 후보. v11+저자 수정 라벨. 보호 proxy/유사 후보38장 격리, domain mismatch20장 이번 배치 제외. 연구용 notice 차이·CCTV 적합성·학습 승인 별도 |
+| Simuletic ATM | 237 | 합성 ATM 시점.116장에 knife annotation,121장은 knife annotation0. `knife` 파일명3장은 누락 후보. 확정 음성·실사 평가 자료가 아님 |
 | ACF Knife | 접근 대기 | 논문이 가리킨 원 저장소가 404. 제3자 재배포본을 원본으로 대체하지 않음 |
 
-현재 **8후보 중 7개 표본 화면 준비**, ACF만 원본 부재로 잠겨 있다. 첫 표본은 source 품질을 보는 작업량 단위다. 이를 근거로 전체 source를 채택하거나 10월 말 실험 데이터로 승인하지 않는다. Dangerous `raw ID 1`은 2026-10-04 임시 visual probe 3장의 관찰 결과이며 공식 class map을 뜻하지 않는다. Dangerous 전체 1.4 GB ZIP은 내려받지 않고 공식 archive의 HTTP Range 45,209,628 bytes만 읽었다. 전체 archive checksum은 미검증이고, 표본의 자체 SHA-256·원 경로·원 split은 보존했다. 현재 표본 인벤토리는 PC13의 `data/review/` 및 `data/source-audit/team-review-20261003/`에 있다.
+현재 **10후보 중9개 표본 준비**, ACF는 공식 원 저장소404로 잠겨 있다. 첫 표본은 검수 작업량이며 전체 source 채택·학습 승인이 아니다. Dangerous `raw ID1`은 최초 visual probe에서 시작했으나2026-10-26 원본 VOC와 대응 라벨25쌍으로 지지됐고, source YAML과 전체 YOLO archive checksum은 여전히 미확인이다.2024 VOC 원본357.8MB archive는 제공자 checksum을 검증했다. 원본·인벤토리·백업은 PC13 `data/review/`, `data/source-audit/`에 보관한다. 최초2025 YOLO 표본은 bounded HTTP Range로 준비했으며 원래 random split을 연구 최종 분할로 사용하지 않는다.
 
 ## PC13 운영
 

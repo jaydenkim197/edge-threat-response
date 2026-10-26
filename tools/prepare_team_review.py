@@ -313,8 +313,9 @@ def open_images():
 
 class RangeReader(io.RawIOBase):
     """Read only bounded ZIP ranges from the official endpoint, not all 1.4 GB."""
-    def __init__(self, url, size):
+    def __init__(self, url, size, *, isolate_cache_keys=True):
         self.url, self.size, self.position = url, size, 0
+        self.isolate_cache_keys = isolate_cache_keys
         self.cache = OrderedDict()
         self.downloaded = 0
 
@@ -342,7 +343,9 @@ class RangeReader(io.RawIOBase):
                 # Isolate cache keys: some upstream caches do not vary on Range.
                 parts, offset = [], start
                 for _ in range(4):
-                    request = urllib.request.Request(self.url + f"&review_range={offset}-{stop}", headers={"Range": f"bytes={offset}-{stop}", "User-Agent": "ETR academic review/1.0"})
+                    # Signed provider URLs must retain their exact query string.
+                    request_url = self.url + f"&review_range={offset}-{stop}" if self.isolate_cache_keys else self.url
+                    request = urllib.request.Request(request_url, headers={"Range": f"bytes={offset}-{stop}", "User-Agent": "ETR academic review/1.0"})
                     with urllib.request.urlopen(request, timeout=45) as response:
                         if response.status != 206:
                             raise ValueError("Server did not honor bounded Range request")

@@ -1,0 +1,275 @@
+{
+  "date": "2026-10-26",
+  "scope": "review_only",
+  "sources": {
+    "catargiu": {
+      "prepared": 17,
+      "knife_positive": 17,
+      "knife_zero_annotation": 0,
+      "knife_objects": 20,
+      "image_bytes": 1331129,
+      "selection_strata": {
+        "tiny": 6,
+        "small": 11
+      }
+    },
+    "simuletic-atm": {
+      "prepared": 237,
+      "knife_positive": 116,
+      "knife_zero_annotation": 121,
+      "knife_objects": 118,
+      "image_bytes": 267681593,
+      "selection_strata": {
+        "not_used": 237
+      }
+    },
+    "dangerous-voc-small": {
+      "prepared": 50,
+      "knife_positive": 50,
+      "knife_zero_annotation": 0,
+      "knife_objects": 60,
+      "image_bytes": 4745261,
+      "selection_strata": {
+        "not_used": 50
+      }
+    }
+  },
+  "new_images": 304,
+  "cross_new_source_similarity_candidates": 0,
+  "internal_visual_candidates": {
+    "simuletic-atm": 3
+  },
+  "atm_knife_filename_without_knife_label": 3,
+  "site_prepared": 1219,
+  "site_reviewed": 466,
+  "new_human_judgments_written_by_agent": 0,
+  "new_training_approved": false,
+  "remaining_sources": {
+    "acf": {
+      "status": "blocked",
+      "http_code": 404
+    },
+    "urbanite": {
+      "revision": "e792b271193990ec37c0b773ccd506fc966687e8",
+      "files": 22,
+      "status": "helper repository checked; full RGB + knife 2D annotation access not established"
+    }
+  },
+  "catargiu": {
+    "acquired": 75,
+    "protectedFilenameFamilyQuarantine": 33,
+    "protectedVisualQuarantine": 2,
+    "existingVisualQuarantine": 3,
+    "aiDomainExcluded": 20,
+    "published": 17,
+    "archive": {
+      "bytes": 1363496844,
+      "sha256": "e77e054afbec588212bc1e6c0300c21c356d4acb6d774a3f6c2d965288d0ff02",
+      "zip_members": 48170,
+      "crc_all_members": "ok",
+      "selected_pack_images_sha256_verified": 17,
+      "provider_declared_checksum_available": false,
+      "pc13_copy_matches_local": true
+    }
+  },
+  "dangerousMapping": {
+    "pairedExactImages": 55,
+    "matchingKnifeOverlays": 55,
+    "pairedRawClassLabels": 25,
+    "pairsPerClass": 5,
+    "classMap": {
+      "0": "Machete",
+      "1": "Knife",
+      "2": "Baseball Bat",
+      "3": "Rifle",
+      "4": "Gun"
+    },
+    "fullYoloLabelVerification": false
+  },
+  "preservation": {
+    "old_table_hashes_preserved": true,
+    "old_registry_rows_preserved": 10,
+    "registry_rows_added": 3,
+    "new_judgments_written": 0,
+    "new_assignments_written": 0,
+    "training_controls_preserved": true,
+    "pack_inputs_preserved": true
+  },
+  "qa": [
+    {
+      "dataset": "catargiu",
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "viewport": 412,
+      "total": 17,
+      "storedReopenedResumed": true,
+      "requiredNoteDraft": true,
+      "staleVersion409": true,
+      "questionCount": 2,
+      "horizontalOverflow": false,
+      "minButtonHeight": 46
+    },
+    {
+      "dataset": "catargiu",
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "viewport": 390,
+      "total": 17,
+      "storedReopenedResumed": true,
+      "requiredNoteDraft": true,
+      "staleVersion409": true,
+      "questionCount": 2,
+      "horizontalOverflow": false,
+      "minButtonHeight": 46
+    },
+    {
+      "dataset": "simuletic-atm",
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "viewport": 412,
+      "total": 237,
+      "storedReopenedResumed": true,
+      "requiredNoteDraft": true,
+      "staleVersion409": true,
+      "questionCount": 2,
+      "horizontalOverflow": false,
+      "minButtonHeight": 46
+    },
+    {
+      "dataset": "simuletic-atm",
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "viewport": 390,
+      "total": 237,
+      "storedReopenedResumed": true,
+      "requiredNoteDraft": true,
+      "staleVersion409": true,
+      "questionCount": 2,
+      "horizontalOverflow": false,
+      "minButtonHeight": 46
+    },
+    {
+      "dataset": "dangerous-items",
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "viewport": 412,
+      "total": 150,
+      "storedReopenedResumed": true,
+      "requiredNoteDraft": true,
+      "staleVersion409": true,
+      "questionCount": 2,
+      "horizontalOverflow": false,
+      "minButtonHeight": 46
+    },
+    {
+      "dataset": "dangerous-items",
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "viewport": 390,
+      "total": 150,
+      "storedReopenedResumed": true,
+      "requiredNoteDraft": true,
+      "staleVersion409": true,
+      "questionCount": 2,
+      "horizontalOverflow": false,
+      "minButtonHeight": 46
+    }
+  ],
+  "publicReadOnly": [
+    {
+      "dataset": "catargiu",
+      "total": 17,
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "imageIds": [
+        0,
+        16
+      ],
+      "questions": 2,
+      "noOverflow": true,
+      "productionJudgments": 0,
+      "productionAssignments": 0
+    },
+    {
+      "dataset": "simuletic-atm",
+      "total": 237,
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "imageIds": [
+        0,
+        128,
+        236
+      ],
+      "questions": 2,
+      "noOverflow": true,
+      "productionJudgments": 0,
+      "productionAssignments": 0
+    },
+    {
+      "dataset": "dangerous-items",
+      "total": 150,
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "imageIds": [
+        0,
+        99,
+        100,
+        149
+      ],
+      "questions": 2,
+      "noOverflow": true,
+      "productionJudgments": 0,
+      "productionAssignments": 0
+    },
+    {
+      "dataset": "catargiu",
+      "total": 17,
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "imageIds": [
+        0,
+        16
+      ],
+      "questions": 2,
+      "noOverflow": true,
+      "productionJudgments": 0,
+      "productionAssignments": 0
+    },
+    {
+      "dataset": "simuletic-atm",
+      "total": 237,
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "imageIds": [
+        0,
+        128,
+        236
+      ],
+      "questions": 2,
+      "noOverflow": true,
+      "productionJudgments": 0,
+      "productionAssignments": 0
+    },
+    {
+      "dataset": "dangerous-items",
+      "total": 150,
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "imageIds": [
+        0,
+        99,
+        100,
+        149
+      ],
+      "questions": 2,
+      "noOverflow": true,
+      "productionJudgments": 0,
+      "productionAssignments": 0
+    }
+  ],
+  "email": {
+    "draftCreated": true,
+    "sent": false
+  },
+  "finalCameraSessionIndependenceVerified": false
+}

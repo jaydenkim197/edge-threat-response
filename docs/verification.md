@@ -2,6 +2,14 @@
 
 신규 시스템의 판단 core·PC 영상 입력·replay는 개발 PC에서 검증됐지만 Orin 실기기 통합과 성능은 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
 
+## 2026-10-26 신규 후보304장 검수 배포
+
+- PC13에서 Catargiu17장/ATM237장/Dangerous VOC50장을 추가해 전체1,219장·준비 source9개를 확인했다. 기존915장과 새304장 exact 중복0, protected864개 signature/proxy 재대조와 신규 source끼리 dHash 검사를 수행했다. Catargiu38개 proxy/유사 후보는 격리하고 domain mismatch20개는 이번 묶음에서 제외했다. 실제 session 독립성·학습 승인은 미검증이다.
+- SQLite consistent backup 후 기존 reviews/history/metadata/users/assignments row count/hash 동일, registry10행 유지+3행 추가, 신규 운영 테스트 판정·배정0. 기존 DEV manifest/val/test/config/authorization과 pack input hash도 보존했다.
+- helper 회귀2개 및 전체140 tests·compileall 통과: PC13 Python3.12.4, `6917937` tracked archive+candidate overlay. 최초 tests-only QA는 configs/fixture 부재로 실패해 전체 archive로 다시 검증했다. 신규 dependency/runtime/UI 질문 변경은 없다.
+- 격리 복제 DB에서3개 묶음×Android412/iPhone390px의 저장·메모·재접속·최근 이어가기·reload·version409와 원본100개 Dangerous 판정 불변을 확인했다. Edge Chromium/질문2개/버튼46px/overflow0. 실제 Safari/WebKit/휴대폰 설치 검증은 아니다. 공개 HTTPS도 새/기존 image ID를 읽어 검증했고 claim/save를 차단했다.
+- [버전·원본 hash·누락 후보·상세 증거](../reports/datasets/additional-review-2026-10-26/report.md). PC13 raw `data/review/additional-sources-20261026/`;1,219장/466판정은 배포 직후 snapshot이다. 자동 학습·기존 val/test 재분할·Orin 실기기 검증은 실행하지 않았다.
+
 ## 2026-10-26 신규 best.pt PC 영상 통합
 
 - PC13 RTX3060/Python3.12.4에서 새 DEV-SOHAS best.pt + COCO person의 실제 CUDA 추론을 기존 runtime에 연결했다. train 이미지3개+blank의53frame FFV1/10fps 영상은 전frame decode pixel hash가 encode 전과 동일하고53개가 서로 다르다. valid53/detections59, 같은 JSONL의 B0/B1/B2/B3 event 수4/3/3/2가 fixture 기대 frame과 일치한다. 최종 사건 성능 비교가 아니다.

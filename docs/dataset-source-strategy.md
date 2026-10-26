@@ -17,7 +17,7 @@
 
 ## 2. Dataset roles and application limits — `DECISION`
 
-**2026-10-26 적용 현황:** 아래 표는 source 역할·초기 계획이다. 실제 웹 준비량은 SOHAS200/DaSCI93/Simuletic114 등이며, 고정 snapshot의 정상 판정은 각각183/92/71이다. SOHAS183개만 사용자 승인된 개발 예비 학습에 사용했다. 다른 source의 학습 승인은 여전히 별도다. 새 [오류·보강 분석](../reports/training/development-error-analysis-2026-10-26/report.md)에서 작은 실사 knife 우선 선별과 합성 별도 ablation을 제안한다. DaSCI92개는 보수적 proxy 연결 시 모두 보호된 val/test group과 연결되고, 후보 filename family 연결을 빼도18개가 연결되므로 무조건 추가하지 않는다. 이는 실제92개 전부가 중복이라는 판정이 아니다. Simuletic71개는 같은 검사에서 연결0이나, 독립성·좌표·학습 채택이 자동 승인되는 것은 아니다.
+**2026-10-26 적용 현황:** 아래 표는 source 역할·초기 계획이다. 실제 웹 준비량은 SOHAS350/DaSCI93/Simuletic CCTV114/US Mock100/Dangerous150/Open Images30/Legacy128/Catargiu17/ATM 합성237, 전체1,219장이다. 고정 snapshot의 정상 판정은 SOHAS183/DaSCI92/Simuletic CCTV71이며 SOHAS183개만 사용자 승인된 개발 예비 학습에 사용했다. 다른 source의 학습 승인은 별도다. [추가304장 확보·검수 배포](../reports/datasets/additional-review-2026-10-26/report.md)는 source 확정이나 자동 학습을 뜻하지 않는다. [오류·보강 분석](../reports/training/development-error-analysis-2026-10-26/report.md)의 작은 실사 knife 우선·합성 별도 ablation 원칙을 유지한다. DaSCI92개는 보수적 proxy 연결 시 모두 보호 val/test group과 연결되고 filename family를 빼도18개가 연결돼 무조건 추가할 수 없다. 이는 실제92개 모두 중복이라는 판정이 아니다. Simuletic CCTV71개는 같은 검사에서 연결0이나 독립성·좌표·채택이 자동 승인되지는 않는다.
 
 | 역할 | source | 지금 적용할 양 | 이후 허용 범위 | 이유 |
 |---|---|---:|---|---|
@@ -27,7 +27,9 @@
 | E1 external CCTV test candidate | ACF Knife | 0장 — 논문의 원 저장소가 현재 접근되지 않음 | **Dataset v1 학습에는 0장**. 파일·권리·라벨 확보 시 외부 **이미지** 평가 후보 | 1920×1080 CCTV, small knife 문제와 직접 맞닿아 있다. 영상과 event 정답 확인 전에는 사건 지표를 계산할 수 없다. |
 | E2 sequential CCTV test candidate | US Mock Attack | audit 표본만: camera/sequence별 표본 | **Dataset v1 학습에는 0장**. 데이터·시간 순서·event 정답 확인 시 외부 sequence 평가 후보 | 공개 설명상 knife label 수가 적고 연속 frame이라 random image split은 누수 위험이 크다. |
 | S1 synthetic viewpoint check | Simuletic CCTV Knife | 필요 시 전체 114장 검수 | primary recipe에는 0장. real-data baseline 이후 별도 synthetic augmentation ablation에만 최대 114장 | target viewpoint에는 가깝지만 synthetic-to-real gap과 작은 표본을 본 결과와 혼동하지 않는다. |
-| D1 deferred candidate | Dangerous Items | 초기 웹 검수 100장; 학습 0장 | 공식 Zenodo API는 2026-10-04 CC BY 4.0. ZIP 내부에 class YAML이 없어 knife raw ID·라벨 완전성과 source group을 검수한 뒤에만 재검토 | small/blur/occlusion 보강 가능성이 있지만, 검수용 시각 추정은 학습용 class map 승인이 아니다. |
+| D1 gap candidate | Dangerous Items | 웹150장; 학습0장 | 공식 CC BY 4.0.2026-10-26 paired VOC–YOLO25쌍으로 raw1=Knife 등5개 map을 지지했다. 전체 라벨·negative·source group gate는 남음. 추가50장은 VOC semantic Knife에서 직접 선정 | 원본 class 근거와 CCTV 적합성·학습 승인은 구분한다. |
+| P3 small-knife candidate | Catargiu v11 + corrected labels | 웹17장; 학습0장 | 보호/기존 유사 proxy 후보38장 격리, AI 시각 선별에서 제품/게임 등20장 이번 묶음 제외. 사람·칼 후보의 실제 CCTV 적합성·권리·session 확인 후 재검토 | 큰 dataset이라는 이유로 전체를 받거나 CCTV 주력으로 채택하지 않는다. |
+| S2 synthetic viewpoint check | Simuletic ATM | 원본237장 전량 웹 검수; 학습0장 | CC BY-NC 4.0 고정 revision. 실사 baseline 이후 별도 synthetic ablation 후보. 실제 knife 라벨116 images/118 objects, knife 파일명3장 누락 후보 | 합성자료를 실사 평가셋으로 쓰지 않으며 source offender/victim/gun을 MVP 범위에 추가하지 않는다. |
 | G1 gap-filling candidate | Open Images V7 | 초기 웹 검수 30장; 학습 0장 | source audit 후 필요한 visual gap만 제한적으로 선정 | web-image domain이고 image별 license·annotation density 확인이 필요하다. |
 | person detector | COCO pretrained model | 별도 custom data import 없음 | person detector sanity/composite adapter의 pretrained source | COCO person pretrained model은 사용 가능하되, COCO knife data를 본 project의 knife training corpus로 자동 채택하지 않는다. |
 

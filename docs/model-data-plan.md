@@ -6,6 +6,8 @@
 
 2026-10-26: 사용자 승인된 SOHAS183장 개발용 subset의 예비 학습과 오류 분석을 수행했다. 이는 source 전체 채택이나 최종 detector 결정이 아니다. 낮은 성능은 train/val fit 차이와 작은 객체 분포 차이를 동반하며, 고정 split에서 optimizer/LR 및 크기 증강을 제한적으로 비교한다. 후속 결과와 데이터 보강 우선순위는 [개발 모델 오류 분석](../reports/training/development-error-analysis-2026-10-26/report.md)에 기록한다. 기존 R1/H1 gate와 test 보관 원칙은 유지한다.
 
+2026-10-26 추가: [신규 검수304장](../reports/datasets/additional-review-2026-10-26/report.md)을 웹에 배포했다(Catargiu17/ATM 합성237/Dangerous VOC50). 전량 검수 대기·학습 미승인이며 기존 split/승인 파일은 보존했다. Dangerous raw class map은25개 VOC–YOLO 대응 라벨로 지지됐지만 전체 검증을 뜻하지 않는다. 다음은 human review와 source/negative/group gate이며 자동 학습을 시작하지 않는다.
+
 ## 1. Confirmed legacy inventory
 
 2026-09-14에 고정 submodule `legacy/2025-2-midas/Crime_Prediction`을 읽기 전용으로 점검했다.
