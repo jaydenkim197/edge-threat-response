@@ -90,3 +90,13 @@ class DetectionEvaluationTests(unittest.TestCase):
             self.assertEqual("synthetic_contract_check", result["status"])
             with redirect_stderr(io.StringIO()):
                 self.assertEqual(2, main(args))
+
+    def test_development_truth_is_explicit_and_cannot_become_final_test(self):
+        truth = copy.deepcopy(self.truth)
+        truth.update(status="development_authorized", partition="train_diagnostic")
+        for image in truth["images"]:
+            image.update(image_sha256="0" * 64, source_group="proxy-not-real-session")
+        result, _ = evaluate_boxes(truth, self.pred, self.policy)
+        self.assertEqual("development_image_boxes", result["status"])
+        with self.assertRaises(ValueError):
+            evaluate_boxes({**truth, "partition": "final_test"}, self.pred, {**self.policy, "status": "frozen"})

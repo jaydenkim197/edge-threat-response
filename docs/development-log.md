@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-26 - 낮은 개발 성능의 오류 진단과 제한된 후속 실험
+
+- 작업 카드/사용자 요청: 낮은 성능의 원인을 검증하고 데이터 보강·다음 학습을 진행한다. train/val 예측에서 fit/generalization·confidence·localization 문제를 분리한다. 완료 기준은 고정 split 진단, 시각 점검, 제한된 후속 학습과 동일 기준 비교다. 검수 DB·판정·reserved test·공식 R1/H1 승인은 변경하지 않는다. 위험은 val14 객체의 분산·튜닝 편향, 합성 보강의 domain gap과 source gate 혼동이다.
+- search-first: 기존 bbox 평가기·canonical JSONL·승인/hash 검증·training runner·detached launcher를 재사용했다. `training_diagnostics.py`는 train/val만 추론하고 confidence .05/.1/.25/.5와 IoU .25/.5를 비교한다. 개발 GT는 train diagnostic/tuning만 허용한다. `training_refinement.py`는 DEV-SOHAS manifest/세 partition 목록을 보존하고 optimizer+LR(AdamW/.001), 별도 scale=.9 variant만 만든다. source 추가·공식 승인 승격은 하지 않는다.
+- 관측: SGD best의 conf=.25/IoU=.5에서 train TP117/FP14/FN10, val TP1/FP0/FN13. val conf=.05에서도 TP4/FP7/FN10이다. val GT14개 중 detected1/low-confidence3/localization1/missed9(.05 floor)이며 단순 confidence 완화는 부족하다. 객체 면적 중앙값 train .06867 vs val .004843, small(.02 이하)26/127 vs11/14다. fit/generalization·크기 분포 차이를 지지하지만 단일 원인의 인과 증명은 아니다.
+- 시각 점검: val23개를 4개 AI diagnostic contact sheet로 확인했다. 작은 손-held knife 미검출, 일부 위치 오차·의류/배경 FP가 있다. 기존 사람 판정은 수정하지 않았다. COCO pretrained도 같은 train/val에서 비교했다.
+- 검증: PC13 Python3.12.4 격리 source overlay에서 전체136 tests·compileall 통과. 신규6 tests는 개발/최종평가 분리·test image 미열람·예측 identity 오류·오류 분류·split/base bytes 보존·bounded 설정·부모 hash 변조 차단을 검사한다. 최초 .001 예측은 저신뢰도 zero-area 출력으로 evaluator가 거부했다. 진단 sweep 최소값 .05로 예측 floor를 맞춰 재실행했고 실패 산출물도 보존했다.
+- 다음: 동일 초기 weight/640/batch16/50epoch/seed/137 train·23 val에서 AdamW/.001 비교, 추가로 같은 AdamW에서 scale=.9만 바꾼 증강 비교. 각450 planned updates이며 같은 val을 재사용하는 탐색이다. DaSCI 정상92장(97 objects 중 small88), Simuletic 정상71장(positive60/negative11, small60/60)은 보강 audit 후보로 아직 병합하지 않는다. 결과·raw 경로는 후속 보고서에 기록한다. Git commit은 본 항목의 변경 이력으로 추적한다.
+
 ## 2026-10-26 - 승인된 SOHAS 검수 subset 개발용 예비 학습
 
 - 사용자 결정/작업 카드: 정상 SOHAS183개만의 개발용 예비 학습을 명시적으로 승인했다. Source/review byte·모든 bbox·decode·복사본/label 검증, filename-family+전체 dHash transitive component 분할, 범위와 hash를 묶은 DEV-SOHAS 승인, CUDA 사전검사와 실제 학습 시작 증거를 완료 기준으로 둔다. 공식 R1/H1 승인/논문 성능·source 전체/원 좌표 의미·실제 recording session·외부 재배포는 범위 밖이다.

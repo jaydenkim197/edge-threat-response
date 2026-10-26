@@ -2,6 +2,12 @@
 
 신규 시스템의 판단 core·PC 영상 입력·replay는 개발 PC에서 검증됐지만 Orin 실기기 통합과 성능은 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
 
+## 2026-10-26 개발 모델 오류 진단·후속 설정 검증
+
+- PC13 Python3.12.4 격리 source overlay: `python -m unittest discover -s tests -q` 전체136 tests, `compileall -q src tests` 통과. 실제 학습/진단 환경은 기존 RTX3060 venv이며 로컬 bundled Python의 전체 ML/web 의존성 검증으로 대신하지 않았다.
+- SGD best의 실제 train137/val23 inference·고정 IoU/conf sweep·오류 분류·val contact sheet4장 생성 성공. test image/label은 진단에 열지 않는다(승인 검증의 무결성 hash 읽기만 수행). 원시 결과: PC13 ignored `runs/diagnostics-sohas-20261026-sgd-v2/`, COCO 비교 `runs/diagnostics-sohas-20261026-coco-v1/`. source는 QA overlay, Git base `5a13891` + 본 변경이다. 학습/평가 input bytes와 checkpoint는 보존했다.
+- 23장 validation을 사용한 개발 분석이며 final test·사건 지표·Orin FPS·실제 카메라 성능을 검증한 것이 아니다. 후속 실제 학습 결과는 완료 후 추가한다.
+
 ## 2026-10-26 최신 검수와 학습 진입 점검
 
 - 후속 사용자 승인: SOHAS 정상183개 개발용 예비 학습을 허용했다. 신규 개발 scope·source/review/label·group split·hash-bound 입력 검증6 tests 로컬 Python3.12.14 통과. PC13 Python3.12.4 격리 QA tree에서 전체130 tests/compileall 통과(첫 기존 HTTP socket10053 후 해당7개/전체 재검증). 로컬 전체 검증은 werkzeug 미설치1 error/12 skipped로 통과가 아니며 실제 학습 환경 검증과 구분한다. 공식 R1/H1 gate·원 좌표/실제 session/최종 평가 승인은 유지한다. 실제 실행 증거는 후속 기록한다.

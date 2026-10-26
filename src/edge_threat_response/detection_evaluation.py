@@ -36,12 +36,13 @@ def _box(coords, width, height):
 
 
 def evaluate_boxes(truth: dict, prediction_rows: list[dict], policy: dict) -> tuple[dict, list[dict]]:
-    if truth.get("schema_version") != 1 or truth.get("status") not in {"synthetic", "approved"}:
+    if truth.get("schema_version") != 1 or truth.get("status") not in {"synthetic", "approved", "development_authorized"}:
         raise ValueError("Ground truth must be synthetic or explicitly approved; review candidates are not ground truth")
     if policy.get("schema_version") != 1 or policy.get("status") not in {"development", "frozen"}:
         raise ValueError("Evaluation policy must be development or frozen")
     partition = truth.get("partition")
-    if partition not in {"synthetic", "tuning", "final_test"}:
+    development = truth["status"] == "development_authorized"
+    if partition not in ({"train_diagnostic", "tuning"} if development else {"synthetic", "tuning", "final_test"}):
         raise ValueError("Keep tuning, final test and synthetic partitions separate")
     if (truth["status"] == "synthetic") != (partition == "synthetic"):
         raise ValueError("Synthetic truth must stay in the synthetic partition")
@@ -73,10 +74,10 @@ def evaluate_boxes(truth: dict, prediction_rows: list[dict], policy: dict) -> tu
         if key in seen or key not in predicted:
             raise ValueError("Repeated truth image or missing prediction row")
         seen.add(key)
-        if truth["status"] == "approved" and not all(isinstance(image.get(k), str) and image[k].strip()
+        if truth["status"] != "synthetic" and not all(isinstance(image.get(k), str) and image[k].strip()
                                                        for k in ("image_sha256", "source_group")):
             raise ValueError("Approved image truth needs image hash and source/session group")
-        if truth["status"] == "approved" and not re.fullmatch(r"[a-f0-9]{64}", image["image_sha256"]):
+        if truth["status"] != "synthetic" and not re.fullmatch(r"[a-f0-9]{64}", image["image_sha256"]):
             raise ValueError("Approved image truth needs a SHA-256 image identity")
         width, height = image.get("width"), image.get("height")
         if any(type(v) is not int or v <= 0 for v in (width, height)):
@@ -114,7 +115,7 @@ def evaluate_boxes(truth: dict, prediction_rows: list[dict], policy: dict) -> tu
         raise ValueError("Prediction rows outside the ground-truth image set")
     ratio = lambda numerator, denominator: numerator / denominator if denominator else None
     tp, fp, fn = totals["tp"], totals["fp"], totals["fn"]
-    result = {"schema_version": 1, "status": "synthetic_contract_check" if partition == "synthetic" else "measured_image_boxes",
+    result = {"schema_version": 1, "status": "development_image_boxes" if development else "synthetic_contract_check" if partition == "synthetic" else "measured_image_boxes",
               "partition": partition, "images": len(images), "policy": policy, "counts": dict(totals),
               "precision": ratio(tp, tp + fp), "recall": ratio(tp, tp + fn), "f1": ratio(2 * tp, 2 * tp + fp + fn),
               "small_box_recall": ratio(totals["small_tp"], totals["small_gt"]),
