@@ -129,7 +129,7 @@ CUDA development profile, GPU-required preflight와 review-gated Colab notebook�
 
 ### D4 — full training and evaluation
 
-2026-10-26 사용자 승인으로 별도 `DEV-SOHAS` 예비 학습을 준비한다. 정상 SOHAS183개만 사용하고 명시적 review-overlay pixel-edge 개발 좌표·보수적 filename/dHash proxy split·범위/hash-bound 개발 승인을 강제한다. 원 좌표 의미·실제 session·공식 source/최종 평가·외부 재배포 승인은 false이며 아래의 공식 R1/H1 gate와 별개다. [개발용 실행 계약](training-cuda-handoff.md#2026-10-26-별도-개발용-예비-학습--사용자-승인)을 따른다.
+2026-10-26 사용자 승인으로 별도 `DEV-SOHAS` 예비 학습50epochs와 checkpoint/composite GPU smoke를 완료했다([실행 보고](../reports/training/sohas-reviewed-development-2026-10-26/report.md)). 정상 SOHAS183개만 사용하고 명시적 review-overlay pixel-edge 개발 좌표·보수적 filename/dHash proxy split·범위/hash-bound 개발 승인을 강제한다. 원 좌표 의미·실제 session·공식 source/최종 평가·외부 재배포 승인은 false이며 아래의 공식 R1/H1 gate와 별개다. Val recall.2143/mAP50 .2658로 낮아 오류 분석·보강이 필요하다. [개발용 실행 계약](training-cuda-handoff.md#2026-10-26-별도-개발용-예비-학습--사용자-승인)을 따른다.
 
 2026-10-04 신규 R1/H1 준비에서는 승인 후보 materialized manifest → 공통 val/test·equal draw train 목록 → hash-bound human approval → CUDA-required runner → tuning 결과 비교까지 구현했다. H1의 양성 반복·batch/nbs·FP32·schedule 설정은 development 제안이며 실제 source 승인이나 학습 완료가 아니다. PC13에 승인된 SOHAS export가 아직 없으므로 full training을 시작하지 않는다. [실행·승인 절차](training-cuda-handoff.md#r1h1-실행-준비--2026-10-04)를 따른다.
 
