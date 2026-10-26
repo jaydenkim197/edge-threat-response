@@ -4,6 +4,8 @@
 
 ## 2026-10-26 최신 검수와 학습 진입 점검
 
+- 후속 사용자 승인: SOHAS 정상183개 개발용 예비 학습을 허용했다. 신규 개발 scope·source/review/label·group split·hash-bound 입력 검증6 tests 로컬 Python3.12.14 통과. PC13 Python3.12.4 격리 QA tree에서 전체130 tests/compileall 통과(첫 기존 HTTP socket10053 후 해당7개/전체 재검증). 로컬 전체 검증은 werkzeug 미설치1 error/12 skipped로 통과가 아니며 실제 학습 환경 검증과 구분한다. 공식 R1/H1 gate·원 좌표/실제 session/최종 평가 승인은 유지한다. 실제 실행 증거는 후속 기록한다.
+
 - PC13 운영 DB를 read-only 집계한 결과765개 중466개 판정, SOHAS 정상183개(양성130/음성53)다. 이는 전체 raw source 승인·좌표 의미·독립 session group 검증이 아니다. raw snapshot은 ignored `data/work/review-candidates/20261026-training-v1/`에 있다.
 - 실제 `training_pair check`에서 CUDA RTX3060/로컬 `yolo26n.pt`를 확인했지만 승인된 materialized manifest 부재로 expected exit2/blocked/`training_started=false`였다. 증거는 PC13 ignored `runs/sohas-reviewed-readiness-20261026-v1/readiness.json`, 실행 코드 `a867622`다. 학습 runner의 승인 차단을 우회하지 않았다. 개발용 예비 학습으로 범위를 구분할지와 남은 좌표/group/split 계약은 사용자 판단 대기다.
 

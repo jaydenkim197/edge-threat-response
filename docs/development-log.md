@@ -2,6 +2,14 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-26 - 승인된 SOHAS 검수 subset 개발용 예비 학습
+
+- 사용자 결정/작업 카드: 정상 SOHAS183개만의 개발용 예비 학습을 명시적으로 승인했다. Source/review byte·모든 bbox·decode·복사본/label 검증, filename-family+전체 dHash transitive component 분할, 범위와 hash를 묶은 DEV-SOHAS 승인, CUDA 사전검사와 실제 학습 시작 증거를 완료 기준으로 둔다. 공식 R1/H1 승인/논문 성능·source 전체/원 좌표 의미·실제 recording session·외부 재배포는 범위 밖이다.
+- search-first: 기존 SOHAS parser/blob 검사·image_signature·group split planner·label parser·copy helper·training runner/preflight를 재사용했다. 신규 exporter는 raw VOC와 review snapshot의 얇은 연결이며 일반 downloader나 framework를 추가하지 않았다. 기존 R1/H1의 7개 gate는 그대로이며 DEV-SOHAS에는 사용자 승인된 제한 scope를 별도로 강제한다.
+- 변경: `dataset/development_subset.py`, 기존 `training.py`의 개발 전용 범위 검증·evidence, 신규 tests, CUDA handoff/open decisions/architecture. 원본과 DB는 쓰지 않고 새 copied output만 만든다. Input hash·list·group·negative·review version·공식 승격 거부와 최종 평가 false를 기록한다. 기존 profile에서 640px/batch16/50epochs/FP32/SGD/workers0을 재사용한다.
+- 검증: 신규6 tests는 로컬 bundled Python3.12.14에서 통과. Windows 재설치 후 기존 로컬 venv는 옛 Python 경로를 참조해 실행 불가이며 수정/재설치하지 않았다. Bundled 환경의 전체130 tests 시도는 werkzeug 부재1 error/12 skipped로 전체 통과가 아니다. PC13 기존 venv와 분리된 ignored QA tree에서 전체130 tests/compileall 통과했다. 첫 전체 실행은 기존 HTTP fixture의 Windows socket10053으로1 error였고, 해당7 tests 및 전체130을 다시 실행해 통과했다. production 서버/DB는 수정하지 않았다. 실제 데이터 수·학습 시작은 후속 기록으로 연결한다.
+- 한계: Proxy group은 실제 session 확인이 아니며 literal pixel-edge 개발 계약은 원 convention 확정이 아니다. 사용자 범위 승인을 원본 미검수 corpus나 공식 결과로 확대하지 않는다. Raw/판정/승인/weight/log는 PC13 ignored 경로에만 둔다. 이 항목 포함 Git commit으로 코드·실행을 추적한다.
+
 ## 2026-10-26 - 검수 완료분 학습 요청과 실제 readiness 확인
 
 - 요청/작업 카드: 사용자가 검수 완료 자료로 학습 실행을 요청했다. 최신 운영 판정의 읽기 전용 집계, GPU/기존 job·weight·승인 입력 확인과 안전한 학습 진입을 범위로 잡았다. 기존 DB·판정·사이트·미검수 원본을 수정하거나 검수 완료를 source 전체 승인으로 확대하지 않는다.

@@ -52,8 +52,8 @@ class TrainingConfig:
                 f"Training config arguments are controlled by the runner: {sorted(forbidden)}"
             )
         required = payload.get("approval_required", False)
-        if type(required) is not bool or (required and payload.get("recipe_id") not in {"R1", "H1"}) or (payload.get("recipe_id") in {"R1", "H1"} and not required):
-            raise ValueError("Approval-gated profiles require recipe_id R1/H1 and a boolean approval_required")
+        if type(required) is not bool or (required and payload.get("recipe_id") not in {"R1", "H1", "DEV-SOHAS"}) or (payload.get("recipe_id") in {"R1", "H1", "DEV-SOHAS"} and not required):
+            raise ValueError("Approval-gated profiles require recipe_id R1/H1/DEV-SOHAS and a boolean approval_required")
         return cls(
             schema_version=1,
             profile_id=payload["profile_id"],
@@ -140,6 +140,7 @@ def run_training(
         "environment": _environment_record(),
         "git_commit": _git_commit(),
         "recipe_id": config.recipe_id,
+        "evaluation_scope": "development_only" if config.recipe_id == "DEV-SOHAS" else "profile_defined",
         "approval": approval,
     }
     if dataset_manifest is not None:
@@ -315,13 +316,23 @@ def validate_training_approval(config_path: Path, config: TrainingConfig, data_y
     if not config.approval_required:
         return None
     if approval_path is None or dataset_manifest is None:
-        raise ValueError("R1/H1 training requires --approval and --dataset-manifest before model loading")
+        raise ValueError("Gated training requires --approval and --dataset-manifest before model loading")
     approval = json.loads(approval_path.read_text(encoding="utf-8-sig"))
-    if not isinstance(approval, dict) or approval.get("schema_version") != 1 or approval.get("status") != "approved":
+    development = config.recipe_id == "DEV-SOHAS"
+    expected_status = "authorized_development_only" if development else "approved"
+    if not isinstance(approval, dict) or approval.get("schema_version") != 1 or approval.get("status") != expected_status:
         raise ValueError("Dataset/recipe approval is pending; training is blocked")
     if any(not isinstance(approval.get(key), str) or not approval[key].strip() for key in ("pair_id", "approval_id", "reviewer_alias", "approved_at")):
         raise ValueError("Approval identity/date is missing")
-    if not isinstance(approval.get("gates"), dict) or any(approval["gates"].get(key) is not True for key in TRAINING_GATES):
+    if development:
+        if (approval.get("scope") != "reviewed_sohas_development_only"
+                or approval.get("coordinate_contract") != "review-overlay-pixel-edges-v1"
+                or approval.get("group_policy") != "filename-family+full-source-dhash-components-v1"
+                or any(approval.get(key) is not False for key in
+                       ("formal_source_approval", "original_coordinate_semantics_verified",
+                        "recording_session_independence_verified", "final_evaluation_allowed", "redistribution_approved"))):
+            raise ValueError("Invalid development-only scope/limitations")
+    elif not isinstance(approval.get("gates"), dict) or any(approval["gates"].get(key) is not True for key in TRAINING_GATES):
         raise ValueError("Source/label/negative/group/split/recipe gates are not all approved")
     entry = approval.get("recipes", {}).get(config.recipe_id) if isinstance(approval.get("recipes"), dict) else None
     if not isinstance(entry, dict):
@@ -337,12 +348,27 @@ def validate_training_approval(config_path: Path, config: TrainingConfig, data_y
         raise ValueError("Approved dataset manifest is empty")
     from collections import Counter
     expected = {split: Counter() for split in ("train", "val", "test")}
+    development_groups, development_hashes = {}, set()
     for row in rows:
         if row.get("split") not in expected or type(row.get("draw_count")) is not int or row["draw_count"] < 1:
             raise ValueError("Invalid split/draw count in approved manifest")
         for key in ("image", "label"):
             if _sha256_file(Path(row[key])) != row[f"{key}_sha256"]:
                 raise ValueError("Approved image/label bytes changed")
+        if development:
+            group = row.get("source_group")
+            if (row.get("source_dataset") != "sohas" or row.get("development_only") is not True
+                    or row.get("review_verdict") != "ok" or type(row.get("review_version")) is not int or row["review_version"] < 1
+                    or row.get("coordinate_contract") != approval["coordinate_contract"]
+                    or type(row.get("knife_count")) is not int or row["knife_count"] < 0
+                    or (row["knife_count"] == 0 and row.get("negative_absence_reviewed") is not True)
+                    or not isinstance(group, str) or not group or row["draw_count"] != 1
+                    or row["image_sha256"] in development_hashes):
+                raise ValueError("Invalid reviewed development subset row")
+            if group in development_groups and development_groups[group] != row["split"]:
+                raise ValueError("Development proxy group crosses partitions")
+            development_groups[group] = row["split"]
+            development_hashes.add(row["image_sha256"])
         expected[row["split"]][row["image"]] += row["draw_count"]
     for split in expected:
         actual = Counter(files[f"{split}_list"].read_text(encoding="utf-8").splitlines())
@@ -350,6 +376,7 @@ def validate_training_approval(config_path: Path, config: TrainingConfig, data_y
             raise ValueError("Training list multiplicities differ from approved manifest")
     train_draws = sum(expected["train"].values())
     return {"pair_id": approval["pair_id"], "approval_id": approval["approval_id"],
+            "scope": approval.get("scope", "formal_r1_h1"), "final_evaluation_allowed": not development,
             "approval_sha256": _sha256_file(approval_path), "bound_inputs": hashes,
             "train_draw_count": train_draws,
             "planned_optimizer_updates": math.ceil(train_draws / config.arguments["batch"]) * config.arguments["epochs"]}

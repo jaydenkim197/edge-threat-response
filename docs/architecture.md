@@ -123,6 +123,8 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 
 `training_pair.py`는 승인 가능한 SOHAS materialized manifest에서 R1/H1의 동일 양성·공통 val/test와 같은 draw budget 목록을 준비한다. H1은 양성을 반복하며 이미지를 추가 복제하지 않는다. 기존 training runner를 확장해 승인 파일·입력 bytes/hash가 맞지 않으면 모델 로드 전에 차단한다. 자동 권리 판정·사람 검수·raw VOC 반입·full training launch는 하지 않는다. [CUDA handoff](training-cuda-handoff.md)에 development 설정·승인·실행/비교 절차가 있다.
 
+사용자 승인에 따른 `dataset/development_subset.py`의 DEV-SOHAS는 review snapshot의 정상 SOHAS만 pinned source와 대조하여 별도 복사·pixel-edge label·보수적 proxy group split을 만든다. 기존 runner를 쓰되 `authorized_development_only` hash-bound 범위를 별도로 확인한다. 공식 R1/H1 gate를 완화하지 않고 원 좌표 의미·실제 recording session·최종 평가·재배포 승인은 false로 남긴다. 개발 승인을 공식 profile로 전용하거나 입력 bytes/list/group을 바꾸면 거부한다.
+
 ## 팀 데이터셋 검수 도구
 
 학습 전 검수용 웹 도구는 runtime 경보 시스템과 별도로 PC13에서 실행한다. 기존 Flask/Waitress·ReviewStore·SQLite 이력과 공통 두 질문 UI를 재사용한다. 사용자 선택에 따라 공개 이름 드롭다운으로 검수자를 지정하고 30일 session을 유지한다. 이는 본인 인증이 아닌 self-declared identity다. 관리자 route는 별도의 코드와 8시간 session을 사용한다. 이름·raw pack·DB·비밀값은 ignored runtime에 보관한다.

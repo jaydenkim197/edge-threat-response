@@ -10,6 +10,22 @@ legacy development dataset을 사용하는 아래 Baseline v1 절차는 다른 �
 
 ## R1/H1 실행 준비 — 2026-10-04
 
+### 2026-10-26 별도 개발용 예비 학습 — 사용자 승인
+
+사용자는 SOHAS 정상 판정183개(양성130/음성53)만으로 **개발용 예비 학습**을 먼저 진행하는 제안을 명시적으로 승인했다. `DEV-SOHAS`는 공식 R1/H1이나 최종 연구 성능을 위한 source 승인이 아니다. 기존 R1/H1의 7개 승인 gate는 유지한다.
+
+`dataset.development_subset`는 고정된 review snapshot의 정상 SOHAS 후보만 받아 pinned upstream image/XML blob·review hash·모든 knife bbox·decode/dimension을 다시 비교한다. 복사본과 model-local `0=knife` label을 새 ignored output에 만들고 원본·검수 DB는 수정하지 않는다. 박스는 검수 화면의 raw xyxy를 **명시적인 개발용 pixel-edge 계약**으로 해석한다. 원본 좌표 의미를 회복했다고 주장하지 않는다. 비기본 EXIF와 exact duplicate는 image 전체를 보류·기록한다.
+
+전체 SOHAS integrity의 번호 제거 filename family(범용 knife/pistol 계열도 보수적으로 통합), exact hash, dHash pair를 연결해 transitive proxy component를 만든다. 미선정 image를 통한 연결도 유지하며 같은 component를 분할하지 않는다. 기존 group split planner의 train/val/test=70/15/15·seed20261026을 쓰고, 각 partition에 positive가 없으면 그룹을 깨지 않고 중단한다. 이는 실제 recording session 독립성 검증이 아니다. test는 보관만 하며 이 예비 학습의 model selection에는 쓰지 않는다.
+
+```powershell
+python -m edge_threat_response.dataset.development_subset --manifest data/work/review-candidates/20261026-training-v1/review-linked-manifest.jsonl --source-root data/source-audit/sohas-upstream-byte-exact --integrity data/work/image-screening/sohas-full-20261004-v1/image-integrity.jsonl --pairs data/work/image-screening/sohas-full-20261004-v1/similarity-pairs.jsonl --plan configs/training/sohas-pair.pc13.json --checkpoint yolo26n.pt --output-dir data/processed/sohas-reviewed-development-20261026-v1 --expected-count 183 --authorization-id user-20261026-reviewed-development
+```
+
+이 명령의 authorization ID는 위 사용자의 범위 승인에 대한 참조이며, 임의의 문자열이 새로운 사람 승인을 대신하지 않는다. `development-authorization.json`은 config/YAML/manifest/checkpoint/train·val·test list의 SHA-256을 묶고, `authorized_development_only`·원 좌표/실제 session/최종 평가/외부 재배포 승인 false를 명시한다. 공식 승인과 호환되지 않는다. 학습 runner는 source·review version·negative 확인·group/hash 교차·입력 변조·list 개수를 재검사하며 DEV-SOHAS도 승인 파일 없이 실행하지 않는다. 별도 source 통합이나 corpus 확대는 포함하지 않는다.
+
+실제 실행은 같은 runner에 `--config <output>/training.json --data <output>/data.yaml --dataset-manifest <output>/DEV-manifest.jsonl --approval <output>/development-authorization.json --require-cuda`를 사용한다. 먼저 `--preflight-only`를 확인하고, 이후 새 `--output-dir runs/training`/고유 run name으로 SSH 독립 실행한다. 초기 설정은 기존 development profile의 YOLO26n/640px/batch16/50epochs/FP32/SGD/workers0이며 연구 최종값이 아니다. 결과에는 `evaluation_scope=development_only`를 남긴다. 실제 실행과 측정은 development-log/verification의 후속 증거를 따른다.
+
 **준비 코드와 승인 차단은 구현됐고, 실제 SOHAS 전체 학습은 아직 시작하지 않았다.** 아래는 신규 detector 트랙이다. 기존 legacy/Colab 절차와 혼용하지 않는다.
 
 - R1: 승인된 SOHAS knife 양성 + 실제 knife 부재를 검수한 음성.
