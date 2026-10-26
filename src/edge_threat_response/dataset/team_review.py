@@ -245,9 +245,12 @@ def create_app(config_path: Path):
             reviewed = [item for item in items if item["version"]]
             entries.append({key: value for key, value in entry.items() if key not in {"review_dir", "review_batches"}} | {
                 "available": bool(store), "total": len(items), "reviewed": len(reviewed),
+                "remaining": len(items) - len(reviewed),
                 "held": sum(review_verdict(item["review"], item["knife_count"]) != "ok" for item in reviewed),
                 "mine": sum(item["review"].get("reviewer") == g.user["name"] for item in reviewed),
                 "batch_count": len(store.parts) if isinstance(store, BatchReviewStore) else int(bool(store))})
+        # Python's stable sort preserves catalog order when remaining counts tie.
+        entries.sort(key=lambda item: (not item["available"], -item["remaining"]))
         return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])}, csrf=csrf(), name_login=name_login)
 
     def current_store():

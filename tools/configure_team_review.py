@@ -39,7 +39,6 @@ def configure(public_url: str, reviewer_login: str | None = None):
         ("dangerous-items", "Dangerous Items", base / "dangerous-items", "작은 칼·가림 등 gap-filling 후보", "https://zenodo.org/records/16422779", "공식 API CC BY 4.0. 2026-10-26 VOC–YOLO 동일 이미지25쌍(클래스별5쌍)에서 raw class1=Knife 등5개 map을 대조했다. 전체 라벨 검증·학습 승인·최종 연구 분할은 별도. 추가 VOC 표본은 semantic Knife 이름을 사용."),
         ("open-images", "Open Images", base / "open-images", "웹 이미지 기반 제한적 보강 후보", "https://storage.googleapis.com/openimages/web/index.html", "개별 source URL·license를 보존한 첫 표본. CCTV 주력으로 자동 채택하지 않음."),
         ("legacy", "Legacy MIDAS", base / "legacy", "팀원 L0 재현·기존 128장 검수", "https://github.com/YEOUL0520/Crime_Prediction", "기존 표본을 웹으로 제공. 다른 팀원의 독립 L0 트랙."),
-        ("acf", "ACF Knife", base / "acf", "외부 CCTV 이미지 평가 후보", "https://github.com/iCUBE-Laboratory/The-Armed-CCTV-Footage", "원 저장소 404. 대체 배포본의 provenance를 임의로 인정하지 않음."),
     ]
     entries = []
     outcomes_file = base / "outcomes.json"
@@ -57,7 +56,8 @@ def configure(public_url: str, reviewer_login: str | None = None):
     # Keep intentionally deployed sources outside the initial catalog. Dropping
     # them would orphan assignments and violate the append-only batch registry.
     catalog_ids = {entry["id"] for entry in entries}
-    entries.extend(entry for entry in previous.get("datasets", []) if entry["id"] not in catalog_ids)
+    # The unprepared ACF placeholder was explicitly retired by the user.
+    entries.extend(entry for entry in previous.get("datasets", []) if entry["id"] not in catalog_ids | {"acf"})
     config = {**previous, "public_url": public_url, "secret_file": str(secret_file), "database": str(database), "datasets": entries,
               "reviewer_login": reviewer_login}
     (folder / "config.json").write_text(json.dumps(config, ensure_ascii=False, indent=2), encoding="utf-8")

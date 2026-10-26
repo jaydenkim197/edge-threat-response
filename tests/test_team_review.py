@@ -143,6 +143,37 @@ class TeamReviewTests(unittest.TestCase):
                 self.assertEqual(b"\x89PNG\r\n\x1a\n", image.data[:8])
                 self.assertEqual((size, size), struct.unpack(">II", image.data[16:24]))
 
+    def test_catalog_orders_by_current_unreviewed_count_not_total(self):
+        from edge_threat_response.dataset.team_review import create_app
+        pack = self.root / "larger"
+        pack.mkdir()
+        (pack / "image.jpg").write_bytes(b"image fixture")
+        (pack / "review.csv").write_text("image_path,original_split\na.jpg,train\nb.jpg,train\nc.jpg,train\n")
+        evidence = [{"sample_no": i + 1, "image_path": name, "image_file": "image.jpg", "width": 100, "height": 100,
+                     "image_sha256": hashlib.sha256(b"image fixture").hexdigest(), "knife_count": 0,
+                     "knife_boxes_xyxy_raw": []} for i, name in enumerate(["a.jpg", "b.jpg", "c.jpg"])]
+        (pack / "image-evidence.jsonl").write_text("\n".join(json.dumps(item) for item in evidence))
+        config = json.loads(self.config.read_text())
+        config["datasets"].append({"id": "larger", "name": "Larger", "review_dir": str(pack)})
+        self.config.write_text(json.dumps(config))
+        self.app = create_app(self.config)
+        client, headers = self.login(self.a)
+        before = client.get("/api/catalog", base_url=self.url).json["datasets"]
+        self.assertEqual(["larger", "fixture", "blocked"], [item["id"] for item in before])
+        for dataset, count in [("larger", 2), ("fixture", 2)]:
+            for _ in range(count):
+                sample = self.post(client, headers, "/api/claim?dataset=" + dataset, {}).json["id"]
+                response = self.post(client, headers, "/api/review?dataset=" + dataset,
+                                     {"id": sample, "version": 0, "fields": {"domain": "non_target", "annotation_verdict": "ok"}})
+                self.assertEqual(200, response.status_code)
+            current = client.get("/api/catalog", base_url=self.url).json["datasets"]
+            if dataset == "larger":
+                self.assertEqual(["fixture", "larger", "blocked"], [item["id"] for item in current])
+                self.assertEqual([2, 1, 0], [item["remaining"] for item in current])
+            else:
+                self.assertEqual(["larger", "fixture", "blocked"], [item["id"] for item in current])
+                self.assertEqual([1, 0, 0], [item["remaining"] for item in current])
+
     def test_auth_images_host_origin_csrf_and_no_credentials_in_catalog(self):
         client = self.app.test_client()
         for path in ["/api/catalog", "/api/items?dataset=fixture", "/api/packs/fixture/images/0", "/app.js"]:

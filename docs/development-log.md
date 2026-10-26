@@ -2,6 +2,14 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-26 - Catargiu 전체 조사·ACF 정리·미검수량 정렬
+
+- 작업 카드/사용자 요청: 최초17장은 전체 수량의 상한이 아니므로 Catargiu 원본 전체에서 작은 칼·CCTV 후보를 추가로 찾는다. 현재 진행하지 않는 ACF placeholder를 검수 화면에서 제거하고 미검수량이 많은 순서로 자동 정렬한다. 기존 ID·판정·배정·이력·두 질문과 학습/val/test 경계를 보존하며, source·권리·실제 session gate를 통과했다고 간주하지 않는다.
+- 조사/준비: pinned v11 원본24,083장 파일 목록과 수정 라벨을 조사했다. knife-positive5,429장/6,161객체 중 적어도 하나의 knife area≤.02인 이미지는1,331개다. 기존 prefix당6장 제한을 제거하고 전체 SOHAS5,859개 signature cache·현재 검수1,219개 fresh bytes·보호864 signature와 대조했다. 보수적 격리524개 후4,905개에 기존 COCO person pretrained를 GPU로 적용했다. 이는 선별 힌트이지 정답/새 학습이 아니다. 내부 visual component 대표에서 모든 칼 박스가2% 이하인754개와 낮은 시점 카메라형8개를 준비했다. 칼 라벨 없는 source도 조사해 CCTV형14개를 별도 준비했다. 전체776개 검수 대기/학습 미승인이다.
+- search-first/변경: 기존 pack builder·signature/proxy·BatchReviewStore·consistent backup·격리 QA를 재사용한다. `/api/catalog`은 `remaining=total-reviewed`로 내림차순 정렬하고 준비되지 않은 항목은 뒤에 둔다. 화면에서 미검수량을 표시하며 cached back 복귀 때 중복 카드 없이 다시 읽는다. config helper는 준비량/registry/배정0인 ACF placeholder를 다시 생성하지 않는다. 원본·연구 근거를 삭제하거나 이미 배포된 source registry를 제거하는 변경이 아니다.
+- 검증: PC13 Python3.12.4의 `2ef3501` archive+candidate overlay에서 관련15 tests·전체141 tests/compileall, 로컬 JS syntax 통과. 새 회귀는 총량과 미검수량 순서가 다른 상황·저장 후 순서 변경 및 config 재실행의 ACF 비복원을 검사한다. 새 코드+복제 DB QA에서 Android412/iPhone390px(모두 Edge Chromium)으로 신규 양성/칼 라벨0 배치 저장·필수 메모·재접속·이어가기·409·기존17개 판정 불변·미검수순/ACF 부재/캐시복귀 중복 방지/질문2/버튼46px/overflow0을 확인했다. 운영 테스트 판정0이다.
+- 배포 상태: 현재 source 준비와 code/격리 QA까지 완료했다. 검증된 code를 commit/push한 뒤 서비스 정지 구간의 fresh 재검사·DB/config backup·776장 append·ACF placeholder 제거·기존 테이블 hash 보존·공개 HTTPS를 확인한다. 실제 배포 결과와 source 한계는 후속 기록으로 연결한다. raw는 PC13 `data/review/catargiu-full-expansion-20261026/`에 둔다.
+
 ## 2026-10-26 - 새 best.pt의 PC 영상 파이프라인 통합 검증
 
 - 작업 카드/요청: Orin 접근·검수 완료를 기다리는 동안 신규 best.pt의 PC 영상 연결을 검증한다. 사용자는 쓸 촬영 영상이 없음을 확인했다. 완료 기준은 새 model/class map·영상 decode·동일 JSONL B0~B3·상태/경보 중복 억제/rearm·metadata/snapshot 원 frame 일치다. 실제 움직임/정확도·Orin·GPIO·source 채택·학습·사이트 DB는 범위 밖이며 조합 영상의 event 수를 논문 효과로 오해하지 않도록 한다.

@@ -6,6 +6,7 @@ async function api(path,body){const response=await fetch(path,body===undefined?{
 async function refreshUsers(){const data=await api("/api/users");el("users").replaceChildren();for(const user of data.users){const row=node("p",`${user.name} · ${user.active?"활성":"비활성"}`);if(!user.admin&&user.active){const button=node("button","접속 해제");button.className="small-button";button.onclick=async()=>{await api(`/api/users/${user.id}/disable`,{});await refreshUsers();};row.append(" ",button);}el("users").append(row);}}
 async function initPortal(){
   const data=await api("/api/catalog");portalCsrf=data.csrf;el("identity").textContent=data.user.name;
+  el("datasets").replaceChildren();el("resume-review").hidden=true;
   const last=localStorage.getItem(`etr-last-pack:${data.user.id}`);
   const resume=data.datasets.find(item=>item.id===last && item.available && item.reviewed<item.total);
   if(resume && !data.user.admin){
@@ -15,7 +16,7 @@ async function initPortal(){
   }
   for(const item of data.datasets){
     const card=document.createElement("article");card.className="progress-card dataset-card";
-    card.append(node("h2",item.name),node("p",item.available?`${item.reviewed} / ${item.total}장 완료 · 내 검수 ${item.mine}장`:`준비 중: ${item.reason||"확인 필요"}`));
+    card.append(node("h2",item.name),node("p",item.available?`미검수 ${item.remaining}장 · ${item.reviewed} / ${item.total}장 완료 · 내 검수 ${item.mine}장`:`준비 중: ${item.reason||"확인 필요"}`));
     if(item.available){const link=node("a",data.user.admin?"검수 현황 보기 →":item.reviewed===item.total?"검수 완료 · 기록 보기 →":"검수 시작 →");link.className="button dark";link.href=`/review/${item.id}`;card.append(link);}
     const info=node("details","");info.append(node("summary","데이터셋 정보"),node("p",item.role),node("p",item.note||""));
     if(item.batch_count>1)info.append(node("p",`${item.batch_count}개 표본 묶음 · 기존 기록을 유지하며 이어서 검수합니다.`));
@@ -36,3 +37,4 @@ async function initPortal(){
   }
 }
 initPortal().catch(error=>el("portal-status").textContent=error.message);
+window.addEventListener("pageshow",event=>{if(event.persisted)initPortal().catch(error=>el("portal-status").textContent=error.message);});

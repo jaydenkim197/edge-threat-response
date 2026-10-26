@@ -23,7 +23,7 @@ class ReviewConfigurationTests(unittest.TestCase):
                      "review_batches": [{"id": "second", "review_dir": str(root / "second-pack")}],
                      "note": "Preserve provenance and original order"}
             config_file = folder / "config.json"
-            config_file.write_text(json.dumps({"datasets": [extra], "reviewer_login": "name",
+            config_file.write_text(json.dumps({"datasets": [extra, {"id": "acf", "name": "Retired placeholder", "reason": "source unavailable"}], "reviewer_login": "name",
                                                "backup_interval": 123}), encoding="utf-8")
             with patch.object(module, "ROOT", root), contextlib.redirect_stdout(io.StringIO()):
                 module.configure("https://review.example.test")
@@ -31,6 +31,7 @@ class ReviewConfigurationTests(unittest.TestCase):
                 module.configure("https://review.example.test")
             result = json.loads(config_file.read_text(encoding="utf-8"))
             self.assertEqual([extra], [e for e in result["datasets"] if e["id"] == extra["id"]])
+            self.assertNotIn("acf", [entry["id"] for entry in result["datasets"]])
             self.assertEqual(123, result["backup_interval"])
             self.assertEqual("name", result["reviewer_login"])
             self.assertEqual(first, result)
