@@ -2,6 +2,11 @@
 
 신규 시스템의 판단 core·PC 영상 입력·replay는 개발 PC에서 검증됐지만 Orin 실기기 통합과 성능은 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
 
+## 2026-10-26 최신 검수와 학습 진입 점검
+
+- PC13 운영 DB를 read-only 집계한 결과765개 중466개 판정, SOHAS 정상183개(양성130/음성53)다. 이는 전체 raw source 승인·좌표 의미·독립 session group 검증이 아니다. raw snapshot은 ignored `data/work/review-candidates/20261026-training-v1/`에 있다.
+- 실제 `training_pair check`에서 CUDA RTX3060/로컬 `yolo26n.pt`를 확인했지만 승인된 materialized manifest 부재로 expected exit2/blocked/`training_started=false`였다. 증거는 PC13 ignored `runs/sohas-reviewed-readiness-20261026-v1/readiness.json`, 실행 코드 `a867622`다. 학습 runner의 승인 차단을 우회하지 않았다. 개발용 예비 학습으로 범위를 구분할지와 남은 좌표/group/split 계약은 사용자 판단 대기다.
+
 | 요구사항 | 검증 방법 | 환경 | 최근 결과 | 증거 위치 | 상태 |
 |---|---|---|---|---|---|
 | 보존형 검수 배치 확대 | immutable base/추가 pack·registry prefix·old/new IDs·권한·stale version·cookie/draft·전 DB backup tests, 합성 확대 모바일 저장/재접속·실제 migration hash 비교·외부 HTTPS | 개발 PC Python3.11 / PC13 Python3.12, Chrome/Android412px·WebKit/iPhone390px, 2026-10-04 | 양 PC 전체107 tests·JS·compileall 통과; fixture 추가 sample 저장/재접속·overflow0·버튼46px. SOHAS 추가100장 decode·Git blob/XML dimension·cross-source SHA-256 중복0. 운영 기존 reviews/history/metadata/users/assignments table hash 동일·registry8행 추가. public form·기존/추가 image·200장 확인, QA 판정/배정0, legacy held 집계 호환성 보완 | `tests/test_review_expansion.py`, `tests/test_team_review.py`, [운영 절차·765/307/32 snapshot](team-review-deployment.md), ignored `data/review/expansion-qa-20261004/`, PC13 `data/review/expansion-work-20261004/` | PC13 migration·외부 HTTPS `VERIFIED`; 저장/재접속은 합성 fixture `VERIFIED`; 실제 휴대폰 설치/재부팅·source/학습 승인 별도 |

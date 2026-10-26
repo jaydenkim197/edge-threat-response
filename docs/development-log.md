@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-26 - 검수 완료분 학습 요청과 실제 readiness 확인
+
+- 요청/작업 카드: 사용자가 검수 완료 자료로 학습 실행을 요청했다. 최신 운영 판정의 읽기 전용 집계, GPU/기존 job·weight·승인 입력 확인과 안전한 학습 진입을 범위로 잡았다. 기존 DB·판정·사이트·미검수 원본을 수정하거나 검수 완료를 source 전체 승인으로 확대하지 않는다.
+- 재사용/환경: `search-first`로 기존 `dataset.review_candidates`, `training_pair check`, hash-bound approval gate를 확인했다. 새 학습 우회 경로·dependency·설정 완화를 만들지 않았다. PC13 Python3.12.4/torch2.6.0+cu124/CUDA true/RTX3060 12GB, GPU utilization0%·478MiB 관찰, 확인된 Python job은 검수 서비스였다. 로컬 `yolo26n.pt`가 존재한다. 양 저장소 pull/status는 정상·clean이었다.
+- 최신 판정: 준비765/판정466/미검수299. SOHAS199/200 중 정상183(knife 양성130/부재53)·문제/모름16, DaSCI92/93 정상92, Legacy26/128 정상25, Simuletic77/114 정상71, US25/100 정상21, Dangerous30/100 정상24, Open Images17/30 정상16. 정상 전체432/문제·모름34이며 source-role/mapping/원 split gate는 유지한다. 실제 recipe를 승인한 집계는 아니다.
+- 실제 명령/증거: PC13 repository root에서 `python -m edge_threat_response.dataset.review_candidates --config data/review/team-server/config.json --policy configs/datasets/review-candidate-policy.json --output-dir data/work/review-candidates/20261026-training-v1`; 이어 `python -m edge_threat_response.training_pair check --plan configs/training/sohas-pair.pc13.json --manifest data/processed/sohas-reviewed-v1/materialized-manifest.jsonl --checkpoint yolo26n.pt --output-dir runs/sohas-reviewed-readiness-20261026-v1` (`PYTHONPATH=src`, `.venv-ml` 사용).
+- 결과/한계: 집계 exit0, readiness expected exit2/blocked/`missing=approved_materialized_source_manifest`/`training_started=false`. PC13 `data/processed`와 approval 파일은 미준비다. 기존 source 좌표 의미·camera/session group/split 검증을 정상 표본 판정만으로 완료 처리하지 않는다. 사용자 학습 요청은 받았으나 미확인 gate의 사실 여부를 대신하지 않는다. 코드·학습 설정 변경이 없어 unit tests 재실행은 하지 않았다.
+- 다음 판단: SOHAS 정상183개만 쓰는 개발용 예비 학습을 공식 R1/H1·최종 연구 평가와 구분하여 먼저 허용할지 사용자에게 제안한다. 이 개발 범위의 좌표 계약·보수적 proxy grouping과 그 한계를 명시적으로 정한 뒤 준비해야 하며, 기존 승인 gate를 조용히 해제하거나 인간 검증으로 위장하지 않는다. full training/평가 수치는 이번 작업에서 생성하지 않았다. Git은 이 기록을 포함하는 commit으로 추적한다.
+
 ## 2026-10-04 - 검수와 독립적인 SOHAS 전체 이미지 준비·검출 평가 기반
 
 - 목적/작업 카드: 사용자가 물리 작업·팀 판정이 선행되지 않는 준비를 위임했다. (1) PC13 pinned SOHAS 전체 image 확보·구조/byte/decode 검사, (2) 후보 간 heuristic 유사 pair 진단, (3) 고정 threshold knife bbox·small recall·negative FP 평가기를 완료 기준으로 둔다. 사이트/DB/판정 수정·미승인 source 채택·full training·촬영/Orin은 제외한다. 원본·개인자료 외부 공유를 하지 않는다.
