@@ -2,6 +2,13 @@
 
 신규 시스템의 판단 core·PC 영상 입력·replay는 개발 PC에서 검증됐지만 Orin 실기기 통합과 성능은 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
 
+## 2026-10-26 신규 best.pt PC 영상 통합
+
+- PC13 RTX3060/Python3.12.4에서 새 DEV-SOHAS best.pt + COCO person의 실제 CUDA 추론을 기존 runtime에 연결했다. train 이미지3개+blank의53frame FFV1/10fps 영상은 전frame decode pixel hash가 encode 전과 동일하고53개가 서로 다르다. valid53/detections59, 같은 JSONL의 B0/B1/B2/B3 event 수4/3/3/2가 fixture 기대 frame과 일치한다. 최종 사건 성능 비교가 아니다.
+- Live B3 event/snapshot2, action error0, 전4상태·중복 억제·clear/rearm 확인. frame19/40의 decoded frame을 JPEG로 재인코딩한 bytes가 저장 snapshot과 일치한다. 별도 `etr-run.exe`에서도 동일 source ID/config의 JSONL hash가 detection-only/live API와 같다.
+- Required knife adapter frame21 예외는 error1/partial detections0·K2/N3 유지,21/22 연속 예외는 error2·22 cooldown·재등장 rearm을 확인했다. fault별 event2/snapshot2/action error0이다. 실제 오류 관측과 인위적 fault injection을 구분한다.
+- 관련 detector3/runtime2/replay CLI1 tests, 전체138 tests·driver compileall 통과. source `baf6106` + 신규 driver. [실행 조건·hash·재현·한계](../reports/runtime/development-best-video-2026-10-26/report.md), PC13 ignored `runs/runtime/best-pc-video-20261026-v1/`. 사이트/DB/승인/학습/val·test는 변경하지 않았다. 실영상·manual GT·Orin/camera/GPIO·FPS/지연·장기 운용은 미검증이다.
+
 ## 2026-10-26 SOHAS gap150장 검수 사이트 배포 검증
 
 - 기준 `9563fba`, 기존 runtime/두 질문/이름 선택/immutable batch 연결을 재사용하고 운영 config에100장·50장만 추가했다. 새 준비/질문/학습 기능을 구현하지 않았다. [운영 안내](team-review-deployment.md#2026-10-26-추가-검수150장-배포).

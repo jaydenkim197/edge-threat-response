@@ -1,0 +1,240 @@
+{
+  "status": "passed_pc_integration_not_benchmark",
+  "integration": {
+    "detection": {
+      "count": 59,
+      "frames": 53,
+      "sha256": "4d92ee6524860051e2973ae77b864b6aa68fd8d726041c4451ff4a3be94429da",
+      "statuses": {
+        "valid": 53
+      }
+    },
+    "device": "0",
+    "environment": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    },
+    "fault_injection": {
+      "double-error": {
+        "event_count": 2,
+        "frame_status_counts": {
+          "detector_error": 2,
+          "valid": 51
+        },
+        "injected_error_frames": [
+          21,
+          22
+        ]
+      },
+      "single-error": {
+        "event_count": 2,
+        "frame_status_counts": {
+          "detector_error": 1,
+          "valid": 52
+        },
+        "injected_error_frames": [
+          21
+        ]
+      }
+    },
+    "fixture": {
+      "codec": "FFV1",
+      "fps": 10,
+      "frames": 53,
+      "kind": "train-derived still montage with unique frame markers",
+      "segments": [
+        [
+          "blank",
+          4
+        ],
+        [
+          "person_negative",
+          4
+        ],
+        [
+          "knife_only",
+          4
+        ],
+        [
+          "blank",
+          6
+        ],
+        [
+          "associated",
+          8
+        ],
+        [
+          "blank",
+          6
+        ],
+        [
+          "associated",
+          1
+        ],
+        [
+          "blank",
+          6
+        ],
+        [
+          "associated",
+          8
+        ],
+        [
+          "blank",
+          6
+        ]
+      ],
+      "selection": {
+        "associated": {
+          "image_sha256": "8010b986bd21d2cd7f7c53fc97a2c965d24982be8a40abb48bb088cee8f30deb",
+          "probe_score": 0.9272372722625732,
+          "source_group": "proxy-fc5cef99a44dca465000a328",
+          "split": "train"
+        },
+        "knife_only": {
+          "image_sha256": "01e2d67f07f50fe412c19fc07b5a91cbec2995584dc10fd4456af24abc472095",
+          "probe_score": 0.9584429264068604,
+          "source_group": "proxy-fc5cef99a44dca465000a328",
+          "split": "train"
+        },
+        "person_negative": {
+          "image_sha256": "b0a43970af13cf7a0dbcf628f71b827057c36bc54351c93803a4b218ba3182e8",
+          "probe_score": 0.9393726587295532,
+          "source_group": "proxy-428ea06ceb4fe2785f0b23f1",
+          "split": "train"
+        }
+      },
+      "video_sha256": "b16a569242f37e771f268a6b3d9b1e0ad3c9f98daee85c51d22d0461d2141e6e"
+    },
+    "git_commit": "baf61069649ec8bf2b3b20e605ea20616120c1f8",
+    "limits": [
+      "selected train fixtures test wiring, not detection/event accuracy",
+      "assembled still frames do not establish real motion robustness",
+      "mock alarm only, no GPIO/camera/Orin verification",
+      "development confidence/geometry/K/N are not frozen research parameters"
+    ],
+    "live_b3": {
+      "action_errors": 0,
+      "events": [
+        19,
+        40
+      ],
+      "snapshots": 2,
+      "states": [
+        "CANDIDATE",
+        "CLEAR",
+        "CONFIRMED",
+        "COOLDOWN"
+      ]
+    },
+    "prepared_manifest_sha256": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+    "replay": {
+      "B0": {
+        "action_errors": 0,
+        "events": [
+          8,
+          18,
+          32,
+          39
+        ],
+        "input_sha256": "4d92ee6524860051e2973ae77b864b6aa68fd8d726041c4451ff4a3be94429da"
+      },
+      "B1": {
+        "action_errors": 0,
+        "events": [
+          9,
+          19,
+          40
+        ],
+        "input_sha256": "4d92ee6524860051e2973ae77b864b6aa68fd8d726041c4451ff4a3be94429da"
+      },
+      "B2": {
+        "action_errors": 0,
+        "events": [
+          18,
+          32,
+          39
+        ],
+        "input_sha256": "4d92ee6524860051e2973ae77b864b6aa68fd8d726041c4451ff4a3be94429da"
+      },
+      "B3": {
+        "action_errors": 0,
+        "events": [
+          19,
+          40
+        ],
+        "input_sha256": "4d92ee6524860051e2973ae77b864b6aa68fd8d726041c4451ff4a3be94429da"
+      }
+    },
+    "reserved_test_used": false,
+    "schema_version": 1,
+    "script_sha256": "3b1b71eb256ab6724bf17e9176233c4bf40f1b93c9b808c4668db3442ab63567",
+    "snapshot_frame_equality": {
+      "double-error": [
+        {
+          "frame_index": 19,
+          "sha256": "d93c55e579722df148a94ca7ec572ba369b9b7b02db9e64b9a21937d985fe1a4"
+        },
+        {
+          "frame_index": 40,
+          "sha256": "be54dd071e71305a1b554cb1c5ad0978abaa6577dfa7cf16369103b1202417df"
+        }
+      ],
+      "live": [
+        {
+          "frame_index": 19,
+          "sha256": "d93c55e579722df148a94ca7ec572ba369b9b7b02db9e64b9a21937d985fe1a4"
+        },
+        {
+          "frame_index": 40,
+          "sha256": "be54dd071e71305a1b554cb1c5ad0978abaa6577dfa7cf16369103b1202417df"
+        }
+      ],
+      "single-error": [
+        {
+          "frame_index": 19,
+          "sha256": "d93c55e579722df148a94ca7ec572ba369b9b7b02db9e64b9a21937d985fe1a4"
+        },
+        {
+          "frame_index": 40,
+          "sha256": "be54dd071e71305a1b554cb1c5ad0978abaa6577dfa7cf16369103b1202417df"
+        }
+      ]
+    },
+    "status": "passed_pc_integration_not_benchmark",
+    "training_scope": "reviewed_sohas_development_only",
+    "weight_sha256": {
+      "knife": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+      "person": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+    }
+  },
+  "cli_verification": {
+    "status": "passed",
+    "cli_exit_code": 0,
+    "source_id": "train-derived-integration",
+    "detections_sha256": "4d92ee6524860051e2973ae77b864b6aa68fd8d726041c4451ff4a3be94429da",
+    "identical_detection_only_live_cli": true,
+    "events": 2,
+    "snapshots": [
+      {
+        "frame_index": 19,
+        "sha256": "d93c55e579722df148a94ca7ec572ba369b9b7b02db9e64b9a21937d985fe1a4"
+      },
+      {
+        "frame_index": 40,
+        "sha256": "be54dd071e71305a1b554cb1c5ad0978abaa6577dfa7cf16369103b1202417df"
+      }
+    ],
+    "unique_decoded_frames": 53
+  }
+}

@@ -70,7 +70,7 @@
 
 | 기능 | 목적·가치 | 난이도 / 의존성 | 논문 기여 | 일정 위험 | 상태 |
 |---|---|---|---|---|---|
-| Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | adapter/legacy PC smoke `IMPLEMENTED`; 선택 모델·Orin `PLANNED` |
+| Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | adapter·신규 개발 모델의 PC 영상 통합 `VERIFIED`; 최종 모델·Orin `PLANNED` |
 | Single-frame baseline | 기존 방식의 재현 가능한 비교군 | 중 / 탐지·GPIO | 필수 비교군 | 원본 환경 불명확 | B0 replay `IMPLEMENTED`/PC `VERIFIED`; 실기기 비교 `PLANNED` |
 | Person–knife geometry association | nearest person과 확장 bbox로 공간 문맥 제공; 정규화 거리는 진단값 | 중 / bounding box 계약 | context 효과 비교 | 관계 정의 오류 | core `IMPLEMENTED` / PC `VERIFIED` |
 | K-of-N temporal confirmation | 순간 오탐·누락에 대한 시간 문맥 | 중 / 프레임 시간·누락 처리 | context 효과 비교 | 임계값 과적합 | core `IMPLEMENTED` / PC `VERIFIED` |
@@ -242,6 +242,8 @@ Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP
 주간보고서는 매주 금요일 제출 요구에 맞춰 최신 주차가 앞에 오도록 누적하되, 상세 기술 근거는 개발 로그와 검증 문서를 링크한다. 원본 영상·사진·대용량 결과·개인정보는 Git에 넣지 않고 통제된 로컬 저장 위치와 식별자만 기록한다.
 
 ## 12. Current Work Gate
+
+2026-10-26 갱신: DEV-SOHAS 예비 학습3개와 오류 분석, 새 best.pt + COCO person의 PC13 CUDA 영상/동일 JSONL B0~B3/metadata/snapshot/mock alarm 통합을 검증했다. 검수 사이트는 추가150장 배포 완료이며 학습 승인은 별도다. 다음은 source gate를 통과한 실사 보강과 Orin 접속·실제 영상/사건 정답·카메라/GPIO 통합이다. [PC 통합 증거](../reports/runtime/development-best-video-2026-10-26/report.md)는 train 이미지 조합 smoke이며 실영상 성능·최종 detector·실기기 DoD 완료를 뜻하지 않는다. 아래09-26 항목은 원래의 gate 순서로 보존한다.
 
 2026-09-26 현재, 남은 선행 작업은 아래 순서로 진행한다. 세부 상태는 [Pre-Orin Work Plan](pre-orin-work-plan.md)과 [Verification Matrix](verification.md)를 따른다.
 

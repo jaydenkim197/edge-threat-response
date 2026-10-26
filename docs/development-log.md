@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-26 - 새 best.pt의 PC 영상 파이프라인 통합 검증
+
+- 작업 카드/요청: Orin 접근·검수 완료를 기다리는 동안 신규 best.pt의 PC 영상 연결을 검증한다. 사용자는 쓸 촬영 영상이 없음을 확인했다. 완료 기준은 새 model/class map·영상 decode·동일 JSONL B0~B3·상태/경보 중복 억제/rearm·metadata/snapshot 원 frame 일치다. 실제 움직임/정확도·Orin·GPIO·source 채택·학습·사이트 DB는 범위 밖이며 조합 영상의 event 수를 논문 효과로 오해하지 않도록 한다.
+- search-first/구현: 기존 `build_detector`, `OpenCVFrameSource`, `run_detection_stream`, `run_live_pipeline`, replay CLI와 source/hash 승인 검증을 재사용했다. 신규 `tools/verify_development_video.py`만으로 weight/class 확인→train137 probe→fixture 구성→실제 GPU 추론→결과 assert를 재현한다. 기존 runtime·기본 설정·의존성·운영 사이트는 수정하지 않았다. person.5/knife.25/640/schema2 alpha.25/K2-N3/rearm2는 smoke용이다.
+- 실측: PC13 RTX3060/Python3.12.4/torch2.6.0+cu124/Ultralytics8.4.152. knife `d8eff85e…`·person `9b09cc8b…`를 연결했다. train3 이미지와 blank의53frame/10fps/FFV1 영상은 전frame lossless decode, valid53/canonical59다. 동일 JSONL에서 B0 events[8,18,32,39], B1[9,19,40], B2[18,32,39], B3[19,40]. Live B3 event2/snapshot2/action error0·전4상태 통과. frame19/40의 JPEG 재생성 bytes와 저장 snapshot이 일치하고 첫 snapshot frame019를 눈으로 확인했다. 53개 pixel hash가 모두 달라 binding 오류를 검출할 수 있다.
+- 오류/CLI: knife component frame21 예외1회는 partial detection을 버리고 valid52/error1·K2/N3 confirmation 유지. 21/22 연속 예외는 valid51/error2·22 cooldown·이후 clear/rearm/재등장 확인. 두 경우event19/40만 발생, snapshot2/action error0. 실제 고장이 아닌 fault injection이다. 별도 `etr-run.exe`도 성공했고 source ID까지 맞춘 detection-only/live API/CLI JSONL hash `4d92ee6524860051e2973ae77b864b6aa68fd8d726041c4451ff4a3be94429da`가 일치했다.
+- 검증/기록: 관련6 tests 후 전체138 tests·driver compileall 통과. source base `baf6106` + 신규 driver, 실행 script SHA `3b1b71eb256ab6724bf17e9176233c4bf40f1b93c9b808c4668db3442ab63567`. raw는 PC13 ignored `runs/runtime/best-pc-video-20261026-v1/`, log는 `data/work/code-qa/pc-video-integration-20261026-v1/`. [보고서·evidence](../reports/runtime/development-best-video-2026-10-26/report.md), architecture·verification·Pre-Orin·Master Plan의 PC 상태를 갱신했다. Git commit은 본 항목과 tool을 포함한 변경 이력으로 추적한다.
+- 한계/다음: 모델이 반응하는 train fixture를 골랐으므로 실영상/사건 precision·recall/오경보·추론 FPS·GPIO 지연의 근거가 아니다. val/test는 추론하지 않고 승인 무결성 hash만 검사했다. 사이트 신규150장 검수와 source gate 후 실사 보강, 실제 영상/수동 사건 GT·Orin·카메라/GPIO 통합은 남는다. 개발 후보·threshold를 최종 연구 결정으로 승격하지 않았다.
+
 ## 2026-10-26 - SOHAS 작은 칼100장·혼동 음성 후보50장 사이트 배포
 
 - 작업 카드/범위: 사용자 지정 준비 commit `9563fba`와 PC13 `data/review/sohas-gap-20261026-v1/README.md`·`summary.json`을 확인했다. 기존 SOHAS에150장을 append하되 기존 image ID/판정/version/history/계정/배정을 보존하고, 이름 선택·공통 두 질문을 유지한다. 완료 기준은 fresh cross-pack 중복/보호 proxy 재검사·consistent backup·격리 QA 저장/재접속/이어가기/모바일·외부 HTTPS·전후 보존 비교다. 원본 변경·새 질문·학습·기존 val/test 재분할은 범위 밖이다.

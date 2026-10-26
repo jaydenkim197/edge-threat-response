@@ -1,6 +1,6 @@
 # System Architecture
 
-상태: MVP 논리 구조 `DECISION`, 공통 core·replay·detector/video/snapshot 인터페이스 `IMPLEMENTED`/PC `VERIFIED`, CUDA/Orin·camera/GPIO adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
+상태: MVP 논리 구조 `DECISION`, 공통 core·replay·detector/video/snapshot 인터페이스 `IMPLEMENTED`/PC `VERIFIED`(CPU 및 PC13 CUDA), Orin·camera/GPIO adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
 
 ## 시스템 경계
 
@@ -29,6 +29,8 @@ Optional after MVP:
 - legacy adapter: 2025-2 Nano 코드는 submodule에서 보존하며 신규 package의 runtime 기준으로 사용하지 않는다.
 
 Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay는 B0~B3와 상태 전이를 같은 입력에 반복 실행하고, PC video 경로는 실제 frame과 detector를 연결한다. 카메라·GPIO의 Orin 실기기 연결은 후속 검증 대상이다.
+
+2026-10-26: 신규 DEV-SOHAS AdamW+scale.9 best.pt와 COCO person을 PC13에서 연결했다. train 이미지 조합53frame 영상의 실제 detector→동일 JSONL B0~B3→live B3 metadata/JPEG/mock alarm, single/double component 오류와 rearm을 검증했다. runtime 수정 없이 기존 adapter를 재사용했고 재현 driver는 `tools/verify_development_video.py`에 있다. 이는 [PC 통합 검증](../reports/runtime/development-best-video-2026-10-26/report.md)이며 실제 연속 촬영 성능·최종 topology·Orin 동작은 확정하지 않았다.
 
 ## 책임 분리
 

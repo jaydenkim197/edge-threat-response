@@ -1,8 +1,8 @@
 # Pre-Orin Work Plan
 
-기준일: 2026-10-04
+기준일: 2026-10-26
 
-상태: PC core·replay·dataset tooling·video adapter·CUDA handoff `IMPLEMENTED`/PC `VERIFIED`; legacy 사람 검수·외부 source audit·CUDA full training·Orin 통합 `PLANNED`
+상태: PC core·replay·dataset tooling·video adapter·CUDA handoff와 새 개발 best.pt PC13 영상 통합 `IMPLEMENTED`/PC `VERIFIED`; source 전체 정식 학습·실영상 사건 평가·Orin 통합 `PLANNED`
 
 이 문서는 Orin의 원격 접속·주변장치 통합 전 **남은 작업**을 관리한다. 2026-10-04 사용자 최신 확인은 Orin 보유/원격 미설정/카메라·GPIO 미확보다. 수령 대기가 아니라 부팅 상태·SKU/OS inventory와 원격 설정이 다음 실물 gate다. 과거 W1~W6의 상세 구현·측정 이력은 [Development Log](development-log.md)와 [Verification Matrix](verification.md)에 보존한다. 접속 후 실제 환경·장비 상태를 재확인한다.
 
@@ -11,12 +11,13 @@
 - 순수 판단 core, B0~B3 replay, knife-only dataset audit/export/review pack, image/video detector adapter와 snapshot 경로를 PC에서 검증했다.
 - legacy 원본은 7,364장이고 exact duplicate 3장을 제거한 development export는 7,361장이다. 기존 split에는 source group 교차가 발견됐다.
 - 로컬 CPU에서 YOLO26n 소규모 학습 smoke를 완료했다. 이는 학습 배관 검증이며 detector 품질 근거가 아니다.
-- CUDA용 runner·config·GPU preflight·Colab notebook은 준비됐지만 full training은 실행하지 않았다.
+- CUDA용 runner·config·GPU preflight·Colab notebook은 준비됐고, 승인된 SOHAS183장 개발 예비 학습3개를 완료했다. source 전체 정식 R1/H1 학습은 아직 수행하지 않았다.
 - W4 review pack은 128행 CSV와 8개 contact sheet가 준비됐다. 사람 판정과 L0 학습 승인은 아직 없다.
 - 선택 detector의 CUDA/Orin 성능, 카메라, GPIO와 TensorRT 동작은 실기기에서 검증되지 않았다.
 - 사건 평가기·가상 B0~B3 end-to-end와 촬영/수동 정답/세션 분리 양식을 준비했다. 실제 거리·matching tolerance·반복 규모는 pilot 후 확정한다([통제 실험](controlled-experiment-protocol.md)).
 - R1/H1의 공통 평가 목록·matched draw budget·hash-bound approval gate·결과 비교 코드는 준비됐다. 승인된 SOHAS export가 없어 full training은 차단 상태다([학습 준비](training-cuda-handoff.md)).
 - 2026-10-26 별도 사용자 승인 DEV-SOHAS에서는 정상183개만으로50epochs GPU 학습·checkpoint·composite 통합 smoke를 완료했다. Train137/val23/reserved-test23이며 val recall.2143/mAP50 .2658로 낮다. [개발용 보고](../reports/training/sohas-reviewed-development-2026-10-26/report.md). 공식 R1/H1·source 전체/최종 평가 승인이 아니므로 기존 gate와 구분하고 오류 분석·보강이 필요하다.
+- 후속 오류 분석/학습에서 AdamW+scale.9 후보의 개발 val mAP50 .5520/mAP50–95 .2072를 측정했다. 새 best.pt + COCO person을 train 이미지 조합53frame 영상에 연결해 같은 JSONL B0~B3·B3 metadata/snapshot·mock alarm·single/double component fault를 검증했다. [새 모델 PC 영상 통합](../reports/runtime/development-best-video-2026-10-26/report.md). 실영상/사건 성능·Orin 검증은 아니며, 별도 실제 영상이 없다는 사용자 확인을 기록했다. 사이트 신규150장도 배포됐으나 검수·학습 승인은 대기다.
 - 웹 판정의 read-only batch/image-hash 연결·source별 집계·미승인 실사/합성/평가/보류 후보 도구를 구현·실제 PC13 765개/판정309개 snapshot을 검증했다([검수→후보](dataset-evaluation-criteria.md#6-웹-판정--미승인-학습-후보-snapshot)). 다음 gate는 승인 범위·좌표/group/권리 확인과 실제 YOLO materialization이다.
 - 팀 판정과 독립적인 원본 decode/hash/XML dimension·유사 pair screening, 고정 threshold knife bbox/small recall/negative FP 평가 기반을 구현했다. SOHAS5859/review765 image 검사와 교차6424 cached signature, 가상 bbox CLI를 PC13에서 검증했다([증거](../reports/datasets/image-screening-2026-10-04/report.md)). 유사 pair는 session 확정이 아니고 image 지표는 사건 지표와 다르다. 다음 source materialization/full training에는 human·권리·좌표·group/recipe 승인이 남는다.
 
