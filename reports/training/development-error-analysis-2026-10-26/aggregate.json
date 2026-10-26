@@ -1,0 +1,2721 @@
+{
+  "coco_diagnostics": {
+    "checkpoint_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+    "git_commit": "5a1389128ccf10c8712fe2ff43206395fe74e56d",
+    "limits": [
+      "fixed-threshold matching differs from Ultralytics best-F1 summary",
+      "train diagnostics are fit measures, not held-out performance",
+      "small normalized area is not physical distance",
+      "predictions below confidence .05 are outside this diagnostic sweep",
+      "AI visual diagnostics do not change human review/ground truth"
+    ],
+    "partitions": {
+      "train": {
+        "error_categories": {
+          "detected": 12,
+          "localization": 21,
+          "low_confidence": 4,
+          "missed": 90
+        },
+        "sweep": [
+          {
+            "counts": {
+              "fn": 91,
+              "fp": 15,
+              "negative_fp_boxes": 1,
+              "negative_images": 40,
+              "negative_images_with_fp": 1,
+              "small_gt": 26,
+              "small_tp": 1,
+              "tp": 36
+            },
+            "f1": 0.4044943820224719,
+            "fp_boxes_per_negative_image": 0.025,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.025,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.05,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.7058823529411765,
+            "recall": 0.28346456692913385,
+            "schema_version": 1,
+            "small_box_recall": 0.038461538461538464,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 93,
+              "fp": 8,
+              "negative_fp_boxes": 0,
+              "negative_images": 40,
+              "negative_images_with_fp": 0,
+              "small_gt": 26,
+              "small_tp": 1,
+              "tp": 34
+            },
+            "f1": 0.40236686390532544,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.1,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.8095238095238095,
+            "recall": 0.2677165354330709,
+            "schema_version": 1,
+            "small_box_recall": 0.038461538461538464,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 104,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 40,
+              "negative_images_with_fp": 0,
+              "small_gt": 26,
+              "small_tp": 0,
+              "tp": 23
+            },
+            "f1": 0.30666666666666664,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 1.0,
+            "recall": 0.18110236220472442,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 120,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 40,
+              "negative_images_with_fp": 0,
+              "small_gt": 26,
+              "small_tp": 0,
+              "tp": 7
+            },
+            "f1": 0.1044776119402985,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.5,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 1.0,
+            "recall": 0.05511811023622047,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 111,
+              "fp": 35,
+              "negative_fp_boxes": 1,
+              "negative_images": 40,
+              "negative_images_with_fp": 1,
+              "small_gt": 26,
+              "small_tp": 0,
+              "tp": 16
+            },
+            "f1": 0.1797752808988764,
+            "fp_boxes_per_negative_image": 0.025,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.025,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.05,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.3137254901960784,
+            "recall": 0.12598425196850394,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 112,
+              "fp": 27,
+              "negative_fp_boxes": 0,
+              "negative_images": 40,
+              "negative_images_with_fp": 0,
+              "small_gt": 26,
+              "small_tp": 0,
+              "tp": 15
+            },
+            "f1": 0.17751479289940827,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.1,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.35714285714285715,
+            "recall": 0.11811023622047244,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 115,
+              "fp": 11,
+              "negative_fp_boxes": 0,
+              "negative_images": 40,
+              "negative_images_with_fp": 0,
+              "small_gt": 26,
+              "small_tp": 0,
+              "tp": 12
+            },
+            "f1": 0.16,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.5217391304347826,
+            "recall": 0.09448818897637795,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 125,
+              "fp": 5,
+              "negative_fp_boxes": 0,
+              "negative_images": 40,
+              "negative_images_with_fp": 0,
+              "small_gt": 26,
+              "small_tp": 0,
+              "tp": 2
+            },
+            "f1": 0.029850746268656716,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 137,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "train_diagnostic",
+            "policy": {
+              "confidence": 0.5,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.2857142857142857,
+            "recall": 0.015748031496062992,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          }
+        ]
+      },
+      "val": {
+        "error_categories": {
+          "missed": 14
+        },
+        "sweep": [
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.05,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.1,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.5,
+              "iou": 0.25,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.05,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.1,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.5,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          }
+        ]
+      }
+    },
+    "prediction_confidence_floor": 0.05,
+    "prepared_manifest_sha256": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+    "schema_version": 1,
+    "status": "completed_development_diagnostics",
+    "test_used": false
+  },
+  "date": "2026-10-26",
+  "environment": {
+    "driver": "560.94",
+    "gpu": "RTX 3060 12GB",
+    "packages": {
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "ultralytics": "8.4.152"
+    },
+    "python": "3.12.4"
+  },
+  "gap_pack": {
+    "existing_review_images_selected": 0,
+    "git_commit": "8d57c258c717f732dd65c91380be9028e6a43e37",
+    "human_verdicts_written": 0,
+    "input_sha256": {
+      "checkpoint": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+      "integrity": "a51faabbf00099ae617bab7f9b0a7ead54364e770e8d93e25908a24a56e8c845",
+      "pairs": "ef19a4b58d8ad848a13597243e1ce9d8987c74e2b07a8446afdc56d5bc6040ff",
+      "prepared_manifest": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+      "review": "ca9aa15ec35dddd8ecbca6ab9f7d305cd9aa4cbdf8e69c3663a98f6dc252bdd2",
+      "voc": "0dc893b27836677d88a0502c57c417e9b114f8454ee8bff1d00a600b2c981f45"
+    },
+    "limits": [
+      "negative annotations are candidates, not verified knife absence",
+      "prediction-assisted, group/class-balanced mining, not evaluation",
+      "filename/hash/dHash proxies are not verified sessions",
+      "raw annotation coordinates remain unconfirmed",
+      "no production site import performed"
+    ],
+    "negative_candidate_pool": 3383,
+    "negative_probed": 512,
+    "negative_selected": 50,
+    "negative_selected_with_prediction_ge05": 50,
+    "protected_groups_selected": 0,
+    "script_sha256": "5b85449ca0a6b528d69949e9e2526e93785814fdebd0d54c67346da860d72c5d",
+    "small_positive_pool": 359,
+    "small_selected": 100,
+    "status": "prepared_not_reviewed_not_approved",
+    "training_approved": false
+  },
+  "reinforcement_audit": {
+    "git_commit": "8d57c258c717f732dd65c91380be9028e6a43e37",
+    "human_verdicts_written": 0,
+    "input_sha256": {
+      "data\\processed\\sohas-reviewed-development-20261026-v1\\DEV-manifest.jsonl": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+      "data\\work\\image-screening\\cross-source-20261004-v1\\similarity-pairs.jsonl": "f6168b8fb4250a76e73f8f52dba32f4b247364e1b03dfaf9c80b6fb1fbbbf8c5",
+      "data\\work\\image-screening\\sohas-full-20261004-v1\\image-integrity.jsonl": "a51faabbf00099ae617bab7f9b0a7ead54364e770e8d93e25908a24a56e8c845",
+      "data\\work\\image-screening\\sohas-full-20261004-v1\\similarity-pairs.jsonl": "ef19a4b58d8ad848a13597243e1ce9d8987c74e2b07a8446afdc56d5bc6040ff",
+      "data\\work\\review-candidates\\20261026-training-v1\\review-linked-manifest.jsonl": "ca9aa15ec35dddd8ecbca6ab9f7d305cd9aa4cbdf8e69c3663a98f6dc252bdd2"
+    },
+    "limits": [
+      "conservative family/hash/dHash links are not verified shared sessions",
+      "no proxy link does not establish independence or training permission",
+      "review raw overlay coordinates are not a source-coordinate audit",
+      "synthetic additions require a separate ablation, never substitute for real target footage"
+    ],
+    "schema_version": 1,
+    "sources": {
+      "dasci-unique": {
+        "area_median": 0.007968221441582097,
+        "domains": {
+          "non_target": 90,
+          "target_cctv": 1,
+          "unclear": 1
+        },
+        "images": 92,
+        "nondefault_exif": 0,
+        "objects": 97,
+        "positive": 92,
+        "protected_linked_without_candidate_filename_families": 18,
+        "protected_proxy_linked": 92,
+        "small_objects": 88
+      },
+      "simuletic": {
+        "area_median": 0.0038733426914999915,
+        "domains": {
+          "non_target": 5,
+          "target_cctv": 61,
+          "unclear": 5
+        },
+        "images": 71,
+        "nondefault_exif": 0,
+        "objects": 60,
+        "positive": 60,
+        "protected_linked_without_candidate_filename_families": 0,
+        "protected_proxy_linked": 0,
+        "small_objects": 60
+      }
+    },
+    "status": "audited_not_approved",
+    "test_images_or_labels_opened": false,
+    "training_approved": false
+  },
+  "runs": {
+    "adamw": {
+      "arguments": {
+        "amp": false,
+        "batch": 16,
+        "cache": false,
+        "close_mosaic": 10,
+        "copy_paste": 0.0,
+        "cos_lr": false,
+        "degrees": 0.0,
+        "deterministic": true,
+        "device": 0,
+        "epochs": 50,
+        "fliplr": 0.5,
+        "flipud": 0.0,
+        "hsv_h": 0.015,
+        "hsv_s": 0.7,
+        "hsv_v": 0.4,
+        "imgsz": 640,
+        "lr0": 0.001,
+        "lrf": 0.01,
+        "mixup": 0.0,
+        "momentum": 0.937,
+        "mosaic": 1.0,
+        "nbs": 16,
+        "optimizer": "AdamW",
+        "patience": 0,
+        "perspective": 0.0,
+        "plots": true,
+        "pretrained": true,
+        "save": true,
+        "save_period": 10,
+        "scale": 0.5,
+        "seed": 20261004,
+        "shear": 0.0,
+        "translate": 0.1,
+        "val": true,
+        "verbose": true,
+        "warmup_epochs": 0.0,
+        "weight_decay": 0.0005,
+        "workers": 0
+      },
+      "best_epoch_by_csv": 35,
+      "best_pt_sha256": "3ecdbf0f6c60c818706017d6a924b4c975de3ef66b2fe29053fe521aa0ac7ecd",
+      "diagnostics": {
+        "checkpoint_sha256": "3ecdbf0f6c60c818706017d6a924b4c975de3ef66b2fe29053fe521aa0ac7ecd",
+        "git_commit": "8d57c258c717f732dd65c91380be9028e6a43e37",
+        "limits": [
+          "fixed-threshold matching differs from Ultralytics best-F1 summary",
+          "train diagnostics are fit measures, not held-out performance",
+          "small normalized area is not physical distance",
+          "predictions below confidence .05 are outside this diagnostic sweep",
+          "AI visual diagnostics do not change human review/ground truth"
+        ],
+        "partitions": {
+          "train": {
+            "error_categories": {
+              "detected": 125,
+              "low_confidence": 2
+            },
+            "sweep": [
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 90,
+                  "negative_fp_boxes": 7,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 4,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.7383720930232558,
+                "fp_boxes_per_negative_image": 0.175,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.1,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.5852534562211982,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 48,
+                  "negative_fp_boxes": 4,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 3,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.8410596026490066,
+                "fp_boxes_per_negative_image": 0.1,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.075,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.7257142857142858,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 1,
+                  "fp": 15,
+                  "negative_fp_boxes": 3,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 126
+                },
+                "f1": 0.9402985074626866,
+                "fp_boxes_per_negative_image": 0.075,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.05,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.8936170212765957,
+                "recall": 0.9921259842519685,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 8,
+                  "fp": 5,
+                  "negative_fp_boxes": 1,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 1,
+                  "small_gt": 26,
+                  "small_tp": 25,
+                  "tp": 119
+                },
+                "f1": 0.9482071713147411,
+                "fp_boxes_per_negative_image": 0.025,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.025,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.9596774193548387,
+                "recall": 0.937007874015748,
+                "schema_version": 1,
+                "small_box_recall": 0.9615384615384616,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 90,
+                  "negative_fp_boxes": 7,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 4,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.7383720930232558,
+                "fp_boxes_per_negative_image": 0.175,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.1,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.5852534562211982,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 48,
+                  "negative_fp_boxes": 4,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 3,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.8410596026490066,
+                "fp_boxes_per_negative_image": 0.1,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.075,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.7257142857142858,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 2,
+                  "fp": 16,
+                  "negative_fp_boxes": 3,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 125
+                },
+                "f1": 0.9328358208955224,
+                "fp_boxes_per_negative_image": 0.075,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.05,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.8865248226950354,
+                "recall": 0.984251968503937,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 8,
+                  "fp": 5,
+                  "negative_fp_boxes": 1,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 1,
+                  "small_gt": 26,
+                  "small_tp": 25,
+                  "tp": 119
+                },
+                "f1": 0.9482071713147411,
+                "fp_boxes_per_negative_image": 0.025,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.025,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.9596774193548387,
+                "recall": 0.937007874015748,
+                "schema_version": 1,
+                "small_box_recall": 0.9615384615384616,
+                "status": "development_image_boxes"
+              }
+            ]
+          },
+          "val": {
+            "error_categories": {
+              "detected": 5,
+              "localization": 3,
+              "low_confidence": 1,
+              "missed": 5
+            },
+            "sweep": [
+              {
+                "counts": {
+                  "fn": 5,
+                  "fp": 16,
+                  "negative_fp_boxes": 5,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 3,
+                  "small_gt": 11,
+                  "small_tp": 6,
+                  "tp": 9
+                },
+                "f1": 0.46153846153846156,
+                "fp_boxes_per_negative_image": 0.5,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.3,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.36,
+                "recall": 0.6428571428571429,
+                "schema_version": 1,
+                "small_box_recall": 0.5454545454545454,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 7,
+                  "fp": 9,
+                  "negative_fp_boxes": 3,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 3,
+                  "small_gt": 11,
+                  "small_tp": 5,
+                  "tp": 7
+                },
+                "f1": 0.4666666666666667,
+                "fp_boxes_per_negative_image": 0.3,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.3,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.4375,
+                "recall": 0.5,
+                "schema_version": 1,
+                "small_box_recall": 0.45454545454545453,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 7,
+                  "fp": 3,
+                  "negative_fp_boxes": 1,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 1,
+                  "small_gt": 11,
+                  "small_tp": 5,
+                  "tp": 7
+                },
+                "f1": 0.5833333333333334,
+                "fp_boxes_per_negative_image": 0.1,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.1,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.7,
+                "recall": 0.5,
+                "schema_version": 1,
+                "small_box_recall": 0.45454545454545453,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 10,
+                  "fp": 0,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 3,
+                  "tp": 4
+                },
+                "f1": 0.4444444444444444,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 1.0,
+                "recall": 0.2857142857142857,
+                "schema_version": 1,
+                "small_box_recall": 0.2727272727272727,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 8,
+                  "fp": 19,
+                  "negative_fp_boxes": 5,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 3,
+                  "small_gt": 11,
+                  "small_tp": 3,
+                  "tp": 6
+                },
+                "f1": 0.3076923076923077,
+                "fp_boxes_per_negative_image": 0.5,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.3,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.24,
+                "recall": 0.42857142857142855,
+                "schema_version": 1,
+                "small_box_recall": 0.2727272727272727,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 9,
+                  "fp": 11,
+                  "negative_fp_boxes": 3,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 3,
+                  "small_gt": 11,
+                  "small_tp": 3,
+                  "tp": 5
+                },
+                "f1": 0.3333333333333333,
+                "fp_boxes_per_negative_image": 0.3,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.3,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.3125,
+                "recall": 0.35714285714285715,
+                "schema_version": 1,
+                "small_box_recall": 0.2727272727272727,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 9,
+                  "fp": 5,
+                  "negative_fp_boxes": 1,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 1,
+                  "small_gt": 11,
+                  "small_tp": 3,
+                  "tp": 5
+                },
+                "f1": 0.4166666666666667,
+                "fp_boxes_per_negative_image": 0.1,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.1,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.5,
+                "recall": 0.35714285714285715,
+                "schema_version": 1,
+                "small_box_recall": 0.2727272727272727,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 11,
+                  "fp": 1,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 2,
+                  "tp": 3
+                },
+                "f1": 0.3333333333333333,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.75,
+                "recall": 0.21428571428571427,
+                "schema_version": 1,
+                "small_box_recall": 0.18181818181818182,
+                "status": "development_image_boxes"
+              }
+            ]
+          }
+        },
+        "prediction_confidence_floor": 0.05,
+        "prepared_manifest_sha256": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+        "schema_version": 1,
+        "status": "completed_development_diagnostics",
+        "test_used": false
+      },
+      "duration_seconds": 212.64099999999962,
+      "epochs_completed": 50,
+      "git_commit": "8d57c258c717f732dd65c91380be9028e6a43e37",
+      "input_sha256": {
+        "config": "852f053dd732f0619c9ddf6f454c57967e0f4eca2eaa9c412566a2943cff30aa",
+        "data_yaml": "828a2951b0b816caa28cf20ea72032c87f7ed7f524c219306b65ec867079fa03",
+        "dataset_manifest": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+        "pretrained": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+        "test_list": "09cc5fe25eb28692ae4e70d3cfcb582dbd2644e2e60ee3047682924ba1efd5d1",
+        "train_list": "44d44325c058d8773d83e57a40c6b97862d55e5216c635df5ed4cad01abc7c3c",
+        "val_list": "9e33ea191edb95e2e641a424a94eb2afc13a558df321f7126b8b4ced4e1a7af7"
+      },
+      "invocation_sha256": "8a2017450d08f4cbdfca4b7e78da519d596139fad67fe168990318336fd50ed9",
+      "last_pt_sha256": "232840f095b1d002a1a0a8f93760817036c7d3758cb4dbf2846b54e9bc8d01b9",
+      "metrics": {
+        "fitness": 0.1845577704454853,
+        "metrics/mAP50(B)": 0.4686849792158185,
+        "metrics/mAP50-95(B)": 0.1845577704454853,
+        "metrics/precision(B)": 0.6629241261823494,
+        "metrics/recall(B)": 0.5
+      },
+      "planned_optimizer_updates": 450,
+      "results_csv_sha256": "b5258f15ab41f2db14e0acc9c4e1ab292ffc472426f1cda31048c899d1101c6e",
+      "run_id": "sohas-reviewed-development-20261026-adamw-v1",
+      "status": "passed_development_only"
+    },
+    "sgd": {
+      "arguments": {
+        "amp": false,
+        "batch": 16,
+        "cache": false,
+        "close_mosaic": 10,
+        "copy_paste": 0.0,
+        "cos_lr": false,
+        "degrees": 0.0,
+        "deterministic": true,
+        "device": 0,
+        "epochs": 50,
+        "fliplr": 0.5,
+        "flipud": 0.0,
+        "hsv_h": 0.015,
+        "hsv_s": 0.7,
+        "hsv_v": 0.4,
+        "imgsz": 640,
+        "lr0": 0.01,
+        "lrf": 0.01,
+        "mixup": 0.0,
+        "momentum": 0.937,
+        "mosaic": 1.0,
+        "nbs": 16,
+        "optimizer": "SGD",
+        "patience": 0,
+        "perspective": 0.0,
+        "plots": true,
+        "pretrained": true,
+        "save": true,
+        "save_period": 10,
+        "scale": 0.5,
+        "seed": 20261004,
+        "shear": 0.0,
+        "translate": 0.1,
+        "val": true,
+        "verbose": true,
+        "warmup_epochs": 0.0,
+        "weight_decay": 0.0005,
+        "workers": 0
+      },
+      "best_epoch_by_csv": 34,
+      "best_pt_sha256": "83fe8cee46d50c52a2fe0beb12f2fae8531c7ce9d1c0b5d9bc91980925353cc7",
+      "diagnostics": {
+        "checkpoint_sha256": "83fe8cee46d50c52a2fe0beb12f2fae8531c7ce9d1c0b5d9bc91980925353cc7",
+        "git_commit": "5a1389128ccf10c8712fe2ff43206395fe74e56d",
+        "limits": [
+          "fixed-threshold matching differs from Ultralytics best-F1 summary",
+          "train diagnostics are fit measures, not held-out performance",
+          "small normalized area is not physical distance",
+          "predictions below confidence .05 are outside this diagnostic sweep",
+          "AI visual diagnostics do not change human review/ground truth"
+        ],
+        "partitions": {
+          "train": {
+            "error_categories": {
+              "detected": 117,
+              "localization": 1,
+              "low_confidence": 9
+            },
+            "sweep": [
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 131,
+                  "negative_fp_boxes": 6,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 5,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.6597402597402597,
+                "fp_boxes_per_negative_image": 0.15,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.125,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.49224806201550386,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 60,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.8089171974522293,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.679144385026738,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 8,
+                  "fp": 12,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 21,
+                  "tp": 119
+                },
+                "f1": 0.9224806201550387,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.9083969465648855,
+                "recall": 0.937007874015748,
+                "schema_version": 1,
+                "small_box_recall": 0.8076923076923077,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 34,
+                  "fp": 1,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 13,
+                  "tp": 93
+                },
+                "f1": 0.8416289592760181,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.9893617021276596,
+                "recall": 0.7322834645669292,
+                "schema_version": 1,
+                "small_box_recall": 0.5,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 1,
+                  "fp": 132,
+                  "negative_fp_boxes": 6,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 5,
+                  "small_gt": 26,
+                  "small_tp": 25,
+                  "tp": 126
+                },
+                "f1": 0.6545454545454545,
+                "fp_boxes_per_negative_image": 0.15,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.125,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.4883720930232558,
+                "recall": 0.9921259842519685,
+                "schema_version": 1,
+                "small_box_recall": 0.9615384615384616,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 2,
+                  "fp": 62,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 25,
+                  "tp": 125
+                },
+                "f1": 0.7961783439490446,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.6684491978609626,
+                "recall": 0.984251968503937,
+                "schema_version": 1,
+                "small_box_recall": 0.9615384615384616,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 10,
+                  "fp": 14,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 20,
+                  "tp": 117
+                },
+                "f1": 0.9069767441860465,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.8931297709923665,
+                "recall": 0.9212598425196851,
+                "schema_version": 1,
+                "small_box_recall": 0.7692307692307693,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 34,
+                  "fp": 1,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 13,
+                  "tp": 93
+                },
+                "f1": 0.8416289592760181,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.9893617021276596,
+                "recall": 0.7322834645669292,
+                "schema_version": 1,
+                "small_box_recall": 0.5,
+                "status": "development_image_boxes"
+              }
+            ]
+          },
+          "val": {
+            "error_categories": {
+              "detected": 1,
+              "localization": 1,
+              "low_confidence": 3,
+              "missed": 9
+            },
+            "sweep": [
+              {
+                "counts": {
+                  "fn": 9,
+                  "fp": 6,
+                  "negative_fp_boxes": 2,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 11,
+                  "small_tp": 3,
+                  "tp": 5
+                },
+                "f1": 0.4,
+                "fp_boxes_per_negative_image": 0.2,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.2,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.45454545454545453,
+                "recall": 0.35714285714285715,
+                "schema_version": 1,
+                "small_box_recall": 0.2727272727272727,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 11,
+                  "fp": 2,
+                  "negative_fp_boxes": 1,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 1,
+                  "small_gt": 11,
+                  "small_tp": 1,
+                  "tp": 3
+                },
+                "f1": 0.3157894736842105,
+                "fp_boxes_per_negative_image": 0.1,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.1,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.6,
+                "recall": 0.21428571428571427,
+                "schema_version": 1,
+                "small_box_recall": 0.09090909090909091,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 13,
+                  "fp": 0,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 1,
+                  "tp": 1
+                },
+                "f1": 0.13333333333333333,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 1.0,
+                "recall": 0.07142857142857142,
+                "schema_version": 1,
+                "small_box_recall": 0.09090909090909091,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 14,
+                  "fp": 0,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 0,
+                  "tp": 0
+                },
+                "f1": 0.0,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": null,
+                "recall": 0.0,
+                "schema_version": 1,
+                "small_box_recall": 0.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 10,
+                  "fp": 7,
+                  "negative_fp_boxes": 2,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 11,
+                  "small_tp": 3,
+                  "tp": 4
+                },
+                "f1": 0.32,
+                "fp_boxes_per_negative_image": 0.2,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.2,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.36363636363636365,
+                "recall": 0.2857142857142857,
+                "schema_version": 1,
+                "small_box_recall": 0.2727272727272727,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 12,
+                  "fp": 3,
+                  "negative_fp_boxes": 1,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 1,
+                  "small_gt": 11,
+                  "small_tp": 1,
+                  "tp": 2
+                },
+                "f1": 0.21052631578947367,
+                "fp_boxes_per_negative_image": 0.1,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.1,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.4,
+                "recall": 0.14285714285714285,
+                "schema_version": 1,
+                "small_box_recall": 0.09090909090909091,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 13,
+                  "fp": 0,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 1,
+                  "tp": 1
+                },
+                "f1": 0.13333333333333333,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 1.0,
+                "recall": 0.07142857142857142,
+                "schema_version": 1,
+                "small_box_recall": 0.09090909090909091,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 14,
+                  "fp": 0,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 0,
+                  "tp": 0
+                },
+                "f1": 0.0,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": null,
+                "recall": 0.0,
+                "schema_version": 1,
+                "small_box_recall": 0.0,
+                "status": "development_image_boxes"
+              }
+            ]
+          }
+        },
+        "prediction_confidence_floor": 0.05,
+        "prepared_manifest_sha256": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+        "schema_version": 1,
+        "status": "completed_development_diagnostics",
+        "test_used": false
+      },
+      "duration_seconds": 203.26499999999987,
+      "epochs_completed": 50,
+      "git_commit": "b390fe98ad65b3ddbc7676b77b22a1d4f4257d59",
+      "input_sha256": {
+        "config": "c4185381fbd5693855af5c9760ea83f9312630533286c73646f169170ac5b663",
+        "data_yaml": "1f86b95079e86028989cc4faad113828384dfac0c880c24614de605806040f44",
+        "dataset_manifest": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+        "pretrained": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+        "test_list": "09cc5fe25eb28692ae4e70d3cfcb582dbd2644e2e60ee3047682924ba1efd5d1",
+        "train_list": "44d44325c058d8773d83e57a40c6b97862d55e5216c635df5ed4cad01abc7c3c",
+        "val_list": "9e33ea191edb95e2e641a424a94eb2afc13a558df321f7126b8b4ced4e1a7af7"
+      },
+      "invocation_sha256": "1f1993f04fabdc46a4b69e080b718cc6deb113fbac6798862cfe5e35e391bc5e",
+      "last_pt_sha256": "631808995bd52cf1bc45ae17cc40412022bc0b75bcaa4d2c1c0d89e99a61e68d",
+      "metrics": {
+        "fitness": 0.10246900557510315,
+        "metrics/mAP50(B)": 0.26576074332171895,
+        "metrics/mAP50-95(B)": 0.10246900557510315,
+        "metrics/precision(B)": 0.53538316377282,
+        "metrics/recall(B)": 0.21428571428571427
+      },
+      "planned_optimizer_updates": 450,
+      "results_csv_sha256": "a68fdae24af5d83c59fbc72424b82e495aea9a14a0928d7802c02bc7be02deaf",
+      "run_id": "sohas-reviewed-development-20261026-v1",
+      "status": "passed_development_only"
+    },
+    "smallscale": {
+      "arguments": {
+        "amp": false,
+        "batch": 16,
+        "cache": false,
+        "close_mosaic": 10,
+        "copy_paste": 0.0,
+        "cos_lr": false,
+        "degrees": 0.0,
+        "deterministic": true,
+        "device": 0,
+        "epochs": 50,
+        "fliplr": 0.5,
+        "flipud": 0.0,
+        "hsv_h": 0.015,
+        "hsv_s": 0.7,
+        "hsv_v": 0.4,
+        "imgsz": 640,
+        "lr0": 0.001,
+        "lrf": 0.01,
+        "mixup": 0.0,
+        "momentum": 0.937,
+        "mosaic": 1.0,
+        "nbs": 16,
+        "optimizer": "AdamW",
+        "patience": 0,
+        "perspective": 0.0,
+        "plots": true,
+        "pretrained": true,
+        "save": true,
+        "save_period": 10,
+        "scale": 0.9,
+        "seed": 20261004,
+        "shear": 0.0,
+        "translate": 0.1,
+        "val": true,
+        "verbose": true,
+        "warmup_epochs": 0.0,
+        "weight_decay": 0.0005,
+        "workers": 0
+      },
+      "best_epoch_by_csv": 49,
+      "best_pt_sha256": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+      "diagnostics": {
+        "checkpoint_sha256": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+        "git_commit": "8d57c258c717f732dd65c91380be9028e6a43e37",
+        "limits": [
+          "fixed-threshold matching differs from Ultralytics best-F1 summary",
+          "train diagnostics are fit measures, not held-out performance",
+          "small normalized area is not physical distance",
+          "predictions below confidence .05 are outside this diagnostic sweep",
+          "AI visual diagnostics do not change human review/ground truth"
+        ],
+        "partitions": {
+          "train": {
+            "error_categories": {
+              "detected": 126,
+              "low_confidence": 1
+            },
+            "sweep": [
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 116,
+                  "negative_fp_boxes": 2,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.6864864864864865,
+                "fp_boxes_per_negative_image": 0.05,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.05,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.522633744855967,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 56,
+                  "negative_fp_boxes": 2,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.8193548387096774,
+                "fp_boxes_per_negative_image": 0.05,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.05,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.6939890710382514,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 1,
+                  "fp": 16,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 126
+                },
+                "f1": 0.9368029739776952,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.8873239436619719,
+                "recall": 0.9921259842519685,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 11,
+                  "fp": 1,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 24,
+                  "tp": 116
+                },
+                "f1": 0.9508196721311475,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.9914529914529915,
+                "recall": 0.9133858267716536,
+                "schema_version": 1,
+                "small_box_recall": 0.9230769230769231,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 116,
+                  "negative_fp_boxes": 2,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.6864864864864865,
+                "fp_boxes_per_negative_image": 0.05,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.05,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.522633744855967,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 0,
+                  "fp": 56,
+                  "negative_fp_boxes": 2,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 2,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 127
+                },
+                "f1": 0.8193548387096774,
+                "fp_boxes_per_negative_image": 0.05,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.05,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.6939890710382514,
+                "recall": 1.0,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 1,
+                  "fp": 16,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 26,
+                  "tp": 126
+                },
+                "f1": 0.9368029739776952,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.8873239436619719,
+                "recall": 0.9921259842519685,
+                "schema_version": 1,
+                "small_box_recall": 1.0,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 11,
+                  "fp": 1,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 40,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 26,
+                  "small_tp": 24,
+                  "tp": 116
+                },
+                "f1": 0.9508196721311475,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 137,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "train_diagnostic",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.9914529914529915,
+                "recall": 0.9133858267716536,
+                "schema_version": 1,
+                "small_box_recall": 0.9230769230769231,
+                "status": "development_image_boxes"
+              }
+            ]
+          },
+          "val": {
+            "error_categories": {
+              "detected": 6,
+              "localization": 2,
+              "low_confidence": 2,
+              "missed": 4
+            },
+            "sweep": [
+              {
+                "counts": {
+                  "fn": 4,
+                  "fp": 29,
+                  "negative_fp_boxes": 11,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 7,
+                  "small_gt": 11,
+                  "small_tp": 7,
+                  "tp": 10
+                },
+                "f1": 0.37735849056603776,
+                "fp_boxes_per_negative_image": 1.1,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.7,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.2564102564102564,
+                "recall": 0.7142857142857143,
+                "schema_version": 1,
+                "small_box_recall": 0.6363636363636364,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 5,
+                  "fp": 8,
+                  "negative_fp_boxes": 4,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 4,
+                  "small_gt": 11,
+                  "small_tp": 6,
+                  "tp": 9
+                },
+                "f1": 0.5806451612903226,
+                "fp_boxes_per_negative_image": 0.4,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.4,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.5294117647058824,
+                "recall": 0.6428571428571429,
+                "schema_version": 1,
+                "small_box_recall": 0.5454545454545454,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 7,
+                  "fp": 2,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 5,
+                  "tp": 7
+                },
+                "f1": 0.6086956521739131,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.7777777777777778,
+                "recall": 0.5,
+                "schema_version": 1,
+                "small_box_recall": 0.45454545454545453,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 10,
+                  "fp": 0,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 2,
+                  "tp": 4
+                },
+                "f1": 0.4444444444444444,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.25,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 1.0,
+                "recall": 0.2857142857142857,
+                "schema_version": 1,
+                "small_box_recall": 0.18181818181818182,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 6,
+                  "fp": 31,
+                  "negative_fp_boxes": 11,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 7,
+                  "small_gt": 11,
+                  "small_tp": 5,
+                  "tp": 8
+                },
+                "f1": 0.3018867924528302,
+                "fp_boxes_per_negative_image": 1.1,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.7,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.05,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.20512820512820512,
+                "recall": 0.5714285714285714,
+                "schema_version": 1,
+                "small_box_recall": 0.45454545454545453,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 7,
+                  "fp": 10,
+                  "negative_fp_boxes": 4,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 4,
+                  "small_gt": 11,
+                  "small_tp": 4,
+                  "tp": 7
+                },
+                "f1": 0.45161290322580644,
+                "fp_boxes_per_negative_image": 0.4,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.4,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.1,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.4117647058823529,
+                "recall": 0.5,
+                "schema_version": 1,
+                "small_box_recall": 0.36363636363636365,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 8,
+                  "fp": 3,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 4,
+                  "tp": 6
+                },
+                "f1": 0.5217391304347826,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.25,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 0.6666666666666666,
+                "recall": 0.42857142857142855,
+                "schema_version": 1,
+                "small_box_recall": 0.36363636363636365,
+                "status": "development_image_boxes"
+              },
+              {
+                "counts": {
+                  "fn": 10,
+                  "fp": 0,
+                  "negative_fp_boxes": 0,
+                  "negative_images": 10,
+                  "negative_images_with_fp": 0,
+                  "small_gt": 11,
+                  "small_tp": 2,
+                  "tp": 4
+                },
+                "f1": 0.4444444444444444,
+                "fp_boxes_per_negative_image": 0.0,
+                "images": 23,
+                "limits": [
+                  "normalized bbox area is not physical distance",
+                  "fixed-threshold greedy IoU matching, not mAP",
+                  "image metrics are not event false alerts/hour or GPIO latency",
+                  "annotation approval and frozen status are declarations, not cryptographic identity verification"
+                ],
+                "negative_image_fp_fraction": 0.0,
+                "partition": "tuning",
+                "policy": {
+                  "confidence": 0.5,
+                  "iou": 0.5,
+                  "schema_version": 1,
+                  "small_area_max": 0.02,
+                  "status": "development"
+                },
+                "precision": 1.0,
+                "recall": 0.2857142857142857,
+                "schema_version": 1,
+                "small_box_recall": 0.18181818181818182,
+                "status": "development_image_boxes"
+              }
+            ]
+          }
+        },
+        "prediction_confidence_floor": 0.05,
+        "prepared_manifest_sha256": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+        "schema_version": 1,
+        "status": "completed_development_diagnostics",
+        "test_used": false
+      },
+      "duration_seconds": 218.03099999999995,
+      "epochs_completed": 50,
+      "git_commit": "8d57c258c717f732dd65c91380be9028e6a43e37",
+      "input_sha256": {
+        "config": "45dcc949e48539c32443477b639f0363501e2c0d4d17ce90466f25ea75e55ed6",
+        "data_yaml": "b19cef7c3969f214d6eda894cfa6ae379496a86a5f48c0d9c41b2a9724e3cc3f",
+        "dataset_manifest": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+        "pretrained": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+        "test_list": "09cc5fe25eb28692ae4e70d3cfcb582dbd2644e2e60ee3047682924ba1efd5d1",
+        "train_list": "44d44325c058d8773d83e57a40c6b97862d55e5216c635df5ed4cad01abc7c3c",
+        "val_list": "9e33ea191edb95e2e641a424a94eb2afc13a558df321f7126b8b4ced4e1a7af7"
+      },
+      "invocation_sha256": "646164972181fdda7a4e50ee2fbd5b2bb0340d41f11c714121b2415203214093",
+      "last_pt_sha256": "637b4d0a6c9df49615af150433117ee4dce3e0e7e074400755a5ccced5ec613d",
+      "metrics": {
+        "fitness": 0.20716044620881058,
+        "metrics/mAP50(B)": 0.5520299910044641,
+        "metrics/mAP50-95(B)": 0.20716044620881058,
+        "metrics/precision(B)": 0.7436719077249386,
+        "metrics/recall(B)": 0.5
+      },
+      "planned_optimizer_updates": 450,
+      "results_csv_sha256": "23588bff2f1b7aa637138b7b7aa51e9724e13658b8293c85bf5f206c7d771b6e",
+      "run_id": "sohas-reviewed-development-20261026-smallscale-v1",
+      "status": "passed_development_only"
+    }
+  },
+  "same_inputs_verified": true,
+  "schema_version": 1,
+  "selection": {
+    "development_candidate": "smallscale",
+    "final_detector_adopted": false,
+    "reason": "highest validation mAP50-95 of three bounded runs",
+    "single_seed": true
+  },
+  "size_distribution": {
+    "train": {
+      "area_median": 0.0686705767350929,
+      "images": 137,
+      "objects": 127,
+      "projected_shortside_640_median": 96.96969696969694,
+      "projected_shortside_le8": 0,
+      "small_le02": 26,
+      "tiny_lt005": 3
+    },
+    "val": {
+      "area_median": 0.004843157691450047,
+      "images": 23,
+      "objects": 14,
+      "projected_shortside_640_median": 29.0,
+      "projected_shortside_le8": 0,
+      "small_le02": 11,
+      "tiny_lt005": 7
+    }
+  },
+  "status": "development_tuning_not_final_evaluation",
+  "test_used_for_metrics_or_selection": false
+}

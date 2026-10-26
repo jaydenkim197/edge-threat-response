@@ -1,6 +1,6 @@
 # CUDA / Colab Training Handoff
 
-상태: runner·config·preflight·notebook `IMPLEMENTED`, PC contract 및 RTX 3060 synthetic CUDA/AMP smoke `VERIFIED`, 실제 데이터 CUDA full training `PLANNED`
+상태: runner·config·preflight·notebook `IMPLEMENTED`, PC contract·RTX 3060 smoke 및 SOHAS183장 개발 예비 학습 `VERIFIED`, source 전체 정식 학습 `PLANNED`
 
 ## 목적과 gate
 
@@ -27,6 +27,12 @@ python -m edge_threat_response.dataset.development_subset --manifest data/work/r
 실제 실행은 같은 runner에 `--config <output>/training.json --data <output>/data.yaml --dataset-manifest <output>/DEV-manifest.jsonl --approval <output>/development-authorization.json --require-cuda`를 사용한다. 먼저 `--preflight-only`를 확인하고, 이후 새 `--output-dir runs/training`/고유 run name으로 SSH 독립 실행한다. 초기 설정은 기존 development profile의 YOLO26n/640px/batch16/50epochs/FP32/SGD/workers0이며 연구 최종값이 아니다. 결과에는 `evaluation_scope=development_only`를 남긴다. 실제 실행과 측정은 development-log/verification의 후속 증거를 따른다.
 
 PC13의 짧은 launch 명령은 `powershell -NoProfile -ExecutionPolicy RemoteSigned -File tools/start_development_training.ps1 -RunId sohas-reviewed-development-20261026-v1`이다. Process별 실행 정책이며 시스템 policy·전원 계획·예약 작업은 바꾸지 않는다. Windows 명령 길이 제한으로 이중 encoded body를 전송하지 않고, 버전 관리된 같은 script의 hidden CIM worker를 띄운다. 중복 run/worker·다른 project trainer를 차단하고 ignored `runs/launch-<RunId>/`에 launcher hash/PID·stdout/stderr·exit code를 보관한다. 생성 성공만으로 학습 시작/완료라 하지 말고 새 SSH에서 invocation·GPU process·epoch loss를 확인한다. 재부팅/절전 지속·자동 resume를 보장하지 않는다.
+
+#### 고정 split 후속 개발 실험
+
+`python -m edge_threat_response.training_refinement --base data/processed/sohas-reviewed-development-20261026-v1 --output-dir data/processed/<fresh-run-id> --variant adamw --authorization-id <실제 사용자 범위 승인 참조>`는 동일 image/label/manifest와 train/val/test 목록 bytes를 보존한 채 AdamW/lr=.001 설정을 만든다. `--variant smallscale`은 여기에 scale=.9만 추가한다. 기존 SGD/scale=.5 baseline에서만 분기하며 재귀 refinement·임의 override·새 source·최종평가 승격은 지원하지 않는다. 생성 후 기존 launcher에 같은 run ID를 넘긴다. 50 epochs·450 planned updates/137 unique train·val23 고정이며, 정식 연구 설정으로 확정하지 않는다.
+
+완료 checkpoint의 개발 진단은 `python -m edge_threat_response.training_diagnostics --prepared data/processed/<run-id> --checkpoint runs/training/<run-id>/weights/best.pt --output-dir runs/<fresh-diagnostics-id>`로 실행한다. train/val만 열어 conf≥.05 예측과 고정 IoU/conf sweep, per-image match/error, val overlay를 보존한다. train 수치는 fitting 진단이며 test 평가는 수행하지 않는다. .05 아래 예측은 본 분석 범위 밖이다. 실제 후속 비교는 [보고서](../reports/training/development-error-analysis-2026-10-26/report.md)를 따른다.
 
 **준비 코드와 승인 차단은 구현됐고, 실제 SOHAS 전체 학습은 아직 시작하지 않았다.** 아래는 신규 detector 트랙이다. 기존 legacy/Colab 절차와 혼용하지 않는다.
 

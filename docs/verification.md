@@ -7,6 +7,7 @@
 - PC13 Python3.12.4 격리 source overlay: `python -m unittest discover -s tests -q` 전체136 tests, `compileall -q src tests` 통과. 실제 학습/진단 환경은 기존 RTX3060 venv이며 로컬 bundled Python의 전체 ML/web 의존성 검증으로 대신하지 않았다.
 - SGD best의 실제 train137/val23 inference·고정 IoU/conf sweep·오류 분류·val contact sheet4장 생성 성공. test image/label은 진단에 열지 않는다(승인 검증의 무결성 hash 읽기만 수행). 원시 결과: PC13 ignored `runs/diagnostics-sohas-20261026-sgd-v2/`, COCO 비교 `runs/diagnostics-sohas-20261026-coco-v1/`. source는 QA overlay, Git base `5a13891` + 본 변경이다. 학습/평가 input bytes와 checkpoint는 보존했다.
 - 23장 validation을 사용한 개발 분석이며 final test·사건 지표·Orin FPS·실제 카메라 성능을 검증한 것이 아니다. 후속 실제 학습 결과는 완료 후 추가한다.
+- 후속 완료: source `8d57c25`에서 AdamW와 AdamW+scale.9 각50epoch/exit0/재검증·checkpoint reload 진단 완료. 세 run의 manifest/pretrained/train·val·test list SHA 동일, 각450 planned updates, test 평가0을 확인했다. 신규 source-link2 tests 포함 전체138 tests·compileall 통과. source audit와150장 fresh 검수팩 생성도 실제 실행했으며 input hash·protected proxy/기존 review 선택0·unique150·source blob/XML/decode를 확인했다. 새 source를 학습하거나 사람 판정을 쓰지 않았다. [지표/설정/hash와 한계](../reports/training/development-error-analysis-2026-10-26/report.md).
 
 ## 2026-10-26 최신 검수와 학습 진입 점검
 

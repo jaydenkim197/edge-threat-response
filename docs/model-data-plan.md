@@ -4,6 +4,8 @@
 
 이 문서는 detector 재학습을 성급하게 시작하지 않고, 데이터의 출처·라벨 의미·분할·학습 이력을 재현 가능하게 만들기 위한 기준이다. 실제 대규모 데이터와 model binary는 Git에 넣지 않는다.
 
+2026-10-26: 사용자 승인된 SOHAS183장 개발용 subset의 예비 학습과 오류 분석을 수행했다. 이는 source 전체 채택이나 최종 detector 결정이 아니다. 낮은 성능은 train/val fit 차이와 작은 객체 분포 차이를 동반하며, 고정 split에서 optimizer/LR 및 크기 증강을 제한적으로 비교한다. 후속 결과와 데이터 보강 우선순위는 [개발 모델 오류 분석](../reports/training/development-error-analysis-2026-10-26/report.md)에 기록한다. 기존 R1/H1 gate와 test 보관 원칙은 유지한다.
+
 ## 1. Confirmed legacy inventory
 
 2026-09-14에 고정 submodule `legacy/2025-2-midas/Crime_Prediction`을 읽기 전용으로 점검했다.

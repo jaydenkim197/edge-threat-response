@@ -11,11 +11,13 @@
 - 실내 복도·출입구·공용공간을 보는 약 3 m 높이의 **고정형 CCTV**
 - 사람을 위에서 아래로 비스듬히 보는 elevated / oblique viewpoint
 - 사람과 함께 나타나는 작거나 먼 knife, 손·팔에 의한 부분 가림, 복잡한 배경
-- 정확한 pixel-size 기준은 카메라 선정 뒤 다시 측정한다. 현재는 image diagonal 대비 normalized bbox area와 scene/viewpoint tag를 사용한다.
+- 정확한 pixel-size 기준은 카메라 선정 뒤 다시 측정한다. 현재는 image area 대비 normalized bbox area와 scene/viewpoint tag를 사용한다.
 
 따라서 정면 인물 사진, 제품 사진, 손과 knife의 close-up이 많은 source는 knife appearance 보강에는 쓸 수 있어도 target-domain 성능의 근거가 될 수 없다.
 
 ## 2. Dataset roles and application limits — `DECISION`
+
+**2026-10-26 적용 현황:** 아래 표는 source 역할·초기 계획이다. 실제 웹 준비량은 SOHAS200/DaSCI93/Simuletic114 등이며, 고정 snapshot의 정상 판정은 각각183/92/71이다. SOHAS183개만 사용자 승인된 개발 예비 학습에 사용했다. 다른 source의 학습 승인은 여전히 별도다. 새 [오류·보강 분석](../reports/training/development-error-analysis-2026-10-26/report.md)에서 작은 실사 knife 우선 선별과 합성 별도 ablation을 제안한다. DaSCI92개는 보수적 proxy 연결 시 모두 보호된 val/test group과 연결되고, 후보 filename family 연결을 빼도18개가 연결되므로 무조건 추가하지 않는다. 이는 실제92개 전부가 중복이라는 판정이 아니다. Simuletic71개는 같은 검사에서 연결0이나, 독립성·좌표·학습 채택이 자동 승인되는 것은 아니다.
 
 | 역할 | source | 지금 적용할 양 | 이후 허용 범위 | 이유 |
 |---|---|---:|---|---|
