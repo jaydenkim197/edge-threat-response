@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-26 - SOHAS 작은 칼100장·혼동 음성 후보50장 사이트 배포
+
+- 작업 카드/범위: 사용자 지정 준비 commit `9563fba`와 PC13 `data/review/sohas-gap-20261026-v1/README.md`·`summary.json`을 확인했다. 기존 SOHAS에150장을 append하되 기존 image ID/판정/version/history/계정/배정을 보존하고, 이름 선택·공통 두 질문을 유지한다. 완료 기준은 fresh cross-pack 중복/보호 proxy 재검사·consistent backup·격리 QA 저장/재접속/이어가기/모바일·외부 HTTPS·전후 보존 비교다. 원본 변경·새 질문·학습·기존 val/test 재분할은 범위 밖이다.
+- search-first: 기존 `BatchReviewStore`·team registry·`team_review_status.py`의 SQLite backup/테이블 hash·`check_team_review.py`·기존 browser QA 흐름을 재사용했다. 신규 runtime 코드/의존성/사이트 기능 변경 없이 ignored 운영 config에 `20261026-small-positive-v1`(100장, global ID200–299), `20261026-negative-mined-v1`(50장, ID300–349) 두 immutable pack을 연결했다. 기존 prefix ID0–199와 base fingerprint/draft identity는 그대로다.
+- 재검사: 운영 config의 전체765개 image bytes를 evidence hash와 대조하고 신규150장 image/source/XML SHA-256·Git blob·decode/dimension/raw bbox·selection lineage를 확인했다. 기존765장과 신규150장 exact 중복0·신규 내부 중복0이다. 원본 integrity/pairs와 DEV-manifest hash를 준비 summary와 비교하고 기존 proxy helper로 다시 계산한 protected val/test group 교차0을 배포 직전에 재확인했다. 실제 camera/session 독립성·원래 좌표 의미·50장 실제 knife 부재는 미검증이다.
+- 백업/반영: PC13 ignored `data/review/sohas-gap-deployment-20261026/before-preparation-backup/` 및 서비스 정지 구간의 `before-deploy-backup/`에 SQLite backup API로 DB/config/status를 보관했다. 배포 작업 약4.8초 후 `ETR-Team-Review` Running을 확인했다. 기존 모든 reviews/history/metadata·team users/assignments의 row count/hash가 동일하고 기존 registry8행을 유지한 채2행만 추가했다. 기존 pack/schema/원본은 재생성하지 않았다. 신규 DB reviews/history0을 확인했다. `DEV-manifest`, train/val/test 목록·data YAML·training config·development authorization 및 gap pack 입력 bytes도 그대로다.
+- 검증: PC13 Python3.12.4 관련 team12 tests·전체138 tests와 compileall 통과. 실제 원본을 읽되 DB는 전부 복제한 별도 loopback8795 QA에서 테스트 계정만 사용했다. Edge Chromium의 Pixel7(412px)/iPhone13 크기(390px) 프로필에서 새 양성·음성 배치 자동 배정→두 질문 자동 저장→다음→쿠키/임시 입력 복원→최근 검수 이어가기→메모 저장→reload, version409와 기존200개 판정 불변을 확인했다. 가로 overflow0, 버튼46px, 질문2개다. Safari/WebKit·실물 휴대폰 설치는 이번에 시험하지 않았다.
+- 공개 접속: 실제 Funnel HTTPS에서 normal HTML form 이름 선택·SOHAS350장/4batch·준비 후보7개·기존/신규 global ID0,100,200,300,349 image200 응답·동일 두 질문과 모바일 두 크기의 overflow0을 확인했다. production QA의 claim/save는 차단했으며 테스트 판정0·테스트 배정0이다. 저장 테스트는 QA DB에만 남겼다.
+- 결과/증거: 배포 직후 전체915장/466개 저장 판정, SOHAS350장/199판정/history268·재확인16, 신규150장 판정0이다. 50장은 확정 음성이 아니며 전량 검수 대기/학습 승인 false다. 당시 README/summary/selection/contact sheet는 준비 기록으로 수정하지 않았다. 원시 audit/DB 보존 비교/proposed config/QA DB는 PC13 ignored `data/review/sohas-gap-deployment-20261026/`, 브라우저 결과/화면은 개발 PC 동일 ignored 경로에 둔다. 운영용 일회성 script는 PC13 `data/review/sohas-gap-deployment-20261026-operations.py`에 보관했다. QA 서버/SSH tunnel은 검증 후 종료하고 운영8770만 유지한다.
+- 문서/다음: 운영 안내·verification과 본 로그만 commit/push한다. 실제 검수와 별도 source/좌표/negative/group/recipe 승인 후에만 보강 학습을 검토한다. 이번 배포는 모델 선택·새 학습·val/test 이동/재분할을 하지 않았다. commit은 본 항목을 포함한 Git history로 추적한다.
+
 ## 2026-10-26 - 낮은 개발 성능의 오류 진단과 제한된 후속 실험
 
 - 작업 카드/사용자 요청: 낮은 성능의 원인을 검증하고 데이터 보강·다음 학습을 진행한다. train/val 예측에서 fit/generalization·confidence·localization 문제를 분리한다. 완료 기준은 고정 split 진단, 시각 점검, 제한된 후속 학습과 동일 기준 비교다. 검수 DB·판정·reserved test·공식 R1/H1 승인은 변경하지 않는다. 위험은 val14 객체의 분산·튜닝 편향, 합성 보강의 domain gap과 source gate 혼동이다.

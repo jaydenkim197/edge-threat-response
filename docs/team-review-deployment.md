@@ -4,6 +4,25 @@
 
 ## 팀원 사용법
 
+### 2026-10-26 추가 검수150장 배포
+
+기존 SOHAS 안에서 바로 이어서 검수한다. 이름 선택과 공통 두 질문은 같고 CSV 작성/추가 질문은 없다. 기존 탭은 `자동 저장됨` 확인 후 새로고침하면350장을 볼 수 있다.
+
+| 추가 배치 | 수량 | 내부 global ID | 화면 번호 |
+|---|---:|---|---|
+| `20261026-small-positive-v1` | 100 | 200–299 | 201–300 |
+| `20261026-negative-mined-v1` | 50 | 300–349 | 301–350 |
+
+SOHAS는200→350장, 전체 준비량은765→915장이다. 작은 knife bbox 후보100장과 모델 혼동 후보50장은 모두 검수 대기이며 학습 승인되지 않았다. **칼 라벨0개는 확정 음성이 아니다.** 실제 칼이 보이거나 라벨이 누락됐다면 `문제 있음`과 메모, 애매하면 `모르겠음`을 선택한다. 모델 예측 bbox로 원본 라벨을 바꾸지 않으며 기존 raw overlay를 확인한다. 원 좌표 의미와 camera/session 독립성은 미검증이다.
+
+- 준비 근거: source commit `9563fba`, PC13 `data/review/sohas-gap-20261026-v1/README.md`·`summary.json`·`selection.jsonl`, [개발 오류 분석](../reports/training/development-error-analysis-2026-10-26/report.md). 이미 준비된 각 하위 pack을 원위치에서 연결했고 기존 input bytes를 보존했다.
+- 배포 직전 검증: 현재 catalog 전체765개 이미지의 실제 hash와 신규150개 image/XML/source bytes·dimension·raw bbox를 대조했다. cross-pack exact hash 중복0·신규 내부 중복0·재계산한 protected val/test proxy group 교차0이다. 이것은 실제 recording session 독립성의 증명이 아니다.
+- 보존/백업: 기존 image ID0–199·fingerprint·판정/version/history·계정·배정 불변을 row count/hash로 확인했다. 기존 registry8행은 유지하고2행만 추가했다. PC13 `data/review/sohas-gap-deployment-20261026/before-deploy-backup/`에 변경 전 DB/config/status의 consistent backup이 있다. 같은 PC 디스크 백업이며 오프사이트 보관을 뜻하지 않는다. 새 판정이 생긴 뒤 과거 DB를 자동 복원하지 않는다.
+- 검증: PC13 전체138 tests·compileall·관리자/후보/배치별 image smoke 통과. 별도 복제 DB QA에서 신규 양성·음성 ID의 저장/재접속/최근 이어가기/필수 메모/충돌409를 검증했다. Edge Chromium 모바일412/390px 프로필에서 overflow0·질문2개·버튼46px를 확인했다. 공개 HTTPS normal form 이름 선택·새/기존 이미지 표시도 통과했고 production 테스트 판정/배정은0건이다. 이번 iPhone 크기 검증은 Chromium이며 실제 Safari/WebKit/실물 설치 검증은 아니다.
+- 배포 직후 snapshot: 전체915장·466판정·재확인34, SOHAS350장·199판정·history268·재확인16이며 새150장 판정0이다. 실제 진행률은 사이트에서 확인한다. 원본 pack/DB·개인정보는 GitHub에 올리지 않는다. 기존23장 val/23장 test 목록·학습 승인·기존 split은 변경하지 않았다.
+
+원시 audit/보존 비교/최종 상태는 PC13 ignored `data/review/sohas-gap-deployment-20261026/`, 모바일 browser 결과는 개발 PC의 같은 ignored 경로에 보관한다. 배포 후 검수 완료와 source/recipe 승인·후속 학습은 각각 별도 단계다.
+
 1. [팀 검수 사이트](https://yu-desktop-97msr1i.tail37c267.ts.net/)에 접속한다.
 2. 드롭다운에서 본인 이름을 선택하고 `검수 시작`을 누른다. 비밀번호·개인 코드는 필요 없다. 이름 선택은 브라우저에 30일간 유지하며, 쿠키를 삭제하거나 새 브라우저를 쓰면 다시 선택한다. 이름을 바꾸려면 후보 목록의 `이름 바꾸기`를 누른다.
 3. 어떤 후보든 **같은 두 질문**에 답한다: `CCTV형 / 그 외 / 모르겠음`, `라벨 정상 / 문제 있음 / 모르겠음`. `문제 있음`일 때 메모 칸이 나타나며 한 줄을 쓴다. 검수자 이름은 선택한 이름으로 자동 입력된다.
@@ -28,7 +47,7 @@
 
 | 후보 | 현재 웹 검수 표본 | 용도·현재 제한 |
 |---|---:|---|
-| SOHAS | 200 | 기존100장+추가100장. 판정·history·배정은 보존. CC 표기 충돌·원본 좌표·negative 진위 확인 필요 |
+| SOHAS | 350 | 기존200장+작은 칼100장+모델 혼동 후보50장. 판정·history·배정 보존. 50장은 확정 음성이 아니며 원본 좌표·negative 진위·source gate 확인 필요 |
 | DaSCI unique | 93 | SOHAS와 byte-identical 1,985장은 제외. Near-duplicate와 권리 gate는 남음 |
 | Simuletic | 114 | 합성 CCTV 시점. 실사 성능 증거가 아님 |
 | US Mock Attack | 100 | Cam1/Cam5/Cam7 및 knife annotation 유무 층화. 연속 영상의 사건 정답을 대신하지 않음 |

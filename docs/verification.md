@@ -2,6 +2,15 @@
 
 신규 시스템의 판단 core·PC 영상 입력·replay는 개발 PC에서 검증됐지만 Orin 실기기 통합과 성능은 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
 
+## 2026-10-26 SOHAS gap150장 검수 사이트 배포 검증
+
+- 기준 `9563fba`, 기존 runtime/두 질문/이름 선택/immutable batch 연결을 재사용하고 운영 config에100장·50장만 추가했다. 새 준비/질문/학습 기능을 구현하지 않았다. [운영 안내](team-review-deployment.md#2026-10-26-추가-검수150장-배포).
+- 배포 직전 현재765개 pack image bytes와 신규150개의 image/source/XML SHA-256·Git blob·decode/dimension·raw bbox·선택 lineage를 대조했다. cross-pack exact 중복0·내부 중복0이다. 준비 input hash와 보호된 val/test proxy component를 재계산해 교차0을 확인했다. camera/session/negative 진위·좌표 원 의미·학습 승인은 미검증/미승인이다.
+- SQLite backup API로 변경 전 DB/config를 일관되게 보관했다. 기존 reviews/history/metadata/users/assignments의 row count/hash 동일·기존 registry8행 유지+2행 추가·기존 IDs0–199 보존·신규 판정/history0을 확인했다. gap input과 DEV manifest/train·val·test list/YAML/config/authorization bytes도 불변이다. raw: PC13 ignored `data/review/sohas-gap-deployment-20261026/{before-deploy-backup,audit-immediately-before-deploy.json,preservation.json,after-migration.json,final-status.json}`.
+- PC13 Python3.12.4 team12 tests·전체138 tests·compileall 통과. 운영과 DB/secret을 분리한8795 QA에서 Edge Chromium Pixel7/412px 및 iPhone13 크기/390px 프로필의 정상 form 이름 선택·ID200/300 새 배치 배정·두 질문 저장·다음·쿠키/임시 입력 복원·최근 이어가기·메모 저장·reload·stale version409를 확인했다. QA 중 기존200개 판정 불변·overflow0·버튼46px다. 이것은 Safari/WebKit/실물 홈 화면 설치 검증이 아니다.
+- 실제 Funnel HTTPS에서 이름 선택·SOHAS350장/4batch·준비 후보7개·IDs0,100,200,300,349 image200·두 질문·모바일 두 크기의 overflow0을 확인했다. 생산 claim/save를 차단해 운영 테스트 판정0·배정0이다. 저장/이어가기 시험 판정은 복제 QA DB에만 있다. browser raw는 개발 PC ignored `data/review/sohas-gap-deployment-20261026/{browser-qa-result.json,public-check-result.json}`.
+- 결과: 전체915장/466판정, SOHAS350장/199판정/history268, 새150장0판정. Runtime source·승인·훈련·val/test 재분할은 변경하지 않았다. QA 서버/tunnel은 종료하고 `ETR-Team-Review` 운영은 유지한다.
+
 ## 2026-10-26 개발 모델 오류 진단·후속 설정 검증
 
 - PC13 Python3.12.4 격리 source overlay: `python -m unittest discover -s tests -q` 전체136 tests, `compileall -q src tests` 통과. 실제 학습/진단 환경은 기존 RTX3060 venv이며 로컬 bundled Python의 전체 ML/web 의존성 검증으로 대신하지 않았다.
