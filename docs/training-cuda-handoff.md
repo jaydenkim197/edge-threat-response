@@ -26,6 +26,8 @@ python -m edge_threat_response.dataset.development_subset --manifest data/work/r
 
 실제 실행은 같은 runner에 `--config <output>/training.json --data <output>/data.yaml --dataset-manifest <output>/DEV-manifest.jsonl --approval <output>/development-authorization.json --require-cuda`를 사용한다. 먼저 `--preflight-only`를 확인하고, 이후 새 `--output-dir runs/training`/고유 run name으로 SSH 독립 실행한다. 초기 설정은 기존 development profile의 YOLO26n/640px/batch16/50epochs/FP32/SGD/workers0이며 연구 최종값이 아니다. 결과에는 `evaluation_scope=development_only`를 남긴다. 실제 실행과 측정은 development-log/verification의 후속 증거를 따른다.
 
+PC13의 짧은 launch 명령은 `powershell -NoProfile -ExecutionPolicy RemoteSigned -File tools/start_development_training.ps1 -RunId sohas-reviewed-development-20261026-v1`이다. Process별 실행 정책이며 시스템 policy·전원 계획·예약 작업은 바꾸지 않는다. Windows 명령 길이 제한으로 이중 encoded body를 전송하지 않고, 버전 관리된 같은 script의 hidden CIM worker를 띄운다. 중복 run/worker·다른 project trainer를 차단하고 ignored `runs/launch-<RunId>/`에 launcher hash/PID·stdout/stderr·exit code를 보관한다. 생성 성공만으로 학습 시작/완료라 하지 말고 새 SSH에서 invocation·GPU process·epoch loss를 확인한다. 재부팅/절전 지속·자동 resume를 보장하지 않는다.
+
 **준비 코드와 승인 차단은 구현됐고, 실제 SOHAS 전체 학습은 아직 시작하지 않았다.** 아래는 신규 detector 트랙이다. 기존 legacy/Colab 절차와 혼용하지 않는다.
 
 - R1: 승인된 SOHAS knife 양성 + 실제 knife 부재를 검수한 음성.

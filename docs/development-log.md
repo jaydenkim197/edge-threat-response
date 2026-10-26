@@ -9,6 +9,7 @@
 - 변경: `dataset/development_subset.py`, 기존 `training.py`의 개발 전용 범위 검증·evidence, 신규 tests, CUDA handoff/open decisions/architecture. 원본과 DB는 쓰지 않고 새 copied output만 만든다. Input hash·list·group·negative·review version·공식 승격 거부와 최종 평가 false를 기록한다. 기존 profile에서 640px/batch16/50epochs/FP32/SGD/workers0을 재사용한다.
 - 검증: 신규6 tests는 로컬 bundled Python3.12.14에서 통과. Windows 재설치 후 기존 로컬 venv는 옛 Python 경로를 참조해 실행 불가이며 수정/재설치하지 않았다. Bundled 환경의 전체130 tests 시도는 werkzeug 부재1 error/12 skipped로 전체 통과가 아니다. PC13 기존 venv와 분리된 ignored QA tree에서 전체130 tests/compileall 통과했다. 첫 전체 실행은 기존 HTTP fixture의 Windows socket10053으로1 error였고, 해당7 tests 및 전체130을 다시 실행해 통과했다. production 서버/DB는 수정하지 않았다. 실제 데이터 수·학습 시작은 후속 기록으로 연결한다.
 - 한계: Proxy group은 실제 session 확인이 아니며 literal pixel-edge 개발 계약은 원 convention 확정이 아니다. 사용자 범위 승인을 원본 미검수 corpus나 공식 결과로 확대하지 않는다. Raw/판정/승인/weight/log는 PC13 ignored 경로에만 둔다. 이 항목 포함 Git commit으로 코드·실행을 추적한다.
+- 실제 준비 `b094713`: 183장 전량/161 objects, proxy17개, train137(양성97/음성40)·val23(13/10)·reserved test23(20/3), 제외0으로 materialization 완료. 모든183개 선택 판정의 현재 version/hash가 snapshot과 같음을 재확인했다. CUDA/hash-bound 승인 preflight 통과했다. 첫 이중 encoded launch 시도는 Windows command-line 길이 제한으로 실행 전에 실패했고 launch directory·invocation·trainer0을 확인했다. 반복 가능한 짧은 hidden CIM worker script `tools/start_development_training.ps1`로 보완한다. 기존 run/DB/전원 설정은 바꾸지 않는다.
 
 ## 2026-10-26 - 검수 완료분 학습 요청과 실제 readiness 확인
 
