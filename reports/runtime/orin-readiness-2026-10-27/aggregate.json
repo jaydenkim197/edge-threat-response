@@ -1,0 +1,262 @@
+{
+  "artifact_sha256": {
+    "fixture": "b16a569242f37e771f268a6b3d9b1e0ad3c9f98daee85c51d22d0461d2141e6e",
+    "knife": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+    "person": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+  },
+  "bounded_profile": {
+    "action_errors": 0,
+    "code_sha256": {
+      "pipeline": "913c3bd216caa38a4432d10192384f108b8e3bbecb237f94118be33670a2c97b",
+      "profile": "064cecb15b4340b0ce4b6ec1ee198b379d3ed8137dbc0b34df443d970c13ef67",
+      "runtime": "099071d81403a012a4046b7b1518ea77bc97cda0bc63e955e6ae474c2b72d0c9"
+    },
+    "cuda_peak_allocated_bytes": 77524992,
+    "elapsed_s": 600.0864562830002,
+    "event_count": 278,
+    "file_processing_fps": 12.28989576882228,
+    "final_rss_kib": 2009448,
+    "first_rss_kib": 1788572,
+    "frame_processing_ms": {
+      "max": 95.44129899950349,
+      "mean": 79.56206233654852,
+      "median": 79.15839700035576,
+      "p95": 86.4304490005452
+    },
+    "frames": 7375,
+    "inference_ms": {
+      "max": 94.09256099934282,
+      "mean": 79.09256350279229,
+      "median": 78.92399099910108,
+      "p95": 85.04221799921652
+    },
+    "limits": [
+      "repeated train still montage, not camera FPS or event accuracy",
+      "warmup excluded; sequential file decode/inference/actions/logging included in throughput",
+      "logical frame timestamps differ from elapsed processing time",
+      "85C/512MiB are test abort guards, not device specifications",
+      "scalar latency samples and mock-alarm history still grow with run length; not unlimited-memory or 24h stability proof"
+    ],
+    "max_sampled_rss_kib": 2009448,
+    "max_sampled_temperature_c": 60.75,
+    "minimum_sampled_available_kib": 5085100,
+    "power_mode_after": "NV Power Mode: 25W\n1",
+    "power_mode_before": "NV Power Mode: 25W\n1",
+    "requested_seconds": 600.0,
+    "rss_growth_mib": 215.69921875,
+    "sample_count": 121,
+    "snapshot_count": 278,
+    "status": "completed_bounded_warm_file_profile",
+    "warmup_frames": 53,
+    "warmup_seconds": 9.548946048999824
+  },
+  "checks": {
+    "local_focused_tests": 15,
+    "offline_detections_equal_previous_native_run": true,
+    "orin_full_tests": 148,
+    "orin_full_tests_seconds": 13.035,
+    "tool_compileall": "passed"
+  },
+  "cli_guard_cases": [
+    {
+      "case": "existing-output",
+      "entry": "detect_main",
+      "exit_code": 2
+    },
+    {
+      "case": "existing-output",
+      "entry": "run_main",
+      "exit_code": 2
+    },
+    {
+      "case": "missing-weight",
+      "entry": "detect_main",
+      "exit_code": 2
+    },
+    {
+      "case": "missing-weight",
+      "entry": "run_main",
+      "exit_code": 2
+    }
+  ],
+  "cli_guards": {
+    "existing_artifacts_unchanged": true,
+    "existing_file_count": 7,
+    "script_sha256": "5362eaa5fd5147c6148fff3033337c9ade8b402e9d60c554dfcbe407f0621abb",
+    "status": "passed_device_cli_guards"
+  },
+  "date": "2026-10-27",
+  "decode_only_diagnostic": {
+    "cycles": 121,
+    "fixture_sha256": "b16a569242f37e771f268a6b3d9b1e0ad3c9f98daee85c51d22d0461d2141e6e",
+    "frames": 6413,
+    "limits": [
+      "same frozen montage repeated, no ML or pipeline imports",
+      "one process diagnostic, not camera/long-term memory proof"
+    ],
+    "post_gc_rss_kib": 78088,
+    "rss_growth_mib": 4.84765625,
+    "samples": [
+      {
+        "cycle": 0,
+        "elapsed_s": 1.3242253299995355,
+        "rss_kib": 73124
+      },
+      {
+        "cycle": 10,
+        "elapsed_s": 12.41414497599908,
+        "rss_kib": 76476
+      },
+      {
+        "cycle": 20,
+        "elapsed_s": 23.232282195000153,
+        "rss_kib": 76500
+      },
+      {
+        "cycle": 30,
+        "elapsed_s": 34.491966399999,
+        "rss_kib": 78072
+      },
+      {
+        "cycle": 40,
+        "elapsed_s": 45.362445054999625,
+        "rss_kib": 78072
+      },
+      {
+        "cycle": 50,
+        "elapsed_s": 56.62459297799978,
+        "rss_kib": 78076
+      },
+      {
+        "cycle": 60,
+        "elapsed_s": 67.8418027179996,
+        "rss_kib": 78076
+      },
+      {
+        "cycle": 70,
+        "elapsed_s": 78.44938848499987,
+        "rss_kib": 78076
+      },
+      {
+        "cycle": 80,
+        "elapsed_s": 89.58128971800033,
+        "rss_kib": 78080
+      },
+      {
+        "cycle": 90,
+        "elapsed_s": 100.75225734099877,
+        "rss_kib": 78080
+      },
+      {
+        "cycle": 100,
+        "elapsed_s": 111.75138952700036,
+        "rss_kib": 78080
+      },
+      {
+        "cycle": 110,
+        "elapsed_s": 122.67913248399964,
+        "rss_kib": 78084
+      },
+      {
+        "cycle": 120,
+        "elapsed_s": 133.74632179800028,
+        "rss_kib": 78088
+      }
+    ],
+    "script_sha256": "af844c3f16ba0acfa5e55d957daa49fb86d69f316274c1b7b9c68473a07d5a9a",
+    "status": "completed_cpu_decode_diagnostic"
+  },
+  "environment": {
+    "logical_cpu_count": 6,
+    "packages": {
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "torch": "2.14.1+cu132",
+      "torchvision": "0.29.1+cu132",
+      "ultralytics": "8.4.152"
+    },
+    "platform": "Linux-6.8.12-1021-tegra-aarch64-with-glibc2.39",
+    "processor": "aarch64",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "formal_platform_or_runtime_adopted": false,
+  "l4t_release": "39.2.0",
+  "not_verified": [
+    "real camera/GPIO",
+    "independent event accuracy/latency",
+    "long-term or leak-free memory stability",
+    "reboot/power/network recovery",
+    "TensorRT"
+  ],
+  "offline": {
+    "cli_exit_code": 0,
+    "detections": 59,
+    "detections_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd",
+    "frames": 53,
+    "network_isolation": {
+      "connect_errno": 101,
+      "host_network_modified": false,
+      "interfaces": [
+        "lo"
+      ],
+      "namespace": "net:[4026533494]",
+      "scope": "kernel_network_namespace"
+    },
+    "replay": {
+      "B0": {
+        "events": [
+          8,
+          18,
+          32,
+          39
+        ],
+        "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+      },
+      "B1": {
+        "events": [
+          9,
+          19,
+          40
+        ],
+        "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+      },
+      "B2": {
+        "events": [
+          18,
+          32,
+          39
+        ],
+        "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+      },
+      "B3": {
+        "events": [
+          19,
+          40
+        ],
+        "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+      }
+    },
+    "script_sha256": "a8f80af7c9e8154a0119a7acde452ea4a8a29adc6ac8a238e4c9764334242824",
+    "snapshots": [
+      {
+        "frame_index": 19,
+        "sha256": "d93c55e579722df148a94ca7ec572ba369b9b7b02db9e64b9a21937d985fe1a4"
+      },
+      {
+        "frame_index": 40,
+        "sha256": "be54dd071e71305a1b554cb1c5ad0978abaa6577dfa7cf16369103b1202417df"
+      }
+    ],
+    "status": "passed_orin_file_smoke_experimental_platform"
+  },
+  "raw_location": "Orin ignored runs/orin-readiness-20261027-v1/; QA archive data/work/code-qa/orin-readiness-20261027-v1/",
+  "schema_version": 1,
+  "source_base_commit": "cf674506274a0cc607f15e8e9573e0d5ce941163",
+  "source_overlay_sha256": {
+    "src/edge_threat_response/detect_cli.py": "0d06d6b7285149674dad9201b106de43bbb1c02ca51aa70ffaaa120a8a88e90f",
+    "src/edge_threat_response/pipeline.py": "913c3bd216caa38a4432d10192384f108b8e3bbecb237f94118be33670a2c97b",
+    "src/edge_threat_response/runtime.py": "099071d81403a012a4046b7b1518ea77bc97cda0bc63e955e6ae474c2b72d0c9",
+    "tools/profile_orin_file.py": "064cecb15b4340b0ce4b6ec1ee198b379d3ed8137dbc0b34df443d970c13ef67",
+    "tools/verify_orin_file_smoke.py": "a8f80af7c9e8154a0119a7acde452ea4a8a29adc6ac8a238e4c9764334242824"
+  }
+}

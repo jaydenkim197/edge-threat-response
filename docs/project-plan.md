@@ -18,6 +18,8 @@
 
 2026-10-27 실측 갱신: SSH key 접속, device-tree Orin Nano Super/p3767-0005·약8GB·NVMe·UEFI39.2.0·25W를 확인했다. 실제 L4T39.2.0/CUDA13.2.2의 격리 native 환경에서 실제 GPU kernel과 새 모델의53frame 파일입력/B0~B3/metadata/snapshot/mock alarm을 검증했다. **계획39.2.1과 실제39.2.0은 다르며 기준 변경/OS 업데이트를 승인한 것이 아니다.** 카메라/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. [실기기 증거](../reports/runtime/orin-native-smoke-2026-10-27/report.md).
 
+주변장치 전 운용 점검: local weight/output 검증·완료 frame 로그 flush·사진 실패 집계를 보완했다. 실제 Orin의 별도 통신 격리 공간에서도 같은 파일의 추론/B0~B3/사진이 통과했으며 host SSH는 유지했다. 제한 시간 반복의 자원 측정과 해석은 [운용 준비 기록](../reports/runtime/orin-readiness-2026-10-27/report.md)을 따른다. 이 작업은 실제 사건 benchmark나 장시간·재부팅 검증, MVP 범위 확대가 아니다.
+
 ### Target deployment and data-domain assumption
 
 - camera 모델·화각은 미정이지만, dataset 검수와 controlled scenario는 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 비스듬히 보는 환경을 기준으로 한다.

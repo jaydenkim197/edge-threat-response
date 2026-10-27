@@ -3,6 +3,7 @@ import argparse
 import json
 import os
 import platform
+import socket
 import subprocess
 import sys
 from pathlib import Path
@@ -21,7 +22,19 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     for name in ("person","knife","fixture","inventory","output"):
         parser.add_argument("--"+name,type=Path,required=True)
+    parser.add_argument("--offline-netns",action="store_true",help="Require a private namespace with only loopback and no external IPv4 route")
     args = parser.parse_args()
+    isolation = None
+    if args.offline_netns:
+        interfaces = [name for _,name in socket.if_nameindex()]
+        require(interfaces==["lo"],"Offline test must run in an isolated network namespace")
+        try:
+            with socket.create_connection(("192.0.2.1",443),timeout=1):
+                raise RuntimeError("Unexpected route out of offline namespace")
+        except OSError as exc:
+            require(exc.errno==101,"Expected ENETUNREACH from the kernel, not a remote timeout")
+            isolation = {"scope":"kernel_network_namespace","interfaces":interfaces,"connect_errno":exc.errno,
+                         "namespace":os.readlink("/proc/self/ns/net"),"host_network_modified":False}
     require(platform.machine()=="aarch64" and "Orin" in Path("/proc/device-tree/model").read_text(),"Actual Jetson Orin required")
     require(not args.output.exists(),"Use a fresh output and preserve prior runs")
     for name,digest in HASHES.items():
@@ -68,9 +81,10 @@ def main():
               "inventory_sha256":_sha256_file(args.inventory),"l4t_release":inventory["l4t_release"],
               "matches_planned_l4t":inventory["matches_planned_l4t"],"formal_platform_or_runtime_adopted":False,
               "cuda_warnings":inventory["cuda_smoke"]["warnings"],"cli_exit_code":result.returncode,
+              "network_isolation":isolation,
               "frames":summary["frame_count"],"detections":summary["detection_count"],"detections_sha256":summary["detections_sha256"],
               "snapshots":snapshots,"replay":{r["mode"]:{"events":r["event_frame_indices"],"input_sha256":r["input_sha256"]} for r in replay},
-              "limits":["frozen train-derived still montage, not independent event evaluation","no camera/GPIO/TensorRT/network-fault/endurance verification",
+              "limits":["frozen train-derived still montage, not independent event evaluation","no camera/GPIO/TensorRT/endurance verification; isolated-netns test is not physical link recovery",
                         "installed platform differs from the project plan","framework versions differ from PC13; no speed or accuracy comparison"]}
     _write_json(args.output/"verification.json",record)
     print(json.dumps({"status":record["status"],"frames":record["frames"],"events":{k:v["events"] for k,v in record["replay"].items()},"snapshots":len(snapshots)}))

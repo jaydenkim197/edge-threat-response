@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-27 - Orin 파일 운용 오류 수정·통신 격리·600초 반복 점검
+
+- 작업 카드/목적: 사용자 요청에 따라 camera/GPIO 없이 가능한 파일 경로 운용 점검을 진행했다. 범위는 기존 runtime/CLI의 결과 보호·중단 로그·실패 집계, 통신 격리 실제 GPU 파일 실행, 600초 반복과 자원 수집이다. 완료 기준은 최소 실패 재현→수정→관련/전체 tests·실기기 회귀·raw/aggregate·문서·Git 반영이다. OS/driver/firmware/power/clock·학습·검수 사이트/DB·val/test는 변경하지 않는다. 위험은 현재39.2.0 pilot과 계획39.2.1 차이, train montage 과대해석과 메모리 증가다.
+- search-first/구현: 기존 canonical runtime/port·OpenCV source·고정 video/weight·Orin file driver를 확장했다. detection/decision/latency 전체 dict 보관 대신 완료 frame JSONL flush, 비어 있지 않은 output 거부, local weight 선검사, all-error CLI exit2, returned snapshot failure 집계, max_frames 초과 source 소비 수정·nearest-rank p95/frame processing 범위를 추가했다. 신규 의존성은 없다. scalar latency/mock alarm 이력은 여전히 실행 길이에 비례한다.
+- 변경 파일: runtime/pipeline/detect_cli, 관련 tests3개, Orin smoke tool의 offline-netns 검사와 bounded profile tool, 운영 절차/architecture/Master Plan/open decisions 및 이번 보고서·aggregate. 수정 전 관련 회귀 실패를 확인했다. local Python3.12.14 관련15 tests, 실제 Orin Python3.12.3 전체148 tests13.035s와 tool compileall 통과. 별도 실제 CLI4건은 전부 expected exit2이고 기존7개 output 파일 SHA 불변이다.
+- 실기기/명령: basecf67450의 격리 QA archive+overlay, Orin Nano Super/약8GB/NVMe/L4T39.2.0/기존25W, torch2.14.1+cu132/vision0.29.1+cu132/Ultralytics8.4.152. 기존 freeze weight2개/53frame FFV1을 사용했다. `sudo unshare --net -- runuser ... tools/verify_orin_file_smoke.py --offline-netns`는 loopback만/ENETUNREACH와 actual device0 CLI valid53/detection59/B3 event·JPEG2/action error0, same JSONL B0~B3 expected4/3/3/2를 확인했다. 원 host-network run과 detection SHA 동일, host SSH 재접속·원 network 유지다.
+- 제한 시간 결과: `tools/profile_orin_file.py --seconds 600`, warmup53 제외600.086s/valid7,375frame/12.2899 file frames/s, B3 event·snapshot278/action error0, inference mean79.0926/p95 85.0422ms, frame-processing mean79.5621/p95 86.4304ms, 최고 관측60.75°C, 최소 MemAvailable5,085,100KiB, 최고 torch CUDA allocated77,524,992bytes. 입력·설정/source SHA와25W 모드 보존, 정상 종료·잔류 profile/tegrastats 없음이다. 파일 처리율은 decode/추론/actions/로그를 포함하고 camera FPS·실제 사건 지연과 다르다.
+- 한계/진단: process RSS1,788,572→2,009,448KiB(+215.70MiB)로 원인 미확정이다. 별도 no-ML decode121회/6,413frame/133.746s는73,124→78,088KiB(+4.85MiB)였고 같은 규모 증가는 재현하지 못했다. 전체 경로 attribution·실제 camera 장시간 검사는 남는다. 실험은 train still montage의 제어 회귀이며 실제 event 정확도·GPIO·물리 회선/재부팅 복구·24h/leak-free·TensorRT 증거가 아니다. 라이브러리 half deprecation 경고가 raw에 있으며 설정을 임의 변경하지 않았다.
+- 증거/다음: [운용 준비 보고서](../reports/runtime/orin-readiness-2026-10-27/report.md), aggregate에 환경/입력·코드 hash·검증·원시 위치를 기록했다. raw는 Orin ignored `runs/orin-readiness-20261027-v1/`, source/test log는 `data/work/code-qa/orin-readiness-20261027-v1/`. 계획 patch/정식 runtime은 PROPOSAL 유지. 다음은 memory attribution, platform patch 결정, camera/GPIO 확보 후 실제 영상/수동 GT와 동일 D* B0~B3 평가다. 완료 commit은 본 항목의 Git history로 연결한다.
+
 ## 2026-10-27 - Orin 최초 원격 접속·native GPU·파일 영상 검증
 
 - 작업 카드/요청: 사용자가 Orin 접속 정보와 계정을 제공했다. SSH→장비/설치 환경→격리 native GPU→기존 새 best.pt 파일 경로를 실제 검증한다. 완료 기준은 key 재접속, GPU kernel/2detector/53frame/동일 JSONL B0~B3/snapshot 원 frame 일치·tests·증거다. OS/firmware/driver/전력 변경, 카메라/GPIO, 새 학습·사이트/DB는 범위 밖이다. 계획39.2.1과 실제39.2.0 불일치를 별도 기록한다.

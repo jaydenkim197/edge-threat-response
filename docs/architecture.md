@@ -1,6 +1,6 @@
 # System Architecture
 
-상태: MVP 논리 구조 `DECISION`, 공통 core·replay·detector/video/snapshot 인터페이스 `IMPLEMENTED`/PC `VERIFIED`(CPU 및 PC13 CUDA), Orin·camera/GPIO adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
+상태: MVP 논리 구조 `DECISION`, 공통 core·replay·detector/video/snapshot 인터페이스 `IMPLEMENTED`/PC 및 Orin 파일 GPU 경로 `VERIFIED`, camera/GPIO adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
 
 2026-10-27: **실제 Orin L4T39.2.0의 native GPU·파일입력 경로는 smoke `VERIFIED`**, camera/GPIO·실제 사건 benchmark는 `PLANNED`다. 계획39.2.1과의 차이 및 framework pilot을 별도 관리하며 정식 플랫폼/runtime 채택으로 승격하지 않는다. [환경·재현](orin-runtime-setup.md), [실기기 증거](../reports/runtime/orin-native-smoke-2026-10-27/report.md).
 
@@ -78,6 +78,8 @@ Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay�
 - `etr-run`: current decoded frame을 snapshot port에 동기 binding하고 pipeline의 `CONFIRMED` 진입 시 JPEG 한 장을 저장한다.
 - input, detector/pipeline config와 로컬 weight의 path·size·SHA-256을 summary provenance에 기록한다.
 - Ultralytics와 OpenCV는 lazy optional dependency라 pure core와 replay test는 ML package 없이 유지된다.
+- CLI는 누락된 local weight와 기존 비어 있지 않은 output을 거부한다. detection/decision/latency는 완료 frame마다 flush하며 source 중단 시 성공 summary를 남기지 않는다. 반환된 snapshot 실패도 action error로 집계한다. 모든 frame이 오류면 CLI exit2이며, 부분 오류는 summary로 별도 판단한다.
+- runtime의 p95는 nearest rank다. `frame_processing_ms`는 decoded frame부터 동기 actions까지이며 decode/진단 log write를 제외한다. `tools/profile_orin_file.py`는 이 경로를 warmup 후 제한 시간 반복하고 Jetson 자원을 별도 수집한다. scalar latency 및 mock alarm 이력은 여전히 실행 길이에 비례하므로 무기한 운용을 보장하지 않는다. [측정 범위·재현](orin-runtime-setup.md).
 
 ### MVP temporal identity boundary
 

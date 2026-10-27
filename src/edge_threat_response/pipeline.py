@@ -258,7 +258,10 @@ class ThreatPipeline:
         errors: list[str],
     ) -> SnapshotResult:
         try:
-            return self.snapshot.capture(event_id, frame)
+            result = self.snapshot.capture(event_id, frame)
+            if result.status == "failed":
+                errors.append(f"snapshot: {result.error or 'capture returned failure'}")
+            return result
         except Exception as exc:
             message = f"{type(exc).__name__}: {exc}"
             errors.append(f"snapshot: {message}")

@@ -9,7 +9,7 @@ from edge_threat_response.domain import (
     FrameStatus,
 )
 from edge_threat_response.pipeline import ThreatPipeline
-from edge_threat_response.ports import MemoryEventRecorder, MockAlarm
+from edge_threat_response.ports import MemoryEventRecorder, MockAlarm, SnapshotResult
 from edge_threat_response.replay import load_detection_replay
 
 
@@ -19,6 +19,21 @@ REPLAY = ROOT / "tests/fixtures/replay/basic.jsonl"
 
 
 class PipelineAblationTests(unittest.TestCase):
+    def test_snapshot_failure_result_is_counted_without_suppressing_alarm(self):
+        class FailedSnapshot:
+            def capture(self,event_id,frame):
+                return SnapshotResult(status="failed",error="injected disk-full writer result")
+        frame = load_detection_replay(REPLAY)[0]
+        config = load_pipeline_config(CONFIG).for_mode(AblationMode.B0)
+        alarm = MockAlarm()
+        recorder = MemoryEventRecorder()
+        result = ThreatPipeline(config,alarm=alarm,recorder=recorder,snapshot=FailedSnapshot()).process(frame)
+        self.assertTrue(alarm.active)
+        self.assertEqual(1,len(recorder.events))
+        self.assertEqual("failed",result.event.snapshot_status)
+        self.assertEqual(1,len(result.action_errors))
+        self.assertIn("disk-full",result.action_errors[0])
+
     def test_b0_to_b3_have_distinct_expected_confirmation_frames(self):
         expected = {
             AblationMode.B0: [0, 7],

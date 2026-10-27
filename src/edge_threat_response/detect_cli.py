@@ -88,6 +88,7 @@ def detect_main(argv: Sequence[str] | None = None) -> int:
     args = build_detect_parser().parse_args(argv)
     try:
         config = DetectorConfig.load(args.detector_config)
+        _validate_local_weights(config)
         detector = build_detector(config)
         frames = OpenCVFrameSource(args.input, source_id=args.source_id)
         summary = run_detection_stream(
@@ -101,13 +102,14 @@ def detect_main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
-    return 0
+    return 0 if summary["frame_status_counts"].get("valid",0) else 2
 
 
 def run_main(argv: Sequence[str] | None = None) -> int:
     args = build_run_parser().parse_args(argv)
     try:
         detector_config = DetectorConfig.load(args.detector_config)
+        _validate_local_weights(detector_config)
         detector = build_detector(detector_config)
         pipeline_config = load_pipeline_config(args.pipeline_config)
         frames = OpenCVFrameSource(args.input, source_id=args.source_id)
@@ -126,7 +128,7 @@ def run_main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
-    return 0
+    return 0 if summary["frame_status_counts"].get("valid",0) else 2
 
 
 def _add_common_arguments(parser: argparse.ArgumentParser) -> None:
@@ -135,6 +137,12 @@ def _add_common_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--source-id")
     parser.add_argument("--max-frames", type=int)
+
+
+def _validate_local_weights(config: DetectorConfig) -> None:
+    for component in config.components:
+        if not Path(component.weights).is_file():
+            raise ValueError(f"Local weight is missing for {component.component_id}: {component.weights}")
 
 
 def _parse_component(payload: object) -> DetectorComponentConfig:

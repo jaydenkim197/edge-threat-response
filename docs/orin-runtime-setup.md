@@ -57,4 +57,47 @@ PYTHONPATH=src .venv-orin/bin/python tools/verify_orin_file_smoke.py \
 
 파일 smoke는 PC에서 고정한 개발 weight·영상 SHA를 강제한다. 새 모델로 대체할 때는 기존 검증을 승계하지 말고 별도 fixture/설정·증거를 만든다. 이번 성공은 frame53·canonical59·B3 event/snapshot2·action error0이며, 같은 JSONL의 B0~B3가 기대 제어 동작과 일치했다. 실제 사건 정확도·프레임 처리율·GPIO 반응 시간은 아니다.
 
+## 파일 실행의 오류·기록 규칙
+
+- `etr-detect`/`etr-run`의 weight는 실행 PC에 존재하는 파일이어야 한다. 누락이면 모델 생성 전에 exit2로 중단하며 자동 다운로드하지 않는다. 이 규칙은 CLI에 적용되며 programmatic backend 전체의 다운로드를 차단하는 정책은 아니다.
+- output은 새 디렉터리 또는 빈 디렉터리만 허용한다. 재실행 시 새 run 이름을 사용한다. 기존 사건·사진·로그를 덮어쓰지 않는다.
+- 완료한 frame의 detection/decision/latency JSONL을 매 frame flush한다. source 예외가 나면 앞선 완료 row는 남고 성공 summary는 생성하지 않는다. 여러 파일 사이의 원자적 저장이나 정전 시 디스크 영속성(`fsync`)을 보장하지 않는다.
+- 예외 없이 반환된 snapshot `failed`도 action error에 포함한다. 사진 실패와 event metadata/alarm 처리는 각각 기록한다. 현재 alarm은 mock이다.
+- 유효 frame이 하나도 없는 CLI 실행은 summary에 오류를 남기고 exit2다. 일부 오류만 있는 실행은 exit0일 수 있으므로 `frame_status_counts`와 `action_error_count`도 확인한다.
+- `inference_ms`와 `frame_processing_ms`는 mean/median/p95/max를 기록한다. p95는 nearest rank다. 후자는 decoded frame 수신 이후 inference·canonical 변환·판단·동기 actions까지이며 decode/진단 JSONL write를 제외한다. 실제 GPIO 경보 지연과 다르다.
+
+## 통신 없는 실행 점검
+
+원격 SSH를 유지하면서 별도 kernel network namespace 안에서만 외부 통신을 막는다. 아래 명령은 host interface/Tailscale 설정을 변경하지 않으며 namespace 생성에만 sudo가 필요하다. 로컬 weight·fixture·inventory를 먼저 준비하고 새 output을 사용한다.
+
+```bash
+task_root="$PWD"
+sudo unshare --net -- runuser -u "$(id -un)" -- env \
+  PYTHONPATH="$task_root/src" CUBLAS_WORKSPACE_CONFIG=:4096:8 \
+  "$task_root/.venv-orin/bin/python" "$task_root/tools/verify_orin_file_smoke.py" \
+  --person "$task_root/models/development-20261026/person-yolo26n.pt" \
+  --knife "$task_root/models/development-20261026/knife-best.pt" \
+  --fixture "$task_root/data/integration/pc-video-20261026/train-derived-fixture.avi" \
+  --inventory "$task_root/runs/<fresh-inventory>.json" \
+  --output "$task_root/runs/<fresh-offline-smoke>" --offline-netns
+```
+
+검사기는 loopback만 있는 namespace와 kernel `ENETUNREACH`를 요구한다. 성공 시 실제 GPU 파일 추론·동일 JSONL B0~B3·사진을 검증한다. 이 시험으로 케이블 단절/재연결·카메라 복구·원격 재부팅을 검증했다고 해석하지 않는다.
+
+## 제한된 반복 파일 자원 측정
+
+`tools/profile_orin_file.py`는 같은 frozen fixture와 모델을 한 번 warmup한 뒤 B3를 반복한다. 기존 file runtime을 재사용하며 실제 Orin에서만 실행한다. 별도 GPU 작업과 동시에 실행하지 않는다.
+
+```bash
+PYTHONPATH=src .venv-orin/bin/python tools/profile_orin_file.py \
+  --fixture data/integration/pc-video-20261026/train-derived-fixture.avi \
+  --detector-config runs/<file-smoke>/detector.json \
+  --pipeline-config runs/<file-smoke>/pipeline.json \
+  --output runs/<fresh-profile> --seconds 600
+```
+
+`profile.json`, 5초 간격 RAM/RSS/CUDA/온도 `resources.jsonl`, 1초 간격 `tegrastats.log`, live B3의 metadata/JPEG/JSONL을 남긴다. 입력·모델·설정과 실행 source hash를 보존하고 전력 모드는 조회만 한다. 관측 온도85°C 이상 또는 MemAvailable512MiB 이하에서 중단하는 것은 이번 시험의 guard이며 제조사 허용치가 아니다. 새 run 디렉터리를 쓰고 1~1800초만 허용한다.
+
+`file_processing_fps`는 warmup 이후 반복 파일의 decode·추론·판단·저장·로그를 포함한 처리율이다. 영상의 논리 timestamp와 실제 경과 시간은 다르며 camera FPS나 사건 경보 지연으로 사용하지 않는다. scalar latency 목록과 mock alarm 이력은 실행 길이에 따라 여전히 증가하므로 무기한 운용/24시간 안정성 증거가 아니다. [이번 실기기 결과](../reports/runtime/orin-readiness-2026-10-27/report.md).
+
 다음은 플랫폼 patch 기준의 유지/변경 결정, 카메라·GPIO 확보/통합, 실제 촬영과 사건 정답, 정식 benchmark다. 원격 재부팅 후 접속 유지·장시간 운용·TensorRT는 아직 검증하지 않았다.

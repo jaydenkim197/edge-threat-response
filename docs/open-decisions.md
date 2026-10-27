@@ -8,7 +8,7 @@
 | P0-02 | P0 | 기존 소스의 기준 저장소 | 현재 저장소와 고정된 legacy submodule을 기준으로 사용 | 비밀값·라이선스·재현 환경은 계속 별도 확인 | 완료 | `DECISION` / `IMPLEMENTED` |
 | P0-03 | P0 | 2026-2 MVP 기능 | knife only + geometry association + K-of-N + 4-state + GPIO + metadata/snapshot + B0~B3 ablation | core/replay는 PC 검증 완료; detector·snapshot·GPIO는 실기기 증거 필요 | 완료 | `DECISION`; core `IMPLEMENTED` |
 | P1-01 | P1 | 상황 인식 범위 | geometry-only association과 K-of-N을 MVP로, tracking·movement는 stretch | B0~B3 결과와 Orin 성능 | 완료 | `DECISION` |
-| P1-02 | P1 | 기준 Jetson 플랫폼 | 신규 시스템은 Orin Nano Developer Kit + JetPack 7.2.1, Nano는 legacy/선택 비교 | 사용자의 플랫폼 변경 결정과 NVIDIA 최신 지원 환경 확인 | 완료 | `DECISION`; 실기기 `PLANNED` |
+| P1-02 | P1 | 기준 Jetson 플랫폼 | 신규 시스템은 Orin Nano Developer Kit + JetPack 7.2.1, Nano는 legacy/선택 비교 | 사용자의 플랫폼 변경 결정과 NVIDIA 지원 환경 확인. 실제39.2.0 pilot 파일 경로는 검증, 계획39.2.1 차이는 P0-01에서 관리 | 완료 | 기준 `DECISION`; pilot `VERIFIED`; camera/GPIO `PLANNED` |
 | P1-03 | P1 | 이벤트 전송·대시보드 | 로컬 경보 우선, 위험 이벤트 메타데이터만 서버 전송 | 네트워크 단절 시 동작, 개인정보·저장 정책 | 대시보드 구현 전 | `PROPOSAL` |
 | P1-04 | P1 | 영상·개인정보 경계 | 원본 영상 최소 보존, 이벤트 기반 저장, 접근 제어 명시 | 지도교수·기관 정책, 수집 장소·동의 범위 | 실제 수집 전 | `PLANNED` |
 | P2-01 | P2 | 멀티카메라·Re-ID | 이번 학기 핵심 범위에서는 제외하고 후속 확장으로 보류 | Orin 성능, 카메라 수, 실험 장소, 일정 | MVP 검증 후 | `DEFERRED` |
@@ -17,7 +17,7 @@
 | P0-04 | P0 | 1차 구매 목록 | Orin용 NVMe·카메라·냉각/전원 안정화 장비를 우선 검토 | 정확한 대여 장비 구성, 보유품, 지원 마감일, 견적 | 구매 전 | `PLANNED` |
 | P1-05 | P1 | Web Dashboard 범위 | MVP 이후 선택 기능으로 보류 | MVP 진척, 시연 필요성, 개발 시간 | MVP 기능 확정 시 | `PROPOSAL` |
 | P0-05 | P0 | baseline detector 구조·모델·입력 규격 | output은 person/knife로 고정. COCO single-model은 sanity baseline, composite person+knife는 primary implementation proposal, unified 2-class는 person annotation 완전성 확보 시에만 후보 | composite adapter와 legacy weights의 PC CPU smoke는 통과; W4 사람 검수, Baseline v1 CUDA 학습, license, Orin latency·고정 입력/threshold 필요 | 실제 detector 검증 전 | contract/adapter `IMPLEMENTED`, topology `PROPOSAL` |
-| P0-09 | P0 | JetPack 7.2.1 ML runtime | 실제39.2.0 pilot의 torch2.14.1+cu132/vision0.29.1+cu132/Ultralytics8.4.152를 기록. 플랫폼 patch 결정 후 정식 동결 | 2026-10-27 실제 CUDA matmul·conv·NMS/2detector/53frame B0~B3·snapshot·141 tests·pip check 통과. camera/GPIO·실험 benchmark·TensorRT는 미검증. 설치 OS/driver를 자동 갱신하지 않음 | 정식 Orin 환경 동결 전 | pilot `VERIFIED`; 정식 runtime `PROPOSAL` |
+| P0-09 | P0 | JetPack 7.2.1 ML runtime | 실제39.2.0 pilot의 torch2.14.1+cu132/vision0.29.1+cu132/Ultralytics8.4.152를 기록. 플랫폼 patch 결정 후 정식 동결 | 2026-10-27 실제 CUDA kernel·53frame 통신 격리 추론/B0~B3·snapshot·148 tests·pip check 통과. 600초 반복7,375frame/action error0이지만 RSS 약216MiB 증가 원인은 미확정([증거](../reports/runtime/orin-readiness-2026-10-27/report.md)). camera/GPIO·정식 benchmark·TensorRT·장시간은 미검증. OS/driver 자동 갱신 안 함 | 정식 Orin 환경 동결 전 | pilot `VERIFIED`; 정식 runtime `PROPOSAL` |
 | P0-06 | P0 | 사건 정답과 controlled scenario | person-associated knife event의 수동 annotation, positive/hard-negative 시나리오, distance 필수·lighting 선택 | matching 허용 구간, 모호 frame, 촬영 장소·동의, 반복 횟수 | 촬영 전 | 방법 `DECISION`, 세부 `PROPOSAL` |
 | P0-07 | P0 | 프로젝트 정량 목표치 | Orin baseline 측정 후 false alarm·event recall·latency 목표 결정 | 표본 규모, baseline 분산, 일정, 실제 Orin 결과 | 제안서 목표 확정 전 | `PROPOSAL` |
 | P1-06 | P1 | 사건 증거 범위 | MVP는 metadata+snapshot 1장, clip은 stretch | 개인정보, 저장공간, 오류 분석 가치 | 완료 | `DECISION` |

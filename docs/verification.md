@@ -2,6 +2,13 @@
 
 판단 core·PC 영상/replay와 실제 Orin의 native GPU·파일 입력 smoke를 검증했다. Orin camera/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. `VERIFIED`는 해당 환경·범위의 실행 증거가 있을 때만 부여한다.
 
+## 2026-10-27 Orin 파일 운용·통신 격리·600초 반복
+
+- 수정 전 결과 덮어쓰기·중단 로그 부재·snapshot 실패 누락·누락 weight/backend 진입·all-error CLI 성공을 회귀 테스트로 재현했다. 수정 후 local 관련15 tests와 실제 Orin 전체148 tests13.035s·tool compileall 통과. 실제 두 CLI×기존 output/누락 weight4건 expected exit2, 기존7개 파일 hash 불변·누락 output 생성0이다.
+- 기존25W/L4T39.2.0 pilot에서 network namespace(loopback만/ENETUNREACH) 내부 native GPU CLI valid53/detection59/B3 event2/JPEG2/action error0, same-input B0~B3 event4/3/3/2를 확인했다. host network smoke와 canonical JSONL SHA 동일·host SSH 유지/재접속이다. 물리 회선 복구/재부팅은 시험하지 않았다.
+- 고정 train montage/2weights/640/device0, B3/K2-N3/rearm2를 warmup53 후600.086s 반복했다. valid7,375frame/12.2899 file frames/s, event278/snapshot278/action error0, 최고 관측60.75°C·최소 MemAvailable5,085,100KiB·25W 전후 동일. inference mean/p95 79.0926/85.0422ms, processing79.5621/86.4304ms(decode/진단 log write 제외)다. 정상 종료·profile/tegrastats 잔류 없음이다.
+- RSS는 약215.70MiB 증가해 원인 미확정이다. 별도 no-ML121회 decode6,413frame/133.746s는+4.85MiB로 같은 규모를 재현하지 못했다. 원인 attribution·실제 camera 장시간 검사는 남는다. camera FPS/실제 event 정확도·GPIO latency/24h/leak-free 검증으로 승격하지 않는다. [실측·hash·재현·raw 위치](../reports/runtime/orin-readiness-2026-10-27/report.md), [운영 절차](orin-runtime-setup.md).
+
 ## 2026-10-27 Orin 최초 native GPU·파일 입력 smoke
 
 - 실제Orin(p3767-0005 Super/약8GB/NVMe/25W), Ubuntu24.04.4/L4T39.2.0/kernel6.8.12-1021-tegra/driver595.78/system CUDA13.2.2를 관측했다. 계획39.2.1과 다르므로 플랫폼/runtime 정식 채택은 하지 않고 기존OS/driver/power를 변경하지 않았다. SSH key BatchMode 재접속을 확인했다.
