@@ -2,6 +2,8 @@
 
 상태: MVP 논리 구조 `DECISION`, 공통 core·replay·detector/video/snapshot 인터페이스 `IMPLEMENTED`/PC `VERIFIED`(CPU 및 PC13 CUDA), Orin·camera/GPIO adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
 
+2026-10-27: **실제 Orin L4T39.2.0의 native GPU·파일입력 경로는 smoke `VERIFIED`**, camera/GPIO·실제 사건 benchmark는 `PLANNED`다. 계획39.2.1과의 차이 및 framework pilot을 별도 관리하며 정식 플랫폼/runtime 채택으로 승격하지 않는다. [환경·재현](orin-runtime-setup.md), [실기기 증거](../reports/runtime/orin-native-smoke-2026-10-27/report.md).
+
 ## 시스템 경계
 
 ```text

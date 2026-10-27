@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "status": "observed_not_formal_platform_adoption",
+  "architecture": "aarch64",
+  "kernel": "6.8.12-1021-tegra",
+  "python": "3.12.3",
+  "device_model": "NVIDIA Jetson Orin Nano Engineering Reference Developer Kit Super",
+  "device_compatible": "nvidia,p3768-0000+p3767-0005-super nvidia,p3767-0005 nvidia,tegra234",
+  "os_release": "PRETTY_NAME=\"Ubuntu 24.04.4 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.4 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo",
+  "nv_tegra_release": "# R39 (release), REVISION: 2.0, GCID: 45755727, BOARD: generic, EABI: aarch64, DATE: Mon Jun  1 09:28:48 PM UTC 2026\n# KERNEL_VARIANT: oot\nTARGET_USERSPACE_LIB_DIR=nvidia\nTARGET_USERSPACE_LIB_DIR_PATH=usr/lib/aarch64-linux-gnu/nvidia",
+  "l4t_release": "39.2.0",
+  "planned_l4t_release": "39.2.1",
+  "matches_planned_l4t": false,
+  "firmware_bios_version": "39.2.0-gcid-45755727",
+  "memory": {
+    "MemTotal": "7665092 kB",
+    "MemAvailable": "6491608 kB",
+    "SwapTotal": "0 kB"
+  },
+  "packages": {
+    "argv": [
+      "dpkg-query",
+      "-W",
+      "-f=${binary:Package}\t${Version}\t${db:Status-Abbrev}\n",
+      "nvidia-l4t-core",
+      "nvidia-l4t-bootloader",
+      "nvidia-jetpack",
+      "cuda-toolkit-13-2",
+      "libnvinfer10",
+      "python3-libnvinfer",
+      "libcudnn9-cuda-13"
+    ],
+    "exit_code": 1,
+    "stdout": "cuda-toolkit-13-2\t13.2.2-1\tii \nnvidia-l4t-bootloader\t39.2.0-20260601141651\tii \nnvidia-l4t-core\t39.2.0-20260601141651\tii",
+    "stderr": "dpkg-query: no packages found matching nvidia-jetpack\ndpkg-query: no packages found matching libnvinfer10\ndpkg-query: no packages found matching python3-libnvinfer\ndpkg-query: no packages found matching libcudnn9-cuda-13"
+  },
+  "storage": {
+    "argv": [
+      "lsblk",
+      "-J",
+      "-o",
+      "NAME,SIZE,TYPE,MOUNTPOINTS"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n   \"blockdevices\": [\n      {\n         \"name\": \"loop0\",\n         \"size\": \"16M\",\n         \"type\": \"loop\",\n         \"mountpoints\": [\n             null\n         ]\n      },{\n         \"name\": \"nvme0n1\",\n         \"size\": \"238.5G\",\n         \"type\": \"disk\",\n         \"mountpoints\": [\n             null\n         ],\n         \"children\": [\n            {\n               \"name\": \"nvme0n1p1\",\n               \"size\": \"237G\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   \"/\"\n               ]\n            },{\n               \"name\": \"nvme0n1p2\",\n               \"size\": \"128M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p3\",\n               \"size\": \"768K\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p4\",\n               \"size\": \"31.6M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p5\",\n               \"size\": \"128M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p6\",\n               \"size\": \"768K\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p7\",\n               \"size\": \"31.6M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p8\",\n               \"size\": \"100M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p9\",\n               \"size\": \"512K\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p10\",\n               \"size\": \"64M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   \"/boot/efi\"\n               ]\n            },{\n               \"name\": \"nvme0n1p11\",\n               \"size\": \"100M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p12\",\n               \"size\": \"512K\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p13\",\n               \"size\": \"64M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p14\",\n               \"size\": \"400M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            },{\n               \"name\": \"nvme0n1p15\",\n               \"size\": \"479.5M\",\n               \"type\": \"part\",\n               \"mountpoints\": [\n                   null\n               ]\n            }\n         ]\n      }\n   ]\n}",
+    "stderr": ""
+  },
+  "root_space": {
+    "argv": [
+      "df",
+      "-h",
+      "/"
+    ],
+    "exit_code": 0,
+    "stdout": "Filesystem      Size  Used Avail Use% Mounted on\n/dev/nvme0n1p1  233G   22G  200G  10% /",
+    "stderr": ""
+  },
+  "gpu_driver": {
+    "argv": [
+      "nvidia-smi",
+      "--query-gpu=name,driver_version",
+      "--format=csv,noheader"
+    ],
+    "exit_code": 0,
+    "stdout": "Orin (nvgpu), 595.78",
+    "stderr": ""
+  },
+  "cuda_compiler": {
+    "argv": [
+      "/usr/local/cuda/bin/nvcc",
+      "--version"
+    ],
+    "exit_code": 0,
+    "stdout": "nvcc: NVIDIA (R) Cuda compiler driver\nCopyright (c) 2005-2026 NVIDIA Corporation\nBuilt on Fri_May_08_10:52:52_AM_PDT_2026\nCuda compilation tools, release 13.2, V13.2.86\nBuild cuda_13.2.r13.2/compiler.37953736_0",
+    "stderr": ""
+  },
+  "power_mode": {
+    "argv": [
+      "/usr/sbin/nvpmodel",
+      "-q"
+    ],
+    "exit_code": 0,
+    "stdout": "NV Power Mode: 25W\n1",
+    "stderr": ""
+  },
+  "tegrastats_sample": {
+    "argv": [
+      "tegrastats",
+      "--interval",
+      "1000"
+    ],
+    "status": "bounded_sample_complete",
+    "stdout": "10-27-2026 14:17:39 RAM 1120/7485MB (lfb 47x4MB) CPU [34%@729,2%@729,15%@729,14%@729,0%@729,0%@729] GR3D_FREQ 0% cpu@53.687C/53.687C soc2@53.375C/53.375C soc0@53.031C/53.031C gpu@53.75C/53.75C tj@54.406C/54.406C soc1@54.406C/54.406C VDD_IN 4856mW/4856mW/4856mW VDD_CPU_GPU_CV 715mW/715mW/715mW VDD_SOC 1430mW/1430mW/1430mW\n10-27-2026 14:17:40 RAM 1120/7485MB (lfb 47x4MB) CPU [35%@729,3%@729,22%@729,16%@729,1%@729,0%@729] GR3D_FREQ 0% cpu@53.843C/53.843C soc2@53.25C/53.375C soc0@53.062C/53.062C gpu@53.531C/53.75C tj@54.468C/54.468C soc1@54.468C/54.468C VDD_IN 4856mW/4856mW/4856mW VDD_CPU_GPU_CV 715mW/715mW/715mW VDD_SOC 1430mW/1430mW/1430mW\n"
+  },
+  "video_device_nodes": [],
+  "limits": [
+    "read-only inventory, no power/clock/firmware/OS updates",
+    "device-tree name is not a physical module inspection",
+    "package presence is not runtime verification",
+    "tegrastats is a short observation, not a benchmark"
+  ],
+  "cuda_smoke": {
+    "status": "passed_bounded_cuda_kernels",
+    "torch": "2.14.1+cu132",
+    "torchvision": "0.29.1+cu132",
+    "torch_cuda": "13.2",
+    "gpu_name": "Orin",
+    "compute_capability": [
+      8,
+      7
+    ],
+    "compiled_arches": [
+      "sm_80",
+      "sm_90",
+      "sm_100",
+      "sm_110",
+      "sm_120"
+    ],
+    "operations": [
+      "matrix_multiply",
+      "cudnn_convolution",
+      "torchvision_nms"
+    ],
+    "warnings": [],
+    "formal_runtime_adopted": false
+  }
+}

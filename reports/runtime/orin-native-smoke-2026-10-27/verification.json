@@ -1,0 +1,84 @@
+{
+  "artifact_sha256": {
+    "fixture": "b16a569242f37e771f268a6b3d9b1e0ad3c9f98daee85c51d22d0461d2141e6e",
+    "knife": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+    "person": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+  },
+  "cli_exit_code": 0,
+  "cuda_warnings": [],
+  "detections": 59,
+  "detections_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd",
+  "environment": {
+    "executable": "/home/jorin/edge-threat-response/.venv-orin/bin/python",
+    "logical_cpu_count": 6,
+    "packages": {
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "torch": "2.14.1+cu132",
+      "torchvision": "0.29.1+cu132",
+      "ultralytics": "8.4.152"
+    },
+    "platform": "Linux-6.8.12-1021-tegra-aarch64-with-glibc2.39",
+    "processor": "aarch64",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+  },
+  "formal_platform_or_runtime_adopted": false,
+  "frames": 53,
+  "git_commit": "9ad86e075b5887567302dd2fe38a8aa4de32e5cd",
+  "inventory_sha256": "e2ef681f1dba40f389147f5c241c8ab03d0d4d5b321c2f7181bc9818c5fed352",
+  "l4t_release": "39.2.0",
+  "limits": [
+    "frozen train-derived still montage, not independent event evaluation",
+    "no camera/GPIO/TensorRT/network-fault/endurance verification",
+    "installed platform differs from the project plan",
+    "framework versions differ from PC13; no speed or accuracy comparison"
+  ],
+  "matches_planned_l4t": false,
+  "replay": {
+    "B0": {
+      "events": [
+        8,
+        18,
+        32,
+        39
+      ],
+      "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+    },
+    "B1": {
+      "events": [
+        9,
+        19,
+        40
+      ],
+      "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+    },
+    "B2": {
+      "events": [
+        18,
+        32,
+        39
+      ],
+      "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+    },
+    "B3": {
+      "events": [
+        19,
+        40
+      ],
+      "input_sha256": "d498b6961edbe6bfb003f2a16fe007fd1f93292c5d228674ea3a7932b46113cd"
+    }
+  },
+  "schema_version": 1,
+  "script_sha256": "1976bc970e824bc2bd94b694c920847d288e4b81455f8ab04947c9668db6a531",
+  "snapshots": [
+    {
+      "frame_index": 19,
+      "sha256": "d93c55e579722df148a94ca7ec572ba369b9b7b02db9e64b9a21937d985fe1a4"
+    },
+    {
+      "frame_index": 40,
+      "sha256": "be54dd071e71305a1b554cb1c5ad0978abaa6577dfa7cf16369103b1202417df"
+    }
+  ],
+  "status": "passed_orin_file_smoke_experimental_platform"
+}

@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-10-27 - Orin 최초 원격 접속·native GPU·파일 영상 검증
+
+- 작업 카드/요청: 사용자가 Orin 접속 정보와 계정을 제공했다. SSH→장비/설치 환경→격리 native GPU→기존 새 best.pt 파일 경로를 실제 검증한다. 완료 기준은 key 재접속, GPU kernel/2detector/53frame/동일 JSONL B0~B3/snapshot 원 frame 일치·tests·증거다. OS/firmware/driver/전력 변경, 카메라/GPIO, 새 학습·사이트/DB는 범위 밖이다. 계획39.2.1과 실제39.2.0 불일치를 별도 기록한다.
+- 환경/접속: 사용자 authorized_keys에 전용 public key를 추가하고 기존 key/로컬 SSH config를 보존했다. 노트북 alias의 BatchMode 재접속을 확인했다. 비밀값/private endpoint/key는 Git에 넣지 않았다. device-tree Orin Nano Super/p3767-0005, 약8GB/6CPU/swap0, NVMe238.5GiB, Ubuntu24.04.4/kernel6.8.12-1021-tegra, BIOS/L4T39.2.0, driver595.78/system CUDA13.2.2, 기존25W mode1을 관측했다.
+- search-first/구현: 기존 canonical adapter·CLI·replay·snapshot 검사/고정PC fixture를 재사용했다. 신규 `tools/inspect_jetson.py`는 제한된 비파괴 inventory와 실제 CUDA matmul/conv/NMS, `tools/verify_orin_file_smoke.py`는 고정 weight/영상 hash와 native CLI/B0~B3/snapshot을 검증한다. `.venv-orin` 격리·Git 제외, submodule 비재귀 clone, PC13에서 모델2개/소량 시험 영상만 전송했다. source dataset은 PC13에 유지한다.
+- runtime: 초기torch2.13.0+cu132의 Orin CC8.7 경고/작은 matmul 동작을 관찰했다. PyTorch 공식cu132의2.14.1/vision0.29.1에서 실제 matmul32768·cuDNN conv27·CUDA NMS[0,2]/synchronize 통과, CUDA 경고0이다. Ultralytics8.4.152/NumPy1.26.4/OpenCV4.11.0.86을 고정했다. OS package가 아닌 venv CUDA/cuDNN wheel이며, 점검한 JetPack meta/TensorRT package는 없다. 최초 shell exit 전달 오류도 raw에 보존하고 후속 pip check·kernel·실제 추론으로 성공을 확인했다.
+- 실기기 결과: 새knife `d8eff85e…`·person `9b09cc8b…`·PC와동일FFV1 `b16a5692…`를 검사했다. 53/53valid/canonical59, B3 event2/snapshot2/action error0, frame19/40의 decoded image→JPEG bytes 일치. 동일 Orin JSONL의 B0[8,18,32,39]/B1[9,19,40]/B2[18,32,39]/B3[19,40]을 확인했다. full141 tests13.058s·pip check·tool compileall 통과. source base `9ad86e0` + 신규tools, 실행 file-smoke SHA `1976bc970e824bc2bd94b694c920847d288e4b81455f8ab04947c9668db6a531`.
+- 기록/영향: [실측·inventory/lock](../reports/runtime/orin-native-smoke-2026-10-27/report.md), [운영 재현](orin-runtime-setup.md), Master Plan/README/architecture/open decisions/통합계획을 갱신했다. 공식JetPack7.2.1 CUDA 구성은10-27 재확인으로13.2.2를 정정했지만 목표L4T39.2.1은 유지한다. raw는 Orin ignored `runs/orin-setup-20261027-v1/`, `runs/orin-file-smoke-20261027-v1/`. commit은 본 항목을 포함한 변경 이력으로 추적한다. 병행 사이트 작업은 별도로 보존한다.
+- 한계/다음: 계획 플랫폼/runtime 정식 채택은 아니며 실제39.2.0의 bounded smoke만 VERIFIED다. 학습 이미지 조합은 실제 사건 정확도/오경보/추론 FPS/물리 GPIO 지연의 근거가 아니다. camera node 없음, camera/GPIO·실제 영상/사건 GT·장시간/네트워크 단절·재부팅·TensorRT는 미검증이다. patch 기준 결정과 부품 확보/통합, 검수 승인 후 보강 학습이 남는다.
+
 ## 2026-10-26 - Catargiu 전체 조사·ACF 정리·미검수량 정렬
 
 - 작업 카드/사용자 요청: 최초17장은 전체 수량의 상한이 아니므로 Catargiu 원본 전체에서 작은 칼·CCTV 후보를 추가로 찾는다. 현재 진행하지 않는 ACF placeholder를 검수 화면에서 제거하고 미검수량이 많은 순서로 자동 정렬한다. 기존 ID·판정·배정·이력·두 질문과 학습/val/test 경계를 보존하며, source·권리·실제 session gate를 통과했다고 간주하지 않는다.

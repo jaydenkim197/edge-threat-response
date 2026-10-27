@@ -4,7 +4,7 @@
 
 | ID | 우선순위 | 결정 사항 | 현재 권장안 | 선택 기준 / 필요한 증거 | 결정 시점 | 상태 |
 |---|---|---|---|---|---|---|
-| P0-01 | P0 | Orin Nano 실기기 inventory와 설치 경로 | JetPack 7.2.1 기준, UEFI/QSPI 확인 후 NVMe 우선 검토 | 2026-10-04 사용자: Orin 보유/원격 미설정/카메라·GPIO 미확보(`USER_REPORTED`). 정확한 SKU·RAM·부팅 OS/JetPack·firmware·microSD/NVMe·냉각은 미확인 | 원격 접속·실기기 통합 전 | `PLANNED`; 실기기 미검증 |
+| P0-01 | P0 | Orin Nano 실기기 inventory와 기준 patch 차이 | 계획39.2.1 유지/실제39.2.0 채택 또는 업데이트를 별도로 결정. NVMe에서 pilot 진행 | 2026-10-27 SSH key 접속·device-tree p3767-0005 Super·약8GB·NVMe238.5GiB·UEFI/L4T39.2.0·CUDA13.2.2·25W 및 GPU 파일 smoke 확인. 카메라/GPIO·실물 모듈/냉각 상세 미검증 | 정식 환경 동결 전 | inventory/file smoke `VERIFIED`; patch 결정 `PROPOSAL` |
 | P0-02 | P0 | 기존 소스의 기준 저장소 | 현재 저장소와 고정된 legacy submodule을 기준으로 사용 | 비밀값·라이선스·재현 환경은 계속 별도 확인 | 완료 | `DECISION` / `IMPLEMENTED` |
 | P0-03 | P0 | 2026-2 MVP 기능 | knife only + geometry association + K-of-N + 4-state + GPIO + metadata/snapshot + B0~B3 ablation | core/replay는 PC 검증 완료; detector·snapshot·GPIO는 실기기 증거 필요 | 완료 | `DECISION`; core `IMPLEMENTED` |
 | P1-01 | P1 | 상황 인식 범위 | geometry-only association과 K-of-N을 MVP로, tracking·movement는 stretch | B0~B3 결과와 Orin 성능 | 완료 | `DECISION` |
@@ -17,7 +17,7 @@
 | P0-04 | P0 | 1차 구매 목록 | Orin용 NVMe·카메라·냉각/전원 안정화 장비를 우선 검토 | 정확한 대여 장비 구성, 보유품, 지원 마감일, 견적 | 구매 전 | `PLANNED` |
 | P1-05 | P1 | Web Dashboard 범위 | MVP 이후 선택 기능으로 보류 | MVP 진척, 시연 필요성, 개발 시간 | MVP 기능 확정 시 | `PROPOSAL` |
 | P0-05 | P0 | baseline detector 구조·모델·입력 규격 | output은 person/knife로 고정. COCO single-model은 sanity baseline, composite person+knife는 primary implementation proposal, unified 2-class는 person annotation 완전성 확보 시에만 후보 | composite adapter와 legacy weights의 PC CPU smoke는 통과; W4 사람 검수, Baseline v1 CUDA 학습, license, Orin latency·고정 입력/threshold 필요 | 실제 detector 검증 전 | contract/adapter `IMPLEMENTED`, topology `PROPOSAL` |
-| P0-09 | P0 | JetPack 7.2.1 ML runtime | 실제 Orin에서 native PyTorch·Ultralytics smoke를 먼저 수행하고 container는 재현성 대안으로 비교; 성공한 버전·image digest만 고정 | JetPack 7.2.1 공식 지원과 별개로 Orin Nano 조합의 GPU access, YOLO load/inference, TensorRT와 package conflict 확인 필요 | Orin runtime 통합 전 | `PROPOSAL` |
+| P0-09 | P0 | JetPack 7.2.1 ML runtime | 실제39.2.0 pilot의 torch2.14.1+cu132/vision0.29.1+cu132/Ultralytics8.4.152를 기록. 플랫폼 patch 결정 후 정식 동결 | 2026-10-27 실제 CUDA matmul·conv·NMS/2detector/53frame B0~B3·snapshot·141 tests·pip check 통과. camera/GPIO·실험 benchmark·TensorRT는 미검증. 설치 OS/driver를 자동 갱신하지 않음 | 정식 Orin 환경 동결 전 | pilot `VERIFIED`; 정식 runtime `PROPOSAL` |
 | P0-06 | P0 | 사건 정답과 controlled scenario | person-associated knife event의 수동 annotation, positive/hard-negative 시나리오, distance 필수·lighting 선택 | matching 허용 구간, 모호 frame, 촬영 장소·동의, 반복 횟수 | 촬영 전 | 방법 `DECISION`, 세부 `PROPOSAL` |
 | P0-07 | P0 | 프로젝트 정량 목표치 | Orin baseline 측정 후 false alarm·event recall·latency 목표 결정 | 표본 규모, baseline 분산, 일정, 실제 Orin 결과 | 제안서 목표 확정 전 | `PROPOSAL` |
 | P1-06 | P1 | 사건 증거 범위 | MVP는 metadata+snapshot 1장, clip은 stretch | 개인정보, 저장공간, 오류 분석 가치 | 완료 | `DECISION` |

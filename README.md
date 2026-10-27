@@ -26,8 +26,9 @@ Camera
 
 - **설계:** MVP 범위와 B0~B3 비교 구조는 `DECISION`입니다. 기준 플랫폼은 Jetson Orin Nano Developer Kit / JetPack 7.2.1입니다.
 - **PC에서 검증됨:** 판단 core, replay, dataset audit/export/review tooling, detector/video/snapshot scaffold, CUDA training handoff가 구현·검증되었습니다.
+- **Orin에서 확인됨(2026-10-27):** 실제 L4T39.2.0 보드에서 CUDA 연산과 새 개발 모델의 파일 영상→B0~B3→metadata/snapshot/mock alarm 경로를 검증했습니다. 학습 이미지 조합 영상의 연결 시험이며 실제 사건 성능이나 카메라/GPIO 검증은 아닙니다. [실기기 증거](reports/runtime/orin-native-smoke-2026-10-27/report.md).
 - **데이터 전략:** 약 3 m 고정형 실내 CCTV를 목표 domain으로 둡니다. legacy 재현은 팀원 별도 트랙이고, 신규 detector는 SOHAS 감사 후 실사 기준(R1)·음성 데이터 효과(H1)를 우선 비교하는 제안 상태입니다. 자체 CCTV 적응(T1)은 독립 촬영 세션 확보 뒤 검토합니다. DaSCI는 SOHAS와 대부분 정확 중복되어 필수 합본이 아닙니다. ACF/Mock Attack은 외부 평가 후보로 보존합니다.
-- **아직 남음:** CUDA full training, 최종 detector 선택, Orin runtime·camera·GPIO·TensorRT·benchmark입니다.
+- **아직 남음:** source 전체 정식 학습·최종 detector 선택, 기준 L4T39.2.1과 실제39.2.0 차이 처리, camera·GPIO·실제 사건 benchmark입니다. 개발용 학습3회는 완료했으며 TensorRT는 후속 최적화입니다.
 - **증거 원칙:** 기존 MIDAS 성능 수치는 재현 조건이 부족해 이번 프로젝트의 공식 결과로 사용하지 않습니다.
 - **일정 목표:** 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태를 확보합니다.
 
@@ -43,7 +44,8 @@ Camera
 
 - [Master Project Plan](docs/project-plan.md): 목적, 범위, 일정, 성공 조건의 최상위 기준
 - [MVP Research Specification](docs/mvp-research-specification.md): 이벤트 정의, 상태·평가·시나리오의 구현 기준
-- [Orin 도착 전 작업 계획](docs/pre-orin-work-plan.md): 병렬 legacy 재현·신규 source audit·CUDA/실기기 작업
+- [PC 준비·Orin 통합 계획](docs/pre-orin-work-plan.md): 병렬 legacy 재현·source audit·실기기 통합 gate
+- [Orin 접속·runtime 재현](docs/orin-runtime-setup.md): 실제 설치 환경·격리 venv·GPU/파일 smoke 절차
 - [모델·데이터 준비 계획](docs/model-data-plan.md): 데이터 inventory, 라벨·분할 계약, 검증·학습 단계
 - [Dataset Source Strategy](docs/dataset-source-strategy.md): 신규 detector 후보 recipe, 공개 source별 역할, PC13 원본 저장 원칙과 audit gate
 - [Dataset Evaluation Criteria](docs/dataset-evaluation-criteria.md): 공개 source와 legacy 128장 검수의 gate·판정 열

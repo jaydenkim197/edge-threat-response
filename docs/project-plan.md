@@ -16,6 +16,8 @@
 
 2026-10-04 사용자 최신 확인: **Orin Nano는 보유 중**이며 원격 접속은 설정하지 않았다. 카메라·GPIO 기기는 아직 확보하지 않았다. 이는 `USER_REPORTED` 장비 준비 상태이며 실제 SKU/RAM·저장장치·부팅 OS/JetPack·firmware·CUDA 동작은 원격/실물 inventory 전까지 미검증이다. 다음 실물 gate는 수령 대기가 아니라 부팅 상태 확인·원격 접속 설정이고, 주변장치 확보 전에도 runtime/image GPU smoke는 접속 후 진행할 수 있다.
 
+2026-10-27 실측 갱신: SSH key 접속, device-tree Orin Nano Super/p3767-0005·약8GB·NVMe·UEFI39.2.0·25W를 확인했다. 실제 L4T39.2.0/CUDA13.2.2의 격리 native 환경에서 실제 GPU kernel과 새 모델의53frame 파일입력/B0~B3/metadata/snapshot/mock alarm을 검증했다. **계획39.2.1과 실제39.2.0은 다르며 기준 변경/OS 업데이트를 승인한 것이 아니다.** 카메라/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. [실기기 증거](../reports/runtime/orin-native-smoke-2026-10-27/report.md).
+
 ### Target deployment and data-domain assumption
 
 - camera 모델·화각은 미정이지만, dataset 검수와 controlled scenario는 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 비스듬히 보는 환경을 기준으로 한다.
@@ -170,7 +172,7 @@ Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP
 ## 8. Platform Strategy
 
 - 신규 시스템의 기준은 **Jetson Orin Nano Developer Kit + JetPack 7.2.1 / Jetson Linux 39.2.1**로 고정한다. 재현성을 위해 개발 중 임의로 최신 버전으로 자동 추종하지 않고, 변경 시 별도 결정을 남긴다.
-- JetPack 기준 구성은 Ubuntu 24.04, kernel 6.8, CUDA 13.2.1, cuDNN 9.20.0, TensorRT 10.16.2, VPI 4.1.3이다. 이는 NVIDIA 공식 배포 정보로 확인한 플랫폼 기준이며 프로젝트 ML runtime의 동작 검증 결과는 아니다.
+- JetPack7.2.1 기준 구성은 Ubuntu24.04, kernel6.8, CUDA13.2.2, cuDNN9.20.0, TensorRT10.16.2, VPI4.1.3이다. 2026-10-27 공식 배포 정보를 재확인해 이전 CUDA13.2.1 표기를 정정했다. 이는 기준 배포 구성이고 실제39.2.0 보드/venv와 구분한다.
 - detector용 PyTorch/Ultralytics와 NVIDIA container image는 JetPack 7.2.1 및 실제 보드에서 smoke test한 뒤 고정한다. NVIDIA 문서의 예시 container tag를 프로젝트 의존성으로 그대로 채택하지 않는다.
 - 공통 domain·spatial·temporal·state-machine·ablation 로직은 Python 3.10~3.12에서 동작하는 platform-neutral package로 만들고, camera·detector·GPIO·resource monitor를 adapter로 분리한다.
 - detector runtime은 JetPack 7.2.1 실제 보드에서 native PyTorch·Ultralytics smoke를 먼저 수행하고, container는 재현성과 호스트 OS 분리를 위한 대안으로 비교한다. 순수 core와 PC replay test는 두 runtime 없이도 실행 가능해야 한다.

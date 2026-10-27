@@ -43,6 +43,7 @@ __pycache__/
 *.egg-info/
 .venv/
 .venv-ml/
+.venv-orin/
 venv/
 runs/
 .pytest_cache/

@@ -1,6 +1,13 @@
 # Verification Matrix
 
-신규 시스템의 판단 core·PC 영상 입력·replay는 개발 PC에서 검증됐지만 Orin 실기기 통합과 성능은 미검증이다. `VERIFIED`는 명령·환경·결과·증거를 확보한 뒤에만 부여한다.
+판단 core·PC 영상/replay와 실제 Orin의 native GPU·파일 입력 smoke를 검증했다. Orin camera/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. `VERIFIED`는 해당 환경·범위의 실행 증거가 있을 때만 부여한다.
+
+## 2026-10-27 Orin 최초 native GPU·파일 입력 smoke
+
+- 실제Orin(p3767-0005 Super/약8GB/NVMe/25W), Ubuntu24.04.4/L4T39.2.0/kernel6.8.12-1021-tegra/driver595.78/system CUDA13.2.2를 관측했다. 계획39.2.1과 다르므로 플랫폼/runtime 정식 채택은 하지 않고 기존OS/driver/power를 변경하지 않았다. SSH key BatchMode 재접속을 확인했다.
+- 격리venv torch2.14.1+cu132/vision0.29.1+cu132에서 실제 CUDA matmul·cuDNN convolution·torchvision NMS/synchronize 통과, CUDA 경고0. Ultralytics8.4.152/NumPy1.26.4/OpenCV4.11.0.86, pip check 정상이다. source base9ad86e0 + 신규tools에서 실제Orin 전체141 tests13.058s·tool compileall 통과.
+- PC13과동일 weight2개/FFV1 영상 hash를 확인하고 native device0 `etr-run`을 실행했다. valid53/canonical59·B3 event2/snapshot2/action error0, frame19/40의 JPEG bytes가 원 decoded event frame 재인코딩과 일치했다. 같은 Orin JSONL의 B0/B1/B2/B3 events4/3/3/2가 고정fixture 기대frame과 일치한다. raw: Orin ignored `runs/orin-setup-20261027-v1/`, `runs/orin-file-smoke-20261027-v1/`.
+- 학습 이미지 조합의 파일 경로 검증이며 실제 촬영/사건 성능·GPIO·TensorRT·장시간/재부팅/FPS를 검증한 것은 아니다. 카메라 node는 없고 source 추가 학습·site/DB 변경은 하지 않았다. [환경·hash·한계](../reports/runtime/orin-native-smoke-2026-10-27/report.md), [재실행](orin-runtime-setup.md).
 
 ## 2026-10-26 신규 후보304장 검수 배포
 
