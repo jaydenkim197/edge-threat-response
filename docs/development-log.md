@@ -1090,3 +1090,15 @@
 
 - 결정사항 요약은 `docs/meeting-decisions/2026-09-04.md`에 남겼다.
 - 원본 회의록은 공개 저장소에 넣지 않고 로컬 수업 자료로 유지한다.
+
+
+## 2026-10-29 - Codex baseline 전체 규칙 호환 적용
+
+- Goal / Why: 사용자 요청에 따라 공통 baseline 전체 작업 규칙을 적용하고 프로젝트별 지침을 유지한다.
+- Scope / Changes: AGENTS.md에 upstream 전체 규칙과 기존 문서 역할 매핑을 추가했다. 상태·구조·결정·기록은 기존 project-plan/verification/architecture/open-decisions/development-log를 계속 사용한다. 중복 status/ADR 트리는 만들지 않는다.
+- Environment / Commands: 새 Windows 노트북의 로컬 저장소, 적용 전 git pull --ff-only 결과 Already up to date. 전역 search-first/verification-loop는 기존 설치를 재사용한다.
+- Verification: 원문 보존, upstream 전체 규칙 포함, 기존 문서 매핑과 git diff --check를 적용 보고서에서 검증한다. 문서·작업 규칙 변경이므로 코드 테스트·실기기 시험은 실행하지 않는다.
+- Status: 작업 규칙 IMPLEMENTED; 실제 정적 검증 결과는 별도 적용 보고서에 기록한다. 제품 구현·하드웨어 검증 상태와 측정값은 변경하지 않는다.
+- Known limitations: 작업 전부터 있던 수정 파일은 보존한다. OneDrive/MYBOX 경로의 콘텐츠 상태는 별도 문제다.
+- Decision impact / Next: 기존 MVP·JetPack·팀 결정·Git 정책 유지. 다음 작업부터 병합된 지침을 사용한다.
+- Git commit: 이 항목과 AGENTS.md에 대한 Git 이력으로 추적한다.

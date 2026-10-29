@@ -49,3 +49,150 @@ material task에는 날짜, 목적, 이유, 범위, 변경 파일, 환경·명�
 - 다음 작업자는 기존 README·계획·open decisions·최근 개발 로그·verification에서 맥락을 복원한다. 별도 agent memory DB나 중복 `project-status.md`를 기본으로 추가하지 않는다.
 - 외부 탐색·그래프·시각화 도구는 반복되는 구체적 병목과 도입 효과가 확인될 때만 검토한다. 생성된 그래프·다이어그램은 보조 산출물이며 현재 코드의 증거를 대체하지 않는다.
 - 완료 시 의도한 파일만 stage하고 commit/push 결과를 확인한다. post-commit hook이 이미 push했다면 중복 sync를 하지 않으며, 실패·충돌 시 force push나 자동 덮어쓰기로 해결하지 않는다.
+
+
+<!-- codex-development-baseline:begin -->
+## Baseline integration — 2026-10-29
+
+Upstream: https://github.com/jaydenkim197/codex-development-baseline
+
+The following upstream rules are defaults. Preserve and follow all pre-existing project-specific instructions, source-of-truth mappings, hardware constraints, document workflows, and Git rules; they take precedence over conflicting defaults. Do not rewrite historical records or infer implementation status from templates. An existing canonical document fulfills the corresponding baseline role. Update only documents affected by the task. Global skills `search-first` and `verification-loop` are installed once; do not duplicate them per project.
+
+Existing project sources (retain their ownership and existing status):
+- `docs/project-plan.md`
+- `docs/mvp-research-specification.md`
+- `docs/open-decisions.md`
+- `docs/architecture.md`
+- `docs/verification.md`
+- `docs/development-log.md`
+- `README.md`
+
+Project-specific compatibility mapping: use `docs/project-plan.md` and `docs/verification.md` for current state, `docs/architecture.md` for architecture, `docs/open-decisions.md` and `docs/meeting-decisions/` for decisions, and `docs/development-log.md` for chronology. These existing documents implement baseline documentation roles. Do not create parallel status/ADR trees. Keep the project-specific documentation-governance rules.
+
+# Project Instructions for Codex
+
+## 1. Source of Truth
+Use this order:
+1. Current source code and configuration
+2. `docs/architecture/`
+3. `docs/decisions/`
+4. `docs/project-status.md`
+5. `docs/development/`
+6. `README.md`
+
+Do not treat old plans, stale comments, historical docs, or generated artifacts as current implementation unless confirmed.
+
+## 2. Project Status Model
+Use only:
+- `PROPOSAL` — under consideration
+- `DECISION` — selected, not necessarily implemented
+- `PLANNED` — approved/scheduled work
+- `IMPLEMENTED` — exists in code/config/hardware integration
+- `VERIFIED` — passed defined validation criteria
+- `BLOCKED` — cannot proceed due to unresolved dependency/constraint
+- `DEFERRED` — intentionally postponed
+- `SUPERSEDED` — replaced by a newer decision/design/implementation
+
+Important:
+`DECISION != IMPLEMENTED`
+`IMPLEMENTED != VERIFIED`
+
+Do not promote status without evidence.
+
+## 3. Development Philosophy
+Prefer the smallest correct change.
+
+Before creating new code:
+1. Reuse existing project code.
+2. Prefer built-in or standard-library capabilities.
+3. Prefer already-installed dependencies.
+4. Add a dependency only for clear reliability/maintenance benefit.
+5. Create abstractions only when current concrete requirements justify them.
+
+Avoid unrelated refactoring, speculative abstractions, duplicate implementations, unnecessary wrappers/dependencies, broad architecture changes for local problems, and style-only rewrites.
+
+Use the global `search-first` skill for substantial new functionality, integrations, dependencies, helpers, wrappers, or abstractions.
+
+## 4. Before Editing
+For non-trivial work:
+1. Locate the current implementation.
+2. Read relevant surrounding code.
+3. Identify callers, dependencies, tests, and config.
+4. Check relevant architecture/decision docs.
+5. Determine the smallest safe implementation.
+6. If architecture changes, state the impact before implementing.
+
+## 5. Verification
+Use the global `verification-loop` skill after meaningful changes and before reporting completion.
+
+Never claim a check passed unless it was actually run and observed.
+
+Keep these states distinct:
+- implemented
+- statically checked
+- automated-tested
+- integration-verified
+- hardware-verified
+- not verified
+
+Do not build a large testing framework only because tests are absent.
+
+## 6. Hardware / AI / Embedded Work
+When hardware, edge AI, robotics, IoT, sensors, cameras, GPU acceleration, firmware, or external devices are involved:
+- separate software correctness from target-device verification
+- define measurable pass/fail criteria before experiments when practical
+- preserve reproducible configuration and benchmark conditions
+- do not claim target-device performance from desktop/simulated results
+- record hardware-specific limitations
+- prefer MVP validation before optional optimization
+
+## 7. Documentation
+Update:
+- `docs/project-status.md` for current state
+- `docs/architecture/` for implemented structure and runtime/data flow
+- `docs/decisions/` for important decisions
+- `docs/development/` for useful chronological records
+
+When a decision is replaced, mark the old record `SUPERSEDED` and link to the replacement when practical.
+
+Do not describe `PLANNED` work as implemented or `IMPLEMENTED` work as verified without evidence.
+
+## 8. Git Policy
+Codex may autonomously:
+- create/switch branches
+- stage files
+- commit
+- push normal branches
+- inspect history/diffs
+- create logical checkpoint commits when useful
+
+Before committing:
+1. Review the diff.
+2. Run relevant verification.
+3. Exclude temporary/debug/generated files that should not be versioned.
+4. Use a concise commit message describing the actual change.
+
+Destructive history changes require explicit user instruction:
+- force push / force-with-lease
+- reset --hard
+- rewriting/deleting shared history
+- deleting active remote branches
+
+Never commit secrets or credentials.
+
+## 9. Scope Control
+Complete the requested task, not adjacent improvements.
+
+If an unrelated issue is found:
+- fix it only if required for correctness/safety
+- otherwise report it without expanding scope
+
+## 10. Completion
+For substantial work, report:
+- what changed
+- what was verified
+- what remains unverified
+- docs updated
+- branch/commit/push status
+- blockers or known limitations
+<!-- codex-development-baseline:end -->
