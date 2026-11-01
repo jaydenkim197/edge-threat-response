@@ -2,6 +2,18 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-11-02 - Orin 약216MiB 증가 원인 분리와 process-only THP 수정
+
+- 작업 카드/요청: camera/GPIO 없이 앞선 VmRSS 증가의 원인을 재현하고 해결한다. 모델·시험 영상·conf/K-N/B0~B3·운영 site/DB·학습/val/test·OS/driver/power는 유지한다. 완료 기준은 Python/native/CUDA/OS 계측 분리, 최소 수정, 같은600초 비교·고정 입력 회귀·문서·commit/push다. 위험은 계측에 의한 실행 양상 변화, THP의 성능 trade-off와 bounded 검사를 장기 안정성으로 과대해석하는 것이다.
+- source/search-first: 기존 `profile_orin_file.py`, native runtime/CLI·frozen fixture/weights·실제 CLI 회귀를 재사용하고 표준 ctypes/prctl만 추가했다. 최신 source archive92509ca와 이전 실행 parent93997d6의 core는 동일한 내용을 사용했다. Git pull을 막던 타 작업 문서5개는 backup+clean three-way overlay로 보존했고 이후 원격 문서 추가도 fast-forward했다. runtime/pipeline/detector 판단 코드는 수정하지 않는다.
+- 원인 분리: Python trace300초/2,098frame의 tracked peak4.59MB는216MiB 전체를 설명하지 못했다. 반복 중 native/image-lifetime 계측은408초에 수동 중단했으며 성공600초로 집계하지 않았다. 추가 계측을 EOF에만 하는600초에서+155MiB 수준, THP/host/CUDA까지 검사한600.119초/7,515frame에서+211.664MiB를 재현했다. GC43개 수집 후 RSS 불변, malloc_trim 약14.34MiB·CUDA cache 반환 약24MiB, pinned host4bytes→0으로는 주된 증가가 남았다.
+- 원인 근거: 실제 kernel THP `[always] madvise never`/max_ptes_none511/2MiB page에서 AnonHugePages 초기403,456→종료972,800KiB와 resident memory가 함께 증가했다. Linux 공식 문서의 sparse 영역 자동 병합과 부합한다. 해당 workload의 지배적 원인은 THP resident inflation으로 좁혔으며 모든 누수 부재를 주장하지 않는다.
+- 최소 구현: `jetson_memory.py`는 Linux Orin에서 ML 로드 전 현재 worker의 THP disable flag를 get/set/get(0→1) 확인한다. generic `etr-detect`/`etr-run`과 Orin profiler가 호출하며 provenance에 policy를 남긴다. Windows/non-Orin no-op, 실패 시 모델 생성 전 중단, `--inherit-thp`는 비교용 inherited policy 유지다. 전역 sysfs/boot·driver는 쓰지 않는다. profiler는 두 endpoint의 smaps/전역 policy 불변도 기록한다. 직접 API는 fresh worker에서 같은 preflight를 호출해야 한다.
+- 검증/환경: Orin Nano Super/약8GB/NVMe/L4T39.2.0/기존25W, torch2.14.1+cu132/vision0.29.1+cu132/Ultralytics8.4.152/NumPy1.26.4/OpenCV4.11.0.86. local Python3.12.14 UTF-8 mode 관련7 tests, 실제 Orin Python3.12.3 전체153 tests12.955s와 compileall 통과. 최초 local 기본cp1252에서 기존 JSON read test가 실패해 UTF-8 mode로 확인했다. prototype syscall도 실제0→1·global값 불변이다.
+- 실측 결과: 수정후600.103초/7,291frame, RSS+11.453MiB(기본값 재현211.664 대비94.59% 억제), AnonHugePages 전후0KiB, event/snapshot275/action error0, 최고57.718°C·기존25W/global THP 전후동일. file 처리율은12.5225→12.1496frames/s(-2.98%), processing mean78.0478→80.4976ms/p9584.5033→86.3092ms였다. 단일 반복의 trade-off이며 camera FPS나 통계적 성능 결론이 아니다.
+- 회귀: 공통7,291frame canonical detections 동일·run event ID를 존재 여부로 정규화한 decisions 전행 동일. 별도 실제 CLI valid53/detection59/B3 event·snapshot2/action error0, 같은 JSONL B0~B3 expected4/3/3/2·event frame JPEG·기존 canonical SHA 동일을 확인했다. 같은600초의 event284→275 차이는 처리 frame 수 차이이며 정확도·오경보 개선이 아니다. QA 일부 CRLF source는 raw hash를 보존하고 LF 정규화 후 core와의 동일성도 확인했다.
+- 증거/한계/다음: [원인·전후 수치·그림·CSV·aggregate](../reports/runtime/orin-memory-2026-11-02/report.md), raw는 Orin ignored `runs/orin-memory-20261102-v1/`, 진단 script/QA는 `data/work/orin-memory-20261102/`. 이전216MiB 기록은 보존하고 후속 링크로 연결했다. scalar latency/mock 이력의 O(N)와 남은11.45MiB, 실제 camera/GPIO·24h/leak-free·재부팅·정식 runtime 동결은 별도다. 완료 commit은 본 항목의 Git history로 연결한다.
+
 ## 2026-10-27 - Orin 파일 운용 오류 수정·통신 격리·600초 반복 점검
 
 - 작업 카드/목적: 사용자 요청에 따라 camera/GPIO 없이 가능한 파일 경로 운용 점검을 진행했다. 범위는 기존 runtime/CLI의 결과 보호·중단 로그·실패 집계, 통신 격리 실제 GPU 파일 실행, 600초 반복과 자원 수집이다. 완료 기준은 최소 실패 재현→수정→관련/전체 tests·실기기 회귀·raw/aggregate·문서·Git 반영이다. OS/driver/firmware/power/clock·학습·검수 사이트/DB·val/test는 변경하지 않는다. 위험은 현재39.2.0 pilot과 계획39.2.1 차이, train montage 과대해석과 메모리 증가다.

@@ -86,6 +86,10 @@ sudo unshare --net -- runuser -u "$(id -un)" -- env \
 
 ## 제한된 반복 파일 자원 측정
 
+2026-11-02 추가: Orin의 `etr-detect`/`etr-run`과 아래 profiler는 모델 로드 전 현재 worker의 THP만 비활성화한다. 전역 THP는 바꾸지 않는다. Linux Orin 외 플랫폼은 변경하지 않으며, 비교용 `--inherit-thp`는 상속된 process policy를 유지한다. `summary.provenance.native_memory` 또는 `profile.native_memory`에서 before/after flag를 확인한다. 설정 실패는 모델 생성 전에 오류로 처리한다.
+
+이 정책은 새 worker에서 적용해야 한다. 이미 다른 코드가 만든 큰 페이지를 뒤늦게 분해하는 기능은 아니다. 직접 Python API를 쓰는 경우에는 ML runtime/model 로드 전에 `edge_threat_response.jetson_memory.prepare_jetson_memory()`를 호출한다. [원인 분리·실측 근거](../reports/runtime/orin-memory-2026-11-02/report.md).
+
 `tools/profile_orin_file.py`는 같은 frozen fixture와 모델을 한 번 warmup한 뒤 B3를 반복한다. 기존 file runtime을 재사용하며 실제 Orin에서만 실행한다. 별도 GPU 작업과 동시에 실행하지 않는다.
 
 ```bash
@@ -97,6 +101,8 @@ PYTHONPATH=src .venv-orin/bin/python tools/profile_orin_file.py \
 ```
 
 `profile.json`, 5초 간격 RAM/RSS/CUDA/온도 `resources.jsonl`, 1초 간격 `tegrastats.log`, live B3의 metadata/JPEG/JSONL을 남긴다. 입력·모델·설정과 실행 source hash를 보존하고 전력 모드는 조회만 한다. 관측 온도85°C 이상 또는 MemAvailable512MiB 이하에서 중단하는 것은 이번 시험의 guard이며 제조사 허용치가 아니다. 새 run 디렉터리를 쓰고 1~1800초만 허용한다.
+
+smaps의 Rss/Pss_Anon/AnonHugePages는 warmup 이후와 종료 시에만 기록한다. VmRSS와 구분해 해석하고, 전역 THP 값의 전후 동일성도 확인한다. 재현 비교에서는 서로 다른 fresh output과 같은 frozen 입력을 사용하고, 기본 worker와 `--inherit-thp`를 순차 실행한다. 전역 sysfs를 바꿔 비교하지 않는다.
 
 `file_processing_fps`는 warmup 이후 반복 파일의 decode·추론·판단·저장·로그를 포함한 처리율이다. 영상의 논리 timestamp와 실제 경과 시간은 다르며 camera FPS나 사건 경보 지연으로 사용하지 않는다. scalar latency 목록과 mock alarm 이력은 실행 길이에 따라 여전히 증가하므로 무기한 운용/24시간 안정성 증거가 아니다. [이번 실기기 결과](../reports/runtime/orin-readiness-2026-10-27/report.md).
 

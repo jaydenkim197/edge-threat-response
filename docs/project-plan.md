@@ -20,6 +20,8 @@
 
 주변장치 전 운용 점검: local weight/output 검증·완료 frame 로그 flush·사진 실패 집계를 보완했다. 실제 Orin의 별도 통신 격리 공간에서도 같은 파일의 추론/B0~B3/사진이 통과했으며 host SSH는 유지했다. 제한 시간 반복의 자원 측정과 해석은 [운용 준비 기록](../reports/runtime/orin-readiness-2026-10-27/report.md)을 따른다. 이 작업은 실제 사건 benchmark나 장시간·재부팅 검증, MVP 범위 확대가 아니다.
 
+2026-11-02 메모리 후속: 약216MiB 증가를 THP 자동 병합으로 재현·분리하고, Orin 파일 CLI/profile worker의 process-only THP 정책으로600초 추가 증가를211.664→11.453MiB로 줄였다. 공통7,291frame 탐지·판단과 실제53frame CLI/B0~B3/snapshot 회귀를 통과했다. [실측과 처리율 trade-off](../reports/runtime/orin-memory-2026-11-02/report.md). 실제 카메라/GPIO·무기한 메모리 안정성·정식 runtime 채택은 승격하지 않는다.
+
 ### Target deployment and data-domain assumption
 
 - camera 모델·화각은 미정이지만, dataset 검수와 controlled scenario는 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 비스듬히 보는 환경을 기준으로 한다.

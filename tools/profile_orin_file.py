@@ -9,6 +9,7 @@ from pathlib import Path
 
 import edge_threat_response.runtime as runtime_module
 import edge_threat_response.pipeline as pipeline_module
+import edge_threat_response.jetson_memory as memory_module
 
 from edge_threat_response.config import load_pipeline_config
 from edge_threat_response.detect_cli import DetectorConfig, _provenance, build_detector
@@ -44,8 +45,10 @@ def main():
     for name in ("fixture","detector-config","pipeline-config","output"):
         parser.add_argument("--"+name,type=Path,required=True)
     parser.add_argument("--seconds",type=float,default=600)
+    parser.add_argument("--inherit-thp",action="store_true",help="Keep inherited Orin THP policy for diagnostic comparisons")
     args = parser.parse_args()
-    sources = {"profile":Path(__file__),"runtime":Path(runtime_module.__file__),"pipeline":Path(pipeline_module.__file__)}
+    sources = {"profile":Path(__file__),"runtime":Path(runtime_module.__file__),"pipeline":Path(pipeline_module.__file__),
+               "native_memory":Path(memory_module.__file__)}
     code_sha256 = {name:_sha256_file(path) for name,path in sources.items()}
     require(platform.machine()=="aarch64" and "Orin" in Path("/proc/device-tree/model").read_text(),"Actual Orin required")
     require(1<=args.seconds<=1800 and not args.output.exists(),"Use a bounded duration and fresh output")
@@ -56,6 +59,8 @@ def main():
                 and c.predict_arguments.get("imgsz")==640 for c in config.components),"Use fixed canonical maps and CUDA0/640 settings")
     observed = {"person" if c.class_map=={0:"person"} else "knife":_sha256_file(Path(c.weights)) for c in config.components}
     require(observed=={k:HASHES[k] for k in ("person","knife")},"Fixed detector weights/class maps changed")
+    native_memory = memory_module.prepare_jetson_memory(inherit_thp=args.inherit_thp)
+    system_thp_before = Path("/sys/kernel/mm/transparent_hugepage/enabled").read_text().strip()
     import torch
     require(torch.cuda.is_available(),"Do not fall back to CPU")
     detector = build_detector(config)
@@ -69,6 +74,7 @@ def main():
     require(warm_frames==53,"Warmup input incomplete")
     torch.cuda.reset_peak_memory_stats()
     power_before = subprocess.check_output(["/usr/sbin/nvpmodel","-q"],text=True).strip()
+    smaps_before = smaps_summary()
     pipeline = replace(load_pipeline_config(args.pipeline_config),run_id=args.output.name,config_id="bounded-orin-file-profile")
     args.output.mkdir(parents=True)
     samples = []
@@ -107,6 +113,7 @@ def main():
             monitor.wait(timeout=10)
     elapsed = time.perf_counter()-started
     final = resource_sample(torch,elapsed,summary["frame_count"])
+    smaps_after = smaps_summary()
     samples.append(final)
     with (args.output/"resources.jsonl").open("a") as handle:
         handle.write(json.dumps(final)+"\n")
@@ -117,10 +124,14 @@ def main():
     require(summary["snapshot_count"]==len(expected),"Snapshot count mismatch")
     power_after = subprocess.check_output(["/usr/sbin/nvpmodel","-q"],text=True).strip()
     require(power_before==power_after,"Power mode changed during profile")
+    system_thp_after = Path("/sys/kernel/mm/transparent_hugepage/enabled").read_text().strip()
+    require(system_thp_before==system_thp_after,"System THP policy changed during profile")
     require(_provenance(args.fixture,args.detector_config,config)=={k:v for k,v in provenance.items() if k!="base_pipeline_sha256"},"Profile input bytes changed")
     require(code_sha256=={name:_sha256_file(path) for name,path in sources.items()},"Profile source changed during the run")
     result = {"schema_version":1,"status":"completed_bounded_warm_file_profile","git_commit":_git_commit(),
               "code_sha256":code_sha256,
+              "native_memory":native_memory,"system_thp_before":system_thp_before,"system_thp_after":system_thp_after,
+              "smaps_before_kib":smaps_before,"smaps_after_kib":smaps_after,
               "environment":_environment_record(),"requested_seconds":args.seconds,"elapsed_s":elapsed,
               "warmup_frames":warm_frames,"warmup_seconds":warm_seconds,"frames":summary["frame_count"],
               "file_processing_fps":summary["frame_count"]/elapsed,"inference_ms":summary["inference_ms"],
@@ -137,6 +148,13 @@ def main():
                         "scalar latency samples and mock-alarm history still grow with run length; not unlimited-memory or 24h stability proof"]}
     _write_json(args.output/"profile.json",result)
     print(json.dumps({k:result[k] for k in ("status","elapsed_s","frames","file_processing_fps","event_count","max_sampled_temperature_c")}))
+
+
+def smaps_summary():
+    # Read only at the endpoints, not on every frame or sampling interval.
+    return {line.split(":")[0]:int(line.split()[1])
+            for line in Path("/proc/self/smaps_rollup").read_text().splitlines()
+            if line.startswith(("Rss:","Pss_Anon:","AnonHugePages:"))}
 
 
 if __name__=="__main__":

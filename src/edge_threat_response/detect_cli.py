@@ -11,6 +11,7 @@ from typing import Sequence
 from .config import load_pipeline_config
 from .detector import CompositeDetector, MappedDetector, UltralyticsBackend
 from .media import OpenCVFrameSource
+from .jetson_memory import prepare_jetson_memory
 from .runtime import run_detection_stream, run_live_pipeline
 
 
@@ -89,6 +90,7 @@ def detect_main(argv: Sequence[str] | None = None) -> int:
     try:
         config = DetectorConfig.load(args.detector_config)
         _validate_local_weights(config)
+        native_memory = prepare_jetson_memory(inherit_thp=args.inherit_thp)
         detector = build_detector(config)
         frames = OpenCVFrameSource(args.input, source_id=args.source_id)
         summary = run_detection_stream(
@@ -96,7 +98,7 @@ def detect_main(argv: Sequence[str] | None = None) -> int:
             detector,
             output_dir=args.output_dir,
             max_frames=args.max_frames,
-            provenance=_provenance(args.input, args.detector_config, config),
+            provenance={**_provenance(args.input, args.detector_config, config), "native_memory":native_memory},
         )
     except (ImportError, OSError, RuntimeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
@@ -110,6 +112,7 @@ def run_main(argv: Sequence[str] | None = None) -> int:
     try:
         detector_config = DetectorConfig.load(args.detector_config)
         _validate_local_weights(detector_config)
+        native_memory = prepare_jetson_memory(inherit_thp=args.inherit_thp)
         detector = build_detector(detector_config)
         pipeline_config = load_pipeline_config(args.pipeline_config)
         frames = OpenCVFrameSource(args.input, source_id=args.source_id)
@@ -122,6 +125,7 @@ def run_main(argv: Sequence[str] | None = None) -> int:
             provenance={
                 **_provenance(args.input, args.detector_config, detector_config),
                 "pipeline_config": _file_record(args.pipeline_config),
+                "native_memory": native_memory,
             },
         )
     except (ImportError, OSError, RuntimeError, ValueError) as exc:
@@ -137,6 +141,7 @@ def _add_common_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--source-id")
     parser.add_argument("--max-frames", type=int)
+    parser.add_argument("--inherit-thp", action="store_true", help="Keep inherited THP policy on Orin for diagnostic comparisons")
 
 
 def _validate_local_weights(config: DetectorConfig) -> None:

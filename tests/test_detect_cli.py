@@ -12,6 +12,25 @@ from edge_threat_response.media import FramePacket, IterableFrameSource
 
 
 class DetectionCliReadinessTests(unittest.TestCase):
+    def test_native_policy_failure_stops_before_model_loading(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp)
+            weight=root/"weight.pt"
+            weight.touch()
+            config=root/"detector.json"
+            config.write_text(json.dumps({"schema_version":1,"topology":"single","components":[
+                {"component_id":"knife","weights":str(weight),"class_map":{"0":"knife"}}]}))
+            for main in (detect_main,run_main):
+                args=["--input",str(weight),"--detector-config",str(config),"--output-dir",str(root/"out"),"--inherit-thp"]
+                if main is run_main:
+                    args += ["--pipeline-config",str(root/"pipeline.json")]
+                with patch("edge_threat_response.detect_cli.prepare_jetson_memory",side_effect=RuntimeError("native preflight failed")) as policy, \
+                     patch("edge_threat_response.detect_cli.build_detector") as build, contextlib.redirect_stderr(io.StringIO()):
+                    self.assertEqual(2,main(args))
+                    policy.assert_called_once_with(inherit_thp=True)
+                    build.assert_not_called()
+                self.assertFalse((root/"out").exists())
+
     def test_missing_local_weight_is_rejected_before_backend_loading(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp)
@@ -45,7 +64,9 @@ class DetectionCliReadinessTests(unittest.TestCase):
                 args=["--input",str(weights),"--detector-config",str(config),"--output-dir",str(output)]
                 if main is run_main:
                     args += ["--pipeline-config",str(Path(__file__).resolve().parents[1]/"configs/replay/development-v2.example.json")]
-                with patch("edge_threat_response.detect_cli.build_detector",return_value=detector),patch("edge_threat_response.detect_cli.OpenCVFrameSource",return_value=frames):
+                with patch("edge_threat_response.detect_cli.build_detector",return_value=detector), \
+                     patch("edge_threat_response.detect_cli.OpenCVFrameSource",return_value=frames), \
+                     patch("edge_threat_response.detect_cli.prepare_jetson_memory",return_value=None):
                     with contextlib.redirect_stdout(io.StringIO()):
                         self.assertEqual(2,main(args))
                 summary=json.loads((output/"summary.json").read_text())

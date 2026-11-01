@@ -80,6 +80,7 @@ Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay�
 - Ultralytics와 OpenCV는 lazy optional dependency라 pure core와 replay test는 ML package 없이 유지된다.
 - CLI는 누락된 local weight와 기존 비어 있지 않은 output을 거부한다. detection/decision/latency는 완료 frame마다 flush하며 source 중단 시 성공 summary를 남기지 않는다. 반환된 snapshot 실패도 action error로 집계한다. 모든 frame이 오류면 CLI exit2이며, 부분 오류는 summary로 별도 판단한다.
 - runtime의 p95는 nearest rank다. `frame_processing_ms`는 decoded frame부터 동기 actions까지이며 decode/진단 log write를 제외한다. `tools/profile_orin_file.py`는 이 경로를 warmup 후 제한 시간 반복하고 Jetson 자원을 별도 수집한다. scalar latency 및 mock alarm 이력은 여전히 실행 길이에 비례하므로 무기한 운용을 보장하지 않는다. [측정 범위·재현](orin-runtime-setup.md).
+- Orin CLI/profile worker는 `jetson_memory.py`에서 ML 로드 전 process-only THP 정책을 준비한다. `prctl` get/set/get으로 현재 worker의 disable flag를 확인하고 실패하면 모델 생성 전에 중단한다. Windows·non-Orin Linux는 no-op이며 비교용 `--inherit-thp`는 inherited policy를 유지한다. 전역 kernel/sysfs 설정은 변경하지 않는다. 정책은 provenance에, profiler의 smaps Rss/AnonHugePages는 두 endpoint에 기록한다. 직접 Python API의 호출자는 fresh worker에서 같은 preflight를 명시적으로 호출한다.
 
 ### MVP temporal identity boundary
 

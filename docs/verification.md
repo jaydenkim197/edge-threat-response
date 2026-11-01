@@ -2,6 +2,13 @@
 
 판단 core·PC 영상/replay와 실제 Orin의 native GPU·파일 입력 smoke를 검증했다. Orin camera/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. `VERIFIED`는 해당 환경·범위의 실행 증거가 있을 때만 부여한다.
 
+## 2026-11-02 Orin THP 메모리 증가 분리·수정
+
+- 기본 THP에서600.119초/7,515frame·VmRSS+211.664MiB로 이전 약216MiB 증가를 재현했다. 초기/종료 AnonHugePages403,456→972,800KiB, GC/heap/device/host cache 분리 결과가 THP resident inflation을 지지한다. 수정은 current Orin worker의 PR_SET_THP_DISABLE이며 전역 policy/OS/driver/power는 유지했다.
+- local UTF-8 mode 관련7 tests, 실제 Orin 전체153 tests12.955s·compileall 통과. 플랫폼 no-op·idempotence·진단 inherit·syscall/확인 실패·모델 로드 전 차단을 검사했다. 실제 flag0→1/global값 불변도 확인했다.
+- 수정후600.103초/valid7,291frame·VmRSS+11.453MiB(94.59% 감소), smaps AnonHugePages 전후0KiB·event/snapshot275/action error0·최고57.718°C다. 전역 THP `[always] madvise never`/25W 유지. file 처리율12.5225→12.1496frames/s(-2.98%)로 이번 single-run trade-off를 기록했다.
+- 공통7,291frame detections 전행 동일·run event ID 정규화 decisions 동일. 실제 CLI53frame/B3 event2/JPEG2/동일 JSONL B0~B3·이전 canonical SHA 일치. source/input/model/config hash·단계별 cache 진단·그림/CSV는 [실측 보고서](../reports/runtime/orin-memory-2026-11-02/report.md)에 있다. camera/GPIO·실제 event 성능·24h/leak-free 검증은 아니다.
+
 ## 2026-10-27 Orin 파일 운용·통신 격리·600초 반복
 
 - 수정 전 결과 덮어쓰기·중단 로그 부재·snapshot 실패 누락·누락 weight/backend 진입·all-error CLI 성공을 회귀 테스트로 재현했다. 수정 후 local 관련15 tests와 실제 Orin 전체148 tests13.035s·tool compileall 통과. 실제 두 CLI×기존 output/누락 weight4건 expected exit2, 기존7개 파일 hash 불변·누락 output 생성0이다.
