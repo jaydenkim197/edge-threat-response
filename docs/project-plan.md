@@ -92,6 +92,7 @@
 - object tracking과 track ID 기반 연속성
 - movement/approaching 분석 및 복합 threat score
 - TensorRT/FP16 최적화
+- 후속 연구 후보(`PROPOSAL`): NVIDIA Holoscan 5.0 기반 실시간 영상·AI 파이프라인을 기존 Python 및 TensorRT-only 경로와 비교. 동일 모델/입력/장비에서 GPU 데이터 이동·프레임 적체·end-to-end 지연과 자원 사용의 차이를 검증하며, 기본 B0~B3 연구와 분리한다. 구체 gate는 [P2-04](open-decisions.md)를 따른다.
 - 일정과 장비 상태가 허용할 경우 legacy Nano와 Orin Nano의 동일 workload 비교
 - 선택적 로컬 dashboard
 
