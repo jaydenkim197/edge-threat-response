@@ -1102,3 +1102,14 @@
 - Known limitations: 작업 전부터 있던 수정 파일은 보존한다. OneDrive/MYBOX 경로의 콘텐츠 상태는 별도 문제다.
 - Decision impact / Next: 기존 MVP·JetPack·팀 결정·Git 정책 유지. 다음 작업부터 병합된 지침을 사용한다.
 - Git commit: 이 항목과 AGENTS.md에 대한 Git 이력으로 추적한다.
+
+## 2026-11-02 - Holoscan 5.0 영상 파이프라인 비교 후속 연구 후보 등록
+
+- **목적/배경:** 사용자의 요청으로 NVIDIA Holoscan 5.0 적용 시 영상 처리 경로의 변화와 실측 성능 차이를 후속 연구 주제로 보존한다. 현재 본 연구 RQ1~RQ3(동일 detector 기반 B0~B3 사건 경보 비교)의 범위·일정·구현 상태는 변경하지 않는다.
+- **가설(PROPOSAL):** GPU 내 영상 데이터 전달, operator scheduling, bounded buffering 등을 활용하면 기존 Python 기반 실행 경로보다 end-to-end latency의 p95/지터, 프레임 적체 또는 자원 사용량이 개선될 수 있다. 실측 전 효과를 주장하지 않는다. 정확도 향상은 Holoscan의 고유 효과로 가정하지 않는다.
+- **비교 실험 설계:** A=현재 Python/OpenCV+Ultralytics/PyTorch FP32; B=기존 Python 파이프라인+TensorRT FP16; C=Holoscan 5.0+**B와 동일한** TensorRT FP16 person/knife 엔진. A↔B는 주로 추론 엔진/정밀도 변화, B↔C는 실행 프레임워크/데이터 경로 변화의 차이를 평가한다. 엔진·전후처리·출력 규약이 같아야 B↔C 해석이 가능하다. 필요 시 TensorRT FP32를 추가 대조군으로 둔다.
+- **통제/지표:** 동일 Orin Nano, 전력·clock·냉각, 모델 weight·input resolution·confidence/IoU, 영상 source, 버퍼·drop 정책을 가능한 한 일치시킨다. stage latency(decode/capture, preprocess, inference, postprocess, decision/action), end-to-end mean/p50/p95·지터, 유효 FPS, dropped/stale frames, CPU/GPU 부하, RAM/RSS growth, 온도/전력(계측 가능 시), canonical detection 및 B0~B3 event 동등성을 기록한다. 재현 가능한 고정 영상과 실제 카메라 workload를 구별한다. TensorRT FP16 정밀도 변화가 detection에 영향을 주면 별도로 보고한다.
+- **현 기준선:** 2026-10-27 Orin 25W/L4T39.2.0 파일 반복 시험은 600초/7,375 frame/12.2899 file FPS, inference mean79.0926ms/p95 85.0422ms, RSS 증가 약215.70MiB다. 이는 train 이미지 조합 파일 반복이고 camera FPS/실제 event benchmark가 아니다. [측정 근거](../reports/runtime/orin-readiness-2026-10-27/report.md).
+- **착수 gate/위험:** MVP의 camera/GPIO·실제 사건 평가 및 별도 TensorRT-only baseline을 먼저 완료한다. SDK 5.0과 실제 L4T39.2.0/JetPack·TensorRT·카메라 어댑터 호환성은 공식 요구사항 및 격리 smoke로 확인해야 한다. 환경 재설치/OS 변경이나 main runtime 전면 교체는 승인하지 않았다. 8GB 메모리·추가 개발 비용·비교 조건 불일치 위험을 고려한다.
+- **범위/변경/검증:** 문서상 후속 연구 후보만 추가한다(`docs/project-plan.md`, `docs/open-decisions.md`, 이 로그). Holoscan 설치·코드 변경·Jetson 재시험 없음. 문서의 기존 RQ/MVP/Stretch 상태와 모순이 없는지 확인하며 GitHub 커밋으로 추적한다.
+- **상태/다음:** `PROPOSAL`/P2. 기존 시스템과 TensorRT-only 측정 후 연구 착수/보류를 결정한다.
