@@ -1,0 +1,2 @@
+dataset,source_path,status,reason,action_taken
+open-images,validation/19aaf40e64cdfb7b.jpg,AI concern; human adjudication required,Crossed-utensil image may contain another visible knife not covered by the single source box; completeness needs a second look.,"No label edits, posthoc exclusions, or rescoring; frozen data retained."

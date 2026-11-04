@@ -2,6 +2,14 @@
 
 판단 core·PC 영상/replay와 실제 Orin의 native GPU·파일 입력 smoke를 검증했다. Orin camera/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. `VERIFIED`는 해당 환경·범위의 실행 증거가 있을 때만 부여한다.
 
+## 2026-11-04 다중 평가셋의 pretrained 대 fine-tuned 비교
+
+- PC13 RTX3060/Python3.12.4/torch2.6.0+cu124/Ultralytics8.4.152·격리 RF-DETR1.11.2/pycocotools2.0.11 환경에서9개 모델×6개 동일 frozen set(263images/241GT)을 완료했다. default predict/v2와 클래스별 후보/v3를 각각54개/총108개로 보존했다. 전체 FP32 dtype·hash-bound weights/class map·source/truth/prediction identity 및 source input/DEIM source 전후 보존을 확인했다. Orin/카메라/GPIO·사건 성능 검증은 아니다.
+- 같은 n의 주 비교 SOHAS test AP50 7.26→35.69%, Open Images84.90→7.85%; RF Large test AP50 38.41%, conf.25 recall30%(custom35%). 실제 CCTV8GT에서 RF Large TP1, customTP0/FP25다. DaSCI는 관련-source, synthetic은 별도, 외부 pretrained corpus overlap 미확인이다. 최종 D*나 독립 final-test 성능으로 승격하지 않았다.
+- YOLO predict의 단일 최고 class와 validator multi-label 차이를 실제 source/합성 회귀로 확인했다. DEIM HF에서 빠진 비학습 scalar0.5/4만 pinned source와 대조해 복원하고 나머지 state는 strict load했다. v1 실패 후 v2 전체 재실행, 후보 convention 점검 후 v3 전체 재실행을 보존했다. AP는 전 모델 동일 COCO evaluator이며 이전 native AP와 혼합하지 않는다.
+- 로컬 UTF-8 관련4 tests 통과/optional3 skip·두 CLI 개발 비교 guard·compileall 통과. PC13 최종 전체160 tests17.396s/compileall·기존 ML pip check 정상이다. QA HEIF 검사에서 pi-heif1.4.0이 실험 venv에만 추가됐고 benchmark lock과 분리 기록했다. 표·PNG 육안 확인·SVG XML/PDF 구조 검사와 Open Images completeness 재검수 항목을 기록했으며 원 라벨/운영 판정은 수정하지 않았다.
+- [원시 경로·protocol·환경·수치·source SHA·통계 한계](../reports/evaluation/pretrained-vs-finetuned-2026-11-04/report.md). group bootstrap2,000회는 descriptive recall 차이이며 AP 유의성·독립 세션·반복 학습 효과를 증명하지 않는다.
+
 ## 2026-11-04 기성 YOLO26x와 개발 best의 동일 이미지 평가
 
 - PC13 RTX3060/Python3.12.4/torch2.6.0+cu124/Ultralytics8.4.152에서 custom n640·COCO n640·x640·x1280의 val23/test23 native AP와 canonical JSONL bbox 평가4개 조건을 완료했다. FP32/batch1/square, knife ID custom0/COCO43, 실제 one-to-many 경로를 확인했다. test AP50은34.43/6.33/19.44/24.98%, 고정 conf.25·IoU.5 TP7/0/1/1(20GT)이다. AP와 best-F1 P/R·고정 P/R은 구분한다.

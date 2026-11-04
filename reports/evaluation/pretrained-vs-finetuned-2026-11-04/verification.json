@@ -1,0 +1,19 @@
+{
+  "full_tests": 160,
+  "test_exit": 0,
+  "compileall_exit": 0,
+  "base_ml_pip_check": "No broken requirements found.",
+  "extra_model_inputs_preserved": true,
+  "suite_inputs_preserved": true,
+  "final_source_sha256": {
+    "src/edge_threat_response/detector_comparison.py": "f92c0b332cd03089360324a8b46cdb12e09071903f89cdec9108d5f4482240fa",
+    "tools/prepare_detector_comparison.py": "19a1f8e0a711fe7092eb48403692154fb332ff8fde475a659fbd2e5e98db0afa",
+    "tools/run_detector_comparison.py": "48f89187c5c8f3be9523dae5d0bd5b7828bbada2e6eed9e3a00d39bab24179d3",
+    "tools/summarize_detector_comparison.py": "173eebbcb7dd8723e1ce688ec1a4c6681cb197d6d8430d3af6236af164430acb",
+    "tools/plot_detector_comparison.py": "4919ea0e810156e7618fddf3ee3da4fdbd76bf7912def9140fa75a2e127cb306",
+    "tests/test_detector_comparison.py": "da5c251b06992675814389e933ed5306113b378a12b45a90adb3894473b7a1b8"
+  },
+  "source_archive_sha256": "35e7cc7a88ea6571f19fac5b27a3276c81a110f58c63ff94520a4a2f6f192a17",
+  "frozen_protocol_sha256": "6ce18b366f78d561d0eeb7b177e09e0d041804b06323a712c6288f2a6bd6395b",
+  "suite_sha256": "e74e6f8d6dd7864cf9b1e14ed1aa3fd25ac7567f4028ed5f2354fed04e3fa67e"
+}

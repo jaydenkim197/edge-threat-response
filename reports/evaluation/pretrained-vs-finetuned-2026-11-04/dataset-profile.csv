@@ -1,0 +1,7 @@
+dataset,images,knife_gt,small_gt,negative_images,group_proxies_or_sequences,group_basis,same_family_as_protected_images,role,truth_sha256
+dasci-unique,92,97,88,0,1,filename/dHash proxies,92,source-label development comparison; not certified independent final test,237b585b1ed456b6b54dc3ae968d7168e4eaedba8e3969dc9250225a40495315
+open-images,29,39,0,0,29,filename/dHash proxies,0,source-label development comparison; not certified independent final test,ea91d85cdc7519c01f4c9dc3b86fa66c0d71e75729ec2fc364dad6ce73a84fa0
+simuletic,75,63,63,12,1,filename/dHash proxies,0,source-label development comparison; not certified independent final test,ebf27cb896736d483c8926961dfd28f54a12a41b4575a5f44370d29a208517f4
+sohas-test,23,20,16,3,7,frozen full-source filename/dHash proxies,0,opened development split; not unseen final test,ab8b7f3a3f76b2410105bdd9d7f7df68a93ee36b266128de1b647524cc49d41d
+sohas-val,23,14,11,10,8,frozen full-source filename/dHash proxies,0,opened development split; not unseen final test,f05690fd9238b3eaf4ac25b2b00f9b9731e5ea022dd24b5b21de11fb2931f897
+us-mock,21,8,8,13,10,source sequence,0,source-label development comparison; not certified independent final test,32e51a7fdceeb187123fdd378c728febb901568902d32ec5284c5bd14b9a159f

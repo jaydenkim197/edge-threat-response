@@ -1,0 +1,8 @@
+{
+  "case": "coco-n-640",
+  "datasets": 6,
+  "prediction_jsonl_all_identical": true,
+  "AP_all_identical": true,
+  "autoinstall": "false",
+  "new_run": "C:\\Class6\\edge-threat-response\\runs\\default-predict-reproduction-20261104"
+}

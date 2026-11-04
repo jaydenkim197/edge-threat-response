@@ -4,6 +4,12 @@
 
 이 문서는 공개 dataset의 **이미지 수**가 아니라 현장 CCTV 적합성, annotation, 권리, 중복·누수 위험 및 실험 역할을 기준으로 결정한 source 전략이다. 구체 검수 양식과 역할별 gate는 [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)를 따른다. 원본 image, video, annotation 및 model binary는 Git에 넣지 않는다. 학습·평가 채택은 source audit 후 결정한다.
 
+## 2026-11-04 개발 평가에 사용한 표본의 역할 갱신
+
+[기성/파인튜닝 다중 평가](../reports/evaluation/pretrained-vs-finetuned-2026-11-04/report.md)에서 frozen SOHAS val23/test23과 외부 정상 검수분 DaSCI92/US Mock21/Open Images29/Simuletic75를 사용했다. 외부337개 중 정상218개에서 보호 DEV183장과의 dHash 후보1개를 사전 제외했다. 사람 판정/이미지/배정/원 라벨·학습 승인·split은 바꾸지 않았다. 정상 수는 이 작업의 read-only snapshot 기준이며 예전 snapshot을 소급 수정하지 않는다.
+
+이 표본은 이제 개발 모델 비교에 공개된 자료다. DaSCI92개는 모두 보호 자료와 같은 filename family이므로 독립성 근거가 아니며, synthetic75개도 실사 test로 합치지 않는다. US Mock은8knife GT/5positive sequences라 작고, Open Images는 small GT0/음성0이다. 사전학습 corpus의 중복 가능성과 source 권리/좌표 gate는 남는다. Open Images1개에 annotation completeness 재확인 항목이 있으나 사후 label 수정·제외·재계산은 하지 않았다. 논문 최종 평가는 새 camera/session holdout과 수동 GT 검증이 필요하며 이 비교를 source 전체 채택/추가 학습 승인으로 승격하지 않는다.
+
 ## 1. Target domain — `DECISION`
 
 최종 카메라의 모델·화각·초점거리와 관찰 거리는 아직 미정이다. 그 전까지 dataset 검수와 controlled scenario 설계에 사용할 목표 환경은 다음으로 고정한다.

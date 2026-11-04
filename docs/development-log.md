@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-11-04 - 기성 모델과 fine-tuned checkpoint의 다중 domain 비교
+
+- 작업 카드/목적: 현재 학습 모델이 학습 전 동일 n과 다른 기성 모델보다 유리한지 동일한 여러 평가셋에서 확인하고 논문용 근거를 보존한다. 범위는 기존 모델·검수 완료 이미지의 read-only 평가, 완료 기준은9개/동일6set의 완전 결과·공통 지표·source/model/config/raw prediction hash·재현 도구·표/그림·검증·commit/push다. 위험은 test 공개/관련 source·소표본·synthetic·후처리 차이를 무시한 학습 효과 과장이다.
+- search-first/변경: 기존 source bbox/리뷰 verdict·read-only SQLite snapshot·signature/proxy·JSONL·고정 bbox evaluator를 재사용하고 pycocotools 공통 AP·paired group recall bootstrap과 실험 prepare/run/aggregate/plot 도구를 추가했다. RF/DEIM은 실험 전용 adapter이며 제품 runtime/Orin/site를 변경하지 않는다. dependency는 별도 venv, 데이터/weights/raw는 PC13 ignored 위치에 둔다.
+- 데이터/모델: SOHAS val23/test23, human-ok 외부 DaSCI92/US Mock21/Open Images29/Simuletic75, 총263images/241GT. 외부 정상218개 중 보호183개와의 유사 후보1개를 사전 제외했다. DaSCI92개 전부 같은 filename family, synthetic 별도, US Mock8GT, Open Images small0이라는 한계를 고정했다. 기성YOLO n/m/l/x·RF Small/Medium/Large2026·DEIMv2-S와 기존 AdamW+scale.9 n best를 사용하고 재학습/threshold tuning은 하지 않았다.
+- 공정성 보완: YOLO default predict는 최고 class만, validator는 multi_label=True로 후보를 생성함을 source와 회귀로 확인했다. default/v2와 per-class/v3를 각각9×6 완전 재실행·분리 보존했다. 후자는 사후 protocol sensitivity이며 사전 등록으로 주장하지 않는다. AP50/AP50–95는 공통 COCO, 고정 P/R은conf.25/IoU.5, native input과 class IDs0/43/49를 명시했다. v1 DEIM의 누락 비학습 scalar 두 개는 고정source와 대조해 복원 후 strict load했다.
+- 실행/결과: PC13 RTX3060/Python3.12.4/torch2.6.0+cu124/UL8.4.152/RF1.11.2/pycocotools2.0.11. 같은 n AP50 SOHAS test7.26→35.69%, Open Images84.90→7.85%, DaSCI29.16→24.03%다. RF Large test38.41%가 높지만 고정 recall30%(custom35%)이며 실제 CCTV8GT도1개만 검출했다. 학습 효과가 보편적이라는 근거가 없고 현재 custom을 최종 D*로 승격하지 않는다. RF Large/Small은 추가 Orin 검증용 기성 기준선 후보다.
+- 검증/한계: local4 tests/optional3 skip·CLI guard2·compileall, PC13 전체160 tests17.396s·compileall/기존 ML pip check 통과. 마지막 QA의 pi-heif는 실험 venv에만 추가돼 benchmark 환경과 구분했다. source/weight/truth/prediction hash와 실제 FP32를 확인했다. 표와PNG를 육안 확인하고 SVG XML/PDF 구조를 검사했으며 AI sanity에서 Open Images1장의 누락 annotation 가능성을 기록하되 라벨/판정 수정·사후 제외는 하지 않았다. 최종 GT·독립 camera/session·반복 학습·Orin FPS·event 성능은 미검증이다.
+- 기록/다음: [보고서·두 protocol의108개 결과·CSV·그림·논문 문단·hash·원시 경로](../reports/evaluation/pretrained-vs-finetuned-2026-11-04/report.md). raw는 PC13 data/work/multi-model-20261104와 runs/pretrained-vs-finetuned-20261104-v2/v3에 있다. model-data-plan/dataset-source-strategy/verification을 갱신한다. 목표 도메인의 새 독립 GT와 강한 기성 기준선의 Orin 비용을 확인한 뒤 추가 학습 가치를 판단한다. Git은 본 항목 도입 commit으로 추적하고 검증 후 main에 push한다. 다른 채팅의 Catargiu/site 변경은 보존·제외한다.
+
 ## 2026-11-04 - 최고 정확도 기성 YOLO26과 현재 개발 모델 비교
 
 - 작업 카드/목적: 사용자 요청의 '최고 성능 YOLO를 테스트셋에서 실행'을 PC13 읽기 전용 비교로 수행한다. 완료 기준은 공식 ready checkpoint 확인·현재 모델 동일 조건 재평가·수치/원시 결과 보존·문서·commit/push다. 위험은 전체 COCO 정확도를 knife 성능으로 오인하고 작은 개발셋/공개된 test를 최종 평가로 주장하는 것이다.

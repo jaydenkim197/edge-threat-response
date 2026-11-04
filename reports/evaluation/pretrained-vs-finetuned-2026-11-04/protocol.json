@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-04",
+  "question": "Does custom fine-tuning improve the identical pretrained architecture, and beat ready pretrained alternatives on common evaluation images?",
+  "status": "frozen_development_comparison",
+  "training_started": false,
+  "policy": {
+    "prediction_floor": 0.001,
+    "fixed_confidence": 0.25,
+    "fixed_iou": 0.5,
+    "normalized_small_area": 0.02,
+    "coco_AP_max_dets": 100,
+    "COCO_AP_IoU": ".50:.05:.95",
+    "fixed_max_detections": 300,
+    "model_native_preprocessing": true,
+    "threshold_tuned_on_test": false,
+    "batch": 1,
+    "tf32": false,
+    "inference_warmup": "3 synthetic blank images",
+    "ultralytics_candidate_convention": "per-class candidates (validator convention)"
+  },
+  "caveats": [
+    "not independent certified final test",
+    "no Orin performance claim",
+    "not equal-input-resolution architecture ablation",
+    "pretraining corpus overlap beyond custom training unknown",
+    "DaSCI shared source lineage and synthetic data reported separately"
+  ],
+  "suite_sha256": "e74e6f8d6dd7864cf9b1e14ed1aa3fd25ac7567f4028ed5f2354fed04e3fa67e",
+  "posthoc_protocol_sensitivity": "Added after discovering default predict vs val candidate mismatch; no weights or thresholds tuned; retain full default-predict v2 results.",
+  "cases": [
+    {
+      "id": "custom-n-640",
+      "backend": "ultralytics",
+      "checkpoint_sha256": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": null,
+      "ultralytics_multi_label": true,
+      "checkpoint_file": "best.pt"
+    },
+    {
+      "id": "coco-n-640",
+      "backend": "ultralytics",
+      "checkpoint_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": null,
+      "ultralytics_multi_label": true,
+      "checkpoint_file": "yolo26n.pt"
+    },
+    {
+      "id": "coco-m-640",
+      "backend": "ultralytics",
+      "checkpoint_sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7",
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": null,
+      "ultralytics_multi_label": true,
+      "checkpoint_file": "yolo26m.pt",
+      "download": {
+        "requested_url": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26m.pt",
+        "bytes": 44255705,
+        "sha256": "401cea9ab23ad19246ff7744859816bc599f350e93c9dd30367b6f0a0745d0b7",
+        "official_md5": null
+      }
+    },
+    {
+      "id": "coco-l-640",
+      "backend": "ultralytics",
+      "checkpoint_sha256": "9fe3c544f2b19bebad7ea41e76d7ad3d88b7c2f10d11d24430c5311f6b32db26",
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": null,
+      "ultralytics_multi_label": true,
+      "checkpoint_file": "yolo26l.pt",
+      "download": {
+        "requested_url": "https://github.com/ultralytics/assets/releases/download/v8.4.0/yolo26l.pt",
+        "bytes": 53211173,
+        "sha256": "9fe3c544f2b19bebad7ea41e76d7ad3d88b7c2f10d11d24430c5311f6b32db26",
+        "official_md5": null
+      }
+    },
+    {
+      "id": "coco-x-640",
+      "backend": "ultralytics",
+      "checkpoint_sha256": "9fdd44a31c504547ffb81d2c6d9e6dac3493c8eaa8b0398d3f43bae6c7003e92",
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": null,
+      "ultralytics_multi_label": true,
+      "checkpoint_file": "yolo26x.pt"
+    },
+    {
+      "id": "rf-small-512",
+      "backend": "rfdetr",
+      "checkpoint_sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+      "imgsz": 512,
+      "knife_class_id": 49,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": "RFDETRSmall",
+      "checkpoint_file": "rf-detr-small.pth",
+      "download": {
+        "requested_url": "https://storage.googleapis.com/rfdetr/small_coco/checkpoint_best_regular.pth",
+        "bytes": 386045550,
+        "sha256": "d81979a9213a2109345158ce9232668df4c1ae52e9b8db3f2ec0a8cbad959b33",
+        "official_md5": "fb37061c1af7bace359c91b723a8d5c1"
+      }
+    },
+    {
+      "id": "rf-medium-576",
+      "backend": "rfdetr",
+      "checkpoint_sha256": "749ff6071828aaffac63e204c4f4135ed3d6cdae4d702e086c360edc3b5768c8",
+      "imgsz": 576,
+      "knife_class_id": 49,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": "RFDETRMedium",
+      "checkpoint_file": "rf-detr-medium.pth",
+      "download": {
+        "requested_url": "https://storage.googleapis.com/rfdetr/medium_coco/checkpoint_best_regular.pth",
+        "bytes": 404992918,
+        "sha256": "749ff6071828aaffac63e204c4f4135ed3d6cdae4d702e086c360edc3b5768c8",
+        "official_md5": null
+      }
+    },
+    {
+      "id": "rf-large-704",
+      "backend": "rfdetr",
+      "checkpoint_sha256": "0f4e20e19a99c0f8a62b5685f57f6c8b5c371c59081feda6752a0561a79ccf38",
+      "imgsz": 704,
+      "knife_class_id": 49,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": "RFDETRLarge",
+      "checkpoint_file": "rf-detr-large-2026.pth",
+      "download": {
+        "requested_url": "https://storage.googleapis.com/rfdetr/rf-detr-large-2026.pth",
+        "bytes": 135954129,
+        "sha256": "0f4e20e19a99c0f8a62b5685f57f6c8b5c371c59081feda6752a0561a79ccf38",
+        "official_md5": "5cb72153541cbcb9aa6efa26222acc75"
+      }
+    },
+    {
+      "id": "deimv2-s-640",
+      "backend": "deimv2",
+      "checkpoint_sha256": "fe545b150766b8761a696f7b1d92ea138fafe8e02a7398823e0c62d2a5867956",
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "batch": 1,
+      "precision": "float32",
+      "model_class": null,
+      "source_revision": "f005f50ce565e63f6c298feccb51901a98c3d035",
+      "model_hf_revision": "cf0540f3f319bb8ecbe132624358a35a7beb86d5",
+      "checkpoint_file": "deimv2-s.safetensors",
+      "download": {
+        "requested_url": "https://huggingface.co/Intellindust/DEIMv2_DINOv3_S_COCO/resolve/cf0540f3f319bb8ecbe132624358a35a7beb86d5/model.safetensors",
+        "bytes": 39386484,
+        "sha256": "fe545b150766b8761a696f7b1d92ea138fafe8e02a7398823e0c62d2a5867956",
+        "official_md5": null
+      }
+    }
+  ],
+  "code_base_commit": "867d7d169376aab6290ae9f07b94d8bf25cbff4f",
+  "dataset_suite_sha256": "e74e6f8d6dd7864cf9b1e14ed1aa3fd25ac7567f4028ed5f2354fed04e3fa67e",
+  "default_track_protocol_sha256": "c78ff77348094d76932650be1013f88b384a4412d12c53abf0c4d4e5454ca4c3",
+  "case_order": [
+    "custom-n-640",
+    "coco-n-640",
+    "coco-m-640",
+    "coco-l-640",
+    "coco-x-640",
+    "rf-small-512",
+    "rf-medium-576",
+    "rf-large-704",
+    "deimv2-s-640"
+  ]
+}

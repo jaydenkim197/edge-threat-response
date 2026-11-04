@@ -8,6 +8,14 @@
 
 2026-10-26 추가: [신규 검수304장](../reports/datasets/additional-review-2026-10-26/report.md)을 웹에 배포했다(Catargiu17/ATM 합성237/Dangerous VOC50). 전량 검수 대기·학습 미승인이며 기존 split/승인 파일은 보존했다. Dangerous raw class map은25개 VOC–YOLO 대응 라벨로 지지됐지만 전체 검증을 뜻하지 않는다. 다음은 human review와 source/negative/group gate이며 자동 학습을 시작하지 않는다.
 
+## 2026-11-04 다중 source의 기성 모델 대 fine-tuned 모델 비교
+
+사용자 요청으로 기존 best와 기성 YOLO26n/m/l/x·RF-DETR Small/Medium/Large·DEIMv2-S의9개 checkpoint를 동일6개 개발 평가셋(263장/241knife GT)에서 비교했다. 신규 학습은 없으며 source/최종 D* 채택 승인은 추가하지 않았다. [조건·전체 표·CSV·논문용 그림·원시 경로](../reports/evaluation/pretrained-vs-finetuned-2026-11-04/report.md).
+
+공통 COCO evaluator와 클래스별 후보 convention에서 같은 n의 SOHAS test AP50은7.26→35.69%지만 Open Images는84.90→7.85%로 저하됐다. RF Large의 SOHAS test AP50은38.41%이나 고정.25 recall은30%(custom35%)다. 실제 CCTV 표본도8GT뿐이고 RF Large recall12.5%라 배포 충분성을 주장하지 않는다. 현재 custom의 보편적 개선·최종 모델 승격 근거는 없고 RF Large/Small은 후속 Orin 검증용 강한 기성 기준선 `PROPOSAL`이다.
+
+YOLO default predict와 validator의 multi-label 차이를 확인해 default/v2와 per-class/v3 각54개 결과를 분리 보존했다. 이 보고의 AP는 공통 COCO 계산이므로 이전 native AP34.43%와 본35.69%를 모델 향상으로 해석하지 않는다. DaSCI92장은 관련-source, Simuletic75장은 합성, Open Images29장은 small GT0이다. 모든 자료는 개발 비교에 사용됐으며 독립 final holdout이 아니다. 라벨 재확인 항목1개를 남겼고 source/검수 DB·기존 split·weight는 수정하지 않았다.
+
 ## 2026-11-04 기성 YOLO 비교와 reserved test 공개 이력
 
 직접 사용자 요청으로 DEV-SOHAS reserved test23장을 개발 모델 비교에 열었다. **이23장은 더 이상 unseen final test가 아니며**, 이후 정식 평가는 별도 독립 holdout이 필요하다. 이전 test 보관 방침은 이 범위에서 `SUPERSEDED`다. 원본 split/manifest/승인 파일은 그대로 보존하고 평가 truth에 개발 비교/원 split을 명시했다. source 전체 채택·좌표/실제 session·최종 평가 승인은 추가하지 않았다.
