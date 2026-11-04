@@ -1,0 +1,472 @@
+{
+  "cases": {
+    "coco-n-640": {
+      "batch": 1,
+      "class_count": 80,
+      "effective_predictor_end2end": false,
+      "half": false,
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "nms_argument": null,
+      "partitions": {
+        "test": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 20,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 3,
+              "negative_images_with_fp": 0,
+              "small_gt": 16,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.02983333333333333,
+            "metrics/mAP50(B)": 0.06333333333333332,
+            "metrics/mAP50-95(B)": 0.02983333333333333,
+            "metrics/precision(B)": 0.2,
+            "metrics/recall(B)": 0.1
+          },
+          "native_map50": 0.06333333333333332,
+          "native_map50_95": 0.02983333333333333,
+          "prediction_elapsed_s_not_benchmark": 0.3408603999996558
+        },
+        "val": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 14,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.1768888888888889,
+            "metrics/mAP50(B)": 0.29388888888888887,
+            "metrics/mAP50-95(B)": 0.1768888888888889,
+            "metrics/precision(B)": 0.38461538461538464,
+            "metrics/recall(B)": 0.35714285714285715
+          },
+          "native_map50": 0.29388888888888887,
+          "native_map50_95": 0.1768888888888889,
+          "prediction_elapsed_s_not_benchmark": 0.6826572000281885
+        }
+      },
+      "rect": false,
+      "weights_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+    },
+    "coco-x-1280": {
+      "batch": 1,
+      "class_count": 80,
+      "effective_predictor_end2end": false,
+      "half": false,
+      "imgsz": 1280,
+      "knife_class_id": 43,
+      "nms_argument": null,
+      "partitions": {
+        "test": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 19,
+              "fp": 4,
+              "negative_fp_boxes": 0,
+              "negative_images": 3,
+              "negative_images_with_fp": 0,
+              "small_gt": 16,
+              "small_tp": 0,
+              "tp": 1
+            },
+            "f1": 0.08,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.2,
+            "recall": 0.05,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.07662689393939395,
+            "metrics/mAP50(B)": 0.24979166666666663,
+            "metrics/mAP50-95(B)": 0.07662689393939395,
+            "metrics/precision(B)": 0.22916666666666666,
+            "metrics/recall(B)": 0.55
+          },
+          "native_map50": 0.24979166666666663,
+          "native_map50_95": 0.07662689393939395,
+          "prediction_elapsed_s_not_benchmark": 44.642331399954855
+        },
+        "val": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 10,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 2,
+              "tp": 4
+            },
+            "f1": 0.4444444444444444,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 1.0,
+            "recall": 0.2857142857142857,
+            "schema_version": 1,
+            "small_box_recall": 0.18181818181818182,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.2661107808857809,
+            "metrics/mAP50(B)": 0.5932517482517483,
+            "metrics/mAP50-95(B)": 0.2661107808857809,
+            "metrics/precision(B)": 1.0,
+            "metrics/recall(B)": 0.35537464929419815
+          },
+          "native_map50": 0.5932517482517483,
+          "native_map50_95": 0.2661107808857809,
+          "prediction_elapsed_s_not_benchmark": 83.27471219992731
+        }
+      },
+      "rect": false,
+      "weights_sha256": "9fdd44a31c504547ffb81d2c6d9e6dac3493c8eaa8b0398d3f43bae6c7003e92"
+    },
+    "coco-x-640": {
+      "batch": 1,
+      "class_count": 80,
+      "effective_predictor_end2end": false,
+      "half": false,
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "nms_argument": null,
+      "partitions": {
+        "test": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 19,
+              "fp": 2,
+              "negative_fp_boxes": 0,
+              "negative_images": 3,
+              "negative_images_with_fp": 0,
+              "small_gt": 16,
+              "small_tp": 0,
+              "tp": 1
+            },
+            "f1": 0.08695652173913043,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.3333333333333333,
+            "recall": 0.05,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.05788612836438924,
+            "metrics/mAP50(B)": 0.19437500000000002,
+            "metrics/mAP50-95(B)": 0.05788612836438924,
+            "metrics/precision(B)": 0.25,
+            "metrics/recall(B)": 0.45
+          },
+          "native_map50": 0.19437500000000002,
+          "native_map50_95": 0.05788612836438924,
+          "prediction_elapsed_s_not_benchmark": 1.03982810000889
+        },
+        "val": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 11,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 1,
+              "tp": 3
+            },
+            "f1": 0.35294117647058826,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 1.0,
+            "recall": 0.21428571428571427,
+            "schema_version": 1,
+            "small_box_recall": 0.09090909090909091,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.2637916666666667,
+            "metrics/mAP50(B)": 0.420625,
+            "metrics/mAP50-95(B)": 0.2637916666666667,
+            "metrics/precision(B)": 0.7671432027243545,
+            "metrics/recall(B)": 0.35714285714285715
+          },
+          "native_map50": 0.420625,
+          "native_map50_95": 0.2637916666666667,
+          "prediction_elapsed_s_not_benchmark": 2.1545224000001326
+        }
+      },
+      "rect": false,
+      "weights_sha256": "9fdd44a31c504547ffb81d2c6d9e6dac3493c8eaa8b0398d3f43bae6c7003e92"
+    },
+    "custom-n-640": {
+      "batch": 1,
+      "class_count": 1,
+      "effective_predictor_end2end": false,
+      "half": false,
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "nms_argument": null,
+      "partitions": {
+        "test": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 13,
+              "fp": 4,
+              "negative_fp_boxes": 1,
+              "negative_images": 3,
+              "negative_images_with_fp": 1,
+              "small_gt": 16,
+              "small_tp": 5,
+              "tp": 7
+            },
+            "f1": 0.45161290322580644,
+            "fp_boxes_per_negative_image": 0.3333333333333333,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.3333333333333333,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.6363636363636364,
+            "recall": 0.35,
+            "schema_version": 1,
+            "small_box_recall": 0.3125,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.17214533419796677,
+            "metrics/mAP50(B)": 0.3442597221399648,
+            "metrics/mAP50-95(B)": 0.17214533419796677,
+            "metrics/precision(B)": 0.5406787546864537,
+            "metrics/recall(B)": 0.3533627779411213
+          },
+          "native_map50": 0.3442597221399648,
+          "native_map50_95": 0.17214533419796677,
+          "prediction_elapsed_s_not_benchmark": 0.3967517999699339
+        },
+        "val": {
+          "fixed_conf025_iou050": {
+            "counts": {
+              "fn": 8,
+              "fp": 3,
+              "negative_fp_boxes": 0,
+              "negative_images": 10,
+              "negative_images_with_fp": 0,
+              "small_gt": 11,
+              "small_tp": 4,
+              "tp": 6
+            },
+            "f1": 0.5217391304347826,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 23,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.6666666666666666,
+            "recall": 0.42857142857142855,
+            "schema_version": 1,
+            "small_box_recall": 0.36363636363636365,
+            "status": "development_image_boxes"
+          },
+          "native_best_f1_results": {
+            "fitness": 0.2172772242142822,
+            "metrics/mAP50(B)": 0.5017200571386712,
+            "metrics/mAP50-95(B)": 0.2172772242142822,
+            "metrics/precision(B)": 0.5923379809269951,
+            "metrics/recall(B)": 0.42857142857142855
+          },
+          "native_map50": 0.5017200571386712,
+          "native_map50_95": 0.2172772242142822,
+          "prediction_elapsed_s_not_benchmark": 0.6076796000124887
+        }
+      },
+      "rect": false,
+      "weights_sha256": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043"
+    }
+  },
+  "counts": {
+    "test": {
+      "images": 23,
+      "knife_objects": 20
+    },
+    "val": {
+      "images": 23,
+      "knife_objects": 14
+    }
+  },
+  "environment": {
+    "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+    "logical_cpu_count": 32,
+    "packages": {
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "ultralytics": "8.4.152"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+  },
+  "git_commit": "cf674506274a0cc607f15e8e9573e0d5ce941163",
+  "script_sha256": "940acdcfca42815c3bf5f652280b57d1f77882bd17aaa182f815e58867fc0d20",
+  "source_sha256": {
+    "data\\processed\\sohas-reviewed-development-20261026-smallscale-v1\\DEV-manifest.jsonl": "4bff41f710e7ba043aeebab194ba449a9e41f7fab0cde3714963d337321dc1f2",
+    "data\\processed\\sohas-reviewed-development-20261026-smallscale-v1\\development-authorization.json": "b0c23ce46c5a495ae2a9c2508ccb28001fbdde26198d746ac792e3caa6b07336",
+    "data\\processed\\sohas-reviewed-development-20261026-smallscale-v1\\test.txt": "09cc5fe25eb28692ae4e70d3cfcb582dbd2644e2e60ee3047682924ba1efd5d1",
+    "data\\processed\\sohas-reviewed-development-20261026-smallscale-v1\\train.txt": "44d44325c058d8773d83e57a40c6b97862d55e5216c635df5ed4cad01abc7c3c",
+    "data\\processed\\sohas-reviewed-development-20261026-smallscale-v1\\training.json": "45dcc949e48539c32443477b639f0363501e2c0d4d17ce90466f25ea75e55ed6",
+    "data\\processed\\sohas-reviewed-development-20261026-smallscale-v1\\val.txt": "9e33ea191edb95e2e641a424a94eb2afc13a558df321f7126b8b4ced4e1a7af7",
+    "models\\comparison-20261104\\yolo26x.pt": "9fdd44a31c504547ffb81d2c6d9e6dac3493c8eaa8b0398d3f43bae6c7003e92",
+    "runs\\training\\sohas-reviewed-development-20261026-smallscale-v1\\weights\\best.pt": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+    "yolo26n.pt": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef"
+  },
+  "status": "completed_opened_development_comparison",
+  "test_no_longer_unseen": true,
+  "training_started": false
+}

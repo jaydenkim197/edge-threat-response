@@ -8,6 +8,12 @@
 
 2026-10-26 추가: [신규 검수304장](../reports/datasets/additional-review-2026-10-26/report.md)을 웹에 배포했다(Catargiu17/ATM 합성237/Dangerous VOC50). 전량 검수 대기·학습 미승인이며 기존 split/승인 파일은 보존했다. Dangerous raw class map은25개 VOC–YOLO 대응 라벨로 지지됐지만 전체 검증을 뜻하지 않는다. 다음은 human review와 source/negative/group gate이며 자동 학습을 시작하지 않는다.
 
+## 2026-11-04 기성 YOLO 비교와 reserved test 공개 이력
+
+직접 사용자 요청으로 DEV-SOHAS reserved test23장을 개발 모델 비교에 열었다. **이23장은 더 이상 unseen final test가 아니며**, 이후 정식 평가는 별도 독립 holdout이 필요하다. 이전 test 보관 방침은 이 범위에서 `SUPERSEDED`다. 원본 split/manifest/승인 파일은 그대로 보존하고 평가 truth에 개발 비교/원 split을 명시했다. source 전체 채택·좌표/실제 session·최종 평가 승인은 추가하지 않았다.
+
+PC13 CUDA에서 기존 custom n640 / COCO n640 / COCO x640 / COCO x1280을 동일 val23·test23, square/FP32/batch1로 재평가했다. test knife AP50은 각각34.43/6.33/19.44/24.98%, 고정 conf.25·IoU.5 recall35/0/5/5%다. val에서는 x1280 AP50이 더 높아 표본 일반화는 금한다. 기성 x로 즉시 교체할 근거가 없고 custom도 충분하지 않다. 최종 D*는 미확정이며 보강/학습 gate를 유지한다. [조건·수치·hash·한계](../reports/evaluation/ready-yolo-comparison-2026-11-04/report.md).
+
 ## 1. Confirmed legacy inventory
 
 2026-09-14에 고정 submodule `legacy/2025-2-midas/Crime_Prediction`을 읽기 전용으로 점검했다.

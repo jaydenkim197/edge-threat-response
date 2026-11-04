@@ -2,6 +2,13 @@
 
 판단 core·PC 영상/replay와 실제 Orin의 native GPU·파일 입력 smoke를 검증했다. Orin camera/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. `VERIFIED`는 해당 환경·범위의 실행 증거가 있을 때만 부여한다.
 
+## 2026-11-04 기성 YOLO26x와 개발 best의 동일 이미지 평가
+
+- PC13 RTX3060/Python3.12.4/torch2.6.0+cu124/Ultralytics8.4.152에서 custom n640·COCO n640·x640·x1280의 val23/test23 native AP와 canonical JSONL bbox 평가4개 조건을 완료했다. FP32/batch1/square, knife ID custom0/COCO43, 실제 one-to-many 경로를 확인했다. test AP50은34.43/6.33/19.44/24.98%, 고정 conf.25·IoU.5 TP7/0/1/1(20GT)이다. AP와 best-F1 P/R·고정 P/R은 구분한다.
+- 원본 config/manifest/authorization/split lists·weight3개와 val/test image/label 전후 hash 동일. `completed_opened_development_comparison`, `training_started=false`를 확인했다. v1/v2 필수 train key 누락은 평가 YAML `train: []`로 해결했다. v3 launcher의 후속 cp949 로그 출력 실패를 child 평가 실패/성공 exit0로 오기하지 않는다.
+- 로컬 Python3.12.14 UTF-8 mode 기존 evaluator7 tests·script compileall·test-open flag 없으면 파일 접근 전 거부하는 guard 통과. 전체 suite/Orin·카메라·GPIO·FPS/사건 지표는 이번 검증 범위가 아니다. 자동 contact sheet는 사람 검수/라벨 승인으로 승격하지 않는다.
+- 직접 사용자 요청에 따라 기존 reserved test23장을 개발 비교에 사용했으므로 이제 unseen final test가 아니다. source split 자체를 바꾸거나 source 승인을 추가하지 않았다. [원시 경로·환경·수치·hash·재현](../reports/evaluation/ready-yolo-comparison-2026-11-04/report.md). 대형 기성 모델 즉시 교체·최종 D* 채택은 하지 않았다.
+
 ## 2026-11-02 Orin THP 메모리 증가 분리·수정
 
 - 기본 THP에서600.119초/7,515frame·VmRSS+211.664MiB로 이전 약216MiB 증가를 재현했다. 초기/종료 AnonHugePages403,456→972,800KiB, GC/heap/device/host cache 분리 결과가 THP resident inflation을 지지한다. 수정은 current Orin worker의 PR_SET_THP_DISABLE이며 전역 policy/OS/driver/power는 유지했다.

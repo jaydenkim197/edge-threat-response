@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-11-04 - 최고 정확도 기성 YOLO26과 현재 개발 모델 비교
+
+- 작업 카드/목적: 사용자 요청의 '최고 성능 YOLO를 테스트셋에서 실행'을 PC13 읽기 전용 비교로 수행한다. 완료 기준은 공식 ready checkpoint 확인·현재 모델 동일 조건 재평가·수치/원시 결과 보존·문서·commit/push다. 위험은 전체 COCO 정확도를 knife 성능으로 오인하고 작은 개발셋/공개된 test를 최종 평가로 주장하는 것이다.
+- search-first/범위: 기존 TrainingConfig·승인/hash 검증·review bbox parser·canonical JSONL·bbox evaluator·사후 diagnostic helper를 재사용하고 실험 driver `tools/compare_ready_detectors.py`만 추가했다. 새 의존성·학습·배포 모델 변경·사이트/DB 쓰기는 없다. 공식 ready YOLO26 계열의 전체 COCO 최고 정확도 x와 n 대조군을 사용한다.
+- 사용자 직접 요청으로 reserved test23장을 열었고 이후 unseen final test가 아님을 기록했다. 원 split을 보존하고 개발 truth에 original_split/purpose를 명시했다. 기존 source/라벨/session/최종 승인 gate를 우회 승인으로 바꾸지 않는다.
+- 실행/결과: PC13 RTX3060/Python3.12.4/torch2.6.0+cu124/Ultralytics8.4.152, custom n640/COCO n640/x640/x1280. 공통 FP32/square/batch1, native AP floor.001, 고정 P/R conf.25·IoU.5. test23/20GT AP50은34.43/6.33/19.44/24.98%, TP7/0/1/1, small TP5/0/0/0(16GT). val에서는 x1280 AP50이59.33%로 custom50.17%보다 높아 작은 test의 우열을 일반화하지 않는다. custom recall35%도 실사용 충분성 증거가 아니다.
+- 검증: val/test 전4개 case GPU 실행·native AP와 JSONL 평가 완료 및 config/manifest/authorization/split/weight·평가 image/label hash 보존. 로컬 UTF-8 기존 evaluator7 tests·compileall·명시적 test-open guard 통과. v1/v2 YAML train key 누락은 train=[]로 해결했다. v3 child 완료 후 launcher cp949 로그 출력 실패를 따로 기록했다. 전체 suite/Orin 속도·사건 성능은 이번에 검증하지 않았다.
+- 판단/다음: 기성 x 즉시 교체 근거 없음·최종 D* 미확정. 검수 승인된 target-domain/small-knife 보강과 제한된 도메인 fine-tuning 비교가 필요하다. 새 source 채택/학습은 이번에 실행하지 않았다. 문서: model-data-plan/verification 및 [비교 보고/aggregate](../reports/evaluation/ready-yolo-comparison-2026-11-04/report.md). 원시는 PC13 ignored runs/ready-detector-comparison-20261104-v3, 실행 base cf67450+hash-bound driver다. Git은 이 항목을 도입한 commit으로 추적하며 검증 후 main push한다. 다른 채팅의 Catargiu/site 미커밋 변경은 보존·제외한다.
+
 ## 2026-11-02 - Orin 약216MiB 증가 원인 분리와 process-only THP 수정
 
 - 작업 카드/요청: camera/GPIO 없이 앞선 VmRSS 증가의 원인을 재현하고 해결한다. 모델·시험 영상·conf/K-N/B0~B3·운영 site/DB·학습/val/test·OS/driver/power는 유지한다. 완료 기준은 Python/native/CUDA/OS 계측 분리, 최소 수정, 같은600초 비교·고정 입력 회귀·문서·commit/push다. 위험은 계측에 의한 실행 양상 변화, THP의 성능 trade-off와 bounded 검사를 장기 안정성으로 과대해석하는 것이다.
