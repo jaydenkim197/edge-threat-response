@@ -1,0 +1,64 @@
+{
+  "legacy": {
+    "images": 7361,
+    "sha256": "cf70182ef17410b7cb3c51e98add37d4483f437f5e44e0d3eec98bb47c215ec2",
+    "bytes": 460986245,
+    "included_in_current_queue": false,
+    "global_duplicate_check_complete": false,
+    "status": "staged_not_merged",
+    "archive_and_image_hashes_verified": true,
+    "source_dir": "C:\\Class6\\edge-threat-response\\data\\source-audit\\legacy-development-20261105\\export"
+  },
+  "open_images": {
+    "acquired_images": 594,
+    "annotation_license": "CC BY 4.0",
+    "eligible_images": 594,
+    "failed_images": 0,
+    "final_evaluation_allowed": false,
+    "global_duplicate_check_complete": false,
+    "human_review_complete": false,
+    "image_license": "publisher metadata CC BY 2.0; attribution retained",
+    "included_in_current_queue": false,
+    "individual_rights_independently_verified": false,
+    "knife_mid": "/m/04ctx",
+    "knife_objects": 820,
+    "original_split": "train",
+    "seed": 20261105,
+    "selected_images": 594,
+    "selection": "up to half normalized-area<=.02, half other; deterministic source-ID hash; positive-only",
+    "source_commit": "d9a870aaa92850126fbe67d1062c0bded94908f8",
+    "source_metadata": {
+      "boxes": {
+        "bytes": 2258447590,
+        "headers": {
+          "Content-Length": "2258447590",
+          "ETag": "\"3c3e70cfaba5757ea5c2604b19cac3b2\"",
+          "Last-Modified": "Mon, 03 Feb 2020 15:15:49 GMT"
+        },
+        "sha256": "dfc9637907a6b105f87e435bac91a5ee9b29af3ff8391168f86c1d63879786b6",
+        "url": "https://storage.googleapis.com/openimages/v6/oidv6-train-annotations-bbox.csv"
+      },
+      "classes": {
+        "bytes": 12064,
+        "headers": {
+          "Content-Length": "12064",
+          "ETag": "\"c5e7cb6b85d0539b2105db2d1974681f\"",
+          "Last-Modified": "Tue, 11 Oct 2022 10:46:20 GMT"
+        },
+        "sha256": "1839e0e7e84130ae281f7f67413768601b031581c0c42e7fc17527b8e2a99aa9",
+        "url": "https://storage.googleapis.com/openimages/v7/oidv7-class-descriptions-boxable.csv"
+      },
+      "images": {
+        "bytes": 638407721,
+        "headers": {
+          "Content-Length": "638407721",
+          "ETag": "\"a4ac0bcedb5c2df4d1b1230dc6b41b8f\"",
+          "Last-Modified": "Thu, 17 May 2018 14:33:46 GMT"
+        },
+        "sha256": "05f3d68dbbb03728d1a37e51479f4f35c062b871e1a6cae8c4cefbe0e0c80ed0",
+        "url": "https://storage.googleapis.com/openimages/2018_04/train/train-images-boxable-with-rotation.csv"
+      }
+    },
+    "status": "acquired_not_merged"
+  }
+}

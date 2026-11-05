@@ -1,0 +1,232 @@
+{
+  "local_cpu": {
+    "accuracy_claim": false,
+    "camera_gpio_verified": false,
+    "data_kind": "synthetic_only",
+    "environment": {
+      "executable": ".venv-ml/Scripts/python.exe",
+      "logical_cpu_count": 22,
+      "packages": {
+        "numpy": "2.4.6",
+        "opencv-python": "5.0.0.93",
+        "torch": "2.14.0",
+        "torchvision": "0.29.0",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-10-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+      "python": "3.11.18 (main, Oct 26 2026, 14:08:50) [MSC v.1944 64 bit (AMD64)]"
+    },
+    "forced_wiring_threshold": 0,
+    "git_commit": "c2daa70dc56be0f32d1b7a2eacfa06c2a49d0d12",
+    "inference_device": "cpu",
+    "live_events": 1,
+    "live_frames": 4,
+    "live_snapshots": 1,
+    "models": {
+      "G": {
+        "checkpoint_sha256": "075ae1773c747e8de3426bca354939b93d05a7ccf986e5ce72eff57089784a75",
+        "duration_seconds": 0.01600000000325963,
+        "reload_identical": true,
+        "status": "passed"
+      },
+      "VG": {
+        "checkpoint_sha256": "7396db3a934edc45a3b47c4364b67b7ea87daea93b2c5d2117247590ceaf3a4a",
+        "duration_seconds": 0.46900000001187436,
+        "reload_identical": true,
+        "status": "passed"
+      }
+    },
+    "native_memory_policy": null,
+    "pretrained_visual_weights_tested": false,
+    "score_export": {
+      "frames": 4,
+      "relations_sha256": "7532d328d6a1e9975a12adefeed0dd31bfb613645a9933f0b5392022e0ba46c4",
+      "threshold": 0.05
+    },
+    "source_sha256": {
+      "src/edge_threat_response/hoi.py": "57aa9e5081b17e9c932640872949c89d0fd97382f9cf61fb372e60b95123c9d3",
+      "src/edge_threat_response/pipeline.py": "749d982e9fe7d0d314e9295d9fc23c92ca3e11e0863520d4db14e6631d69d90a",
+      "src/edge_threat_response/relations.py": "51637f5f9bb34935c41a67b0c8aa20b37d2cd18979290985ff682434ae7667dc",
+      "src/edge_threat_response/replay_cli.py": "8f8268a4ead9bae2bf14b94ab1116878d4f1be2b6bf1ecd85e93312303d78cf8",
+      "src/edge_threat_response/runtime.py": "9aa131b623d399eeed8a6a1b0d60356aba8a0c0985ae5327647f88a5d3ed57ba",
+      "tools/verify_hoi_smoke.py": "3c50201247c2da3397f63effd09b25ced6938f8d53a651018d6617b4a530e9c5"
+    },
+    "status": "passed",
+    "target_cuda_inference_verified": false
+  },
+  "pc13_cpu": {
+    "accuracy_claim": false,
+    "camera_gpio_verified": false,
+    "data_kind": "synthetic_only",
+    "environment": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    },
+    "forced_wiring_threshold": 0,
+    "git_commit": "700795763706ce786ab4b224d4411ea591d3a1ac",
+    "inference_device": "cpu",
+    "live_events": 1,
+    "live_frames": 4,
+    "live_snapshots": 1,
+    "models": {
+      "G": {
+        "checkpoint_sha256": "c42585a822cd89361f88a43457b7748984b032523fba26d2372a4ac1b8a314c6",
+        "duration_seconds": 0.8429999999934807,
+        "reload_identical": true,
+        "status": "passed"
+      },
+      "VG": {
+        "checkpoint_sha256": "ef5fc1a5834ca9f1e8a64b039c385c5b9bd9366b706d6d3337303588f4e143e5",
+        "duration_seconds": 0.375,
+        "reload_identical": true,
+        "status": "passed"
+      }
+    },
+    "native_memory_policy": null,
+    "pretrained_visual_weights_tested": false,
+    "score_export": {
+      "frames": 4,
+      "relations_sha256": "77707d29fa954a97bc0f627840705e157074b310ff21cbdd083d39bbe35d9352",
+      "threshold": 0.05
+    },
+    "source_sha256": {
+      "src/edge_threat_response/hoi.py": "9b8083850d53b0daf07de8b9a6081fcb6e31e552b32ae5a0430dc74287bae77e",
+      "src/edge_threat_response/pipeline.py": "150a102eb3d8f275603832be1f163cea706166302f1dbcdf1ce36a3f550d4331",
+      "src/edge_threat_response/relations.py": "3ae732f1bf943fe7c517f5dad70ffb32bf1f63b4f7542f0009f9ecb607b48389",
+      "src/edge_threat_response/replay_cli.py": "bccf1694594235b4890bdad8fdb6571b7b520e5fe4d273e1b4f970d05a4a610c",
+      "src/edge_threat_response/runtime.py": "4fdf7d75a6b8dccfaaf0dff6d08250f035b4c89d35bdc373595d134432ed61c0",
+      "tools/verify_hoi_smoke.py": "eefd89a9d7ffc55bf714223e813ee66d8dc670432194257c266e6ca82d7db280"
+    },
+    "status": "passed",
+    "target_cuda_inference_verified": false
+  },
+  "orin_cuda": {
+    "accuracy_claim": false,
+    "camera_gpio_verified": false,
+    "data_kind": "synthetic_only",
+    "environment": {
+      "executable": "/home/jorin/edge-threat-response/.venv-orin/bin/python",
+      "logical_cpu_count": 6,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.14.1+cu132",
+        "torchvision": "0.29.1+cu132",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Linux-6.8.12-1021-tegra-aarch64-with-glibc2.39",
+      "processor": "aarch64",
+      "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]"
+    },
+    "forced_wiring_threshold": 0,
+    "git_commit": "c2daa70dc56be0f32d1b7a2eacfa06c2a49d0d12",
+    "inference_device": "cuda:0",
+    "live_events": 1,
+    "live_frames": 4,
+    "live_snapshots": 1,
+    "models": {
+      "G": {
+        "checkpoint_sha256": "243744f9cc2cdf36a768dcd19ef7a2b49aeb074e4fccf9158cc985ea4c3d4ac4",
+        "duration_seconds": 0.12182962603401393,
+        "reload_identical": true,
+        "status": "passed"
+      },
+      "VG": {
+        "checkpoint_sha256": "d6e944bccba02d974b811e10b807ceb362087e7e0eacb2ad49cd3c4bfc15a314",
+        "duration_seconds": 1.060617889976129,
+        "reload_identical": true,
+        "status": "passed"
+      }
+    },
+    "native_memory_policy": {
+      "after": 1,
+      "before": 0,
+      "changed": true,
+      "requested": "disable_thp",
+      "scope": "current_process"
+    },
+    "pretrained_visual_weights_tested": false,
+    "score_export": {
+      "frames": 4,
+      "relations_sha256": "bcbb8b3f958ea92c61aeed242f97a3899f17b9079e5fcae33551c196b6a7cd58",
+      "threshold": 0.05
+    },
+    "source_sha256": {
+      "src/edge_threat_response/hoi.py": "57aa9e5081b17e9c932640872949c89d0fd97382f9cf61fb372e60b95123c9d3",
+      "src/edge_threat_response/pipeline.py": "749d982e9fe7d0d314e9295d9fc23c92ca3e11e0863520d4db14e6631d69d90a",
+      "src/edge_threat_response/relations.py": "51637f5f9bb34935c41a67b0c8aa20b37d2cd18979290985ff682434ae7667dc",
+      "src/edge_threat_response/replay_cli.py": "8f8268a4ead9bae2bf14b94ab1116878d4f1be2b6bf1ecd85e93312303d78cf8",
+      "src/edge_threat_response/runtime.py": "9aa131b623d399eeed8a6a1b0d60356aba8a0c0985ae5327647f88a5d3ed57ba",
+      "tools/verify_hoi_smoke.py": "3c50201247c2da3397f63effd09b25ced6938f8d53a651018d6617b4a530e9c5"
+    },
+    "status": "passed",
+    "target_cuda_inference_verified": true
+  },
+  "orin_tests": {
+    "test_hoi.py": {
+      "exit_code": 0,
+      "summary": "est_hoi.HoiContractTests.test_geometry_is_translation_and_scale_invariant) ... ok\ntest_metrics_include_all_negative_undefined_precision (test_hoi.HoiContractTests.test_metrics_include_all_negative_undefined_precision) ... ok\ntest_pair_import_preserves_uncertain_and_rejects_leakage_and_tampering (test_hoi.HoiContractTests.test_pair_import_preserves_uncertain_and_rejects_leakage_and_tampering) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 0.149s\n\nOK\n"
+    },
+    "test_rtsp.py": {
+      "exit_code": 0,
+      "summary": "test_latest_frame_queue_is_bounded_and_released (test_rtsp.RTSPTests.test_latest_frame_queue_is_bounded_and_released) ... ok\ntest_transport_exception_does_not_leak_credentials (test_rtsp.RTSPTests.test_transport_exception_does_not_leak_credentials) ... ok\n\n----------------------------------------------------------------------\nRan 2 tests in 0.137s\n\nOK\n"
+    },
+    "test_pipeline*.py": {
+      "exit_code": 0,
+      "summary": ") ... ok\ntest_loads_development_example (test_pipeline_config.PipelineConfigTests.test_loads_development_example) ... ok\ntest_loads_v2_expanded_bbox_policy_without_distance_threshold (test_pipeline_config.PipelineConfigTests.test_loads_v2_expanded_bbox_policy_without_distance_threshold) ... ok\ntest_rejects_invalid_k_of_n (test_pipeline_config.PipelineConfigTests.test_rejects_invalid_k_of_n) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 0.009s\n\nOK\n"
+    },
+    "test_evaluation.py": {
+      "exit_code": 0,
+      "summary": "ping_tolerance_windows_preserve_one_to_one_matching) ... ok\ntest_real_replay_to_evaluation_and_provenance_tamper_detection (test_evaluation.EventEvaluationTests.test_real_replay_to_evaluation_and_provenance_tamper_detection) ... ok\ntest_rejects_nonfinite_duplicates_and_out_of_recording_alerts (test_evaluation.EventEvaluationTests.test_rejects_nonfinite_duplicates_and_out_of_recording_alerts) ... ok\n\n----------------------------------------------------------------------\nRan 8 tests in 0.042s\n\nOK\n"
+    }
+  },
+  "cross_device": {
+    "status": "passed",
+    "checkpoint_sha256": "ef5fc1a5834ca9f1e8a64b039c385c5b9bd9366b706d6d3337303588f4e143e5",
+    "source_training_runtime": "PC13 torch2.6.0+cu124/torchvision0.21.0+cu124; synthetic CPU training",
+    "target_torch": "2.14.1+cu132",
+    "target_device": "Orin",
+    "strict_load_and_cuda_inference": true,
+    "scores": [
+      0.5154221653938293,
+      0.5154221653938293,
+      0.5154221653938293
+    ],
+    "human_accuracy_verified": false,
+    "camera_gpio_verified": false
+  },
+  "pc13_tests": {
+    "evaluation_environment": {
+      "count": 181,
+      "failures": 0,
+      "skipped": 0
+    },
+    "ml_environment": {
+      "count": 181,
+      "failures": 0,
+      "skipped": 2
+    },
+    "evaluation_latest": {
+      "source_commit": "d9a870aaa92850126fbe67d1062c0bded94908f8",
+      "count": 183,
+      "duration_seconds": 23.077,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "result": "OK",
+      "log": "C:/Class6/edge-threat-response/runs/qa-hoi-b4-20261105/final-183-tests.log",
+      "interpreter": ".venv-evaluation-20261104/Scripts/python.exe"
+    }
+  }
+}

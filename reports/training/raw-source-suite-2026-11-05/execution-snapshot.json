@@ -1,0 +1,75 @@
+{
+  "captured_utc": "2026-11-05T05:54:41.255559+00:00",
+  "prepared_images": 14224,
+  "split_sources": {
+    "test": {
+      "catargiu": 160,
+      "dangerous": 1263
+    },
+    "train": {
+      "catargiu": 5100,
+      "dangerous": 1296,
+      "sohas": 4982
+    },
+    "val": {
+      "catargiu": 164,
+      "dangerous": 1255,
+      "sohas": 4
+    }
+  },
+  "excluded_before_strict_filter": {
+    "exact_duplicate": 186,
+    "protected_proxy_group": 864
+  },
+  "strict_jpeg_exclusions": 8,
+  "changed_training_copies_preserved": 8,
+  "raw_sources_modified": false,
+  "split_assignment_changed": false,
+  "draws_per_epoch": 11392,
+  "planned_updates_each": 35600,
+  "human_review_complete": false,
+  "final_evaluation_allowed": false,
+  "queue": {
+    "active": "RAW-R1-n",
+    "completed": [],
+    "queue_sha256": "983430cce0dd12cd6b0c36092b2e439a76a24945f761c56c1a27e377b923e030",
+    "status": "running"
+  },
+  "actual_loader": {
+    "accumulate": 1,
+    "batch_size": 16,
+    "batches_per_epoch": 712,
+    "train_dataset_length": 11392,
+    "validation_dataset_length": 1423
+  },
+  "observed_updates_snapshot": 23496,
+  "source_commit_for_training": "cd60f3b494b891c1c371f6551f5b11f7cd2ab374",
+  "followup": {
+    "final_detector_selected": false,
+    "queue_sha256": "983430cce0dd12cd6b0c36092b2e439a76a24945f761c56c1a27e377b923e030",
+    "script_sha256": "57666a3c7acefb02602fe140dd4e88570bdbd4d5b9ab6de7edbdc7afd675c61f",
+    "source_commit": "700795763706ce786ab4b224d4411ea591d3a1ac",
+    "status": "waiting_for_training"
+  },
+  "tests": {
+    "evaluation_environment": {
+      "count": 181,
+      "failures": 0,
+      "skipped": 0
+    },
+    "ml_environment": {
+      "count": 181,
+      "failures": 0,
+      "skipped": 2
+    }
+  },
+  "open_images": {
+    "final_evaluation_allowed": false,
+    "global_duplicate_check_complete": false,
+    "human_review_complete": false,
+    "included_in_current_queue": false,
+    "original_split": "train",
+    "source_commit": "d9a870aaa92850126fbe67d1062c0bded94908f8",
+    "status": "acquiring_metadata"
+  }
+}

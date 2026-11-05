@@ -8,7 +8,7 @@
 - RTSP는 환경변수의 비공개 URL을 받아 queue1의 최신 decode frame을 전달하고 drop을 센다. timestamp는 host decode 완료 시각이며 camera exposure나 물리 GPIO 시각이 아니다. 파일 기반 독립 평가는 별도 원본 녹화가 필요하다. 실제 P430 연결은 아직 미검증이다.
 - RAW 예비 학습은 기존 parser/group split/training runner의 확장이다. 원본은 보존하고, 실제 loader 수·batch·update와 입력 해시를 검증한다. [범위](raw-source-training.md).
 
-위 신규 연결의 검증은 가상 자료 CPU 범위이며 실제 HOI 정확도·카메라/GPIO 검증을 뜻하지 않는다. 아래 10월 기록은 당시 범위다.
+위 신규 연결은 가상 자료 PC 및 Orin CUDA에서 검증했다. PC13에서 생성한 VG checkpoint의 Orin strict load/CUDA 추론도 확인했다. 실제 HOI 정확도·카메라/GPIO 검증을 뜻하지 않는다. [검증 보고서](../reports/runtime/hoi-b4-integration-2026-11-05/report.md). 아래 10월 기록은 당시 범위다.
 
 상태: MVP 논리 구조 `DECISION`, 공통 core·replay·detector/video/snapshot 인터페이스 `IMPLEMENTED`/PC 및 Orin 파일 GPU 경로 `VERIFIED`, camera/GPIO adapter `PLANNED`. Tracker와 Dashboard는 현재 필수 경로가 아니다.
 

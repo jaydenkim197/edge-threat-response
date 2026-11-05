@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- november-integration-evidence-20261105:begin -->
+## 2026-11-05 — 실행 재확인·Orin B4 검증·추가 source 확보
+
+- 토큰 중단 후 PC13 R1 학습/대기 queue가 계속 실행 중임을 확인했다. 학습 checkout은 cd60f3b로 유지하고 후속 평가/개발 source는 별도 worktree에 격리했다. `.venv-evaluation-20261104`에서 환경 preflight와 최신 source 전체183개 테스트가23.077초에 skip 없이 통과했다. 실행 로그는 PC13 `runs/qa-hoi-b4-20261105/final-183-tests.log`에 보관했다.
+- PC/PC13 CPU 가상 G/VG 학습·reload·영상 연결, Orin G/VG CUDA 추론·sidecar/replay/snapshot/mock alarm, target27 tests, PC13 torch2.6 checkpoint→Orin torch2.14 strict load/CUDA 추론을 확인했다. 실제 Holding 정확도·카메라/GPIO·ImageNet visual fine-tuning은 미검증이다. [근거](../reports/runtime/hoi-b4-integration-2026-11-05/report.md).
+- Legacy normalized export7361장을 image hash/라벨 검사 후 PC13에 전송하고 archive/추출 image hash를 대조했다. Open Images 공식 train에서 원본 주석·권리 metadata·자동 좌표/그룹/회전 조건에 맞는594장/820boxes를 확보했다(실패0). 현재 queue에는 넣지 않았고 전역 중복/보호 그룹 검사는 후속 recipe에서 한다. 사람 검수 완료를 기다리는 조건을 되살리지 않는다. [추가 확보](../reports/datasets/additional-train-sources-2026-11-05/report.md).
+- 후속 비교는 학습 성공 후8개 모델×기존6개 개발셋의 AP/predict 두 track을 자동 생성하도록 대기한다. 실제 전체 학습·새 모델 비교·D* 선정은 완료 전이다. [실행 snapshot](../reports/training/raw-source-suite-2026-11-05/report.md).
+- HOI 담당 인계는 PC13 `data/handoffs/20261105_hoi-labeling.md`, source/실행 위치는 같은 폴더의 execution-locations JSON에 보관했다. 공개 검수 사이트 HTTP200을 확인했으며 운영 DB/이미지/판정/배정을 쓰지 않았다. P430은 사용자 답변상 아직 연결 전이다. Git commit은 이 항목을 포함한 변경 이력으로 추적한다.
+<!-- november-integration-evidence-20261105:end -->
+
 <!-- hoi-b4-implementation-20261105:begin -->
 ## 2026-11-05 — RAW 전체 학습 착수·HOI/B4 구현
 

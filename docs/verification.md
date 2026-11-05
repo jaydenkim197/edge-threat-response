@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- november-integration-evidence-20261105:begin -->
+2026-11-05 후속: PC13 평가 venv의 최신 source 전체183 tests(23.077초, skip0), Orin target27 tests와 G/VG CUDA 가상 영상 연결·PC13 checkpoint strict load를 확인했다. 새 모델 실제 정확도/카메라/GPIO는 미검증이다. [범위·환경·hash](../reports/runtime/hoi-b4-integration-2026-11-05/report.md). RAW 전체50epoch 및8모델 공통 비교는 아직 실행 중/대기다. Legacy7361/Open Images train594의 확보는 전역 중복 검사나 학습 recipe 채택과 구분한다.
+<!-- november-integration-evidence-20261105:end -->
+
 <!-- hoi-b4-implementation-20261105:begin -->
 ## 2026-11-05 추가 검증
 

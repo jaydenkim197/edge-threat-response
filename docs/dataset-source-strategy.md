@@ -1,5 +1,9 @@
 # Dataset Source Strategy
 
+<!-- november-integration-evidence-20261105:begin -->
+2026-11-05 후속 확보: PC13에 Legacy normalized export7361장(전송 전후 image/archive hash 확인), Open Images **별도 train**594장/820 knife boxes(공식 metadata·원 주석·attribution 보존)를 보관했다. 현재 RAW queue에는 추가하지 않았으며 전역 중복/보호 그룹을 검사해 후속 recipe로 구성한다. 미검수 상태와 개별 권리 미확인을 유지한다. [확보 내역](../reports/datasets/additional-train-sources-2026-11-05/report.md).
+<!-- november-integration-evidence-20261105:end -->
+
 <!-- hoi-b4-implementation-20261105:begin -->
 ### 최초 RAW mixture 준비·실행
 
