@@ -129,6 +129,7 @@ if __name__ == "__main__":
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--filter-inventory", type=Path)
+    parser.add_argument("--source-signatures", type=Path)
     args = parser.parse_args()
-    result = filter_detector_inventory(args.filter_inventory, args.output_dir) if args.filter_inventory else prepare(args.root, args.output_dir)
+    result = filter_detector_inventory(args.filter_inventory, args.output_dir, source_signatures=args.source_signatures) if args.filter_inventory else prepare(args.root, args.output_dir)
     print(json.dumps(result, ensure_ascii=False), flush=True)

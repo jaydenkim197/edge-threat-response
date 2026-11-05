@@ -36,25 +36,46 @@ def check_detector_image(path: Path) -> None:
         raise ValueError(f"Invalid detector image: {exc}") from exc
 
 
-def filter_detector_inventory(inventory: Path, output: Path) -> dict:
+def filter_detector_inventory(inventory: Path, output: Path, *, source_signatures: Path | None = None) -> dict:
     if output.exists(): raise ValueError("Fresh filtered inventory output required")
     rows = [json.loads(x) for x in inventory.read_text(encoding="utf-8-sig").splitlines() if x.strip()]
-    keep, excluded = [], []
+    originals = {r["record_id"]: r for r in (json.loads(x) for x in source_signatures.read_text(encoding="utf-8-sig").splitlines() if x.strip())} if source_signatures else {}
+    keep, excluded, changed_copies = [], [], []
     for row in rows:
         image = Path(row["image"])
-        if _sha256_file(image) != row["image_sha256"]:
+        changed = _sha256_file(image) != row["image_sha256"]
+        if changed and source_signatures is None:
             raise ValueError("Materialized bytes changed; do not silently reauthorize repairs")
+        if source_signatures is not None:
+            original = originals.get(row["image_id"], {})
+            if original.get("image_sha256") != row["image_sha256"]:
+                raise ValueError("Original source signatures do not bind this image")
+            image = Path(original["image_file"])
+            if _sha256_file(image) != row["image_sha256"]:
+                raise ValueError("Immutable raw source changed")
+        if changed: changed_copies.append(row["image_id"])
+        if _sha256_file(Path(row["label"])) != row["label_sha256"]:
+            raise ValueError("Prepared label changed")
         try:
             check_detector_image(image)
             image_signature(image, expected_sha256=row["image_sha256"])
         except (OSError, ValueError) as exc:
             excluded.append({"image_id": row["image_id"], "reason": str(exc), "image_sha256": row["image_sha256"]})
             continue
-        keep.append(row)
+        keep.append({**row, "immutable_source_image": str(image)})
     output.mkdir(parents=True)
+    (output/"images").mkdir()
+    (output/"labels").mkdir()
+    for row in keep:
+        image, label = output/"images"/Path(row["image"]).name, output/"labels"/Path(row["label"]).name
+        shutil.copyfile(row.pop("immutable_source_image"), image)
+        shutil.copyfile(row["label"], label)
+        row.update(image=image.resolve().as_posix(), label=label.resolve().as_posix())
     write_jsonl(output/"inventory.jsonl", keep)
     write_jsonl(output/"exclusions.jsonl", excluded)
     result = {"input_inventory_sha256": _sha256_file(inventory), "images": len(keep), "excluded": excluded,
+              "source_signatures_sha256": _sha256_file(source_signatures) if source_signatures else None,
+              "previous_detector_copies_changed": changed_copies,
               "split_assignment_changed": False, "source_images_modified": False,
               "split_sources": {s: dict(Counter(r["source_dataset"] for r in keep if r["split"] == s)) for s in ("train", "val", "test")}}
     _write_json(output/"summary.json", result)
