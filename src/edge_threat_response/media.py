@@ -96,7 +96,7 @@ class RTSPFrameSource:
             import cv2
             cv2.setLogLevel(0)
             factory = lambda: cv2.VideoCapture(self._url, cv2.CAP_FFMPEG,
-                                               [cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, 5000,
+                                               [cv2.CAP_PROP_OPEN_TIMEOUT_MSEC, 20000,
                                                 cv2.CAP_PROP_READ_TIMEOUT_MSEC, 5000])
         pending = queue.Queue(maxsize=1)
         stop, done = threading.Event(), threading.Event()

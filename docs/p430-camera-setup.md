@@ -2,6 +2,8 @@
 
 ## 2026-11-05 실제 LAN 진단
 
+**계정 수정 후:** 카메라 자체 계정으로 다시 저장한 뒤 authenticated DESCRIBE200/H264를 확인했다. 초기5초 제한 probe는0frame였으나,20초 제한 진단은6.210초에 열려640×360/광고FPS10·30frame를 수신했다. 공통 RTSP 수신기의 open timeout만5→20초로 수정하고 read timeout5초·queue1·인증정보 비노출은 유지했다. 광고FPS/초기 버퍼의 빠른 반환은 실제 추론FPS가 아니다. 아래401은 수정 전 기록이다.
+
 **후속 실측:** 사용자가 Save 실행·화면 재진입 후 체크 유지를 확인했고, Orin에서554/8000/9000 open 및 RTSP OPTIONS `200 OK`를 확인했다. 포트 활성화 문제는 해결됐다. 이후 저장된 비공개 계정으로 sub stream decode를 시도했으나0frame이고, 별도 동일 TCP 연결의 Digest 인증 DESCRIBE도 `401 Unauthorized`였다. 현재 남은 gate는 카메라 계정·권한 확인이다. 이것만으로 decoder 불량이나 모델 성능을 판정하지 않는다.
 
 계정 입력은 Orin의 `python3 ~/edge-threat-response/runs/setup-p430-private.py`를 사용한다. 실제 카메라 계정과 비밀번호를 입력하며 SSH/Reolink 클라우드 계정과 구분한다. 별도 카메라 계정이 없다면 사용자명은 기본 `admin`인지 User Management에서 확인한다. 비밀번호는 두 번 숨김 입력하고, URL을 percent-encode해 mode0600 임시 파일을 원자적으로 교체한다. 값은 출력·Git에 넣지 않는다.

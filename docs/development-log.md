@@ -2,6 +2,14 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- p430-open-timeout-fix-20261105:begin -->
+## 2026-11-05 — P430 인증 해결·초기 open timeout 수정
+
+- 사용자 camera 계정 수정 후 authenticated DESCRIBE200/H264를 확인했다. 기존5초 probe의0frame 실패를 재현했지만 직접20초 진단은6.210초에 열려640×360·30frame를 디코딩했다. 초기 연결 시간이5초보다 긴 것이 현재 실패 원인으로 분리됐다. FPS10은 카메라 광고값이며 실제 추론 처리율이 아니다.
+- 기존 RTSPFrameSource의 native open timeout만5→20초로 수정했다. read timeout5초·queue1·worker/credential 계약은 유지하고 새 dependency/adapter를 추가하지 않았다. backend 파라미터와 release를 검증하는 최소 회귀1개를 추가했으며 로컬 관련3 tests 통과·diff check를 확인했다.
+- raw 진단은 Orin `runs/p430-yolo26n-20261105-v1/extended-open-diagnostic.json`, 비공개 계정은 기존 mode0600 파일에만 남긴다. 다음은 수정 source의 실제120frame probe와 YOLO26n/B3 제한 실행이다. 본 code commit에 고정한 별도 worktree에서 검증하고 기존 실행/PC13 학습은 보존한다.
+<!-- p430-open-timeout-fix-20261105:end -->
+
 <!-- p430-yolo-deployment-20261105:begin -->
 ## 2026-11-05 — P430 포트 해결·RAW-R1-n Orin 준비
 
