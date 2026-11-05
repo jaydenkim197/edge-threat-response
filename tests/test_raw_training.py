@@ -7,6 +7,7 @@ from edge_threat_response.raw_training import prepare_suite, run_queue
 from edge_threat_response.training import TrainingConfig, validate_training_approval, _sha256_file
 from edge_threat_response.dataset.raw_import import voc_knife, materialize_inventory
 from edge_threat_response.dataset.image_screening import image_signature
+from edge_threat_response.dataset.materialize import _convert_knife_label
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -95,6 +96,18 @@ class RawTrainingTests(unittest.TestCase):
             voc_knife(xml, width=100, height=80, allowed_names={"gun"})
         with self.assertRaisesRegex(ValueError, "dimensions"):
             voc_knife(xml, width=101, height=80, allowed_names={"knife"})
+
+    def test_multiclass_import_filters_only_explicitly_mapped_other_classes(self):
+        with tempfile.TemporaryDirectory() as d:
+            label = Path(d)/"mixed.txt"
+            label.write_text("1 .5 .5 .2 .2\n0 .4 .4 .1 .1\n")
+            with self.assertRaisesRegex(ValueError, "non-knife"):
+                _convert_knife_label(label, class_map={0: 1, 1: 0}, canonical_knife_id=1)
+            text, count, _ = _convert_knife_label(label, class_map={0: 1, 1: 0}, canonical_knife_id=1, skip_non_knife=True)
+            self.assertEqual(1, count)
+            self.assertTrue(text.startswith("0 "))
+            with self.assertRaisesRegex(ValueError, "non-knife"):
+                _convert_knife_label(label, class_map={0: 1}, canonical_knife_id=1, skip_non_knife=True)
 
     def test_global_protected_images_excluded_and_groups_do_not_cross(self):
         from PIL import Image

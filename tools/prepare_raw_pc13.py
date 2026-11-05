@@ -102,7 +102,7 @@ def prepare(root: Path, output: Path):
                 image = extracted/matching[0]
                 with image.open("xb") as f:
                     f.write(z.read(member))
-                text, _, _ = _convert_knife_label(annotation, class_map={0: 1, 1: 0, 2: 0, 3: 0}, canonical_knife_id=1)
+                text, _, _ = _convert_knife_label(annotation, class_map={0: 1, 1: 0, 2: 0, 3: 0}, canonical_knife_id=1, skip_non_knife=True)
                 add("catargiu", image, annotation, member, member.split("/")[0], "CC BY 4.0 export; upstream research-only notice", "https://github.com/CostiCatargiu/Yolov12_WeaponDetection",
                     lambda sig, text=text: text, provenance={"archive_sha256": source_inputs[str(archive)], "corrected_revision": "382d925c0d4ce054c0368ac2778c93b94654954d"})
     protected = []

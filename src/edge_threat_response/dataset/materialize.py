@@ -230,6 +230,7 @@ def _convert_knife_label(
     *,
     class_map: dict[int, int],
     canonical_knife_id: int,
+    skip_non_knife: bool = False,
 ) -> tuple[str, int, Counter[str]]:
     output_lines: list[str] = []
     formats: Counter[str] = Counter()
@@ -245,6 +246,8 @@ def _convert_knife_label(
         except ValueError as exc:
             raise ValueError(f"Invalid label at {path}:{line_number}.") from exc
         canonical_id = class_map.get(raw_class_id)
+        if skip_non_knife and canonical_id is not None and canonical_id != canonical_knife_id:
+            continue
         if canonical_id != canonical_knife_id:
             raise ValueError(
                 f"Knife-only export found non-knife class at {path}:{line_number}."
