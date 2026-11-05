@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- p430-live-confirmed-20261105:begin -->
+## 2026-11-05 — 실제 CCTV YOLO 통합·로컬 화면 확인
+
+- 인증 수정과 open timeout 수정 후 P430 sub640×360/120frame·main3840×2160/60frame 수신을 통과했다. 각각300frame의 신규RAW-R1-n knife+COCO26n person·640/FP32·B3 실행은 valid300/action error0이다. main event2/snapshot2, sub event4/snapshot4이며 정답 없는 탐색 실행이다. 서로 다른 시간 영상의 정확도·recall 비교나 실제GPIO 검증이 아니다.
+- 사용자 요청으로 기존 detector/RTSP를 재사용한 `tools/view_live_detection.py`를 추가했다. Orin X11 `:1`/실제 DP 모니터에서30frame GUI smoke 종료와 무제한 표시의591frame 갱신·Normal/활성 창을 관찰했고 사용자도 움직이는 탐지를 확인했다. 사람green/knifeorange·신뢰도·viewFPS를 표시하며 Q/Esc로 닫는다. 영상/프레임을 저장하지 않으며 HOI/사건 판단/GPIO는 이 창에서 하지 않는다. CLI help/compile은 로컬에서 확인했다.
+- core8a52fc8의 PC13 격리 평가env 전체184 tests가17.553초/skip0 통과했다. 관련RTSP3 tests는 로컬 통과다. 로컬 전체는 localhost HTTP Win10053 오류1/skip2, Orin 전체는 UL corrupt-image 경로의 선택 pi_heif 누락 오류1/skip2로 통과가 아니다. 자동 설치나 환경/기존검수 코드를 변경하지 않고 차이를 기록했다.
+- 네트워크 간단 기록 `docs/cctv-local-network-setup.md`와 실제 결과/실행/한계를 P430 문서·architecture·Master Plan·verification·배포보고에 반영했다. 비공개 계정과 카메라 영상은 Git에 넣지 않았다. 최신PC13은R1-n50완료/H1-n39진행, M1-n/s대기·후속8모델비교대기이며 실행checkout cd60f3b를 유지했다.
+- 사용자 시연 종료 지시 시 Orin Tailscale/직접LAN SSH가 불통이고 노트북은 다른Wi-Fi였다. 직접Q/Esc 종료를 안내했으며 원격으로 종료했다고 기록하지 않는다. PC13은 계속 접속 가능하다. raw 위치·SHA·지연 범위·남은WAN/재부팅/정확도/HOI/GPIO 검증은 [실행 보고](../reports/runtime/p430-yolo26n-2026-11-05/report.md)를 따른다. 본 commit으로 소스·문서 변경을 추적한다.
+<!-- p430-live-confirmed-20261105:end -->
+
 ## 2026-11-05 - 검수 기회 활용·실사 후보 1,630장 추가
 
 - 목적/범위: 사용자가 가용 검수 인력에 맞춰 유망 후보를 더 공급하도록 요청했다. SOHAS 800개(양성600/주석0 200), Dangerous250개(양성150/주석0 100), 별도 Open Images train580개를 기존 source 아래 새 배치로 추가했다. 작은 칼 후보92개이며 전부 고정 CCTV라고 주장하지 않는다. 신규1,630개는 사람 검수 대기다.

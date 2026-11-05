@@ -1,0 +1,90 @@
+{
+  "recorded_at_utc": "2026-11-05T11:18:44.395764+00:00",
+  "kind": "aggregate_of_observed_runs_not_a_new_benchmark",
+  "core_commit": "8a52fc87d31205376745c6363dcdecd6ee705088",
+  "camera_authentication": "RTSP DESCRIBE 200 OK",
+  "startup": {
+    "old_open_timeout_ms": 5000,
+    "new_open_timeout_ms": 20000,
+    "read_timeout_ms": 5000,
+    "observed_open_seconds": 6.20989653200013
+  },
+  "sub": {
+    "width": 640,
+    "height": 360,
+    "probe_frames": 120,
+    "live_frames": 300,
+    "valid_frames": 300,
+    "action_errors": 0,
+    "events": 4,
+    "snapshots": 4,
+    "decoded_frames": 389,
+    "latest_queue_dropped_frames": 88,
+    "processing_p95_ms": 78.07004499954928,
+    "detections_sha256": "a40ce561d7cc8576286ab243b95d5d6776db982b3ad23674975565e1748461ff",
+    "run": "runs/p430-live-raw-20261105-183820-042866"
+  },
+  "main": {
+    "width": 3840,
+    "height": 2160,
+    "probe_frames": 60,
+    "live_frames": 300,
+    "valid_frames": 300,
+    "action_errors": 0,
+    "events": 2,
+    "snapshots": 2,
+    "decoded_frames": 797,
+    "latest_queue_dropped_frames": 496,
+    "processing_p95_ms": 87.95843600000808,
+    "detections_sha256": "377f3b2b5ff811ff7a769ca7ff18a3ab1319620525ff4daba63bd7c77c08ecaf",
+    "run": "runs/p430-live-raw-main-20261105-184044-759258"
+  },
+  "latency_scope": "decoded frame through inference, decision, actions; excludes capture exposure, decode and per-frame diagnostic writes; not physical GPIO",
+  "preview": {
+    "bounded_smoke_frames": 30,
+    "continuous_last_observed_frames": 591,
+    "observed_original_width": 3840,
+    "observed_original_height": 2160,
+    "window_title": "YOLO26n - Person / Knife - Live CCTV",
+    "window_state": "Normal and active",
+    "physical_display_user_confirmed": true,
+    "media_saved": false,
+    "automatic_restart": false,
+    "remote_termination_verified": false,
+    "core_commit": "8a52fc87d31205376745c6363dcdecd6ee705088",
+    "local_tool_sha256": "c8b9ed50c780416f56452773263ec6dc2142807b9479677c90d8f8877bc02af0"
+  },
+  "tests": {
+    "pc13_evaluation_environment": {
+      "count": 184,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 17.553
+    },
+    "local_rtsp": {
+      "count": 3,
+      "errors": 0,
+      "failures": 0
+    },
+    "local_full": {
+      "count": 184,
+      "errors": 1,
+      "skipped": 2,
+      "limitation": "localhost HTTP WinError10053 in test_review_web; targeted retry also failed"
+    },
+    "orin_full": {
+      "count": 184,
+      "errors": 1,
+      "skipped": 2,
+      "limitation": "Ultralytics corrupt-image fallback needs missing optional pi_heif; autoinstall disabled"
+    }
+  },
+  "accuracy_verified": false,
+  "physical_gpio_verified": false,
+  "hoi_accuracy_verified": false,
+  "wan_disconnection_verified": false,
+  "independent_final_evaluation": false,
+  "credentials_recorded": false,
+  "camera_media_committed": false
+}

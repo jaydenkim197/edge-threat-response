@@ -1,5 +1,30 @@
 # P430 연결과 촬영 준비
 
+## 현재 확인 상태 — 2026-11-05
+
+**실제 카메라 인증·main/sub 수신·각각 YOLO26n/B3 300frame 실행을 통과했다.** 같은 LAN의 구성·연결 순서는 [간단 연결 기록](cctv-local-network-setup.md)을 따른다. 아래401·초기5초 제한 실패는 해결 이전의 진단 기록이다.
+
+- sub640×360의120frame, main3840×2160의60frame probe를 통과했다. 카메라 자체 계정 수정 후 인증200을 확인했다.
+- 신규RAW-R1-n knife+COCO26n person·입력640/FP32로 두 stream을 각300frame 처리했다. 모두 valid300/action error0이며 B3 metadata·snapshot·mock 경보가 연결됐다. 최종 정확도나 실제 소지 판별의 근거는 아니다.
+- 초기open에약6.2초가 필요해 timeout5→20초로 수정했다. read timeout5초와 최신frame queue1은 유지했다. main/sub 비교는 서로 다른 시간 구간이므로 동일 장면 정확도 비교가 아니다.
+- Orin X11 모니터에서 탐지 박스 표시를 검증했고 사용자도 실제 움직이는 화면을 확인했다. 미리보기는 탐지 표시 전용으로 B3/HOI/GPIO를 실행하거나 영상을 저장하지 않는다. Q/Esc로 종료한다. 자동 시작/재시작 서비스는 없다.
+
+미리보기 소스는 `tools/view_live_detection.py`다. 검증 당시 Orin에는 같은 파일을 ignored `runs/p430-yolo26n-20261105-v1/view-live-candidate.py`로 복사했고 core는 `~/etr-worktrees/8a52fc8`을 사용했다. 기존 창을 닫은 뒤 현재 배포 구성으로 다시 실행하려면 Orin에서 다음을 사용한다.
+
+```bash
+cd ~/edge-threat-response
+DISPLAY=:1 XAUTHORITY=/run/user/1000/gdm/Xauthority \
+PYTHONPATH="$HOME/etr-worktrees/8a52fc8/src" \
+.venv-orin/bin/python runs/p430-yolo26n-20261105-v1/view-live-candidate.py \
+  --connection data/local/p430-connection.json \
+  --detector-config runs/p430-yolo26n-20261105-v1/detector-raw.json \
+  --stream main
+```
+
+DISPLAY/Xauthority는 이번에 확인한 Orin 로그인 세션 값이며 다른 장비/세션의 기본값으로 추정하지 않는다. 노트북이 카메라 LAN에서 학교 Wi-Fi로 이동한 뒤 Orin 원격 접속이 끊겼다. 창 활성화/프레임 갱신은 끊기기 전에 확인했고 사용자 화면 확인도 받았으며, 원격으로 종료했다고 주장하지 않는다.
+
+WAN 제거·전원 재시작/자동 복구·물리GPIO·실제 탐지/사건 정확도·HOI 학습 weight는 아직 미검증이다. [실측·테스트·범위](../reports/runtime/p430-yolo26n-2026-11-05/report.md).
+
 ## 2026-11-05 실제 LAN 진단
 
 **계정 수정 후:** 카메라 자체 계정으로 다시 저장한 뒤 authenticated DESCRIBE200/H264를 확인했다. 초기5초 제한 probe는0frame였으나,20초 제한 진단은6.210초에 열려640×360/광고FPS10·30frame를 수신했다. 공통 RTSP 수신기의 open timeout만5→20초로 수정하고 read timeout5초·queue1·인증정보 비노출은 유지했다. 광고FPS/초기 버퍼의 빠른 반환은 실제 추론FPS가 아니다. 아래401은 수정 전 기록이다.

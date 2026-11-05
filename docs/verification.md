@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- p430-live-confirmed-20261105:begin -->
+2026-11-05 실제CCTV: auth200·sub640×360/120frame·main3840×2160/60frame probe와 각각YOLO26n/B3 300valid frames/action error0을 확인했다. local GUI30frame smoke·지속표시591frame/활성 창·사용자 실제화면 확인까지 통과했다. core8a52fc8 PC13 평가venv 전체184 tests/17.553초/skip0 통과. 로컬 관련RTSP3 tests·viewer help/compile 통과. 로컬 전체HTTP Win10053 오류1/skip2 및 Orin 전체 선택pi_heif 누락 오류1/skip2는 미통과로 남겼다. [간단LAN 기록](cctv-local-network-setup.md), [raw 위치·성능 측정 경계·한계](../reports/runtime/p430-yolo26n-2026-11-05/report.md). 정확도/HOI/GPIO/WAN 제거/재부팅·장시간 안정성은 승격하지 않는다.
+<!-- p430-live-confirmed-20261105:end -->
+
 <!-- p430-yolo-deployment-20261105:begin -->
 2026-11-05 후속: Save 후 Orin RTSP200/554·8000 open을 확인했다. sub decode0frame와 authenticated DESCRIBE401은 실패로 보존한다. 신규RAW-R1-n SHA 전송 일치, Orin GPU 파일53 valid frames/B3/event2/snapshot2/action error0/exit0은 통과했다. 실제CCTV·HOI 정확도/물리GPIO/FPS·WAN 제거/재부팅은 미검증이다. [설정·범위·원시 위치](../reports/runtime/p430-yolo26n-2026-11-05/report.md). 코드 변경 없이 실제 배포/파일 통합을 검증했으므로 전체 테스트를 불필요하게 반복하지 않았다.
 <!-- p430-yolo-deployment-20261105:end -->
