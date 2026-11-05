@@ -2,6 +2,16 @@
 
 상태: 평가기와 가상 replay 연결 `IMPLEMENTED`/PC `VERIFIED`. 촬영·정답 기록 절차는 준비됐으며, 거리값·매칭 허용 오차·반복 횟수·최종 동결은 첫 pilot 촬영 후 확정한다.
 
+## 2026-11-05 — YOLO·HOI B4 병렬 연구의 평가 확장
+
+기존 B0~B3를 유지하고 B4=동일 YOLO 출력+독립 학습 HOI Holding 판단+동일 Temporal/FSM을 **11월 내 추가 개발·평가**한다. 이 조항은 평가 설계 결정으로, **현재 evaluator에 B4 코드가 구현됐다는 뜻은 아니다.**
+
+- 직접 촬영한 CCTV/스마트폰 원본은 train/pilot/tuning/final_test의 **서로 다른 세션**으로 촬영 전에 구분한다. 기존 P1~P4/N1~N5 시나리오와 event GT를 유지하고, pair별 person/knife bbox·holding/not_holding/uncertain 관계 정답을 별도로 기록한다.
+- GT bbox 기반 HOI 실험과 실제 YOLO predicted bbox 기반 실험을 구분한다. 후자의 knife FN은 HOI의 실패가 아니라 detector FN으로 분리한다.
+- **D0 vs D*** detector 개선과 **B3 vs B4** 관계 판단 개선은 다른 연구질문이다. B0~B4 이벤트 평가는 동일 고정 detector D*·동일 영상·detection JSONL·K/N·FSM·matching/threshold 프로토콜로 실행한다. B4 classifier score threshold만 tuning에서 선택한다.
+- 11월4일 기존 개발 평가셋은 final unseen이 아니다. 새 독립 CCTV final session으로 11/25~27 한 번 최종 평가하며 재튜닝 시 새로운 untouched session이 필요하다.
+- B4 결과를 기존 evaluator/CLI에 연결할 때는 detection/pair/event 계약과 회귀 테스트를 별도 추가한다. Replay 판단 지연은 실제 Orin 카메라→물리 GPIO 경보 지연과 구분한다.
+
 ## 1. 진행 순서와 파일
 
 촬영 담당자는 [촬영표](../templates/experiments/capture-sheet.md)를 ignored `data/experiments/<experiment-id>/`에 복사해 작성한다. 같은 폴더에 원본 영상·해시·시간축 정보와 수동 [사건 정답](../templates/experiments/ground-truth.template.json)을 보관한다. 이름 대신 참여자/검수자 별칭을 쓰고, 동의·보존 정책은 촬영 전에 확인한다. 학습 데이터셋 웹 검수의 두 질문은 이미지 품질 검수이며 이 사건 시작·종료 annotation을 대신하지 않는다.
