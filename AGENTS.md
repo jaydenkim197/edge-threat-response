@@ -6,6 +6,8 @@
 
 ## Engineering rules
 
+- 2026-11-05 명시적 사용자 결정과 최신 `project-plan.md`가 과거 10월31일 동결/B0~B3 전용 범위보다 우선한다. 현재 마감은 11월30일이며 YOLO26n/s 데이터 보강과 독립 Holding HOI/B4 개발을 포함한다. 후보 자료는 사람 검수 전 원본 주석 예비 학습을 허용하되 `RAW-*` 전용 범위·무결성·중복/분할 보호·미검수 표시를 유지한다. 이 결정은 기존 검수 DB 수정이나 최종 평가 자료의 학습 반입 허가가 아니다.
+
 - 기준 개발 작업공간은 상위 수업 폴더의 `03_개발_GitHub`이다. 작업 시작 전 `git pull --ff-only`를 실행하고, 완료·검증된 의도적 변경은 commit 후 원격 `main`까지 push한다. 상위 폴더의 회의록·제출물·팀원 자료는 저장소 밖에 둔다.
 - material task 시작 전 `docs/project-plan.md`, `docs/mvp-research-specification.md`, `docs/open-decisions.md`, `docs/architecture.md`, `docs/verification.md`, `docs/development-log.md`와 관련 코드를 확인한다. dataset·model 작업은 `docs/model-data-plan.md`도 확인한다.
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.

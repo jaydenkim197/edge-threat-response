@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- raw-source-implementation-20261105:begin -->
+2026-11-05: RAW 예비 학습 경로의 동일 draw/common holdout, 해시 변조/허위 검수 거부, 보호 이미지 제외, queue 순차/실패 중단, VOC 의미/좌표 및 기존 training 회귀를 PC에서 검증했다(신규5+기존14 tests, compileall). 실제 원본 전체 준비·GPU 학습·모델 선정은 이 항목 작성 시 미검증이다. [범위](raw-source-training.md).
+<!-- raw-source-implementation-20261105:end -->
+
 판단 core·PC 영상/replay와 실제 Orin의 native GPU·파일 입력 smoke를 검증했다. Orin camera/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. `VERIFIED`는 해당 환경·범위의 실행 증거가 있을 때만 부여한다.
 
 ## 2026-11-04 다중 평가셋의 pretrained 대 fine-tuned 비교

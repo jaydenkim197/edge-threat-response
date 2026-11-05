@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- raw-source-implementation-20261105:begin -->
+## 2026-11-05 — 미검수 원본 예비 학습 경로 구현
+
+- 목적/결정: 사용자 지시에 따라 후보 자료는 사람 검수 완료를 기다리지 않고 원본 주석으로 개발 예비 학습한다. 최종 평가·검수 합격으로 승격하지 않는다.
+- 구현: 기존 parser/signature/group split/training runner를 재사용한 raw source import, RAW-R1-n/H1-n/M1-n/M1-s 동일 draw/update 예산, 해시 결합 raw authorization, 실패 시 중단되는 순차 CUDA queue와 숨김 launcher를 추가했다. 기존 승인 경로와 사이트 DB는 유지한다.
+- 검증: PC Python3.11 `.venv-ml`, `PYTHONPATH=src`, 신규 raw5 tests와 기존 training14 tests 통과, compileall/diff 확인. 실제 전체 source/CUDA run은 다음 단계다.
+- 한계/다음: 원본 주석 누락·VOC pixel-edge 가정·conservative proxy group 한계가 남는다. 전체 source 준비 후 실제 수량/제외/실행 상태를 기록하고 HOI/B4를 추가한다. [범위·재현](raw-source-training.md). Git commit은 본 항목을 포함한 변경 이력으로 추적한다.
+<!-- raw-source-implementation-20261105:end -->
+
 ## 2026-11-05 — YOLO·HOI 다중 데이터셋 병렬 개발·11월30일 완료 계획 승인
 
 - 목적/사용자 결정: YOLO 데이터·아키텍처 개선과 독립 HOI Holding/Not Holding 모델을 병렬 개발하고 2026-11-30까지 코드·학습·Orin 통합·B0~B4 평가를 완료 목표로 한다. 기존 B0~B3 연구 유지, 후속 Holoscan5.0 범위 불변, 팀원별 역할은 고정 배정하지 않는다.

@@ -1,5 +1,11 @@
 # Dataset Source Strategy
 
+<!-- raw-source-implementation-20261105:begin -->
+## 2026-11-05 추가 결정 — 사람 검수 전 원본 예비 학습
+
+사용자는 후보 자료의 **사람 검수 완료를 기다리지 않고 원본 주석으로 예비 학습**하도록 명시적으로 승인했다. 이 결정은 아래 기존 human-review 선행 조건을 `RAW-*` 개발 예비 recipe에 한해 대체한다. 원본 클래스/좌표 변환·파일 무결성·중복/보호 그룹·공통 split·출처 기록은 유지한다. 사람 검수 여부와 negative absence는 확인됐다고 기록하지 않으며, 기존 사이트 판정·DB나 정식 R1/H1 승인 조건을 바꾸지 않는다. [실제 구현 범위와 최초 조합](raw-source-training.md).
+<!-- raw-source-implementation-20261105:end -->
+
 상태: target domain·source 역할 분리·채택 gate `DECISION`, 개별 공개 source의 실제 채택·dataset recipe `PROPOSAL`
 
 이 문서는 공개 dataset의 **이미지 수**가 아니라 현장 CCTV 적합성, annotation, 권리, 중복·누수 위험 및 실험 역할을 기준으로 결정한 source 전략이다. 구체 검수 양식과 역할별 gate는 [Dataset Evaluation Criteria](dataset-evaluation-criteria.md)를 따른다. 원본 image, video, annotation 및 model binary는 Git에 넣지 않는다. 학습·평가 채택은 source audit 후 결정한다.

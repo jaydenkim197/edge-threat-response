@@ -17,6 +17,7 @@ from typing import Any, Callable
 
 
 TRAINING_GATES = ("rights", "human_review", "labels_coordinates", "negative_absence", "duplicates_groups", "split", "recipe")
+RAW_RECIPES = {"RAW-R1-n", "RAW-H1-n", "RAW-M1-n", "RAW-M1-s"}
 
 
 @dataclass(frozen=True)
@@ -52,8 +53,9 @@ class TrainingConfig:
                 f"Training config arguments are controlled by the runner: {sorted(forbidden)}"
             )
         required = payload.get("approval_required", False)
-        if type(required) is not bool or (required and payload.get("recipe_id") not in {"R1", "H1", "DEV-SOHAS"}) or (payload.get("recipe_id") in {"R1", "H1", "DEV-SOHAS"} and not required):
-            raise ValueError("Approval-gated profiles require recipe_id R1/H1/DEV-SOHAS and a boolean approval_required")
+        gated = {"R1", "H1", "DEV-SOHAS"} | RAW_RECIPES
+        if type(required) is not bool or (required and payload.get("recipe_id") not in gated) or (payload.get("recipe_id") in gated and not required):
+            raise ValueError("Approval-gated profiles require a supported recipe_id and boolean approval_required")
         return cls(
             schema_version=1,
             profile_id=payload["profile_id"],
@@ -140,7 +142,7 @@ def run_training(
         "environment": _environment_record(),
         "git_commit": _git_commit(),
         "recipe_id": config.recipe_id,
-        "evaluation_scope": "development_only" if config.recipe_id == "DEV-SOHAS" else "profile_defined",
+        "evaluation_scope": "development_only" if config.recipe_id == "DEV-SOHAS" or config.recipe_id in RAW_RECIPES else "profile_defined",
         "approval": approval,
     }
     if dataset_manifest is not None:
@@ -319,12 +321,20 @@ def validate_training_approval(config_path: Path, config: TrainingConfig, data_y
         raise ValueError("Gated training requires --approval and --dataset-manifest before model loading")
     approval = json.loads(approval_path.read_text(encoding="utf-8-sig"))
     development = config.recipe_id == "DEV-SOHAS"
-    expected_status = "authorized_development_only" if development else "approved"
+    raw = config.recipe_id in RAW_RECIPES
+    expected_status = "authorized_raw_exploration" if raw else "authorized_development_only" if development else "approved"
     if not isinstance(approval, dict) or approval.get("schema_version") != 1 or approval.get("status") != expected_status:
         raise ValueError("Dataset/recipe approval is pending; training is blocked")
     if any(not isinstance(approval.get(key), str) or not approval[key].strip() for key in ("pair_id", "approval_id", "reviewer_alias", "approved_at")):
         raise ValueError("Approval identity/date is missing")
-    if development:
+    if raw:
+        if (approval.get("scope") != "raw_source_annotations_development_only"
+                or any(approval.get(key) is not False for key in
+                       ("human_review_complete", "negative_absence_verified", "final_evaluation_allowed"))
+                or not isinstance(approval.get("authorization_reference"), str)
+                or not approval["authorization_reference"].strip()):
+            raise ValueError("Invalid raw exploration scope/limitations")
+    elif development:
         if (approval.get("scope") != "reviewed_sohas_development_only"
                 or approval.get("coordinate_contract") != "review-overlay-pixel-edges-v1"
                 or approval.get("group_policy") != "filename-family+full-source-dhash-components-v1"
@@ -369,6 +379,17 @@ def validate_training_approval(config_path: Path, config: TrainingConfig, data_y
                 raise ValueError("Development proxy group crosses partitions")
             development_groups[group] = row["split"]
             development_hashes.add(row["image_sha256"])
+        if raw:
+            group = row.get("source_group")
+            if (not isinstance(group, str) or not group.strip()
+                    or row.get("human_review_status") != "not_required_for_raw_exploration"
+                    or row.get("negative_absence_verified") is not False
+                    or row["image_sha256"] in development_hashes):
+                raise ValueError("Invalid raw exploration row or duplicate image")
+            if group in development_groups and development_groups[group] != row["split"]:
+                raise ValueError("Raw source group crosses partitions")
+            development_groups[group] = row["split"]
+            development_hashes.add(row["image_sha256"])
         expected[row["split"]][row["image"]] += row["draw_count"]
     for split in expected:
         actual = Counter(files[f"{split}_list"].read_text(encoding="utf-8").splitlines())
@@ -376,7 +397,7 @@ def validate_training_approval(config_path: Path, config: TrainingConfig, data_y
             raise ValueError("Training list multiplicities differ from approved manifest")
     train_draws = sum(expected["train"].values())
     return {"pair_id": approval["pair_id"], "approval_id": approval["approval_id"],
-            "scope": approval.get("scope", "formal_r1_h1"), "final_evaluation_allowed": not development,
+            "scope": approval.get("scope", "formal_r1_h1"), "final_evaluation_allowed": not (development or raw),
             "approval_sha256": _sha256_file(approval_path), "bound_inputs": hashes,
             "train_draw_count": train_draws,
             "planned_optimizer_updates": math.ceil(train_draws / config.arguments["batch"]) * config.arguments["epochs"]}
