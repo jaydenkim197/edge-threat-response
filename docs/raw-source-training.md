@@ -47,3 +47,9 @@ RAW 실행은 실제 train/validation loader 수·batch·accumulate를 확인하
 `tools/finish_raw_training.py`는 성공한 queue만 이어받아 기존 D0/COCO26n/s/RF-Large와 새4모델을 같은6개 개발셋에서 평가한다. AP와 실제 predict를 별도 track으로 남기며 YOLO는640, RF-Large는 기존704 native protocol이다. 이는 각 준비된 시스템 비교이며, 데이터 효과는 동일 YOLO 크기/640에서 해석한다. 기존 SOHAS val23의 F2 threshold는 임시 개발 값이며 D*를 자동 채택하지 않는다. 실패한 queue·다른 입력 hash·불완전 update는 후속 평가를 시작하지 않는다. 새 source 추가는 현재 queue 파일을 바꾸지 않고 별도 recipe로 준비한다.
 
 후속 비교는 기존 **`.venv-evaluation-20261104/Scripts/python.exe`**로 실행한다. 학습/검수용 `.venv-ml`에 비교용 dependency를 설치하지 않는다. CLI는 기다리기 전에 RF-DETR/pycocotools 등 필요한 패키지를 검사하며 `--preflight-only`로 환경만 확인할 수 있다. 실행 중인 학습 checkout은 유지하고 별도 frozen worktree의 source로 후속 비교를 실행한다.
+
+## 후속 source 확보
+
+`tools/acquire_open_images_train.py --output-dir data/source-audit/open-images-train-20261105 --count 1000`은 공식 V7 다운로드 페이지의 train bbox(V6 공개 파일)·image metadata·class names에서 Knife 양성만 확보한다. 최대1,000장을 normalized area<=.02와 그 외에서 절반씩 deterministic ID hash로 뽑고, 가능한 수가 적으면 나머지에서 보충한다. 개별 license/attribution·원 주석·metadata checksum을 보존한다. GroupOf나 회전 좌표가 미해결인 자료는 제외하며 무라벨 이미지를 음성으로 만들지 않는다.
+
+이 단계는 **확보만** 한다. 사람 검수·전역 중복 검사가 완료됐다고 표시하지 않고, 현재 RAW queue나 기존 Open Images validation 평가 자료에 합치지 않는다. 다음 recipe에서 기존 source/보호 group과 함께 검사한다. [공식 다운로드·형식](https://storage.googleapis.com/openimages/web/download_v7.html).
