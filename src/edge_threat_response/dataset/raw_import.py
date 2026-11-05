@@ -18,6 +18,49 @@ from ..replay import write_jsonl
 from ..training import _sha256_file, _write_json
 
 
+def check_detector_image(path: Path) -> None:
+    """Match the trainer's strict geometry/JPEG checks without repairing bytes."""
+    from PIL import Image
+    try:
+        with Image.open(path) as image:
+            if min(image.size) < 10:
+                raise ValueError("Detector image dimensions are smaller than 10 pixels")
+            jpeg = image.format.lower() in {"jpeg", "jpg"}
+            image.verify()
+        if jpeg:
+            with path.open("rb") as stream:
+                stream.seek(-2, 2)
+                if stream.read() != b"\xff\xd9":
+                    raise ValueError("Missing JPEG end marker; source repair is not permitted")
+    except (OSError, SyntaxError) as exc:
+        raise ValueError(f"Invalid detector image: {exc}") from exc
+
+
+def filter_detector_inventory(inventory: Path, output: Path) -> dict:
+    if output.exists(): raise ValueError("Fresh filtered inventory output required")
+    rows = [json.loads(x) for x in inventory.read_text(encoding="utf-8-sig").splitlines() if x.strip()]
+    keep, excluded = [], []
+    for row in rows:
+        image = Path(row["image"])
+        if _sha256_file(image) != row["image_sha256"]:
+            raise ValueError("Materialized bytes changed; do not silently reauthorize repairs")
+        try:
+            check_detector_image(image)
+            image_signature(image, expected_sha256=row["image_sha256"])
+        except (OSError, ValueError) as exc:
+            excluded.append({"image_id": row["image_id"], "reason": str(exc), "image_sha256": row["image_sha256"]})
+            continue
+        keep.append(row)
+    output.mkdir(parents=True)
+    write_jsonl(output/"inventory.jsonl", keep)
+    write_jsonl(output/"exclusions.jsonl", excluded)
+    result = {"input_inventory_sha256": _sha256_file(inventory), "images": len(keep), "excluded": excluded,
+              "split_assignment_changed": False, "source_images_modified": False,
+              "split_sources": {s: dict(Counter(r["source_dataset"] for r in keep if r["split"] == s)) for s in ("train", "val", "test")}}
+    _write_json(output/"summary.json", result)
+    return result
+
+
 def voc_knife(data: bytes, *, width: int, height: int, allowed_names: set[str]) -> str:
     if b"<!DOCTYPE" in data.upper() or b"<!ENTITY" in data.upper():
         raise ValueError("XML declarations not allowed")

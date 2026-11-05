@@ -10,7 +10,7 @@ from pathlib import Path
 from edge_threat_response.dataset.image_screening import image_signature
 from edge_threat_response.dataset.labels import parse_yolo_label
 from edge_threat_response.dataset.materialize import _convert_knife_label
-from edge_threat_response.dataset.raw_import import materialize_inventory, voc_knife
+from edge_threat_response.dataset.raw_import import materialize_inventory, voc_knife, check_detector_image, filter_detector_inventory
 from edge_threat_response.dataset.sohas import VOC_ROOT, _inventory, _source_bytes, SOURCE_URL
 from edge_threat_response.training import _sha256_file, _write_json
 
@@ -25,6 +25,7 @@ def prepare(root: Path, output: Path):
 
     def add(source, image, annotation, original, split, license_name, url, text_factory, *, provenance):
         try:
+            check_detector_image(image)
             signature = image_signature(image)
             if signature["exif_orientation"] != 1:
                 raise ValueError("Nondefault EXIF orientation; cannot assume annotation coordinates")
@@ -127,5 +128,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--filter-inventory", type=Path)
     args = parser.parse_args()
-    print(json.dumps(prepare(args.root, args.output_dir), ensure_ascii=False), flush=True)
+    result = filter_detector_inventory(args.filter_inventory, args.output_dir) if args.filter_inventory else prepare(args.root, args.output_dir)
+    print(json.dumps(result, ensure_ascii=False), flush=True)

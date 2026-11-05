@@ -6,7 +6,7 @@ from pathlib import Path
 from edge_threat_response.raw_training import prepare_suite, run_queue
 from edge_threat_response.training import TrainingConfig, validate_training_approval, _sha256_file
 from edge_threat_response.training import _raw_loader_contract
-from edge_threat_response.dataset.raw_import import voc_knife, materialize_inventory
+from edge_threat_response.dataset.raw_import import voc_knife, materialize_inventory, check_detector_image
 from edge_threat_response.dataset.image_screening import image_signature
 from edge_threat_response.dataset.materialize import _convert_knife_label
 
@@ -15,6 +15,17 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class RawTrainingTests(unittest.TestCase):
+    def test_truncated_jpeg_is_rejected_without_repair(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d)/"test.jpg"
+            Image.new("RGB", (16, 16), (40, 50, 60)).save(path)
+            check_detector_image(path)
+            raw = path.read_bytes()[:-2]
+            path.write_bytes(raw)
+            with self.assertRaisesRegex(ValueError, "JPEG end"):
+                check_detector_image(path)
+            self.assertEqual(raw, path.read_bytes())
     def test_actual_loader_cannot_drop_rows_or_change_batch(self):
         from types import SimpleNamespace
         class Loader:
