@@ -1,5 +1,15 @@
 # P430 연결과 촬영 준비
 
+## 2026-11-05 실제 LAN 진단
+
+Orin 유선 IP `192.168.0.10/24`에서 P430 `192.168.0.4`로의 직접 경로·ARP의 장비 MAC 일치·ping 2/2를 확인했다. 노트북 `192.168.0.6`과 Orin 양쪽에서 TCP9000은 열려 있고, TCP554/8000/80/443은 연결 거부였다. 따라서 LAN 연결은 확인됐지만 RTSP/ONVIF 서비스·인증·영상 수신은 아직 미검증이다. IP 변화의 원인을 확정하거나 이전 `.2` 검사 결과를 재사용하지 않는다.
+
+Reolink Client 화면에는 RTSP554/ONVIF8000이 체크돼 있다. Save가 화면 아래 잘려 있고 자동 입력 좌표가 맞지 않아 저장 성공을 확인하지 못했으며, 사용자의 Save 실행·화면 재진입 후 유지 확인을 요청했다. 체크 표시만으로 서비스가 활성화됐다고 판정하지 않는다. 공식 절차는 Device Settings → Network → Advanced → Server Settings에서 설정 후 Save다([제조사 안내](https://support.reolink.com/articles/900000621783-How-to-Configure-Reolink-Ports-Settings/)).
+
+먼저 저장 후 두 장비에서554를 재검사하고, 열리면 비공개 계정 설정으로 sub/main decode를 검증한다. 현재 Orin의 `data/local/p430-connection.json`은 없으며 비밀번호를 추정하거나 SSH 비밀번호를 카메라에 재사용하지 않는다. `rtspsrc`와 `nvv4l2decoder`는 설치돼 있지만 ffprobe·avdec_h264는 발견하지 못했다. 플러그인 존재는 실제 카메라 디코딩 성공을 뜻하지 않는다. 공유기/Orin 네트워크·OS·드라이버와 PC13 학습은 변경하지 않았다. WAN 제거 시험은 LAN SSH 경로와 영상 수신을 확보한 후 별도로 진행한다.
+
+아래는 최초 연결 준비 절차이며 현재 상태는 위 실측을 우선한다.
+
 2026-11-05 사용자가 **Reolink P430의 영상 출력 확인, 당일 네트워크 연결 예정**을 알려왔다. 이는 사용자 확인이며 PC13/Orin의 RTSP 검증 결과는 아니다. P430은 공식 지원 목록에 RTSP 지원 제품으로 기재돼 있다. [Reolink 지원 목록](https://support.reolink.com/articles/900000617826-Which-Reolink-Products-Support-CGI-RTSP-ONVIF/), [RTSP 설정 안내](https://support.reolink.com/articles/900000630706-Introduction-to-RTSP/).
 
 ## 연결 확인

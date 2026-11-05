@@ -5,7 +5,7 @@
 - 검수 완료를 기다리지 않는 원본 주석 `RAW-*` 예비 학습 경로를 별도로 구현했다. 사람 검수 합격·최종 평가 승인을 뜻하지 않는다. 무결성·클래스 매핑·중복/보호 그룹·공통 split·동일 update 예산은 유지한다.
 - PC13에서 SOHAS/Dangerous Items/Catargiu **14,224장**을 준비했다. 기존 공개 평가와 연결된 proxy group 및 exact duplicate를 제외했고, trainer가 복구/누락할 JPEG8장은 원본을 보존한 채 새 학습 사본에서 제외했다. R1-n→H1-n→M1-n→M1-s의 순차50epoch queue를 시작했다. 결과·D* 채택은 아직 미확정이다. [실행 규격](raw-source-training.md).
 - HOI G/VG 학습·checkpoint·점수 sidecar·B4 replay/평가·영상 snapshot 연결을 가상 자료 PC 및 Orin CUDA에서 확인했다. PC13 checkpoint의 Orin strict load/CUDA 추론과 전체183개 테스트도 통과했다. 실제 Holding 정답과 정확도는 아직 없다. [검증 범위](../reports/runtime/hoi-b4-integration-2026-11-05/report.md). 라벨링 화면은 사이트 담당 채팅에 위임하고 [교환 규격](hoi-annotation-contract.md)을 사용한다.
-- Reolink P430의 기종·영상 출력은 사용자가 확인했다. 사용자 답변상 아직 네트워크 연결 전이며 RTSP 코드는 mock 검증 범위다. [연결 절차](p430-camera-setup.md). 카메라/GPIO 실측과 새 독립 촬영은 계속 선행 의존사항이다.
+- Reolink P430과 Orin의 실제 LAN 통신을 확인했다. 노트북/Orin 양쪽에서 카메라9000은 열렸으나 RTSP554/ONVIF8000은 연결 거부다. Client의 체크 표시와 실제 서비스 활성화를 구분하고 Save·유지 확인 후 재검사한다. [실제 진단·연결 절차](p430-camera-setup.md). 영상 수신·카메라/GPIO 실측과 새 독립 촬영은 아직 미완료다.
 - 기존 검수 사이트 데이터/DB/배정은 변경하지 않는다. 실제 추가 source 확보는 현재 queue 입력을 변경하지 않고 후속 recipe로 관리한다. 아래 11월 일정은 유지한다.
 
 상태: 프로젝트 방향·일정·MVP 연구 범위는 `DECISION`, 정량 목표치와 파라미터는 `PROPOSAL`

@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- p430-lan-diagnosis-20261105:begin -->
+2026-11-05 P430: 실제 Orin 유선 경로·ARP/MAC 일치·ping2/2를 확인했다. 노트북과 Orin에서9000 open,554/8000/80/443 connection refused를 재현했다. Client의RTSP/ONVIF 체크 표시만 확인했으며 Save 적용·RTSP 인증/영상·추론·WAN 제거·GPIO는 미검증이다. 코드/드라이버/네트워크 변경 없이 진단했고 [실측·후속 절차](p430-camera-setup.md)를 기록했다.
+<!-- p430-lan-diagnosis-20261105:end -->
+
 <!-- november-integration-evidence-20261105:begin -->
 2026-11-05 후속: PC13 평가 venv의 최신 source 전체183 tests(23.077초, skip0), Orin target27 tests와 G/VG CUDA 가상 영상 연결·PC13 checkpoint strict load를 확인했다. 새 모델 실제 정확도/카메라/GPIO는 미검증이다. [범위·환경·hash](../reports/runtime/hoi-b4-integration-2026-11-05/report.md). RAW 전체50epoch 및8모델 공통 비교는 아직 실행 중/대기다. Legacy7361/Open Images train594의 확보는 전역 중복 검사나 학습 recipe 채택과 구분한다.
 <!-- november-integration-evidence-20261105:end -->
