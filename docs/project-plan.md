@@ -4,6 +4,45 @@
 
 이 문서는 프로젝트의 목적, 범위, 일정, 성공 조건을 정의하는 최상위 기준이다. 기술 구조는 `architecture.md`, 미확정 선택은 `open-decisions.md`, 실제 변경은 `development-log.md`, 검증 결과는 `verification.md`에서 관리한다.
 
+## 2026-11-05 — 승인된 11월 YOLO·HOI 병렬 개발 및 평가계획
+
+**결정:** YOLO 개선 + 독립 HOI 학습 + B0~B4 비교 + Orin Nano 실기기 통합·평가를 **2026-11-30까지 완료 목표**로 수행한다. 12월 초는 과제 제출물·발표 정리. 과거 10월31일 MVP 동결 목표는 역사 기록으로 유지한다. 새로운 병렬 개발은 별도의 실험 버전이다. 계획 기한은 성공·검증을 의미하지 않는다.
+
+### 연구별 범위 및 검증
+
+| 트랙 | 필수 작업 | 완료 증거 |
+|---|---|---|
+| A — YOLO | 기존 YOLO26n(D0) 대비 고유·검수 실사 혼합 데이터 효과와 YOLO26n/s 구조 효과를 **분리** 평가. 작은 칼과 실제 CCTV 일반화 우선 | source/split/config/checkpoint hashes, AP50/AP50-95, small-knife recall, hard-negative FP, Orin 추론 지연 |
+| B — HOI | YOLO person·knife의 pair/union crop+geometry를 입력받는 별도 학습 모델. 1차 Holding/Not Holding, uncertain은 보류. Geometry MLP(B4-G)와 사전학습 MobileNetV3-Small+MLP(B4-VG) 비교 | pair-level P/R/F1·혼동행렬, GT-box vs predicted-box 진단, 모델·라벨 출처, Orin 추가 비용 |
+| C — 판단 비교 | 동일 detector D*의 **동일 detection JSONL**로 B0~B4 실행. B3=Spatial+Temporal, B4=HOI+동일 Temporal/FSM. B5 결합은 여유 시 선택 | 독립 촬영 세션의 event P/R/F1·False Alerts/hour·판단 지연. Detector D0→D* 효과와 B3→B4 효과는 별도 비교 |
+| D — 통합 | 실제 CCTV→YOLO→B3/B4→FSM→GPIO·metadata·snapshot, Edge 성능 및 장애 검증 | 카메라/물리 경보 동작 증거, FPS·p95·drop/queue·CPU/GPU/RAM·온도·실행 환경 기록 |
+
+### 주차별 일정
+
+| 기간 | 모델·데이터 개발 | 통합·실험 / 완료 기준 |
+|---|---|---|
+| **11/05–11/08** | SOHAS+그 밖의 실사 후보 검수 상태·source 역할 결정, HOI Holding 관계 라벨/네트워크 설계, 실험 프로토콜 동결 준비 | **11/05 CCTV 실물 모델·RTSP·파일 저장 확인 예정(아직 미검증)**. train/tuning/final session 경계와 안전 촬영·동의 준비 |
+| **11/09–11/12** | CCTV/스마트폰 train 촬영 및 YOLO bbox·HOI pair GT 라벨, 중복·source audit, 학습용 manifest 승인 | 약3m 고각 CCTV/정면·측면 휴대폰, 3~5명·실내2곳 이상, Near/Medium/Far·Normal/Low-light. **30~60클립·300~600프레임은 첫 pilot 목표량**, 세션 독립 수 보장은 아님. final은 별도 촬영 |
+| **11/13–11/16** | 승인 실사 D0 vs YOLO26n 개선 및 동일 데이터의 YOLO26s, HOI B4-G/B4-VG 1차 학습. PC13 RTX3060에서 GPU 학습은 **순차 예약** | 양 트랙 각각 학습 완료 checkpoint 최소 1개, validation 비교·오류 사례·원시 학습 로그 |
+| **11/17–11/20** | 작은 칼 FN/FP·HOI hard-negative 오류 분석, 데이터/증강 보완, 640 vs 960·HOI union crop 224/256 조건부 비교, seed 반복 여유 시 수행 | **11/20 D*와 B4 weight·threshold·config·평가 세션 동결**. 1280 및 ResNet18은 옵션 |
+| **11/21–11/24** | 선택 모델 Orin 이식/전처리·후처리 검증 | 실제 CCTV RTSP 또는 저장 영상·GPIO·snapshot 통합 smoke, B0~B4 실행 경로·latency·dropping·메모리 실측. TensorRT는 병목·호환성 확인 후 조건부 |
+| **11/25–11/27** | 동결 모델에 대해 새로운 독립 CCTV final session의 bbox/HOI pair/event GT 평가 | 동일 영상·D* JSONL·K/N·FSM 기준의 B0~B4 1회 최종 평가, Event F1·False Alerts/hour·p95·FP/FN 분석. 최종 test로 튜닝 금지 |
+| **11/28–11/30** | 코드/weight/config 동결, 오류 해석·성능표·그래프·재현 설정 마무리 | YOLO·HOI·B0~B4·Orin 실측 최종 보고 및 원시 증거 정리. 새 기능 확장 중단 |
+
+### 데이터셋 사용 범위 (SOHAS 단독 학습 아님)
+
+- **실사 기본:** SOHAS R1/H1; 별도 실사 혼합 M1에는 Dangerous Items, Catargiu, Open Images V7의 *기존 평가에서 분리된 학습용 자료*, 중복·권리·검수 통과 legacy/DaSCI 고유분을 후보로 삼는다. 후보 전체를 무조건 합치지는 않는다.
+- **목표 도메인 적응:** 직접 CCTV/스마트폰 촬영의 독립 train session(T1)을 사용하고 별도 독립 final session은 보호한다. 기존 11/04 평가 263장은 개발 확인용으로 공개됐으며 최종 unseen test가 아니다.
+- **보조/외부:** Simuletic CCTV/ATM은 synthetic augmentation을 실사 baseline과 따로 비교. US Mock Attack은 외부 CCTV 평가 후보. ACF는 원본 미확보로 보류. HICO-DET/100DOH/Hands23은 HOI 관계/손-물체 pretrained 후보; YouTube는 이용 조건 확인 전 참고용.
+- **학술 사용:** 별도 법률 보고서는 선행하지 않되 연구 목적만으로 데이터 저작권·라이선스·출처/재배포 제한·촬영 동의가 자동 면제되지는 않는다. source/version/허용범위/중복/annotation을 간단히 확인하고 그 범위 안에서만 학습한다. 원본 민감 영상·이미지·체크포인트를 공개 Git에 업로드하지 않는다.
+
+### 모델·자원·추가 연구 경계
+
+- **해상도:** YOLO640은 Orin 파일입력 **실측 기준선**, 960은 우선 비교 후보, 1280은 960의 이득과 실제 Orin 메모리/지연 여유가 확인된 경우에만. HOI는 4K 전체 프레임이 아닌 원본 영상의 사람-칼 union crop224/256을 후보로 사용. 픽셀수 증가(960=2.25배,1280=4배)가 FPS 저하율과 동일하다고 단정하지 않는다.
+- **Orin 실측:** Jetson Orin Nano Super 약8GB/25W의 이전 640 파일 반복 시험 THP-off 처리율12.1496fps는 **실제 CCTV FPS가 아니다**. HOI 추가 후 end-to-end FPS/p95/프레임 누락·대기열·RAM을 재측정해야 한다.
+- **분담:** 특정 팀원에게 역할을 사전 고정 배정하지 않는다. 팀은 공동 작업 큐를 사용하고 각 학습 run/검수 기록의 실제 담당 정보만 증거에 기록한다.
+- **11월 이외:** Holoscan 5.0은 기존 P2-04 **후속 연구로 유지**한다. Using/Video HOI, B5 융합, 1280·ResNet 확장, Nano 비교 등은 11월 필수 결과를 해치지 않을 때만 검토한다.
+
 ## 1. Project Identity
 
 - 프로젝트명: 상황 인지형 Edge AI 흉기 위협 대응 시스템
