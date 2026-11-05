@@ -10,6 +10,29 @@
 
 이 표본은 이제 개발 모델 비교에 공개된 자료다. DaSCI92개는 모두 보호 자료와 같은 filename family이므로 독립성 근거가 아니며, synthetic75개도 실사 test로 합치지 않는다. US Mock은8knife GT/5positive sequences라 작고, Open Images는 small GT0/음성0이다. 사전학습 corpus의 중복 가능성과 source 권리/좌표 gate는 남는다. Open Images1개에 annotation completeness 재확인 항목이 있으나 사후 label 수정·제외·재계산은 하지 않았다. 논문 최종 평가는 새 camera/session holdout과 수동 GT 검증이 필요하며 이 비교를 source 전체 채택/추가 학습 승인으로 승격하지 않는다.
 
+## 2026-11-05 — 신규 YOLO 다중 데이터셋 조합 및 HOI 자료 범위
+
+사용자 결정: SOHAS 외의 기존 후보도 적극 검토해 **실사 혼합 M1, 자체 촬영 적응 T1, synthetic 보강 S1을 별도 실험으로 비교**한다. 개별 이미지의 학습 채택은 기존 감사 조건에 따라 결정한다. 학술 프로젝트이므로 별도 법률 보고서는 만들지 않지만 라이선스·출처·비영리 제한·촬영 동의는 자료별 간결히 확인하며 일괄 면제로 보지 않는다.
+
+| Source | 이번 11월의 역할 | 실험 투입 시 주의 |
+|---|---|---|
+| SOHAS | R1 실사 기준 / H1 음성 이미지 제외 비교 | VOC–YOLO knife count 차이·좌표·권리/검수 확인. 기존 DEV183장의 개발용 승인≠전체 source 승인 |
+| Dangerous Items | 실사 M1의 knife/유사물체 보강 **우선 후보** | source별 raw class map·bboxes·negative·중복 검수 |
+| Catargiu corrected v11 | small-knife / CCTV 시점 보강 **우선 후보** | 사람 검수·소품/게임/제품 사진·세션/중복 재확인 |
+| Open Images V7 | 별도 train source에서 M1 선택 보강 | 11/04 개발 평가에 사용한 validation29장을 학습 train 자료로 자동 이동하지 않음; 개별 license·누락 GT 확인 |
+| Legacy 2025 MIDAS | L0 별도 재현; 적합·고유 검수 합격분만 L1/M1 후보 | 128장 review, source/split 누수와 2025 수치 재현성 분리 |
+| DaSCI | SOHAS와 겹치지 않는 image만 U1/M1 후보 | 공식 2078장 중1985장 동일 blob, 추가93장도 near dup/group gate |
+| 자체 CCTV + 스마트폰 | T1 학습 적응 및 HOI holding pair label, **새로운 독립 CCTV final test** | 서로 다른 촬영 session을 train/tuning/final로 사전 고정·참여 동의 |
+| Simuletic CCTV/ATM | real-only 모델 대비 **별도 synthetic 증강 ablation** | synthetic 표시·real CCTV 최종 평가로 간주 금지 |
+| US Mock Attack | CCTV 이미지/sequence 외부 비교 후보, primary train 제외 | 소표본·카메라/session 독립성/사건 truth 확인 |
+| ACF Knife | 원본 접근 장애로 투입 보류 | 확보·권리·라벨 확인 전 결과/학습 주장 금지 |
+| HICO-DET/100DOH/Hands23 | HOI 관계/손-물체 사전학습·보조 자료 후보 | Holding GT로 그대로 치환 불가, 실제 활용 전 라벨/weight/권리 호환성 검증 |
+| YouTube 영상 | 다양한 장면 조사·촬영 참고. 사용이 허용된 영상만 학습 후보 | 웹 공개가 자유로운 다운로드·재배포·학습 허가는 아님 |
+
+**실험 순서:** (1) R1/H1 학습 baseline 확보 → (2) 동일 pretrained/YOLO26n/학습예산으로 SOHAS 외 **검수 완료 고유 실사 M1** 혼합 결과 비교 → (3) 별도 직접 CCTV train T1의 추가 효과 비교 → (4) synthetic S1은 시간 여유 시 격리. n↔s 크기와 640↔960 해상도는 **데이터를 고정한 다른 실험**이다. 모든 source를 전수 별도 학습하거나 무조건 대규모 통합하는 계획은 아니다. 기존 11/04 공개 평가자료는 tuning/evidence이고 최종 Test는 새 촬영 세션으로 한다.
+
+기존 source audit·approval·group split·source/provenance manifest를 유지한다. 새 혼합 source를 기존 SOHAS-only runner의 승인 파일로 우회 실행하지 않는다. 미검수·학습 불가 source는 예비 연구 대기열에 남기고, 자료가 확보된 조합부터 학습한다.
+
 ## 1. Target domain — `DECISION`
 
 최종 카메라의 모델·화각·초점거리와 관찰 거리는 아직 미정이다. 그 전까지 dataset 검수와 controlled scenario 설계에 사용할 목표 환경은 다음으로 고정한다.
