@@ -45,3 +45,5 @@ RAW 실행은 실제 train/validation loader 수·batch·accumulate를 확인하
 현재 공통 raw val/test는 source별 비율이 같지 않다(SOHAS val4/test0). 이는 conservative 연결 그룹을 분할하지 않은 결과다. native validation은 원본 주석 기준이며, 기존6개 개발셋의 source별 결과와 새 CCTV final 세션을 함께 확인해야 한다.
 
 `tools/finish_raw_training.py`는 성공한 queue만 이어받아 기존 D0/COCO26n/s/RF-Large와 새4모델을 같은6개 개발셋에서 평가한다. AP와 실제 predict를 별도 track으로 남기며 YOLO는640, RF-Large는 기존704 native protocol이다. 이는 각 준비된 시스템 비교이며, 데이터 효과는 동일 YOLO 크기/640에서 해석한다. 기존 SOHAS val23의 F2 threshold는 임시 개발 값이며 D*를 자동 채택하지 않는다. 실패한 queue·다른 입력 hash·불완전 update는 후속 평가를 시작하지 않는다. 새 source 추가는 현재 queue 파일을 바꾸지 않고 별도 recipe로 준비한다.
+
+후속 비교는 기존 **`.venv-evaluation-20261104/Scripts/python.exe`**로 실행한다. 학습/검수용 `.venv-ml`에 비교용 dependency를 설치하지 않는다. CLI는 기다리기 전에 RF-DETR/pycocotools 등 필요한 패키지를 검사하며 `--preflight-only`로 환경만 확인할 수 있다. 실행 중인 학습 checkout은 유지하고 별도 frozen worktree의 source로 후속 비교를 실행한다.

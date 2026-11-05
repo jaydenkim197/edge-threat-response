@@ -11,11 +11,21 @@ import sys
 import time
 import math
 import csv
+import importlib.metadata
 from contextlib import ExitStack
 from pathlib import Path
 
 from edge_threat_response.detector_comparison import select_f2_operating_point
 from edge_threat_response.training import _sha256_file, _write_json, _git_commit, gpu_training_lock
+
+
+def preflight_environment():
+    packages = {}
+    for name in ("torch", "torchvision", "ultralytics", "rfdetr", "pycocotools", "safetensors", "transformers", "timm"):
+        try: packages[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError as exc:
+            raise RuntimeError("Use the existing .venv-evaluation-20261104 environment; missing "+name) from exc
+    return {"status": "passed", "python": sys.executable, "packages": packages}
 
 
 def finish(root: Path, queue_path: Path, output: Path, wait_hours: float):
@@ -127,5 +137,9 @@ if __name__ == "__main__":
     p = argparse.ArgumentParser(description=__doc__)
     for name in ("root", "queue", "output-dir"): p.add_argument("--"+name, type=Path, required=True)
     p.add_argument("--wait-hours", type=float, default=36)
+    p.add_argument("--preflight-only", action="store_true")
     a = p.parse_args()
-    print(json.dumps(finish(a.root.resolve(), a.queue.resolve(), a.output_dir.resolve(), a.wait_hours)))
+    readiness = preflight_environment()
+    print(json.dumps(readiness), flush=True)
+    if not a.preflight_only:
+        print(json.dumps(finish(a.root.resolve(), a.queue.resolve(), a.output_dir.resolve(), a.wait_hours)))
