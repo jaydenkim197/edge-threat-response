@@ -1,5 +1,11 @@
 # PC13 팀 데이터셋 웹 검수
 
+## 최신 배포 — 2026-11-05
+
+**SOHAS 800장·Dangerous Items 250장·별도 Open Images train 580장을 추가했다. 전체 준비량은 3,625장**이며 SOHAS 1,150 / Dangerous 400 / Open Images 610장이다. 아래 과거 수량은 각 기록 시점의 값이다. 신규 1,630개는 검수 대기이며, 주석상 knife 0인 300개도 확정 음성이 아니다. 기존 메뉴 9개·이름 선택·공통 두 질문·미검수량 정렬·기존 ID/판정/배정/이력은 유지한다. 열린 탭에서 새 자료가 보이지 않으면 후보 목록을 다시 열거나 새로고침한다.
+
+현재 RAW 학습 queue와 train/val/test를 변경하지 않았다. 이번 추가 중 작은 칼 선정 기준에 해당하는 것은 92장이며 나머지 양성은 appearance 보강 후보다. 모두 고정형 CCTV 자료라고 간주하지 않는다. [선정·보존·배포 검증](../reports/datasets/review-expansion-2026-11-05/report.md).
+
 상태: PC13 공개 이름 선택·공통 두 질문·모바일 화면·홈 화면 추가 metadata `VERIFIED`(외부 HTTPS·browser). Chrome/Android 화면 및 WebKit/iPhone 화면의 합성 fixture 저장·재접속·이어하기 `VERIFIED`; 실제 휴대폰 홈 화면 설치와 PC13 재부팅 복구는 미검증이다. 표본 검수 자체와 데이터 채택은 별도다.
 
 ## 팀원 사용법

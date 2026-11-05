@@ -1,0 +1,235 @@
+{
+  "date": "2026-11-05",
+  "scope": "human_review_pending_no_new_training",
+  "batch_id": "20261105-quality-v1",
+  "sources": {
+    "sohas": {
+      "additional": 800,
+      "knife_objects": 616,
+      "image_bytes": 218793051,
+      "selection": {
+        "excluded_visual_similarity_quarantine": 424,
+        "small-positive": 62,
+        "excluded_existing_or_selected_exact": 197,
+        "positive-appearance": 538,
+        "annotation-zero-unverified": 200
+      },
+      "prepared_after": 1150
+    },
+    "dangerous-items": {
+      "additional": 250,
+      "knife_objects": 166,
+      "image_bytes": 21654292,
+      "selection": {
+        "small-positive": 17,
+        "excluded_existing_or_selected_exact": 17,
+        "positive-appearance": 133,
+        "excluded_visual_similarity_quarantine": 3,
+        "annotation-zero-unverified": 100
+      },
+      "prepared_after": 400
+    },
+    "open-images": {
+      "additional": 580,
+      "knife_objects": 803,
+      "image_bytes": 174225194,
+      "selection": {
+        "small-positive": 13,
+        "positive-appearance": 567,
+        "excluded_depiction_annotation": 13,
+        "excluded_visual_similarity_quarantine": 1
+      },
+      "prepared_after": 610
+    }
+  },
+  "additional": 1630,
+  "total_after": 3625,
+  "existing_signature_records": 1995,
+  "protected_signature_references": 3973,
+  "source_session_independence_verified": false,
+  "training_approved": false,
+  "preservation": {
+    "old_table_hashes_preserved": true,
+    "old_registry_rows_preserved": 15,
+    "registry_rows_added": 3,
+    "new_judgments_written": 0,
+    "new_assignments_written": 0,
+    "training_inputs_unchanged": true
+  },
+  "migration_snapshot": {
+    "sohas": {
+      "prepared": 1150,
+      "reviewed": 350,
+      "held": 31
+    },
+    "dasci-unique": {
+      "prepared": 93,
+      "reviewed": 93,
+      "held": 0
+    },
+    "simuletic": {
+      "prepared": 114,
+      "reviewed": 112,
+      "held": 6
+    },
+    "us-mock": {
+      "prepared": 100,
+      "reviewed": 99,
+      "held": 16
+    },
+    "dangerous-items": {
+      "prepared": 400,
+      "reviewed": 150,
+      "held": 26
+    },
+    "open-images": {
+      "prepared": 610,
+      "reviewed": 30,
+      "held": 1
+    },
+    "legacy": {
+      "prepared": 128,
+      "reviewed": 128,
+      "held": 5
+    },
+    "catargiu": {
+      "prepared": 793,
+      "reviewed": 517,
+      "held": 38
+    },
+    "simuletic-atm": {
+      "prepared": 237,
+      "reviewed": 119,
+      "held": 0
+    }
+  },
+  "qa": [
+    {
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "source": "sohas",
+      "total": 1150,
+      "firstId": 350,
+      "twoQuestions": true,
+      "savedReopenedResumed": true,
+      "staleVersion409": true,
+      "oldReviewsUnchanged": true,
+      "noHorizontalOverflow": true,
+      "minButtonHeight": 46
+    },
+    {
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "source": "dangerous-items",
+      "total": 400,
+      "firstId": 150,
+      "twoQuestions": true,
+      "savedReopenedResumed": true,
+      "staleVersion409": true,
+      "oldReviewsUnchanged": true,
+      "noHorizontalOverflow": true,
+      "minButtonHeight": 46
+    },
+    {
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "source": "open-images",
+      "total": 610,
+      "firstId": 30,
+      "twoQuestions": true,
+      "savedReopenedResumed": true,
+      "staleVersion409": true,
+      "oldReviewsUnchanged": true,
+      "noHorizontalOverflow": true,
+      "minButtonHeight": 46
+    },
+    {
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "source": "sohas",
+      "total": 1150,
+      "firstId": 352,
+      "twoQuestions": true,
+      "savedReopenedResumed": true,
+      "staleVersion409": true,
+      "oldReviewsUnchanged": true,
+      "noHorizontalOverflow": true,
+      "minButtonHeight": 46
+    },
+    {
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "source": "dangerous-items",
+      "total": 400,
+      "firstId": 152,
+      "twoQuestions": true,
+      "savedReopenedResumed": true,
+      "staleVersion409": true,
+      "oldReviewsUnchanged": true,
+      "noHorizontalOverflow": true,
+      "minButtonHeight": 46
+    },
+    {
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "source": "open-images",
+      "total": 610,
+      "firstId": 32,
+      "twoQuestions": true,
+      "savedReopenedResumed": true,
+      "staleVersion409": true,
+      "oldReviewsUnchanged": true,
+      "noHorizontalOverflow": true,
+      "minButtonHeight": 46
+    }
+  ],
+  "public_qa": [
+    {
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "sources": {
+        "sohas": 1150,
+        "dangerous-items": 400,
+        "open-images": 610
+      },
+      "total": 3625,
+      "remainingSorted": true,
+      "twoQuestions": true,
+      "noHorizontalOverflow": true,
+      "oldAndNewImagesHTTP200": true,
+      "productionJudgmentsWritten": 0,
+      "productionAssignmentsWritten": 0,
+      "claimRequestsIntercepted": 3
+    },
+    {
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "sources": {
+        "sohas": 1150,
+        "dangerous-items": 400,
+        "open-images": 610
+      },
+      "total": 3625,
+      "remainingSorted": true,
+      "twoQuestions": true,
+      "noHorizontalOverflow": true,
+      "oldAndNewImagesHTTP200": true,
+      "productionJudgmentsWritten": 0,
+      "productionAssignmentsWritten": 0,
+      "claimRequestsIntercepted": 3
+    }
+  ],
+  "team_review_tests_passed": 13,
+  "operational_script_sha256": {
+    "expand.py": "1a7c6755b3e7c7db87ab55e7d5d07e9f895ac52a7fb17b51500d045aecf1454a",
+    "deploy.ps1": "33afd85344a2a4171a522b579d2c7fee5922ff1f5c5420b9924e87f00c629ff2",
+    "browser-qa.cjs": "1364936bae32a06276de16941071df813224ab4f473829562d455866b25822a2",
+    "public-check.cjs": "7b20f267c7f6a8f87df1fcff0e884fddf4968ab8a6ea399d933063812b2a8959"
+  },
+  "documentation_base_commit": "8a52fc87d31205376745c6363dcdecd6ee705088",
+  "production_repository_commit": "cd60f3b494b891c1c371f6551f5b11f7cd2ab374",
+  "review_source_sha256": {
+    "src/edge_threat_response/dataset/team_review.py": "6d2f3eba62b0e2a8e977ade1229719cdf7bf1c9b9a4ccec1cdff99039c4af00c",
+    "src/edge_threat_response/dataset/review_web.py": "b6e678244f020606331c17b6d29197303ae430e8c666a5b81757189ab4f77f7a"
+  }
+}

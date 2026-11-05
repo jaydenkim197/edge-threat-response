@@ -2,6 +2,14 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-11-05 - 검수 기회 활용·실사 후보 1,630장 추가
+
+- 목적/범위: 사용자가 가용 검수 인력에 맞춰 유망 후보를 더 공급하도록 요청했다. SOHAS 800개(양성600/주석0 200), Dangerous250개(양성150/주석0 100), 별도 Open Images train580개를 기존 source 아래 새 배치로 추가했다. 작은 칼 후보92개이며 전부 고정 CCTV라고 주장하지 않는다. 신규1,630개는 사람 검수 대기다.
+- 재사용/구현: 기존 write_pack·fresh image signature·보수적 dHash4·ReviewStore/BatchReviewStore·consistent backup·additive registry를 재사용했다. backend/UI code·질문·dependency는 변경하지 않았다. PC13 ignored 일회성 운영 script/선정·격리 evidence에 입력·label hash·원 split/group·권리와 미확정 좌표 계약을 남겼다.
+- 보호/보존: 현 검수1,995개와 보호signature참조3,973개를 대조하고 배포 직전 재검사했다. 기존 DB/config를 백업하고 registry15행·모든 기존 테이블 hash와 ID/판정/배정을 보존한 채3행만 추가했다. 현재 RAW queue/profile/inventory·과거 DEV split/승인 hashes는 불변이다. 신규 운영 테스트 판정/배정0이며 기존 학습은 유지했다.
+- 검증/결과: PC13 Python3.12.4의 team_review13 tests 통과. 복제 DB에서3개 source×2 mobile viewport의 저장·재접속·이어가기·reload·409·필수 메모·기존 판정 불변·질문2·overflow0/버튼46px을 확인했다. 공개HTTPS에서도9개 메뉴/전체3,625개·새 source수량·정렬·old/new 이미지가 통과했다. iPhone 크기도 Edge Chromium이며 실물 Safari 검증은 아니다. 배포 직후 판정1,598/재확인123, 신규판정0의 시점 snapshot을 기록했다.
+- 문서/한계/다음: [배포 보고와 aggregate](../reports/datasets/review-expansion-2026-11-05/report.md), 운영 안내 최신 항목을 갱신했다. 새로운 source 채택·정상 판정·관계 label·성능을 검증한 것은 아니다. 사람 검수 후 정상분과 문제/모름을 고정하고 평가 보호 경계를 유지한 다음 recipe를 준비한다. Git commit은 이 항목을 포함한 변경 이력으로 추적한다.
+
 <!-- p430-open-timeout-fix-20261105:begin -->
 ## 2026-11-05 — P430 인증 해결·초기 open timeout 수정
 
