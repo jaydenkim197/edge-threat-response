@@ -6,7 +6,8 @@ from pathlib import Path
 from edge_threat_response.raw_training import prepare_suite, run_queue
 from edge_threat_response.training import TrainingConfig, validate_training_approval, _sha256_file
 from edge_threat_response.training import _raw_loader_contract
-from edge_threat_response.dataset.raw_import import voc_knife, materialize_inventory, check_detector_image
+from edge_threat_response.training import _git_commit
+from edge_threat_response.dataset.raw_import import voc_knife, materialize_inventory, check_detector_image, filter_detector_inventory
 from edge_threat_response.dataset.image_screening import image_signature
 from edge_threat_response.dataset.materialize import _convert_knife_label
 
@@ -15,6 +16,38 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class RawTrainingTests(unittest.TestCase):
+    def test_source_commit_does_not_depend_on_callers_working_directory(self):
+        import os
+        expected = _git_commit()
+        previous = Path.cwd()
+        with tempfile.TemporaryDirectory() as d:
+            try:
+                os.chdir(d)
+                self.assertEqual(expected, _git_commit())
+            finally:
+                os.chdir(previous)
+    def test_filter_recovers_new_copies_only_from_hash_bound_originals(self):
+        from PIL import Image
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            source, copy, label = root/"source.png", root/"copy.png", root/"copy.txt"
+            Image.new("RGB", (16, 16), (40, 50, 60)).save(source)
+            copy.write_bytes(b"changed-by-external-repair")
+            label.write_text("")
+            row = {"image_id": "original", "image": str(copy), "image_sha256": _sha256_file(source),
+                   "label": str(label), "label_sha256": _sha256_file(label), "source_dataset": "sohas", "split": "train"}
+            manifest = root/"manifest.jsonl"
+            manifest.write_text(json.dumps(row)+"\n")
+            signature = root/"signature.jsonl"
+            signature.write_text(json.dumps({"record_id": "original", "image_file": str(source), "image_sha256": _sha256_file(source)})+"\n")
+            with self.assertRaisesRegex(ValueError, "bytes changed"):
+                filter_detector_inventory(manifest, root/"rejected")
+            result = filter_detector_inventory(manifest, root/"filtered", source_signatures=signature)
+            self.assertEqual(["original"], result["previous_detector_copies_changed"])
+            restored = json.loads((root/"filtered/inventory.jsonl").read_text())
+            self.assertEqual(source.read_bytes(), Path(restored["image"]).read_bytes())
+            self.assertEqual(b"changed-by-external-repair", copy.read_bytes())
+            self.assertFalse(result["split_assignment_changed"])
     def test_truncated_jpeg_is_rejected_without_repair(self):
         from PIL import Image
         with tempfile.TemporaryDirectory() as d:

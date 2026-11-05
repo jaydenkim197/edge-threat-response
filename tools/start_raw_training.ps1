@@ -15,6 +15,7 @@ $logs = Join-Path $repo ('runs\launch-' + $spec.suite_id)
 $python = Join-Path $repo '.venv-ml\Scripts\python.exe'
 $env:PYTHONPATH = Join-Path $repo 'src'
 $env:CUBLAS_WORKSPACE_CONFIG = ':4096:8'
+$env:YOLO_AUTOINSTALL = 'false'
 if ($Worker) {
     $claim = [IO.File]::Open((Join-Path $logs 'worker-claim'), [IO.FileMode]::CreateNew)
     $claim.Close()

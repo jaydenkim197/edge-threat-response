@@ -1,5 +1,7 @@
 # Dataset Evaluation Criteria
 
+2026-11-05 사용자 결정으로 **`RAW-*` 개발 예비 학습은 아래 사람 검수 선행 조건을 기다리지 않는다.** 원본 주석 기준이며 human review/negative absence가 확인됐다고 기록하지 않는다. 파일·클래스/좌표·중복/보호 그룹·분할·출처 검사는 유지한다. 기존 판정과 정식 연구 채택/최종 평가 규칙은 바꾸지 않는다. [예비 실행 범위](raw-source-training.md).
+
 상태: source 검수 절차와 역할별 판정 기준 `DECISION`; 실제 source 채택·수치 threshold `PROPOSAL`
 
 이 기준은 knife-only detector와 person–knife 사건 평가에 사용할 자료를 검수한다. 논문의 영향력, raw image 수 또는 단일 총점으로 source를 순위화하지 않는다. [Dataset Source Strategy](dataset-source-strategy.md)의 역할별 후보를 **사용 가능 gate → 표본 관찰 → 역할 승인** 순서로 판단한다.

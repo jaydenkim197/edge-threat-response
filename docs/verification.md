@@ -1,5 +1,15 @@
 # Verification Matrix
 
+<!-- hoi-b4-implementation-20261105:begin -->
+## 2026-11-05 추가 검증
+
+- PC 전체181 tests(2 skip: pycocotools 선택 환경), compileall, HOI/detect CLI help 통과. 신규 검증은 미검수 승인 scope·source bytes·동일 loader/update 예산·JPEG 비파괴 거부/복원 사본·GPU claim·관계 GT 누수/불확실·B4 cache/hash/이벤트 평가·RTSP queue/drop/인증정보 미노출을 포함한다.
+- CPU 가상 G/VG 각1epoch 실제 학습·checkpoint reload 동일 예측, fake detector 영상4frame→sidecar→B0~B4 replay, 강제 threshold0의 B4 event1/snapshot1/mock alarm 통과. 실제 관계 정확도·pretrained visual 학습·카메라/GPIO는 검증하지 않았다.
+- PC13 RAW v2 queue의 R1이 실제 loader11392/batch16/accumulate1/712batches를 통과해 여러 epoch를 완료했다. source hash·분할·보호 그룹·사본 보존을 확인했다. 네 모델의 전체 완료와 비교 결과는 아직 아니다. 실제 실행/결과는 ignored `runs/training`과 후속 보고서로 추적한다.
+- 첫 로더 검증은 잘린 JPEG 누락을 감지해 gradient 시작 전 중단했다. 원본이 아닌 trainer 사본8개가 바뀌었음을 확인했고, 원본 해시 기반 새 사본에서8개를 제외했다. 기존 사본/실패 기록/원본은 보존했다.
+- 초기 전체 테스트 중 Ultralytics가 손상 이미지 처리에 사용하는 선택 의존성 pi-heif1.4.0을 로컬 venv에 자동 설치했다. 이후 자동 설치를 끄고 재검증했다. PC13/Orin 패키지 일괄 업데이트는 하지 않았다.
+<!-- hoi-b4-implementation-20261105:end -->
+
 <!-- raw-source-implementation-20261105:begin -->
 2026-11-05: RAW 예비 학습 경로의 동일 draw/common holdout, 해시 변조/허위 검수 거부, 보호 이미지 제외, queue 순차/실패 중단, VOC 의미/좌표 및 기존 training 회귀를 PC에서 검증했다(신규5+기존14 tests, compileall). 실제 원본 전체 준비·GPU 학습·모델 선정은 이 항목 작성 시 미검증이다. [범위](raw-source-training.md).
 <!-- raw-source-implementation-20261105:end -->

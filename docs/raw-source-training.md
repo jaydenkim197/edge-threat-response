@@ -38,4 +38,10 @@ RAW 실행은 실제 train/validation loader 수·batch·accumulate를 확인하
 
 ## 상태
 
-미검수 예비 승인·동일 예산·변조 거부·queue 실패 중단·VOC 의미 검사와 기존 training 회귀를 PC에서 자동 검증했다(신규4+기존14 tests). 실제 전체 source 준비·CUDA 학습·최종 detector 선정은 이 기록 작성 시점에는 아직 검증 전이다. 실제 결과는 후속 실행 보고서에 남긴다.
+2026-11-05: 전체 원본에서 기술 검사·보호 그룹864·exact duplicate186 제외 후14,232장을 준비했다. 첫 trainer loader가 JPEG 누락을 감지해 gradient 시작 전에 중단됐다. trainer가 변경한 사본8개는 보존하고, 해시가 일치하는 원본에서 만든 새 사본은 JPEG EOF 검사 후14,224장이다. 기존 split은 유지했고 train11,378/val1,423/test1,423이다. 사람 검수를 완료했다고 표기하지 않는다.
+
+실제 실행 ID는 **raw-real-20261105-v2**, 입력은 `data/processed/raw-real-20261105-v3/inventory.jsonl`, profile은 `data/processed/raw-real-20261105-v2-profiles/`이다. 앞의 명령은 새 실행을 만드는 예시이며 기존 경로로 재실행하지 않는다. 각 recipe는11,392 draws/epoch·712 batches·35,600 optimizer updates를 계획한다. R1의 실제 loader 수·batch16·accumulate1 및 여러 epoch 완료를 확인했다. 전체50epoch·네 모델 완료·D* 선정은 아직 아니다.
+
+현재 공통 raw val/test는 source별 비율이 같지 않다(SOHAS val4/test0). 이는 conservative 연결 그룹을 분할하지 않은 결과다. native validation은 원본 주석 기준이며, 기존6개 개발셋의 source별 결과와 새 CCTV final 세션을 함께 확인해야 한다.
+
+`tools/finish_raw_training.py`는 성공한 queue만 이어받아 기존 D0/COCO26n/s/RF-Large와 새4모델을 같은6개 개발셋에서 평가한다. AP와 실제 predict를 별도 track으로 남기며 YOLO는640, RF-Large는 기존704 native protocol이다. 이는 각 준비된 시스템 비교이며, 데이터 효과는 동일 YOLO 크기/640에서 해석한다. 기존 SOHAS val23의 F2 threshold는 임시 개발 값이며 D*를 자동 채택하지 않는다. 실패한 queue·다른 입력 hash·불완전 update는 후속 평가를 시작하지 않는다. 새 source 추가는 현재 queue 파일을 바꾸지 않고 별도 recipe로 준비한다.

@@ -17,6 +17,7 @@ from .domain import FrameDetections, FrameStatus
 from .media import CurrentFrameSnapshot, FramePacket
 from .pipeline import ThreatPipeline
 from .ports import JsonlEventRecorder, MockAlarm
+from .relations import RelationProvider
 
 
 def frame_from_inference(packet: FramePacket, result: DetectorInference) -> FrameDetections:
@@ -55,12 +56,15 @@ def run_detection_stream(
             _write_row(detections,_frame_to_dict(frame))
             _write_row(latencies,{"frame_index":packet.frame_index,"timestamp_s":packet.timestamp_s,
                                   "inference_ms":inference.inference_ms,"frame_processing_ms":processing_ms,
-                                  "component_latencies_ms":dict(inference.component_latencies_ms)})
+                                  "component_latencies_ms":dict(inference.component_latencies_ms),
+                                  **({"host_decode_to_output_ms": (time.monotonic()-packet.captured_at_monotonic)*1000} if packet.captured_at_monotonic is not None else {})})
             inference_samples.append(inference.inference_ms)
             processing_samples.append(processing_ms)
             statuses[frame.status.value] += 1
             detection_count += len(frame.detections)
     summary = _runtime_summary(detection_path,detection_count,inference_samples,processing_samples,statuses)
+    if hasattr(frames, "stats"):
+        summary["capture"] = dict(frames.stats)
     if provenance is not None:
         summary["provenance"] = provenance
     _write_json(output_dir / "summary.json", summary)
@@ -75,6 +79,8 @@ def run_live_pipeline(
     output_dir: Path,
     max_frames: int | None = None,
     provenance: dict[str, object] | None = None,
+    relation: RelationProvider | None = None,
+    relation_threshold: float = .5,
 ) -> dict[str, object]:
     if max_frames is not None and max_frames < 1:
         raise ValueError("max_frames must be positive.")
@@ -83,7 +89,8 @@ def run_live_pipeline(
     alarm = MockAlarm()
     snapshot = CurrentFrameSnapshot(output_dir / "snapshots")
     pipeline = ThreatPipeline(
-        config, alarm=alarm, recorder=recorder, snapshot=snapshot
+        config, alarm=alarm, recorder=recorder, snapshot=snapshot,
+        relation=relation, relation_threshold=relation_threshold,
     )
     inference_samples, processing_samples = [], []
     detection_count = event_count = action_error_count = 0
@@ -97,13 +104,16 @@ def run_live_pipeline(
             inference = detector.infer(packet.image)
             frame = frame_from_inference(packet,inference)
             snapshot.bind(packet)
+            if relation is not None and hasattr(relation, "bind"):
+                relation.bind(packet)
             decision = pipeline.process(frame)
             processing_ms = (time.perf_counter()-started)*1000
             _write_row(detections,_frame_to_dict(frame))
             _write_row(decisions,decision.to_dict())
             _write_row(latencies,{"frame_index":packet.frame_index,"timestamp_s":packet.timestamp_s,
                                   "inference_ms":inference.inference_ms,"frame_processing_ms":processing_ms,
-                                  "component_latencies_ms":dict(inference.component_latencies_ms)})
+                                  "component_latencies_ms":dict(inference.component_latencies_ms),
+                                  **({"host_decode_to_actions_ms": (time.monotonic()-packet.captured_at_monotonic)*1000} if packet.captured_at_monotonic is not None else {})})
             inference_samples.append(inference.inference_ms)
             processing_samples.append(processing_ms)
             statuses[frame.status.value] += 1
@@ -111,6 +121,8 @@ def run_live_pipeline(
             event_count += int(decision.event is not None)
             action_error_count += len(decision.action_errors)
     summary = _runtime_summary(detection_path,detection_count,inference_samples,processing_samples,statuses)
+    if hasattr(frames, "stats"):
+        summary["capture"] = dict(frames.stats)
     if provenance is not None:
         summary["provenance"] = provenance
     summary.update(

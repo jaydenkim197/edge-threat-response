@@ -2,13 +2,13 @@
 
 > Context-Aware Edge AI Threat Response System · 2026-2 종합설계과제(1)
 
-Jetson Orin Nano에서 사람과 칼을 탐지하고, **공간적 연관성**과 **시간적 지속성**을 함께 판단해 잠재적 흉기 위협 상황에만 단계적으로 대응하는 엣지 AI 시스템입니다.
+Jetson Orin Nano에서 사람과 칼을 탐지하고 **공간·시간 문맥과 학습 기반 소지 관계**로 경보를 판단하는 엣지 AI 시스템을 개발합니다. 같은 영상에서 판단 방법을 비교해 불필요한 경보가 줄어드는지 검증합니다.
 
 ## 프로젝트 한눈에 보기
 
 - **무엇을:** 기존 Jetson Nano의 단일 프레임 흉기 탐지·즉시 경보 프로토타입을 상황 인지형 시스템으로 고도화합니다.
 - **어떻게:** `person`과 `knife`의 bounding box 공간 연관성, K-of-N 시간 확인, 4-state machine을 결합합니다.
-- **무엇과 비교:** 동일 입력에서 단일 프레임 탐지(B0)부터 공간·시간 문맥을 모두 적용한 B3까지 비교합니다.
+- **무엇과 비교:** 동일 detector·영상에서 B0~B3의 공간·시간 문맥 효과와, 별도로 학습한 Holding 관계 모델 B4를 비교합니다. YOLO26n/s의 데이터 보강 효과는 이 비교와 분리합니다.
 - **무엇을 남기나:** Jetson Orin Nano의 GPIO 경보, 사건 metadata·snapshot, 재현 가능한 성능·오류 분석 근거를 만듭니다.
 - **주장 범위:** 실제 폭력 의도·범죄·위험행동을 판별하지 않습니다. 사람과 칼의 공간적·시간적 연관성을 근거로 **잠재적 흉기 위협 상황**을 탐지합니다.
 
@@ -24,13 +24,15 @@ Camera
 
 ## 현재 개발 상태
 
-- **설계:** MVP 범위와 B0~B3 비교 구조는 `DECISION`입니다. 기준 플랫폼은 Jetson Orin Nano Developer Kit / JetPack 7.2.1입니다.
+- **설계:** 11월30일 개발·평가 마감, YOLO26n/s 데이터 보강 및 B0~B4 비교가 `DECISION`입니다. B4의 실제 Holding 정확도는 아직 검증 전입니다.
 - **PC에서 검증됨:** 판단 core, replay, dataset audit/export/review tooling, detector/video/snapshot scaffold, CUDA training handoff가 구현·검증되었습니다.
 - **Orin에서 확인됨(2026-10-27):** 실제 L4T39.2.0 보드에서 CUDA 연산과 새 개발 모델의 파일 영상→B0~B3→metadata/snapshot/mock alarm 경로를 검증했습니다. 학습 이미지 조합 영상의 연결 시험이며 실제 사건 성능이나 카메라/GPIO 검증은 아닙니다. [실기기 증거](reports/runtime/orin-native-smoke-2026-10-27/report.md).
-- **데이터 전략:** 약 3 m 고정형 실내 CCTV를 목표 domain으로 둡니다. legacy 재현은 팀원 별도 트랙이고, 신규 detector는 SOHAS 감사 후 실사 기준(R1)·음성 데이터 효과(H1)를 우선 비교하는 제안 상태입니다. 자체 CCTV 적응(T1)은 독립 촬영 세션 확보 뒤 검토합니다. DaSCI는 SOHAS와 대부분 정확 중복되어 필수 합본이 아닙니다. ACF/Mock Attack은 외부 평가 후보로 보존합니다.
-- **아직 남음:** source 전체 정식 학습·최종 detector 선택, 기준 L4T39.2.1과 실제39.2.0 차이 처리, camera·GPIO·실제 사건 benchmark입니다. 개발용 학습3회는 완료했으며 TensorRT는 후속 최적화입니다.
+- **데이터 전략:** 약 3 m 고정형 실내 CCTV가 목표입니다. 사용자 승인으로 사람 검수 전 원본 주석의 개발 예비 학습을 시작합니다. SOHAS 기준(R1)·음성 제외(H1)·Dangerous Items/Catargiu 혼합(M1)을 공통 분할·학습 예산으로 비교하며, 미검수 상태를 명시합니다. 합성은 별도, US Mock은 외부 평가용입니다. [예비 학습 규격](docs/raw-source-training.md).
+- **신규 구현:** G/VG 관계 학습기, 해시로 연결한 관계 점수 파일, B4 replay/사건 평가·영상 snapshot 경로를 가상 자료에서 검증했습니다. HOI 관계 정답은 사이트 담당이 별도로 수집합니다. [인계·사용법](docs/hoi-annotation-contract.md).
+- **학습 진행:** 소규모 개발 학습3회 이후, 새 RAW R1/H1/M1-n/M1-s 순차 queue를 PC13에서 시작했습니다. 결과·최종 detector 선정은 아직 미확정입니다.
+- **아직 남음:** 실제 HOI 관계 정답·학습, 자체 촬영 적응, camera·GPIO·독립 사건 평가입니다. 실제 Orin L4T39.2.0 환경은 보존하며 TensorRT는 후속 최적화입니다.
 - **증거 원칙:** 기존 MIDAS 성능 수치는 재현 조건이 부족해 이번 프로젝트의 공식 결과로 사용하지 않습니다.
-- **일정 목표:** 2026-10-31까지 정량 실험을 시작할 수 있는 통합·반복 실행 상태를 확보합니다.
+- **일정 목표:** 2026-11-20 모델·설정 동결 → 11/25~27 독립 CCTV 평가 → **11/30 개발·평가 마감**입니다.
 
 자세한 구조는 [아키텍처](docs/architecture.md), 연구 범위는 [Master Project Plan](docs/project-plan.md), 검증 증거는 [검증 매트릭스](docs/verification.md)에서 확인할 수 있습니다.
 

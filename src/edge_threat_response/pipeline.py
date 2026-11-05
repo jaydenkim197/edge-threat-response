@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import hashlib
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
+import math
 from typing import Any
 
 from .config import PipelineConfig
@@ -27,6 +28,7 @@ from .ports import (
 from .spatial import associate_person_knives
 from .state_machine import AlertStateMachine, StateTransition
 from .temporal import KOfNBuffer
+from .relations import RelationProvider, score_row
 
 
 @dataclass(frozen=True)
@@ -39,9 +41,10 @@ class DecisionEvidence:
     candidate: bool
     confirmed: bool
     reasons: tuple[str, ...]
+    holding_scores: tuple[float | None, ...] | None = None
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "reliable_person_count": len(self.reliable_people),
             "reliable_knife_count": len(self.reliable_knives),
             "associated_pair_count": sum(
@@ -54,6 +57,9 @@ class DecisionEvidence:
             "confirmed": self.confirmed,
             "reasons": list(self.reasons),
         }
+        if self.holding_scores is not None:
+            result["holding_scores"] = list(self.holding_scores)
+        return result
 
 
 @dataclass(frozen=True)
@@ -91,10 +97,17 @@ class ThreatPipeline:
         alarm: AlarmPort | None = None,
         recorder: EventRecorderPort | None = None,
         snapshot: SnapshotPort | None = None,
+        relation: RelationProvider | None = None,
+        relation_threshold: float = .5,
     ) -> None:
         if not isinstance(config, PipelineConfig):
             raise TypeError("config must be a PipelineConfig instance.")
         self.config = config
+        if config.mode is AblationMode.B4 and relation is None:
+            raise ValueError("B4 requires an explicit relation provider; no geometry fallback")
+        if type(relation_threshold) not in (int, float) or not math.isfinite(relation_threshold) or not 0 <= relation_threshold <= 1:
+            raise ValueError("Relation threshold must be finite and in [0,1]")
+        self.relation, self.relation_threshold = relation, relation_threshold
         self.alarm = alarm if alarm is not None else MockAlarm()
         self.recorder = recorder if recorder is not None else MemoryEventRecorder()
         self.snapshot = snapshot if snapshot is not None else UnavailableSnapshot()
@@ -125,6 +138,13 @@ class ThreatPipeline:
             expanded_person_ratio=self.config.expanded_person_ratio,
         )
         has_knife = bool(knives)
+        holding_scores = None
+        if self.config.mode is AblationMode.B4:
+            assert self.relation is not None
+            holding_scores = self.relation(frame, associations)
+            score_row(frame, associations, holding_scores)
+            associations = tuple(replace(pair, associated=score is not None and score >= self.relation_threshold)
+                                 for pair, score in zip(associations, holding_scores))
         has_association = any(item.associated for item in associations)
         knife_temporal = self._knife_temporal.update(has_knife)
         association_temporal = self._association_temporal.update(has_association)
@@ -144,6 +164,7 @@ class ThreatPipeline:
             candidate=candidate,
             confirmed=confirmed,
             reasons=reasons,
+            holding_scores=holding_scores,
         )
         transition = self._state_machine.update(
             candidate=candidate, confirmed=confirmed
@@ -290,5 +311,6 @@ def _evaluate_policy(
     else:
         confirmed = association_temporal.confirmed
         candidate = has_knife or association_temporal.true_count > 0
-        reasons = ("person_knife_association_k_of_n",) if confirmed else ()
+        reason = "learned_holding_k_of_n" if mode is AblationMode.B4 else "person_knife_association_k_of_n"
+        reasons = (reason,) if confirmed else ()
     return candidate, confirmed, reasons

@@ -12,19 +12,22 @@ from .domain import AblationMode
 from .pipeline import ThreatPipeline
 from .ports import JsonlEventRecorder, MockAlarm, UnavailableSnapshot
 from .replay import load_detection_replay, write_jsonl
+from .relations import CachedRelationScores
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Replay recorded detections through B0-B3 threat policies."
+        description="Replay B0-B4 threat policies; B4 requires a bound relation sidecar."
     )
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--config", required=True, type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--relations", type=Path, help="Hash-bound relation sidecar required for B4")
+    parser.add_argument("--relation-threshold", type=float, default=.5)
     parser.add_argument(
         "--modes",
         default="B0,B1,B2,B3",
-        help="Comma-separated subset of B0,B1,B2,B3 (default: all).",
+        help="Comma-separated subset of B0,B1,B2,B3,B4 (default: B0-B3).",
     )
     return parser
 
@@ -32,11 +35,22 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
+        if args.output_dir.exists() and any(args.output_dir.iterdir()):
+            raise ValueError("Replay output must be new or empty; preserve prior evidence")
         modes = _parse_modes(args.modes)
         frames = load_detection_replay(args.input)
         base_config = load_pipeline_config(args.config)
         input_sha256 = _file_sha256(args.input)
         config_sha256 = _file_sha256(args.config)
+        relations = None
+        if AblationMode.B4 in modes:
+            if args.relations is None:
+                raise ValueError("B4 requires --relations")
+            relations = CachedRelationScores(args.relations, frames, input_sha256)
+            if relations.provenance["pipeline_config_sha256"] != config_sha256:
+                raise ValueError("Relation sidecar binds a different pipeline config")
+        elif args.relations is not None:
+            raise ValueError("--relations requires B4 in --modes")
     except (OSError, ValueError) as exc:
         raise SystemExit(str(exc)) from exc
 
@@ -50,6 +64,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             alarm=alarm,
             recorder=recorder,
             snapshot=UnavailableSnapshot(),
+            relation=relations if mode is AblationMode.B4 else None,
+            relation_threshold=args.relation_threshold,
         )
         results = [pipeline.process(frame) for frame in frames]
         write_jsonl(mode_dir / "frames.jsonl", (item.to_dict() for item in results))
@@ -73,6 +89,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             "action_error_count": sum(len(item.action_errors) for item in results),
         }
         mode_dir.mkdir(parents=True, exist_ok=True)
+        if mode is AblationMode.B4:
+            summary["relation"] = {**relations.provenance, "sidecar_sha256": _file_sha256(args.relations),
+                                   "threshold": args.relation_threshold}
         (mode_dir / "summary.json").write_text(
             json.dumps(summary, ensure_ascii=False, indent=2) + "\n",
             encoding="utf-8",
@@ -95,7 +114,7 @@ def _parse_modes(raw: str) -> tuple[AblationMode, ...]:
     try:
         modes = tuple(AblationMode(name) for name in names)
     except ValueError as exc:
-        raise ValueError("Modes must be a comma-separated subset of B0,B1,B2,B3.") from exc
+        raise ValueError("Modes must be a comma-separated subset of B0,B1,B2,B3,B4.") from exc
     if len(set(modes)) != len(modes):
         raise ValueError("Ablation modes must not be duplicated.")
     return modes

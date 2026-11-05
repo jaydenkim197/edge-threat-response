@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "kind": "G",
+  "crop_size": 224,
+  "data_kind": "human",
+  "pretrained": false,
+  "device": "cuda:0",
+  "batch": 32,
+  "epochs": 30,
+  "early_stopping_patience": 5,
+  "seed": 20261004
+}

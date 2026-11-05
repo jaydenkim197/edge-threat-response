@@ -24,6 +24,10 @@ class AblationMode(str, Enum):
     B1 = "B1"
     B2 = "B2"
     B3 = "B3"
+    B4 = "B4"
+
+
+BASE_ABLATION_MODES = (AblationMode.B0, AblationMode.B1, AblationMode.B2, AblationMode.B3)
 
 
 class SpatialPolicy(str, Enum):

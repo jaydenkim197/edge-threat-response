@@ -1,5 +1,15 @@
 # Model and Dataset Readiness Plan
 
+<!-- hoi-b4-implementation-20261105:begin -->
+## 2026-11-05 실행 갱신
+
+사람 검수를 기다리지 않는 RAW 원본 주석 예비 학습을 별도 승인 범위로 구현했다. SOHAS/Dangerous VOC/Catargiu14,224장과 보호 그룹을 고정하고, train11,378/val1,423/test1,423에서 R1/H1/M1-n/M1-s를 같은35,600 update 예산으로 시작했다. 실제 loader 수·변조/누락·공통 평가 목록을 확인한다. 정식 사람 검수나 최종 detector 선택을 뜻하지 않는다. [실행 계약](raw-source-training.md).
+
+M1의 source는 실사 보강을 의도한 공개 source 혼합이며, 미검수이므로 개별 이미지의 실사/CCTV 여부를 확인했다고 주장하지 않는다. 큰 conservative group 때문에 source별 split 비율이 다르고, 새 raw val/test에는 SOHAS가 매우 적다. 따라서 source별 기존 개발 비교와 새 독립 CCTV 평가를 함께 보고해야 한다. source별 최종 성능은 전체 학습 후 확인한다.
+
+HOI는 bbox-only 자료에서 자동 정답을 만들지 않는다. [Holding pair 규격](hoi-annotation-contract.md)의 명시적 human 관계 정답이 필요하며, 현재 학습기/B4의 검증은 가상 자료 CPU 연결이다. 원본/weight/판정은 PC13 ignored 경로에 보관하고 Git에는 코드·설정·간결한 증거만 올린다.
+<!-- hoi-b4-implementation-20261105:end -->
+
 상태: 데이터 준비 범위·canonical class contract `DECISION`, 외부 dataset 채택·detector topology·학습 설정 `PROPOSAL`
 
 이 문서는 detector 재학습을 성급하게 시작하지 않고, 데이터의 출처·라벨 의미·분할·학습 이력을 재현 가능하게 만들기 위한 기준이다. 실제 대규모 데이터와 model binary는 Git에 넣지 않는다.

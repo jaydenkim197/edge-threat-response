@@ -9,7 +9,7 @@ from pathlib import Path
 from statistics import mean, median
 from typing import Any
 
-from .domain import AblationMode
+from .domain import AblationMode, BASE_ABLATION_MODES
 from .replay import load_detection_replay
 
 
@@ -233,7 +233,14 @@ def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Pat
     by_id = {_text(row, "recording_id"): row for row in bindings}
     if len(by_id) != len(bindings) or set(by_id) != {row.recording_id for row in recordings}:
         raise ValueError("Replay and ground-truth recording IDs differ")
-    per_mode: dict[str, list[dict[str, Any]]] = {mode.value: [] for mode in AblationMode}
+    selected_modes = bindings_document.get("modes", [m.value for m in BASE_ABLATION_MODES])
+    if not isinstance(selected_modes, list):
+        raise ValueError("Evaluation modes must be an array")
+    modes = tuple(AblationMode(x) for x in selected_modes)
+    if not modes or len(set(modes)) != len(modes):
+        raise ValueError("Evaluation modes must be nonempty and unique")
+    per_mode: dict[str, list[dict[str, Any]]] = {mode.value: [] for mode in modes}
+    relation_contract = None
     input_records: list[dict[str, Any]] = []
     common_contract: str | None = None
     for recording in recordings:
@@ -257,7 +264,7 @@ def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Pat
                       "pipeline_config_sha256": config_hash, "frame_count": len(frames),
                       "first_sample_s": frames[0].timestamp_s, "last_sample_s": frames[-1].timestamp_s,
                       "missing_or_error_frames": sum(frame.status.value != "valid" for frame in frames), "modes": {}}
-        for mode in AblationMode:
+        for mode in modes:
             folder = replay_root / mode.value
             summary = read_json(folder / "summary.json")
             expected = {"mode": mode.value, "input_sha256": input_hash, "config_sha256": config_hash,
@@ -265,6 +272,25 @@ def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Pat
                         "config_id": config["config_id"], "run_id": config["run_id"]}
             if any(summary.get(key) != value for key, value in expected.items()):
                 raise ValueError(f"{recording.recording_id}/{mode.value}: replay provenance mismatch")
+            if mode is AblationMode.B4:
+                from .relations import CachedRelationScores
+                relation_path = _reference(replay_manifest, _text(binding, "relations"))
+                media_path = _reference(replay_manifest, _text(binding, "media"))
+                cache = CachedRelationScores(relation_path, frames, input_hash)
+                if document["data_kind"] == "controlled" and cache.provenance.get("data_kind") != "human":
+                    raise ValueError("Controlled B4 evaluation requires a human-labeled HOI checkpoint")
+                relation = summary.get("relation", {})
+                threshold = binding.get("relation_threshold")
+                if (type(threshold) not in (int, float) or not math.isfinite(threshold) or not 0 <= threshold <= 1
+                        or relation.get("threshold") != threshold or relation.get("sidecar_sha256") != file_sha256(relation_path)
+                        or cache.provenance["pipeline_config_sha256"] != config_hash
+                        or cache.provenance["image_source_sha256"] != file_sha256(media_path)
+                        or any(relation.get(k) != v for k, v in cache.provenance.items())):
+                    raise ValueError("B4 relation provenance mismatch")
+                contract = (cache.provenance["classifier_sha256"], threshold)
+                if relation_contract is not None and relation_contract != contract:
+                    raise ValueError("B4 classifier/threshold changed across recordings")
+                relation_contract = contract
             events_path = folder / "events.jsonl"
             raw_events = [json.loads(line) for line in events_path.read_text(encoding="utf-8").splitlines() if line.strip()]
             if summary.get("event_count") != len(raw_events):

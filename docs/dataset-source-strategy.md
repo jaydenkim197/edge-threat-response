@@ -1,5 +1,13 @@
 # Dataset Source Strategy
 
+<!-- hoi-b4-implementation-20261105:begin -->
+### 최초 RAW mixture 준비·실행
+
+SOHAS4,986/Dangerous3,814/Catargiu5,424, 합계14,224장의 기술 검사·보호 그룹 제외·공통 분할을 완료했다. train은 SOHAS4,982/Dangerous1,296/Catargiu5,100이며, 공통 val1,423/test1,423이다. 원본/실패 기록을 보존하고 EOF 없는 JPEG8장은 새 학습 사본에서 제외했다. R1/H1/M1-n/M1-s queue를 PC13에서 시작했으나 전체 완료·최종 채택은 아직이다. 미검수이므로 M1 모든 이미지가 실사/CCTV라고 보증하지 않는다.
+
+Open Images 별도 train·Legacy의 PC13 원본 확보 및 새 source 추가는 현재 queue를 변경하지 않고 후속 recipe로 관리한다. DaSCI 기존 고유 후보는 공개 개발 비교와 연결돼 학습에서 보존 제외했다. 합성은 S1, US Mock은 평가용, ACF는 보류다. [RAW 실행 계약](raw-source-training.md).
+<!-- hoi-b4-implementation-20261105:end -->
+
 <!-- raw-source-implementation-20261105:begin -->
 ## 2026-11-05 추가 결정 — 사람 검수 전 원본 예비 학습
 

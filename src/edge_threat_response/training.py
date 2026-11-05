@@ -14,10 +14,23 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
+from contextlib import contextmanager
 
 
 TRAINING_GATES = ("rights", "human_review", "labels_coordinates", "negative_absence", "duplicates_groups", "split", "recipe")
 RAW_RECIPES = {"RAW-R1-n", "RAW-H1-n", "RAW-M1-n", "RAW-M1-s"}
+
+
+@contextmanager
+def gpu_training_lock(path: Path, *, owner: str):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as stream:
+            json.dump({"pid": os.getpid(), "owner": owner}, stream)
+        yield
+    finally:
+        path.unlink()
 
 
 @dataclass(frozen=True)
@@ -457,9 +470,12 @@ def _environment_record() -> dict[str, object]:
 
 
 def _git_commit() -> str | None:
+    repository = Path(__file__).resolve().parents[2]
+    if not (repository / "pyproject.toml").is_file():
+        return None
     try:
         completed = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
+            ["git", "-C", str(repository), "rev-parse", "HEAD"],
             check=True,
             capture_output=True,
             text=True,

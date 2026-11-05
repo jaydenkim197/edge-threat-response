@@ -4,6 +4,7 @@ import unittest
 
 from edge_threat_response.detector_comparison import (
     canonical_prediction, coco_metrics, paired_group_recall_interval,
+    select_f2_operating_point,
 )
 
 
@@ -19,6 +20,16 @@ def fixture():
 
 
 class DetectorComparisonTests(unittest.TestCase):
+    def test_f2_threshold_uses_tuning_and_rewards_recall_without_final_selection(self):
+        truth, perfect, _ = fixture()
+        perfect[1]["detections"][0]["confidence"] = .2
+        result = select_f2_operating_point(truth, perfect)
+        self.assertEqual(1, result["selected"]["f2"])
+        self.assertLessEqual(result["selected"]["confidence"], .2)
+        self.assertFalse(result["final_detector_selected"])
+        truth["partition"] = "final_test"
+        with self.assertRaisesRegex(ValueError, "tuning"):
+            select_f2_operating_point(truth, perfect)
     def test_sparse_class_map_and_boundary_clipping(self):
         image = fixture()[0]["images"][0]
         row, adjusted = canonical_prediction(image, [[-2, 10, 30, 102], [10, 10, 30, 30]], [.8, .9], [49, 43], 49)

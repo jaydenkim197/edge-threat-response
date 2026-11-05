@@ -4,7 +4,9 @@
 
 ## 2026-11-05 — YOLO·HOI B4 병렬 연구의 평가 확장
 
-기존 B0~B3를 유지하고 B4=동일 YOLO 출력+독립 학습 HOI Holding 판단+동일 Temporal/FSM을 **11월 내 추가 개발·평가**한다. 이 조항은 평가 설계 결정으로, **현재 evaluator에 B4 코드가 구현됐다는 뜻은 아니다.**
+기존 B0~B3를 유지하고 B4=동일 YOLO 출력+독립 학습 HOI Holding 판단+동일 Temporal/FSM을 **11월 내 추가 개발·평가**한다. B4 replay/evaluator와 G/VG 학습기는 구현돼 가상 자료 CPU 연결을 검증했으며, 실제 관계 정답 학습·최종 사건 성능은 미검증이다. [입출력 규격](hoi-annotation-contract.md).
+
+평가 manifest의 기본은 B0~B3다. B4를 포함하려면 top-level `modes`에 B0~B4를 명시하고 각 recording에 원본 `media`, `relations` sidecar, 고정 `relation_threshold`를 넣는다. detector/config/media/classifier/sidecar hash와 전체 frame/pair 대응을 확인한다. controlled B4 평가에는 human 관계 정답으로 학습한 checkpoint가 필요하며 가상 smoke 모델은 사용할 수 없다.
 
 - 직접 촬영한 CCTV/스마트폰 원본은 train/pilot/tuning/final_test의 **서로 다른 세션**으로 촬영 전에 구분한다. 기존 P1~P4/N1~N5 시나리오와 event GT를 유지하고, pair별 person/knife bbox·holding/not_holding/uncertain 관계 정답을 별도로 기록한다.
 - GT bbox 기반 HOI 실험과 실제 YOLO predicted bbox 기반 실험을 구분한다. 후자의 knife FN은 HOI의 실패가 아니라 detector FN으로 분리한다.

@@ -18,6 +18,22 @@ POLICY = {"schema_version": 1, "status": "development", "confidence": .25,
           "iou": .5, "small_area_max": .02}
 
 
+def select_f2_operating_point(truth: dict, predictions: list[dict]) -> dict:
+    """Choose a development threshold on tuning only, never final-test truth."""
+    if truth.get("partition") != "tuning":
+        raise ValueError("Detector threshold selection requires tuning truth")
+    curve = []
+    for i in range(5, 100, 5):
+        threshold = i/100
+        metrics, _ = evaluate_boxes(truth, predictions, {**POLICY, "confidence": threshold})
+        c = metrics["counts"]
+        denominator = 5*c["tp"] + 4*c["fn"] + c["fp"]
+        curve.append({"confidence": threshold, "f2": 5*c["tp"]/denominator if denominator else None,
+                      "recall": metrics["recall"], "precision": metrics["precision"], "counts": c})
+    best = max(curve, key=lambda x: (x["f2"] or 0, x["recall"] or 0, -x["counts"]["fp"], -x["confidence"]))
+    return {"selected": best, "curve": curve, "selection_partition": "tuning", "final_detector_selected": False}
+
+
 def canonical_prediction(image: dict, boxes, scores, classes, knife_id: int) -> tuple[dict, int]:
     """Map an explicitly verified class ID, clipping all backends consistently.
 

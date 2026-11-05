@@ -11,7 +11,7 @@ from .training import _git_commit
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Compare B0-B3 decision events with manual event ground truth.")
+    parser = argparse.ArgumentParser(description="Compare manifest-selected B0-B4 events with manual event ground truth.")
     parser.add_argument("--ground-truth", required=True, type=Path)
     parser.add_argument("--replay-manifest", required=True, type=Path)
     parser.add_argument("--policy", required=True, type=Path)

@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- hoi-b4-implementation-20261105:begin -->
+## 2026-11-05 — RAW 전체 학습 착수·HOI/B4 구현
+
+- 목적/범위: 승인된 11월 계획을 구현한다. 미검수 원본 예비 학습은 RAW 전용이며 기존 human approval과 웹 검수 DB/판정을 변경하지 않는다. 실제 관계 라벨·촬영·카메라/GPIO는 별도 의존사항이다.
+- 데이터/실행: SOHAS/Dangerous VOC/Catargiu 원본에서 보호 proxy864·exact duplicate186을 제외해14,232장을 준비했다. 첫 로더 검사가 JPEG 누락을 잡아 gradient 시작 전 중단됐고, trainer가 변경한 사본은 덮어쓰지 않았다. 원본 해시로 검증한 새 사본에서 EOF 없는8장을 제외해14,224장으로 재준비했다. split은 유지했고 train11,378/val1,423/test1,423이다. RAW R1→H1→M1-n→M1-s 각50epoch·11,392 draws/epoch·35,600 updates queue를 PC13에서 시작했다. R1의 실제 loader11392/batch16/accumulate1/712batches와 여러 epoch 완료를 확인했다. 완료·성능 선정은 아직 아니다.
+- 구현: G/VG Holding 학습·tuning threshold·checkpoint·GT/predicted pair 진단·해시 결합 sidecar, B4 core/replay/evaluator/영상 snapshot, queue1 RTSP 입력과 비공개 probe를 추가했다. B0~B3 기본 계약은 유지한다. CUDA 학습/후속 평가에 공유 GPU claim을 사용한다. 후속 도구는 학습 성공 후 D0/COCO-n/s/RF-Large와 새4모델을 기존6개 개발셋에서 AP/predict 두 방식으로 비교하며 D*를 자동 채택하지 않는다.
+- 검증: PC `.venv-ml`, `PYTHONPATH=src`, `YOLO_AUTOINSTALL=false`, UTF8 unittest 전체181개(2 skip) 통과, compileall/CLI help. skip2는 pycocotools 선택 환경 검사다. CPU 가상 G/VG1epoch forward/backward·저장/reload 동일 예측, 영상4frame→sidecar→B0~B4 replay와 B4 사건1/snapshot1/mock alarm을 확인했다. wiring threshold0을 강제한 가상 시험으로 실제 정확도나 GPIO 검증이 아니다.
+- 인계/다음: [HOI 정답 규격](hoi-annotation-contract.md)은 사이트 담당에 위임한다. 사용자가 Reolink P430 영상 출력을 확인했지만 현재 연결 전이다. [P430 연결](p430-camera-setup.md), 실제 관계 정답과 촬영 세션 확보 후 실사 학습·최종 평가를 이어간다. 기존 미커밋 Catargiu 운영 기록은 보존했다. Git commit은 이 항목을 포함한 변경 이력으로 추적한다.
+<!-- hoi-b4-implementation-20261105:end -->
+
 <!-- raw-source-implementation-20261105:begin -->
 ## 2026-11-05 — 미검수 원본 예비 학습 경로 구현
 
