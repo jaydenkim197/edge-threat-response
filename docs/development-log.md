@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+## 2026-11-05 — YOLO·HOI 다중 데이터셋 병렬 개발·11월30일 완료 계획 승인
+
+- 목적/사용자 결정: YOLO 데이터·아키텍처 개선과 독립 HOI Holding/Not Holding 모델을 병렬 개발하고 2026-11-30까지 코드·학습·Orin 통합·B0~B4 평가를 완료 목표로 한다. 기존 B0~B3 연구 유지, 후속 Holoscan5.0 범위 불변, 팀원별 역할은 고정 배정하지 않는다.
+- 데이터 변경: SOHAS 외 Dangerous Items·Catargiu·Open Images의 기존 평가와 분리된 train 자료·고유 legacy·DaSCI 후보를 M1 실사 혼합에 검토, 직접 CCTV+스마트폰 T1을 활용한다. Simuletic 합성은 별도 실험, US Mock Attack은 외부 CCTV 평가, ACF 미확보는 보류. HOI HICO-DET/100DOH/Hands23 사용 가능성 검토, YouTube는 권리 확인 전 참고용. 학술 사용도 라이선스·source·재배포·촬영 동의가 자동 면제되지는 않으며 별도 법률 보고서 대신 자료별 간단한 검사를 보존한다.
+- 촬영/모델: CCTV P430 추정 모델 실물 확인 및 RTSP·녹화 시험은 사용자 11/05 진행 예정이며 현재 미검증. 약3m 실내·2곳·3~5명·거리3단계/조명2단계·안전 모형 소품, 30~60클립/300~600 frame은 1차 수집 목표. HOI B4-G geometry-only, B4-VG pretrained MobileNetV3-Small+geometry, 1차 Holding, Using 후속. YOLO n/s와 데이터 구성 실험 분리. 640 기준/960 우선 비교, 1280 조건부, HOI crop224/256 후보.
+- 일정/검증 gate: 11/05–08 source/설계, 09–12 촬영·검수, 13–16 모델1차 학습, 17–20 조정·동결, 21–24 실기기 통합, 25–27 독립 최종 평가, 28–30 결과 동결. PC13 RTX3060 full GPU 학습은 순차. 동일 frozen D* YOLO JSONL과 K/N/FSM으로 B3 vs B4 event 비교, D0 vs D* detector 개선과 관계 모델 효과 분리, 최종 평가 세션은 개발에 재사용하지 않는다.
+- 변경 범위: Master Plan, Dataset Source Strategy, HOI Research, Controlled Experiment Protocol, Open Decisions, Development Log 문서만 수정. 실제 학습/영상 촬영/카메라·GPIO 검증/Orin benchmark를 실행한 것이 아니며 기존 640 Orin 파일 처리율12.1496fps는 camera 성능이 아니다.
+- 다음 작업: CCTV 실물 기종·접속·샘플 확인, source별 최소 승인/중복 및 train/tuning/final 경계 확정, 학습용 run ID·GPU 예약과 새 B4 통합 구현 작업. 11/30은 목표이며 성능 개선·일정 달성의 실측 증거는 아니다.
+
 ## 2026-11-04 - 기성 모델과 fine-tuned checkpoint의 다중 domain 비교
 
 - 작업 카드/목적: 현재 학습 모델이 학습 전 동일 n과 다른 기성 모델보다 유리한지 동일한 여러 평가셋에서 확인하고 논문용 근거를 보존한다. 범위는 기존 모델·검수 완료 이미지의 read-only 평가, 완료 기준은9개/동일6set의 완전 결과·공통 지표·source/model/config/raw prediction hash·재현 도구·표/그림·검증·commit/push다. 위험은 test 공개/관련 source·소표본·synthetic·후처리 차이를 무시한 학습 효과 과장이다.
