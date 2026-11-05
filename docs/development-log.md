@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- p430-yolo-deployment-20261105:begin -->
+## 2026-11-05 — P430 포트 해결·RAW-R1-n Orin 준비
+
+- 사용자 Save·유지 확인 후 Orin에서554/8000/9000 open·RTSP OPTIONS200을 실측했다. 원본 비공개 계정 파일의 sub probe2회는0frame이고 동일 socket Digest DESCRIBE도401이다. 계정/권한 확인을 요청했으며 비밀번호는 출력/수집/커밋하지 않았다. 저장 helper는 숨김2회 입력·percent encoding·mode0600·원자 교체를 사용한다.
+- PC13 queue에서RAW-R1-n50epoch 완료·RAW-H1-n19epoch 진행을 확인했다. 완료 weight5,368,446bytes의SHA c8006bf63e7d5ab9a71f89a0794c7d9723dc493970ba34918d51aea2480a7775를 PC13/Orin에서 대조했다. 기존 weight/학습 source를 변경하지 않았다.
+- source c2daa70/Orin native venv에서 신규R1 knife+COCO26n person·640/FP32·B3로 기존 train-derived 파일53frame를 실행했다. valid53/detection59/event2/snapshot2/action error0·exit0을 확인했다. 실제 CCTV 정확도/FPS/HOI/GPIO 검증이 아니며 D* 선정 전 임시 배포다. [근거](../reports/runtime/p430-yolo26n-2026-11-05/report.md).
+- 기존 adapter/RTSP/CLI/THP 정책을 재사용했고 새 runtime이나 패키지는 도입하지 않았다. Orin ignored 실행 폴더에raw/coco별config·300frame 제한 runner를 준비했다. 다음은 카메라 인증→sub/main decode→제한된 실제YOLO 실시간 실행이며 자동 무기한 서비스는 아직 없다. 변경 파일·실행 위치는 배포 보고와 본 commit에 기록한다.
+<!-- p430-yolo-deployment-20261105:end -->
+
 <!-- p430-lan-diagnosis-20261105:begin -->
 ## 2026-11-05 — P430 실제 LAN·서비스 진단
 

@@ -1,0 +1,114 @@
+{
+  "deployment_status": "file_gpu_verified_camera_auth_pending",
+  "raw_checkpoint_sha256": "c8006bf63e7d5ab9a71f89a0794c7d9723dc493970ba34918d51aea2480a7775",
+  "person_checkpoint_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+  "raw_training_complete": true,
+  "final_detector_selected": false,
+  "source_commit": "c2daa70dc56be0f32d1b7a2eacfa06c2a49d0d12",
+  "gpio": "mock",
+  "camera_media_saved": false,
+  "camera_rtsp_port_open": true,
+  "camera_rtsp_options_status": 200,
+  "camera_describe_authenticated_status": 401,
+  "camera_frames_verified": 0,
+  "camera_credentials_recorded": false,
+  "recorded_at_utc": "2026-11-05T09:27:26.357526+00:00",
+  "file_smoke": {
+    "action_error_count": 0,
+    "alarm_signals": [
+      {
+        "active": true,
+        "event_id": "p430-yolo26n-pilot-B3-0001-2dc67ad677be",
+        "frame_index": 19,
+        "timestamp_s": 1.9000000000000001
+      },
+      {
+        "active": false,
+        "event_id": null,
+        "frame_index": 27,
+        "timestamp_s": 2.7
+      },
+      {
+        "active": true,
+        "event_id": "p430-yolo26n-pilot-B3-0002-ee564813f0a4",
+        "frame_index": 40,
+        "timestamp_s": 4
+      },
+      {
+        "active": false,
+        "event_id": null,
+        "frame_index": 48,
+        "timestamp_s": 4.800000000000001
+      }
+    ],
+    "detection_count": 59,
+    "detections_path": "/home/jorin/edge-threat-response/runs/p430-yolo26n-20261105-v1/raw-file-smoke/detections.jsonl",
+    "detections_sha256": "1500b1d33da04ec3e6754111cee1a5b9f16a27eccea05a03e6f2eead40759352",
+    "event_count": 2,
+    "frame_count": 53,
+    "frame_processing_ms": {
+      "max": 8187.9355420005595,
+      "mean": 220.38347352832406,
+      "median": 66.34017399937875,
+      "p95": 77.57654899978661
+    },
+    "frame_status_counts": {
+      "valid": 53
+    },
+    "generated_at": "2026-11-05T09:23:59.923185+00:00",
+    "inference_ms": {
+      "max": 8187.64798400025,
+      "mean": 219.89719735849474,
+      "median": 66.11271299971122,
+      "p95": 75.31083000048966
+    },
+    "log_scope": "completed rows flushed per frame; no cross-file transaction or power-loss fsync guarantee",
+    "mode": "B3",
+    "provenance": {
+      "detector_config": {
+        "exists": true,
+        "path": "/home/jorin/edge-threat-response/runs/p430-yolo26n-20261105-v1/detector-raw.json",
+        "sha256": "0350d3fade2b1b76cb49b57ba0f7620bbadb09e7aa1f19e9e61692a7c6c8f270",
+        "size_bytes": 839
+      },
+      "input": {
+        "exists": true,
+        "path": "/home/jorin/edge-threat-response/data/integration/pc-video-20261026/train-derived-fixture.avi",
+        "sha256": "b16a569242f37e771f268a6b3d9b1e0ad3c9f98daee85c51d22d0461d2141e6e",
+        "size_bytes": 4564212
+      },
+      "native_memory": {
+        "after": 1,
+        "before": 0,
+        "changed": true,
+        "requested": "disable_thp",
+        "scope": "current_process"
+      },
+      "pipeline_config": {
+        "exists": true,
+        "path": "/home/jorin/edge-threat-response/runs/p430-yolo26n-20261105-v1/pipeline-raw.json",
+        "sha256": "c3194428e393dbfd3c62c362fc35110fa57db7547f53822db9962fc24fe67da8",
+        "size_bytes": 459
+      },
+      "weights": [
+        {
+          "component_id": "coco-person",
+          "exists": true,
+          "path": "/home/jorin/edge-threat-response/models/development-20261026/person-yolo26n.pt",
+          "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+          "size_bytes": 5544453
+        },
+        {
+          "component_id": "raw-r1-knife",
+          "exists": true,
+          "path": "/home/jorin/edge-threat-response/models/raw-r1-n-20261105/best.pt",
+          "sha256": "c8006bf63e7d5ab9a71f89a0794c7d9723dc493970ba34918d51aea2480a7775",
+          "size_bytes": 5368446
+        }
+      ]
+    },
+    "schema_version": 1,
+    "snapshot_count": 2,
+    "timing_scope": "decoded frame to inference/decision/actions; excludes decode and per-frame diagnostic log writes; not GPIO latency"
+  }
+}

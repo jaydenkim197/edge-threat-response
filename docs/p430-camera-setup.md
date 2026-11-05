@@ -2,6 +2,14 @@
 
 ## 2026-11-05 실제 LAN 진단
 
+**후속 실측:** 사용자가 Save 실행·화면 재진입 후 체크 유지를 확인했고, Orin에서554/8000/9000 open 및 RTSP OPTIONS `200 OK`를 확인했다. 포트 활성화 문제는 해결됐다. 이후 저장된 비공개 계정으로 sub stream decode를 시도했으나0frame이고, 별도 동일 TCP 연결의 Digest 인증 DESCRIBE도 `401 Unauthorized`였다. 현재 남은 gate는 카메라 계정·권한 확인이다. 이것만으로 decoder 불량이나 모델 성능을 판정하지 않는다.
+
+계정 입력은 Orin의 `python3 ~/edge-threat-response/runs/setup-p430-private.py`를 사용한다. 실제 카메라 계정과 비밀번호를 입력하며 SSH/Reolink 클라우드 계정과 구분한다. 별도 카메라 계정이 없다면 사용자명은 기본 `admin`인지 User Management에서 확인한다. 비밀번호는 두 번 숨김 입력하고, URL을 percent-encode해 mode0600 임시 파일을 원자적으로 교체한다. 값은 출력·Git에 넣지 않는다.
+
+RAW-R1-n은 PC13에서50epoch가 완료돼 별도 모델 경로로 복사했다. 전송 SHA 일치와 Orin GPU53frame/B3/mock alarm/snapshot 연결을 확인했으며 최종 D* 채택이나 실제 CCTV 검증이 아니다. [배포 범위·증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md).
+
+아래는 Save 이전 초기 진단이며 현재 포트 상태는 위 후속 실측을 우선한다.
+
 Orin 유선 IP `192.168.0.10/24`에서 P430 `192.168.0.4`로의 직접 경로·ARP의 장비 MAC 일치·ping 2/2를 확인했다. 노트북 `192.168.0.6`과 Orin 양쪽에서 TCP9000은 열려 있고, TCP554/8000/80/443은 연결 거부였다. 따라서 LAN 연결은 확인됐지만 RTSP/ONVIF 서비스·인증·영상 수신은 아직 미검증이다. IP 변화의 원인을 확정하거나 이전 `.2` 검사 결과를 재사용하지 않는다.
 
 Reolink Client 화면에는 RTSP554/ONVIF8000이 체크돼 있다. Save가 화면 아래 잘려 있고 자동 입력 좌표가 맞지 않아 저장 성공을 확인하지 못했으며, 사용자의 Save 실행·화면 재진입 후 유지 확인을 요청했다. 체크 표시만으로 서비스가 활성화됐다고 판정하지 않는다. 공식 절차는 Device Settings → Network → Advanced → Server Settings에서 설정 후 Save다([제조사 안내](https://support.reolink.com/articles/900000621783-How-to-Configure-Reolink-Ports-Settings/)).
@@ -25,7 +33,19 @@ python -X utf8 tools/check_rtsp.py --connection data/local/p430-connection.json 
 
 검사기는 URL/인증정보와 원본 이미지를 결과에 저장하지 않는다. timeout/연결 오류는 실패로 기록한다. source queue는 최신1개만 유지하며 이전 frame을 버린 수를 기록한다. host decode 완료 시각을 사용하므로 sensor capture나 실제 GPIO 지연으로 해석하지 않는다.
 
+Orin에서는 위 명령을 현재 source worktree의 `tools/check_rtsp.py`와 `.venv-orin/bin/python`으로 실행하며, `OPENCV_FFMPEG_CAPTURE_OPTIONS='rtsp_transport;tcp'`를 설정한다. 비공개 설정은 `~/edge-threat-response/data/local/p430-connection.json`에 둔다. 계정 수정 후에는 기존 실패 probe를 덮어쓰지 않고 새 출력 경로를 사용한다.
+
 ## detector 연결
+
+현재 Orin의 배포 구성은 `runs/p430-yolo26n-20261105-v1/`에 준비돼 있다. 인증·실제 decode가 성공한 뒤 아래 명령으로 제한된300frame 실행을 한다. `--preset raw`는 신규 RAW-R1-n knife+COCO26n person, `--preset coco`는 기성 COCO26n의person/knife다. 각각 다른 pipeline model provenance와 새로운 출력 경로를 사용하며 자동 시작 서비스나 무기한 운용은 아직 설정하지 않았다.
+
+```bash
+~/edge-threat-response/.venv-orin/bin/python \
+  ~/edge-threat-response/runs/p430-yolo26n-20261105-v1/run-live.py \
+  --preset raw --max-frames 300
+```
+
+이 실행기는 GUI 영상 표시기가 아니다. detector JSONL·판단·사건 metadata·snapshot을 생성한다. 실제 학습된 HOI checkpoint가 아직 없으므로 B3를 사용하고 GPIO는 mock이다.
 
 비공개 파일을 읽어 현재 프로세스의 환경변수로만 전달한다. 출력이나 Git에 값을 남기지 않는다.
 

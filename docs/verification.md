@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- p430-yolo-deployment-20261105:begin -->
+2026-11-05 후속: Save 후 Orin RTSP200/554·8000 open을 확인했다. sub decode0frame와 authenticated DESCRIBE401은 실패로 보존한다. 신규RAW-R1-n SHA 전송 일치, Orin GPU 파일53 valid frames/B3/event2/snapshot2/action error0/exit0은 통과했다. 실제CCTV·HOI 정확도/물리GPIO/FPS·WAN 제거/재부팅은 미검증이다. [설정·범위·원시 위치](../reports/runtime/p430-yolo26n-2026-11-05/report.md). 코드 변경 없이 실제 배포/파일 통합을 검증했으므로 전체 테스트를 불필요하게 반복하지 않았다.
+<!-- p430-yolo-deployment-20261105:end -->
+
 <!-- p430-lan-diagnosis-20261105:begin -->
 2026-11-05 P430: 실제 Orin 유선 경로·ARP/MAC 일치·ping2/2를 확인했다. 노트북과 Orin에서9000 open,554/8000/80/443 connection refused를 재현했다. Client의RTSP/ONVIF 체크 표시만 확인했으며 Save 적용·RTSP 인증/영상·추론·WAN 제거·GPIO는 미검증이다. 코드/드라이버/네트워크 변경 없이 진단했고 [실측·후속 절차](p430-camera-setup.md)를 기록했다.
 <!-- p430-lan-diagnosis-20261105:end -->
