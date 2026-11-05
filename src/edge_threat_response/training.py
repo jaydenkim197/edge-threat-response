@@ -160,6 +160,27 @@ def run_training(
 
             model_factory = YOLO
         model = model_factory(config.model)
+        if config.recipe_id in RAW_RECIPES:
+            if not hasattr(model, "add_callback"):
+                raise ValueError("Raw training requires loader-budget callbacks")
+            manifest["observed_optimizer_updates"] = 0
+
+            def check_loader(trainer):
+                contract = _raw_loader_contract(trainer, approval["train_draw_count"],
+                                                config.arguments["batch"], approval["validation_image_count"])
+                if "loader_budget" not in manifest:
+                    manifest["loader_budget"] = contract
+                    _write_json(evidence_path, manifest)
+
+            def count_update(trainer):
+                # Fixed FP32, accumulate=1, no warmup: every completed batch
+                # corresponds to one optimizer update in the pinned trainer.
+                manifest["observed_optimizer_updates"] += 1
+
+            model.add_callback("on_train_start", check_loader)
+            model.add_callback("on_train_batch_start", check_loader)
+            model.add_callback("on_train_batch_end", count_update)
+            model.add_callback("on_train_epoch_end", lambda trainer: _write_json(evidence_path, manifest))
         model_source = Path(config.model)
         if model_source.is_file():
             manifest["model_source"] = {
@@ -169,6 +190,10 @@ def run_training(
             }
             _write_json(evidence_path, manifest)
         result = model.train(**arguments)
+        if config.recipe_id in RAW_RECIPES:
+            if manifest["observed_optimizer_updates"] != approval["planned_optimizer_updates"]:
+                raise ValueError("Actual optimizer update budget differs from authorized plan")
+            validate_training_approval(config_path, config, data_yaml, dataset_manifest, approval_path)
         elapsed = time.monotonic() - started
         save_dir = Path(getattr(result, "save_dir", run_dir))
         manifest.update(
@@ -399,8 +424,19 @@ def validate_training_approval(config_path: Path, config: TrainingConfig, data_y
     return {"pair_id": approval["pair_id"], "approval_id": approval["approval_id"],
             "scope": approval.get("scope", "formal_r1_h1"), "final_evaluation_allowed": not (development or raw),
             "approval_sha256": _sha256_file(approval_path), "bound_inputs": hashes,
-            "train_draw_count": train_draws,
+            "train_draw_count": train_draws, "validation_image_count": sum(expected["val"].values()),
             "planned_optimizer_updates": math.ceil(train_draws / config.arguments["batch"]) * config.arguments["epochs"]}
+
+
+def _raw_loader_contract(trainer, expected_draws: int, batch: int, val_count: int) -> dict:
+    actual = {"train_dataset_length": len(trainer.train_loader.dataset), "batches_per_epoch": len(trainer.train_loader),
+              "batch_size": trainer.batch_size, "accumulate": trainer.accumulate,
+              "validation_dataset_length": len(trainer.test_loader.dataset)}
+    expected = {"train_dataset_length": expected_draws, "batches_per_epoch": math.ceil(expected_draws/batch),
+                "batch_size": batch, "accumulate": 1, "validation_dataset_length": val_count}
+    if actual != expected:
+        raise ValueError(f"Raw loader dropped samples or changed the matched budget: {actual}")
+    return actual
 
 
 def _environment_record() -> dict[str, object]:

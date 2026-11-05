@@ -5,6 +5,7 @@ from pathlib import Path
 
 from edge_threat_response.raw_training import prepare_suite, run_queue
 from edge_threat_response.training import TrainingConfig, validate_training_approval, _sha256_file
+from edge_threat_response.training import _raw_loader_contract
 from edge_threat_response.dataset.raw_import import voc_knife, materialize_inventory
 from edge_threat_response.dataset.image_screening import image_signature
 from edge_threat_response.dataset.materialize import _convert_knife_label
@@ -14,6 +15,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class RawTrainingTests(unittest.TestCase):
+    def test_actual_loader_cannot_drop_rows_or_change_batch(self):
+        from types import SimpleNamespace
+        class Loader:
+            dataset = list(range(6))
+            def __len__(self): return 3
+        trainer = SimpleNamespace(train_loader=Loader(), test_loader=SimpleNamespace(dataset=[1]), batch_size=2, accumulate=1)
+        self.assertEqual(6, _raw_loader_contract(trainer, 6, 2, 1)["train_dataset_length"])
+        trainer.batch_size = 1
+        with self.assertRaisesRegex(ValueError, "matched budget"):
+            _raw_loader_contract(trainer, 6, 2, 1)
     def prepare(self, root):
         (root/"images").mkdir()
         (root/"labels").mkdir()

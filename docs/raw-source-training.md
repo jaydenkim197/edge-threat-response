@@ -27,12 +27,14 @@ PC13 저장소에서 `PYTHONPATH=src`, `.venv-ml` 환경을 사용한다. 각 �
 ```powershell
 python tools/prepare_raw_pc13.py --root . --output-dir data/processed/raw-real-20261105-v1
 python -m edge_threat_response.raw_training prepare --plan configs/training/raw-real.pc13.json --inventory data/processed/raw-real-20261105-v1/inventory.jsonl --checkpoint-n yolo26n.pt --checkpoint-s models/pretrained/yolo26s.pt --output-dir data/processed/raw-real-20261105-v1-profiles --authorization-reference user-directive-20261105
-powershell -NoProfile -File tools/start_raw_training.ps1 -Queue data/processed/raw-real-20261105-v1-profiles/queue.json
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File tools/start_raw_training.ps1 -Queue data/processed/raw-real-20261105-v1-profiles/queue.json
 ```
 
 실제 checkpoint 경로는 확보된 고정 파일을 지정한다. launcher는 숨김 worker를 만들고 SSH 종료 후에도 실행한다. `runs/launch-<suite-id>/`의 stdout/stderr/exit code와 `runs/training/<suite-id>-queue-state.json`으로 확인한다. 실패하면 다음 학습을 시작하지 않는다. 기존 run/queue 상태를 덮어쓰지 않으며 stale lock도 자동 삭제하지 않는다.
 
 각 invocation은 입력 config/data/list/manifest/pretrained 해시와 환경·commit·weight/metric을 기록한다. `human_review_complete=false`, `negative_absence_verified=false`, `final_evaluation_allowed=false`를 유지한다. 이미지/라벨 bytes가 바뀌면 실행을 거부한다.
+
+RAW 실행은 실제 train/validation loader 수·batch·accumulate를 확인하고, 학습 중 자동 batch 변경·누락을 거부한다. 고정 FP32/accumulate=1에서 완료 batch마다 update를 세어 계획과 대조하고 종료 후 입력 해시를 다시 확인한다.
 
 ## 상태
 
