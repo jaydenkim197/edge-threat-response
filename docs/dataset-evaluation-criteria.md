@@ -1,5 +1,13 @@
 # Dataset Evaluation Criteria
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 적용 기준 — 2026-11-06
+
+정식 reviewed 승인, 과거 DEV-SOHAS 한정 승인, 11/05 사용자가 허용한 RAW 예비 학습을 구분한다. RAW는 사람 검수 대기만으로 차단하지 않지만 원본·좌표·무결성·사용 조건·중복·분할 보호 검사는 유지한다. 웹의 정상 판정은 이미지 품질 검수이며 Holding 관계나 사건 정답이 아니다.
+
+현재 웹 검수는 이름 선택과 두 질문을 사용하며 본인 인증 기능은 없다. 신규 제한 자료는 [비공개 처리 요건](research-overview-en.md)을 준비하기 전 공개 검수에 추가하지 않는다. 확대 US Mock 83장 전체와 이미 열어본 개발셋은 새 train에서 보호한다. [판정 대조](../reports/datasets/reviewed-next-training-2026-11-06/report.md), [운영 안내](team-review-deployment.md).
+<!-- docs-refresh-20261106:end -->
+
 2026-11-05 사용자 결정으로 **`RAW-*` 개발 예비 학습은 아래 사람 검수 선행 조건을 기다리지 않는다.** 원본 주석 기준이며 human review/negative absence가 확인됐다고 기록하지 않는다. 파일·클래스/좌표·중복/보호 그룹·분할·출처 검사는 유지한다. 기존 판정과 정식 연구 채택/최종 평가 규칙은 바꾸지 않는다. [예비 실행 범위](raw-source-training.md).
 
 상태: source 검수 절차와 역할별 판정 기준 `DECISION`; 실제 source 채택·수치 threshold `PROPOSAL`
@@ -47,7 +55,9 @@ Source/version과 group 단위로 표본을 뽑는다. 기존 계획의 **100장
 
 Composite person detector와 knife detector를 쓰는 현재 후보 구조에서는 knife 학습 이미지에 person bbox가 필수는 아니다. Unified 2-class detector를 별도로 선택할 때만 **모든 식별 가능한 person/knife의 annotation completeness**를 요구한다. 이 선택 자체는 [P0-05](open-decisions.md)로 남긴다.
 
-## 4. Legacy 128장 review pack에 적용
+## 4. Legacy 128장 — 초기 CSV 호환과 현재 웹 검수
+
+2026-11-06 20:35 KST 조회에서 웹 128장 판정 완료, 정상 123장·보류 5장이다. 아래 CSV는 초기 contact sheet와 호환되는 양식이며 현재 공동 검수는 이름 선택과 두 질문을 사용한다. 이 결과는 L0 전체 학습이나 최종 관계 정답의 승인이 아니다.
 
 로컬 `data/review/legacy-development-v1/review.csv`의 기존 행·열은 보존한다. 사람이 8개 contact sheet와 필요 시 원본 이미지를 보고 아래 열에 입력한다. Contact sheet만으로 작은 bbox·가림이 구분되지 않으면 `unclear` 또는 `uncertain`을 사용한다.
 
@@ -107,7 +117,7 @@ $env:PYTHONPATH = 'src'
 - `held.jsonl`: 문제/모름·불완전하거나 충돌하는 판정·knife mapping 미확정·원 split 제한·exact duplicate. 웹 global sample ID로 찾아 별도 확인하며 자동 삭제/수정하지 않는다.
 - `duplicates.jsonl`: 현재 ready pack 사이의 exact SHA-256 중복과 record ID. 동일 source/batch 내부 중복은 오류, cross-source 중복은 보류한다. 외부 평가와 겹친 실사 자료는 학습 후보에서 빠진다. 전체 원 source의 중복·near-duplicate 검사를 대신하지 않는다.
 
-`review-candidate-policy.json`은 source별 실사/legacy/합성/외부 평가와 knife mapping의 의미를 명시한다. source-defined mapping은 package를 해석할 수 있다는 뜻이지 권리·좌표·학습 승인이 아니다. Dangerous Items는 mapping 미확정으로 보류한다. Simuletic 정상은 synthetic 후보, US/ACF는 평가 후보로 분리되어 실사 training-candidates에 들어가지 않는다. 이 정책을 바꿔 source를 승인한 척하지 않는다.
+`review-candidate-policy.json`은 source별 실사/legacy/합성/외부 평가와 knife mapping의 의미를 명시한다. source-defined mapping은 package를 해석할 수 있다는 뜻이지 권리·좌표·학습 승인이 아니다. 이 정책 JSON의 Dangerous `knife_mapping`은 여전히 `unconfirmed`다. 별도 RAW importer에서 VOC `Knife` 매핑을 확인하고 학습한 사실과 구분한다. 이번 문서 갱신으로 정책 JSON을 변경하지 않는다. Simuletic 정상은 synthetic 후보, US/ACF는 평가 후보로 분리되어 실사 training-candidates에 들어가지 않는다. 이 정책을 바꿔 source를 승인한 척하지 않는다.
 
 Open Images는 현재 표본의 원본 validation split을 train으로 옮기지 않도록 `training_original_splits=[train]`을 둔다. 정상이어도 현재 validation 표본은 `hold_source_split`로 남으며 별도 train 자료를 확보해야 학습 후보가 될 수 있다. 다른 source도 원 split을 보존하고 실제 group-aware 재분할은 별도 승인한다.
 

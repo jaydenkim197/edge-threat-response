@@ -1,5 +1,13 @@
 # MVP Research Specification
 
+<!-- docs-refresh-20261106:begin -->
+## 적용 기준 — 2026-11-06
+
+11월 필수 비교 범위는 B0~B4다. 과거 10/31 동결 목표와 B4를 후속 연구로만 두던 범위는 대체됐다. 아래 geometry 기반 사건 정의는 B3 기준선이며, B4의 Holding 판단은 [별도 관계 계약](hoi-annotation-contract.md)을 따른다.
+
+RAW 모델 4종과 Orin 카메라 시범 연동은 완료했다. 실제 Holding 성능, 물리 GPIO와 독립 사건 평가는 남아 있다. [현재 계획](project-plan.md), [실험 실행 규칙](controlled-experiment-protocol.md).
+<!-- docs-refresh-20261106:end -->
+
 ## 2026-11-05 연구 확장 적용
 
 기존 geometry-only 이벤트 정의와 아래 MVP 주장 경계는 **B0~B3 기준**이다. 11월 계획에서는 같은 detector/K-of-N/FSM에 독립 학습한 Holding 분류기를 연결한 B4-G/VG를 추가 비교한다. 폭력 의도·범죄·위험행동 판별은 계속 제외한다. 학습기·B4 연결은 가상 자료 CPU에서 확인됐으며 실제 소지 분류 성능은 아직 미검증이다. [정답 규격·구현](hoi-annotation-contract.md). 개발·평가 마감은 11월30일이며 기존 10월 동결 계획을 대체한다.
@@ -10,24 +18,24 @@
 
 ## 1. Claim boundary
 
-### 공식 이벤트 정의
+### B3 공식 이벤트 정의와 B4 관계 판단
 
 **Person-Associated Knife Event**는 카메라 영상에서 knife가 특정 person과 설정된 bounding-box 기하 조건으로 연관되고, 그 연관이 K-of-N 시간 조건을 충족한 사건이다.
 
-프로젝트의 외부 표현은 **잠재적 흉기 위협 상황 탐지**로 한다. 이 시스템은 실제 폭력 의도, 범죄, 손으로 쥔 상태, 위협 행동을 판별한다고 주장하지 않는다.
+프로젝트의 외부 표현은 **잠재적 흉기 위협 상황 탐지**로 한다. 전체 시스템은 실제 폭력 의도·범죄·위협 행동을 판별한다고 주장하지 않는다. B3 geometry는 손으로 쥔 상태를 증명하지 않는다. B4는 별도Holding 모델로 이를 연구하지만 실제성능은 아직 미검증이다.
 
-### MVP 포함·제외
+### B0~B3 기준선과 11월 B4 확장 범위
 
 | 구분 | 범위 | 상태 |
 |---|---|---|
 | weapon class | `knife`만 | `DECISION` |
-| spatial context | bounding-box geometry 기반 person–knife association | `DECISION` |
+| spatial context | B3 geometry, B4 독립 Holding classifier. Pose/tracking은 필수아님 | 11/05범위 `DECISION`; real Holding `PLANNED` |
 | temporal context | K-of-N confirmation | `DECISION` |
 | response | `CONFIRMED` 진입 시 GPIO LED/Buzzer | `DECISION` |
 | evidence | metadata + snapshot 1장 | `DECISION` |
 | tracking, movement, pose/hand keypoint, 행동·의도 판별 | MVP 제외 | `DECISION` |
 | event clip, dashboard, 추가 weapon class | Stretch | `DECISION` |
-| 기준 실행 플랫폼 | Jetson Orin Nano Developer Kit / JetPack 7.2.1 | `DECISION`; 실기기 세부·검증 `PLANNED` |
+| 기준 실행 플랫폼 | Jetson Orin Nano Developer Kit / JetPack 7.2.1 | `DECISION`; 실제39.2.0 inventory/P430 pilot `VERIFIED`, 정식patch·GPIO `PLANNED` |
 | legacy Nano | 과거 baseline 보존 및 선택적 cross-device 비교 | `DECISION`; 재현 가능성 `PLANNED` |
 
 ## 2. Spatial association
@@ -53,7 +61,7 @@ associated = knife_center in expanded_person_box(α)
 
 ### K-of-N
 
-최근 `N`개 pipeline sample 중 `K`개 이상에서 `associated`가 참이면 temporal condition을 만족한다. 프레임 누락·detector error·미검출은 false sample로 명시적으로 buffer에 기록한다. window가 N개로 채워지기 전이라도 true가 K개 누적되면 확인한다. `K`, `N`, frame sampling rate는 baseline 후 결정한다.
+최근 `N`개 pipeline sample 중 `K`개 이상에서 `associated`가 참이면 temporal condition을 만족한다. 프레임 누락·detector error·미검출은 false sample로 명시적으로 buffer에 기록한다. window가 N개로 채워지기 전이라도 true가 K개 누적되면 확인한다. Tracking이 없으므로 프레임별 source-level 신호를 집계하며 같은 사람의 연속 소지를 증명하지 않는다. `K`, `N`, frame sampling rate는 baseline 후 결정한다.
 
 ### State contract
 
@@ -102,14 +110,15 @@ frame 번호는 0-based 포함 구간이며 end_frame은 마지막 positive fram
 
 ### Ablation conditions
 
-동일 detector, model, 입력 영상, confidence threshold, 해상도, Jetson Orin Nano 조건에서 다음 네 조건을 비교한다.
+동일 detector, model, 입력 영상, confidence threshold, 해상도, Jetson Orin Nano 조건에서 다음 B0~B4를 비교한다. 기본 예제는 B0~B3이며 B4는 명시한 modes·관계 파일과 실제 학습 checkpoint가 필요하다.
 
 | ID | 조건 |
 |---|---|
-| B0 | Detection only → immediate alert |
+| B0 | 현재 frame의 reliable knife evidence → 공통FSM. 모든 positive frame마다 새event를 내는 뜻은 아님 |
 | B1 | Detection + Temporal K-of-N |
 | B2 | Detection + Spatial association |
 | B3 | Detection + Spatial + Temporal |
+| B4 | Detection + 독립 learned Holding + 동일 Temporal/FSM |
 
 주요 결과는 event precision, event recall, event F1, false alerts, missed events, event-start-to-alert latency다. Edge 결과는 FPS, inference latency, end-to-end latency, RAM, temperature를 같은 방법으로 함께 기록한다.
 
@@ -131,10 +140,10 @@ frame 번호는 0-based 포함 구간이며 end_frame은 마지막 positive fram
 
 ## 7. Remaining parameters
 
-다음은 `DECISION`이 아니다: Orin Nano 정확한 SKU·RAM·저장장치, PyTorch/Ultralytics/container image, model/runtime, input resolution, confidence threshold, `α`, `τ_distance`, `K`, `N`, cooldown, camera FPS, sampling rate, final metric targets, alert matching tolerance, tuning/test split. 이 값은 장비 inventory, runtime smoke test, baseline 증거와 experiment record를 근거로 선택한다.
+Orin SKU·RAM·NVMe·native 환경은 10/27 inventory에서 확인했다. 다음 최종 운영값은 미동결이다: 정식 patch·runtime·container, detector D*, input resolution, confidence threshold, `α`, `K`, `N`, cooldown, camera FPS, sampling rate, final metric targets, alert matching tolerance, tuning/test split. 이 값은 장비 inventory, runtime smoke test, baseline 증거와 experiment record를 근거로 선택한다. `τ_distance`는 재현용 schema v1에만 적용하며 신규 v2의 판정 파라미터가 아니다.
 
 ## 8. Target camera and data-domain assumption
 
-실제 camera model·FOV·focal length는 아직 `PLANNED`이다. 그 전 controlled scenario와 dataset audit은 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 elevated/oblique angle로 보는 환경을 target domain으로 사용한다. 이 전제는 작은/먼 knife, person co-occurrence, 손·팔 occlusion을 우선 검수한다는 뜻이지, 정해지지 않은 거리·pixel threshold를 이미 확정했다는 뜻은 아니다.
+카메라는 Reolink P430으로 확인했고 RTSP/Orin 시범 연동도 검증했다. 실제 설치 FOV·거리·높이·초점·가시 영역의 실측과 동결은 아직 `PLANNED`이다. 그 전 controlled scenario와 dataset audit은 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 elevated/oblique angle로 보는 환경을 target domain으로 사용한다. 이 전제는 작은/먼 knife, person co-occurrence, 손·팔 occlusion을 우선 검수한다는 뜻이지, 정해지지 않은 거리·pixel threshold를 이미 확정했다는 뜻은 아니다.
 
 공개 data는 training source, external CCTV holdout, synthetic viewpoint ablation 역할을 혼합하지 않는다. source별 적용 범위와 audit gate는 [Dataset Source Strategy](dataset-source-strategy.md)를 따른다.

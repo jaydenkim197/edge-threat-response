@@ -1,5 +1,23 @@
 # Dataset Source Strategy
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 데이터셋 역할 — 2026-11-06
+
+| Source | 현재 역할과 사용 범위 |
+|---|---|
+| SOHAS / Dangerous VOC / Catargiu v11 수정 라벨 | RAW 기준·혼합 학습 완료. 준비량은 각각 4,986 / 3,814 / 5,424장, train은 4,982 / 1,296 / 5,100장 |
+| Open Images 별도 train 594장 | 추가 학습 후보. 웹 검수용 train 표본 580장과 범위를 구분하며 아직 M1에 미반입. 기존 평가 29장은 train으로 전환하지 않음 |
+| DaSCI 93장 / US Mock 정상 83장 | 이미 열어본 개발 평가 자료. 새 train 반입 시 관련 source·유사 그룹 전체를 보호 |
+| Legacy | 팀원의 L0 재현 트랙. 표본 검수 완료만으로 원본 전체 학습을 승인하지 않음 |
+| Simuletic CCTV / ATM | 합성 효과를 보는 S1 후보. 실사 M2에 자동 병합하지 않음 |
+| ACF | 원본 미확보. 요청·접근 조건 확인과 실제 반입·라벨 검증을 구분 |
+| Roboflow CCTV V3 / 499 | 각각 최대 50장 표본 조사 권장 `PROPOSAL`. 원본 확보·검사·채택은 미완료 |
+
+권장 M2는 88장 정제를 반영한 n/640 단일 후보이며, 별도 Q1 학습은 후순위다. 실제 CCTV 자료 확보 시 T1·HOI를 우선한다([후속 후보 검토](../reports/datasets/cctv-candidate-check-2026-11-06/report.md)). 검수 전 RAW 예비 사용과 정식 reviewed 승인은 구분한다.
+
+제공자가 제한한 자료는 조건 확인과 비공개 접근 준비 전 공개 검수 서비스나 Git에 넣지 않는다([처리 원칙](research-overview-en.md)). [현재 수량·이력 대조](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
+<!-- docs-refresh-20261106:end -->
+
 <!-- cctv-candidate-check-20261106:begin -->
 2026-11-06 원출처재확인: 신규Roboflow CCTV V3(overview2614/exportv1증강4424·grayscale416·class변환)/CCTV499(버전별수량·설정상이)는제한표본조사후보이며최종채택아님. Catargiu26528을새knife데이터로중복계상하지않는다(기존전체v11 knife조사/M1반입). NTU Fights는fight구간GT,VIRAT은일반활동GT여서현재M2/HOI직접학습후순위이고Simuletic114는기존합성역할유지다. 88장정제는M21회에흡수/Q1독립run후순위·Roboflow각최대50장조사안은PROPOSAL이며새원본/검수/학습은실행하지않았다. 새import의보호범위는확대US Mock83장전체를포함한다. 촬영/T1·HOI준비를공개후보대기로늦추지않는다. [공식링크·전처리·현재확보분·한계](../reports/datasets/cctv-candidate-check-2026-11-06/report.md).
 <!-- cctv-candidate-check-20261106:end -->
@@ -74,7 +92,9 @@ Open Images 별도 train·Legacy의 PC13 원본 확보 및 새 source 추가는 
 
 따라서 정면 인물 사진, 제품 사진, 손과 knife의 close-up이 많은 source는 knife appearance 보강에는 쓸 수 있어도 target-domain 성능의 근거가 될 수 없다.
 
-## 2. Dataset roles and application limits — `DECISION`
+## 2. Dataset roles and application limits — 초기 역할·배포 이력
+
+현재반입/평가역할은맨위요약을우선한다. 아래9~10월표본수·승인상태는당시기록이며현재전체학습량이아니다.
 
 **2026-10-26 적용 현황:** 아래 표는 source 역할·초기 계획이다. 실제 웹 준비량은 SOHAS350/DaSCI93/Simuletic CCTV114/US Mock100/Dangerous150/Open Images30/Legacy128/Catargiu17/ATM 합성237, 전체1,219장이다. 고정 snapshot의 정상 판정은 SOHAS183/DaSCI92/Simuletic CCTV71이며 SOHAS183개만 사용자 승인된 개발 예비 학습에 사용했다. 다른 source의 학습 승인은 별도다. [추가304장 확보·검수 배포](../reports/datasets/additional-review-2026-10-26/report.md)는 source 확정이나 자동 학습을 뜻하지 않는다. [오류·보강 분석](../reports/training/development-error-analysis-2026-10-26/report.md)의 작은 실사 knife 우선·합성 별도 ablation 원칙을 유지한다. DaSCI92개는 보수적 proxy 연결 시 모두 보호 val/test group과 연결되고 filename family를 빼도18개가 연결돼 무조건 추가할 수 없다. 이는 실제92개 모두 중복이라는 판정이 아니다. Simuletic CCTV71개는 같은 검사에서 연결0이나 독립성·좌표·채택이 자동 승인되지는 않는다.
 
@@ -186,7 +206,9 @@ README/License.md 차이는 해결됐다고 기록하지 않는다. 저자·논�
 - [Simuletic dataset card](https://huggingface.co/datasets/Simuletic/cctv-knife-detection-dataset)는 114 synthetic CCTV-style person/knife sample과 CC BY 4.0을 제시한다. 이는 real CCTV 성능 근거가 아니다.
 - [Open Images V7 facts](https://storage.googleapis.com/openimages/web/factsfigures_v7.html)는 규모·class availability 근거일 뿐, 선택 image의 rights/annotation completeness를 보장하지 않는다.
 
-## 7. Immediate next actions
+## 7. 초기 준비 순서 — 역사 기록
+
+다음은9~10월최초audit/학습전순서다. 현재는RAW학습완료후M2·T1/HOI·독립평가준비단계이며위현재요약을따른다.
 
 2026-10-02 추가 실제 annotation 대조에서 SOHAS YOLO label은 knife 2,277 objects, 대응 VOC XML은 2,349 objects로 **58개 image에서 knife 개수 불일치**가 확인됐다. YOLO 배포본 image도 DaSCI와 1,985장이 동일하다. [후속 annotation 검증](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md)에 기록했다. 따라서 GPT의 SOHAS→DaSCI→Combined 3연속 screening을 그대로 실행하지 않는다. R1/H1 우선 전략은 유지하며 **공식 YOLO label을 무검수 복사하지 않고 VOC 전체 knife bbox 재변환과 표본 확인**을 다음 준비 작업으로 둔다. 이 대조는 아직 source 채택 승인이 아니다.
 

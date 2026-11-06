@@ -1,5 +1,13 @@
 # Legacy Asset Selection - 2025-2 MIDAS
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 참조·권리 확인 — 2026-11-06
+
+아래 2025 자산 선별 기록은 당시 보존 근거다. 고정 submodule에는 과거 이미지·checkpoint가 있으며, tree 점검에서 별도 LICENSE 파일은 확인하지 못했다. 공개 접근 가능성만으로 재배포 허가를 추정하지 않는다.
+
+신규 코드 확인에는 일반 clone으로 충분하며 legacy 분석 시 submodule을 선택한다. 신규 제한 자료는 별도 제공 조건과 [비공개 처리 원칙](research-overview-en.md)을 따른다. 이번 작업에서 원본 submodule과 고정 commit, 과거 자료는 변경하지 않았다.
+<!-- docs-refresh-20261106:end -->
+
 기록일: 2026-09-04  
 원본 위치: `N:\Own\01_YU\프로젝트 및 활동\2025-2_MIDAS`
 

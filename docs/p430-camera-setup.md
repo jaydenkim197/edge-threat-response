@@ -1,5 +1,13 @@
 # P430 연결과 촬영 준비
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 다음 작업 — 2026-11-06
+
+카메라 포트·인증·RTSP 수신과 R1/B3 실행은 확인했다. 남은 작업은 실제 약 3 m 설치 조건 확인, 연속 원본 영상·시간축 확보, bbox·Holding·사건 정답 작성, 새 detector·GPIO 연동과 독립 평가다.
+
+아래 401·5초 timeout 기록은 해결 전 진단으로 보존한다. 원본 녹화와 물리 경보는 실제 검증 전 완료로 표기하지 않는다.
+<!-- docs-refresh-20261106:end -->
+
 ## 현재 확인 상태 — 2026-11-05
 
 **실제 카메라 인증·main/sub 수신·각각 YOLO26n/B3 300frame 실행을 통과했다.** 같은 LAN의 구성·연결 순서는 [간단 연결 기록](cctv-local-network-setup.md)을 따른다. 아래401·초기5초 제한 실패는 해결 이전의 진단 기록이다.
@@ -29,11 +37,11 @@ WAN 제거·전원 재시작/자동 복구·물리GPIO·실제 탐지/사건 정
 
 **계정 수정 후:** 카메라 자체 계정으로 다시 저장한 뒤 authenticated DESCRIBE200/H264를 확인했다. 초기5초 제한 probe는0frame였으나,20초 제한 진단은6.210초에 열려640×360/광고FPS10·30frame를 수신했다. 공통 RTSP 수신기의 open timeout만5→20초로 수정하고 read timeout5초·queue1·인증정보 비노출은 유지했다. 광고FPS/초기 버퍼의 빠른 반환은 실제 추론FPS가 아니다. 아래401은 수정 전 기록이다.
 
-**후속 실측:** 사용자가 Save 실행·화면 재진입 후 체크 유지를 확인했고, Orin에서554/8000/9000 open 및 RTSP OPTIONS `200 OK`를 확인했다. 포트 활성화 문제는 해결됐다. 이후 저장된 비공개 계정으로 sub stream decode를 시도했으나0frame이고, 별도 동일 TCP 연결의 Digest 인증 DESCRIBE도 `401 Unauthorized`였다. 현재 남은 gate는 카메라 계정·권한 확인이다. 이것만으로 decoder 불량이나 모델 성능을 판정하지 않는다.
+**후속 실측:** 사용자가 Save 실행·화면 재진입 후 체크 유지를 확인했고, Orin에서554/8000/9000 open 및 RTSP OPTIONS `200 OK`를 확인했다. 포트 활성화 문제는 해결됐다. 이후 저장된 비공개 계정으로 sub stream decode를 시도했으나0frame이고, 별도 동일 TCP 연결의 Digest 인증 DESCRIBE도 `401 Unauthorized`였다. 당시남은gate는계정·권한이었고위후속검증에서해결됐다. 현재로그인실패라는뜻이아니다. 이것만으로 decoder 불량이나 모델 성능을 판정하지 않는다.
 
 계정 입력은 Orin의 `python3 ~/edge-threat-response/runs/setup-p430-private.py`를 사용한다. 실제 카메라 계정과 비밀번호를 입력하며 SSH/Reolink 클라우드 계정과 구분한다. 별도 카메라 계정이 없다면 사용자명은 기본 `admin`인지 User Management에서 확인한다. 비밀번호는 두 번 숨김 입력하고, URL을 percent-encode해 mode0600 임시 파일을 원자적으로 교체한다. 값은 출력·Git에 넣지 않는다.
 
-RAW-R1-n은 PC13에서50epoch가 완료돼 별도 모델 경로로 복사했다. 전송 SHA 일치와 Orin GPU53frame/B3/mock alarm/snapshot 연결을 확인했으며 최종 D* 채택이나 실제 CCTV 검증이 아니다. [배포 범위·증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md).
+RAW-R1-n은 PC13에서50epoch가 완료돼 별도 모델 경로로 복사했다. 전송 SHA 일치와 Orin GPU53frame/B3/mock alarm/snapshot 연결을 확인했으며 당시첫배포는파일시험이었으며이후실제P430 pilot을위에서검증했다. 최종D*·사건정확도검증은아니다. [배포 범위·증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md).
 
 아래는 Save 이전 초기 진단이며 현재 포트 상태는 위 후속 실측을 우선한다.
 

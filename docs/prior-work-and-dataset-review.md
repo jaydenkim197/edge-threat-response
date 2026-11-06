@@ -1,8 +1,16 @@
 # 선행연구와 공개 데이터셋 검토
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 문헌·데이터 사용 경계 — 2026-11-06
+
+문헌의 규모·성능과 우리가 확보·학습·평가한 범위를 구분한다. SOHAS·Dangerous VOC·Catargiu 기반 RAW 4종과 [공통 개발 비교](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)는 완료했다. 실제 CCTV 개발셋에서 작은 칼을 거의 검출하지 못하는 문제는 남아 있다. 신규 Roboflow 후보, 전체 Catargiu와 기존 확보분의 관계, 합성·NTU·VIRAT의 역할은 [원출처 대조](../reports/datasets/cctv-candidate-check-2026-11-06/report.md)를 따른다.
+
+ACF의 실제 CCTV 촬영에 관한 논문 설명과 원본 확보·사용 조건·라벨 검증은 별개이며, 현재 원본은 미확보다. US Mock 정상 83장은 이미 열어본 개발 평가 자료로 사용했으므로 새 train에서 보호한다. bbox는 Holding·사건 정답이 아니다. 아래 초기 조사 표와 [현재 반입 전략](dataset-source-strategy.md)을 구분한다.
+<!-- docs-refresh-20261106:end -->
+
 최초 검토: 2026-09-26 / DaSCI–SOHAS image metadata 재검증: 2026-10-02
 
-상태: 공개 자료의 문헌·저장소 수준 확인, SOHAS–DaSCI의 Git blob 정확 중복은 `VERIFIED`. 원본 image decode·라벨·near duplicate·성능의 프로젝트 검증은 `PLANNED`.
+상태: 아래초기문헌검토와후속프로젝트실측을구분한다. SOHAS–DaSCI metadata중복·후속source decode/RAW훈련/개발평가는수행됐으며신규후보/독립final은별도다.
 
 ## 결론
 
@@ -42,11 +50,13 @@ ACF 논문은 [과거 GitHub 주소](https://github.com/iCUBE-Laboratory/The-Arm
 ## 3. 연구 비교에 적용하는 방식
 
 1. Detector 데이터 실험(L0, R1, H1, 이후 조건부 T1/L1/U1/S1/G1)은 source별 run ID·학습 recipe·detector weight를 구분한다. 기존 MIDAS 7,361장 export는 사람 검수 전 L0 학습 승인이 아니며, L0 완료가 신규 detector source audit를 막지 않는다. L1은 별도의 선별 legacy 보강 가능성만 남긴다.
-2. B0~B3의 공간·시간 계층 비교에서는 **동일 detector, 동일 입력 영상, 동일 설정과 장비**를 사용한다. Detector를 바꾼 효과를 상황 판단의 효과로 해석하지 않는다.
+2. B0~B4의 공간·시간/관계 계층 비교에서는 **동일 detector, 동일 입력 영상, 동일 설정과 장비**를 사용한다. Detector를 바꾼 효과를 상황 판단의 효과로 해석하지 않는다.
 3. 공개 CCTV의 bbox 정답은 detector의 image/frame-level 외부 평가에 쓴다. B0~B3의 event precision/recall/alert latency에는 연속 영상, 양성·음성 사건, event start/end 정답이 필요하다.
 4. 최종 target-domain 사건 실험은 직접 촬영한 독립 recording session을 기준으로 설계한다. 실제 카메라·화각·관찰 거리가 정해지면 약 3 m CCTV라는 현재 가정을 측정값으로 갱신한다.
 
-## 4. 다음 검수 순서
+## 4. 초기 조사 순서 — 역사 기록
+
+현재다음작업은[작업표](pre-orin-work-plan.md)이며아래최초SOHAS확보/훈련순서를반복대기하지않는다.
 
 1. 팀원은 로컬 legacy 128장 review pack을 판정해 L0를 담당한다. 신규 detector source audit와 병렬이다.
 2. 신규 담당자는 SOHAS의 공식 package/version·권리 충돌을 확인하고 knife positive와 no-knife hard-negative를 구분해 표본 검수한다.

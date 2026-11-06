@@ -1,5 +1,13 @@
 # 통제 촬영과 사건 단위 평가
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 실험 실행 경계 — 2026-11-06
+
+P430/Orin의 R1 시범 연동은 완료했지만, 독립 사건 평가용 연속 원본 영상과 수동 사건·Holding 정답은 아직 없다. RTSP 입력과 탐지 미리보기는 원본 녹화기가 아니므로 별도 녹화·내보내기·시간축을 확보한다. 같은 사건을 CCTV와 스마트폰으로 동시에 촬영하면 하나의 분할 그룹으로 묶는다.
+
+11월 최종 비교는 B0~B4다. 기본 template·fixture의 B0~B3 예제는 재현용으로 유지하고, B4 실행 시 `modes` 및 각 recording의 `media`·`relations`·`relation_threshold`를 명시한다. 실제 관계 모델 없이 B4 최종 평가를 완료했다고 표현하지 않는다. 모델·설정 동결 목표는 11/20, 독립 평가 목표는 11/25~27이다.
+<!-- docs-refresh-20261106:end -->
+
 상태: 평가기와 가상 replay 연결 `IMPLEMENTED`/PC `VERIFIED`. 촬영·정답 기록 절차는 준비됐으며, 거리값·매칭 허용 오차·반복 횟수·최종 동결은 첫 pilot 촬영 후 확정한다.
 
 ## 2026-11-05 — YOLO·HOI B4 병렬 연구의 평가 확장
@@ -21,7 +29,7 @@
 1. **Pilot**: 실제 카메라 설치 높이·화각·가시 영역과 모형 knife의 크기/가림을 확인한다. 첫 영상으로 거리 구간과 시작/종료 frame 해석을 맞춘다.
 2. **Tuning**: pilot 이후 별도 세션에서 detector threshold, 확장 bbox 비율, K/N, rearm과 매칭 규칙을 고른다. 여기까지는 개발·오류 분석에 사용한다.
 3. **Freeze**: 거리·매칭 허용 오차·annotation version, 모델 SHA-256, 입력 규격, 판단 config, metric 코드 commit과 최종평가 세션 목록을 촬영표의 동결 기록에 남긴다.
-4. **Final test**: 동결된 동일 detector의 detection JSONL을 세션별로 한 번 생성하고 B0~B3에 재사용한다. 최종 결과를 보고 파라미터를 변경하면 새 실험 버전과 새로운 미사용 평가 세션이 필요하다.
+4. **Final test**: 동결된 detector의 detection JSONL을 세션별 한 번 생성하고 B0~B4에 재사용한다. B4는 별도 관계 sidecar와 실제 관계 정답으로 학습한 checkpoint를 연결한다. 최종 결과를 보고 파라미터를 변경하면 새 실험 버전과 새로운 미사용 평가 세션이 필요하다.
 
 ## 2. 촬영 유형
 
@@ -69,7 +77,7 @@ P1~P4·N1~N5 각각 Near/Medium/Far를 촬영표에 배치한다. Near/Medium/Fa
 
 [매칭 설정 템플릿](../configs/evaluation/manual.template.json)의 early/late tolerance는 첫 pilot 후 채운다. `null`인 준비 파일은 실행되지 않는다. 가상 검증의 0초 설정은 실제 허용 오차 결정이 아니다.
 
-평가기 `etr-evaluate`는 B0~B3의 **CONFIRMED 진입당 metadata 사건**을 경보 후보로 세고, 다음 규칙을 네 조건에 동일하게 적용한다.
+평가기 `etr-evaluate`는 manifest가 명시한 B0~B4의 **CONFIRMED 진입당 metadata 사건**을 경보 후보로 세고, 다음 규칙을 선택된 모든 조건에 동일하게 적용한다.
 
 1. 예측 시각을 시간순·ID순으로 정렬한다. ignore 구간의 예측은 분자와 분모에서 제외한다.
 2. 허용 창 `[truth_start - early, truth_end + late)` 안의 미매칭 정답 중 종료가 가장 빠른 사건에 일대일로 대응한다. 허용 창이 겹쳐도 하나의 경보는 정답 하나에만 대응한다.
@@ -92,6 +100,6 @@ $env:PYTHONPATH = 'src'
 .\.venv-ml\Scripts\python.exe -m edge_threat_response.evaluate_cli --ground-truth tests/fixtures/evaluation/ground-truth.json --replay-manifest tests/fixtures/evaluation/replay-manifest.json --policy configs/evaluation/synthetic.example.json --output-dir runs/event-evaluation-synthetic-v1/evaluation
 ```
 
-실제 촬영에는 작성한 ground truth, 매칭 설정과 [replay 연결표](../templates/experiments/replay-manifest.template.json)를 사용한다. 연결표의 경로는 그 JSON 파일 위치 기준이다. 모든 영상의 B0~B3 `summary.json/events.jsonl`이 있어야 하며, 입력/config SHA-256·source·frame/timestamp·사건 개수·model/version·policy가 맞지 않으면 실패한다. 영상별 run ID는 달라도 판단/model 설정은 동일해야 한다.
+실제 촬영에는 작성한 ground truth, 매칭 설정과 [replay 연결표](../templates/experiments/replay-manifest.template.json)를 사용한다. 연결표의 경로는 그 JSON 파일 위치 기준이다. 모든 영상에서 manifest의 `modes`에 선택한 각 mode의 `summary.json/events.jsonl`이 있어야 하며(기본 B0~B3, B4는 명시적으로 추가), 입력/config SHA-256·source·frame/timestamp·사건 개수·model/version·policy가 맞지 않으면 실패한다. 영상별 run ID는 달라도 판단/model 설정은 동일해야 한다.
 
-`comparison.csv`는 partition×B0~B3 요약, `evaluation.json`은 일대일 대응·반복/배경 FP·FN·ignore·입력 해시의 원시 증거다. evaluator의 fingerprint 확인은 실제 모델 binary의 동일성을 단독 증명하지 않는다. `etr-detect` 실행의 weight SHA-256과 입력 영상 hash를 동결 기록에 함께 둔다. 실제 최종평가에는 policy status `frozen`과 승인된 정답 version을 사용한다.
+`comparison.csv`는 partition×선택 mode(B0~B4) 요약, `evaluation.json`은 일대일 대응·반복/배경 FP·FN·ignore·입력 해시의 원시 증거다. evaluator의 fingerprint 확인은 실제 모델 binary의 동일성을 단독 증명하지 않는다. `etr-detect` 실행의 weight SHA-256과 입력 영상 hash를 동결 기록에 함께 둔다. 실제 최종평가에는 policy status `frozen`과 승인된 정답 version을 사용한다.

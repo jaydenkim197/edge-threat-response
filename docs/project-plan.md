@@ -1,5 +1,26 @@
 # Master Project Plan
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 기준 — 2026-11-06
+
+**현재 마일스톤은 공개 데이터 detector 비교와 P430/Orin 시범 연동을 마치고, 목표 CCTV 데이터·실제 HOI 학습·최종 평가를 준비하는 단계다.**
+
+| 구분 | 현재 상태 |
+|---|---|
+| 일정 | 11/20 모델·설정 동결, 11/25~27 독립 B0~B4 평가, 11/30 개발·평가 마감 `DECISION` |
+| RAW detector | 4종 모두 50 epoch·35,600 update 완료. 8개 모델 조건을 같은 6개 개발셋에서 비교 `VERIFIED` ([결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)) |
+| 다음 학습 | M1-n을 주력 후보로 두고, 88장 정제를 M2 n/640에 반영하며 별도 Q1 학습은 후순위로 권장 `PROPOSAL`. 촬영 자료 확보 시 T1·HOI를 우선한다. M2/T1은 미실행 |
+| 실기기 | 실제 L4T 39.2.0에서 P430 main/sub → R1/B3를 각각 300 frame 실행하고 snapshot·mock 경보·화면 표시 확인 `VERIFIED` ([증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md)). 계획 버전 39.2.1과의 차이는 별도 관리 |
+| HOI/B4 | 코드와 합성 자료의 CPU·CUDA 연결 `VERIFIED`. 실제 Holding 정답·학습·성능 검증은 `PLANNED` ([규격](hoi-annotation-contract.md)) |
+| GPU 자원 | PC13의 기존 학습과 PC11/12/14의 CUDA 환경 검증 완료. 각 GPU의 독립 실행이며 분산 학습 검증은 아님 |
+| 남은 필수 작업 | 자체 촬영과 사건·관계 정답, 새 모델의 Orin 측정, 물리 GPIO, 독립 사건 평가, 장시간 운용·장애 복구 검증 |
+
+신규 제한 자료는 제공 조건과 비공개 접근 환경을 준비한 뒤 반입한다([처리 원칙](research-overview-en.md)). 아래 과거 진행 기록과 초기 일정은 현재 기준과 구분해 보존한다.
+<!-- docs-refresh-20261106:end -->
+
+<details>
+<summary>2026-11-05~06 진행·권장안 기록 (위 현재 요약을 우선)</summary>
+
 <!-- cctv-candidate-check-20261106:begin -->
 ## 2026-11-06 — 일정 우선의 후속 학습 권장안 조정
 
@@ -28,6 +49,8 @@
 - Reolink P430과 Orin의 동일LAN에서 인증·main3840×2160/sub640×360 수신과 각각YOLO26n/B3 300frame 통합을 확인했다. 신규RAW-R1-n은 임시 후보이며 최종D*는 미확정이다. Orin 모니터 실시간 박스 표시도 사용자 확인을 받았다. [간단 연결 기록](cctv-local-network-setup.md), [실제 진단·실행](p430-camera-setup.md). 물리GPIO·WAN 제거/자동 복구·새 독립 촬영/정확도는 아직 미검증이다.
 - 기존 검수 사이트 데이터/DB/배정은 변경하지 않는다. 실제 추가 source 확보는 현재 queue 입력을 변경하지 않고 후속 recipe로 관리한다. 아래 11월 일정은 유지한다.
 
+</details>
+
 상태: 프로젝트 방향·일정·MVP 연구 범위는 `DECISION`, 정량 목표치와 파라미터는 `PROPOSAL`
 
 이 문서는 프로젝트의 목적, 범위, 일정, 성공 조건을 정의하는 최상위 기준이다. 기술 구조는 `architecture.md`, 미확정 선택은 `open-decisions.md`, 실제 변경은 `development-log.md`, 검증 결과는 `verification.md`에서 관리한다.
@@ -49,7 +72,7 @@
 
 | 기간 | 모델·데이터 개발 | 통합·실험 / 완료 기준 |
 |---|---|---|
-| **11/05–11/08** | SOHAS+그 밖의 실사 후보 검수 상태·source 역할 결정, HOI Holding 관계 라벨/네트워크 설계, 실험 프로토콜 동결 준비 | **11/05 CCTV 실물 모델·RTSP·파일 저장 확인 예정(아직 미검증)**. train/tuning/final session 경계와 안전 촬영·동의 준비 |
+| **11/05–11/08** | SOHAS+그 밖의 실사 후보 검수 상태·source 역할 결정, HOI Holding 관계 라벨/네트워크 설계, 실험 프로토콜 동결 준비 | P430 RTSP·Orin pilot은11/05 검증. 원본 연속 녹화·최종 GT는 별도 준비. train/tuning/final session 경계와 안전 촬영·동의 준비 |
 | **11/09–11/12** | CCTV/스마트폰 train 촬영 및 YOLO bbox·HOI pair GT 라벨, 중복·source audit, 학습용 manifest 승인 | 약3m 고각 CCTV/정면·측면 휴대폰, 3~5명·실내2곳 이상, Near/Medium/Far·Normal/Low-light. **30~60클립·300~600프레임은 첫 pilot 목표량**, 세션 독립 수 보장은 아님. final은 별도 촬영 |
 | **11/13–11/16** | 승인 실사 D0 vs YOLO26n 개선 및 동일 데이터의 YOLO26s, HOI B4-G/B4-VG 1차 학습. PC13 RTX3060에서 GPU 학습은 **순차 예약** | 양 트랙 각각 학습 완료 checkpoint 최소 1개, validation 비교·오류 사례·원시 학습 로그 |
 | **11/17–11/20** | 작은 칼 FN/FP·HOI hard-negative 오류 분석, 데이터/증강 보완, 640 vs 960·HOI union crop 224/256 조건부 비교, seed 반복 여유 시 수행 | **11/20 D*와 B4 weight·threshold·config·평가 세션 동결**. 1280 및 ResNet18은 옵션 |
@@ -76,12 +99,13 @@
 - 프로젝트명: 상황 인지형 Edge AI 흉기 위협 대응 시스템
 - 수행 기간: 2026-09-01 ~ 2026-12-11
 - 신규 시스템 기준 플랫폼: Jetson Orin Nano Developer Kit
-- 고정 소프트웨어 기준: JetPack 7.2.1 / Jetson Linux 39.2.1
+- 계획 소프트웨어 기준: JetPack 7.2.1 / Jetson Linux 39.2.1; 실제 검증은 L4T 39.2.0 native, 정식 환경 동결은 별도
 - legacy 기준: Jetson Nano 4GB와 2025-2 MIDAS 보존 환경
 - 기준 저장소: `jaydenkim197/edge-threat-response`
-- 개발 동결 목표: 2026-10-31
+- 모델·설정 동결 목표: 2026-11-20
+- 개발·평가 마감: 2026-11-30 (과거 2026-10-31 목표는 `SUPERSEDED`)
 
-2026-10-04 사용자 최신 확인: **Orin Nano는 보유 중**이며 원격 접속은 설정하지 않았다. 카메라·GPIO 기기는 아직 확보하지 않았다. 이는 `USER_REPORTED` 장비 준비 상태이며 실제 SKU/RAM·저장장치·부팅 OS/JetPack·firmware·CUDA 동작은 원격/실물 inventory 전까지 미검증이다. 다음 실물 gate는 수령 대기가 아니라 부팅 상태 확인·원격 접속 설정이고, 주변장치 확보 전에도 runtime/image GPU smoke는 접속 후 진행할 수 있다.
+2026-10-04 당시 사용자 확인(역사 기록): **Orin Nano는 보유 중**이며 원격 접속은 설정하지 않았다. 카메라·GPIO 기기는 아직 확보하지 않았다. 이는 `USER_REPORTED` 장비 준비 상태이며 실제 SKU/RAM·저장장치·부팅 OS/JetPack·firmware·CUDA 동작은 원격/실물 inventory 전까지 미검증이다. 다음 실물 gate는 수령 대기가 아니라 부팅 상태 확인·원격 접속 설정이고, 주변장치 확보 전에도 runtime/image GPU smoke는 접속 후 진행할 수 있다.
 
 2026-10-27 실측 갱신: SSH key 접속, device-tree Orin Nano Super/p3767-0005·약8GB·NVMe·UEFI39.2.0·25W를 확인했다. 실제 L4T39.2.0/CUDA13.2.2의 격리 native 환경에서 실제 GPU kernel과 새 모델의53frame 파일입력/B0~B3/metadata/snapshot/mock alarm을 검증했다. **계획39.2.1과 실제39.2.0은 다르며 기준 변경/OS 업데이트를 승인한 것이 아니다.** 카메라/GPIO·실제 사건 성능·장시간/재부팅은 미검증이다. [실기기 증거](../reports/runtime/orin-native-smoke-2026-10-27/report.md).
 
@@ -91,7 +115,7 @@
 
 ### Target deployment and data-domain assumption
 
-- camera 모델·화각은 미정이지만, dataset 검수와 controlled scenario는 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 비스듬히 보는 환경을 기준으로 한다.
+- camera는 Reolink P430으로 확인됐으며 실제 설치 화각·거리 실측은 남아 있다. dataset 검수와 controlled scenario는 약 3 m 높이의 고정형 실내 CCTV가 복도·출입구·공용공간을 비스듬히 보는 환경을 기준으로 한다.
 - 작은/먼 knife, person co-occurrence, 손·팔 가림과 복잡한 배경을 우선한다. 제품사진·정면 close-up은 보조 appearance data일 수 있으나 target-domain 성능의 근거가 아니다.
 - 공개 dataset은 source·license·annotation·duplicate/session leakage audit을 통과한 뒤에만 import한다. source별 학습·외부평가·synthetic 보조 역할은 [Dataset Source Strategy](dataset-source-strategy.md)를 따른다.
 
@@ -103,7 +127,7 @@
 
 ### 최종 목표
 
-단일 프레임에서 흉기가 탐지되면 곧바로 경보하는 구조를, 선택된 공간·시간 문맥을 이용해 사건 수준의 위협을 판단하고 엣지 장치에서 경보·기록·측정할 수 있는 구조로 발전시킨다. 10월 31일까지 반복 가능한 실험을 시작할 수 있는 통합 상태를 만들고, 11월에는 비교 실험과 분석, 12월 초에는 최종 데모·보고서·졸업논문으로 연결한다.
+단일 프레임에서 흉기가 탐지되면 곧바로 경보하는 구조를, 선택된 공간·시간 문맥을 이용해 사건 수준의 위협을 판단하고 엣지 장치에서 경보·기록·측정할 수 있는 구조로 발전시킨다. 11월20일까지 모델·설정을 동결하고 11월25~27일 독립 사건 평가, 11월30일 개발·평가 마감, 12월 초 제출물·발표 정리로 연결한다.
 
 ## 2. Problem Definition
 
@@ -111,8 +135,8 @@
 
 - 기존 보존 코드는 single-frame weapon detection과 즉시 GPIO 경보 중심이다.
 - 기존 정량 수치는 재현 조건이 부족하여 현재 기준 성능을 증명하지 못한다.
-- 사건 단위의 정답 정의, 오경보·누락·경보 지연 평가 절차가 없다.
-- 대여·사용할 Jetson Orin Nano의 정확한 SKU, 저장장치, 펌웨어, 카메라, GPIO, 모델 호환성과 지속 운용 상태가 미검증이다.
+- 사건 평가기·annotation 계약은 구현됐지만 실제 독립 촬영의 event/pair 정답과 최종 성능은 아직 없다.
+- Orin SKU/NVMe/native 환경과 P430 pilot은 확인했다. 물리 GPIO·정식 모델/환경 동결·지속 운용/독립 사건 성능은 미검증이다.
 - 상황 문맥을 추가했을 때 실제로 오경보가 줄어드는지는 아직 가설이다.
 
 따라서 이 프로젝트는 단순 모델 교체나 mAP 상승보다, 동일 입력에서 baseline과 context-aware 판단을 비교할 수 있는 시스템·실험 체계를 만드는 데 초점을 둔다.
@@ -124,7 +148,8 @@
 | RQ1 | 경량 공간·시간 event-confirmation 계층이 single-frame alert보다 사건 수준 오경보를 줄이는가? | `DECISION` |
 | RQ2 | 오경보 감소 과정에서 person-associated knife event recall과 경보 지연은 어떻게 변하는가? | `DECISION` |
 | RQ3 | spatial association과 temporal confirmation은 각각 어떤 기여를 하는가? | `DECISION` |
-| EQ1 | Jetson Orin Nano에서 탐지·판단·경보·기록을 네트워크 없이 반복 실행할 수 있는가? | `DECISION` |
+| RQ4 | 독립 Holding 모델 B4가 geometry 기반 B3 대비 사건 recall·오경보·지연에 어떤 차이를 만드는가? | `DECISION` |
+| EQ1 | Jetson Orin Nano에서 외부 인터넷 없이 탐지·판단·경보·기록을 반복 실행할 수 있는가? | `DECISION` |
 | EQ2 | Orin Nano의 자원·열·지연 제약 안에서 재현 가능한 실행 조건은 무엇인가? | `PLANNED` |
 
 구체 가설·임계값·정량 목표는 baseline, development/tuning set, holdout test 설계 후 기록한다.
@@ -139,18 +164,19 @@
 - 사건 단위 평가, 성능·자원 측정, 재현 설정과 증거 기록
 - 안전한 모형 소품 또는 적법하게 사용할 수 있는 비민감 입력을 이용한 통제 시나리오
 
-### Official MVP - `DECISION`
+### 11월 필수 범위 — B0~B4 (`DECISION`)
 
 | 기능 | 목적·가치 | 난이도 / 의존성 | 논문 기여 | 일정 위험 | 상태 |
 |---|---|---|---|---|---|
-| Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | adapter·신규 개발 모델의 PC 영상 통합 `VERIFIED`; 최종 모델·Orin `PLANNED` |
+| Person/Knife detection | 공통 인지 입력과 baseline 제공 | 중 / 모델·Jetson 환경 | 비교 기반 | 구형 stack 호환성 | adapter·신규 개발 모델의 PC 영상 통합 `VERIFIED`; R1 camera/Orin pilot `VERIFIED`; 최종 D* `PROPOSAL` |
 | Single-frame baseline | 기존 방식의 재현 가능한 비교군 | 중 / 탐지·GPIO | 필수 비교군 | 원본 환경 불명확 | B0 replay `IMPLEMENTED`/PC `VERIFIED`; 실기기 비교 `PLANNED` |
 | Person–knife geometry association | nearest person과 확장 bbox로 공간 문맥 제공; 정규화 거리는 진단값 | 중 / bounding box 계약 | context 효과 비교 | 관계 정의 오류 | core `IMPLEMENTED` / PC `VERIFIED` |
 | K-of-N temporal confirmation | 순간 오탐·누락에 대한 시간 문맥 | 중 / 프레임 시간·누락 처리 | context 효과 비교 | 임계값 과적합 | core `IMPLEMENTED` / PC `VERIFIED` |
 | CLEAR/CANDIDATE/CONFIRMED/COOLDOWN | 판단과 action을 분리 | 중 / context 신호 | 설명·재현 가능성 | 상태 조건 복잡화 | core `IMPLEMENTED` / PC `VERIFIED` |
+| Holding HOI / B4 | 공간 규칙과 학습 관계 판단 비교 | 중 / 실제 pair GT | B3 대비 관계 특징 기여 | 라벨·가림·일정 | G/VG·B4 구현/합성 CPU·CUDA `VERIFIED`; 실제 학습·성능 `PLANNED` |
 | GPIO LED/Buzzer | 엣지 대응 데모 | 하 / Jetson GPIO | 공학 통합 | 하드웨어 상태 | `PLANNED` |
-| Event metadata + snapshot | 사건 근거와 오류 분석 | 중 / 저장 정책 | 실험 증거 | 개인정보·용량 | file-input PC `VERIFIED`; camera/정책 `PLANNED` |
-| B0~B3 benchmark/ablation | baseline·spatial·temporal 기여 비교 | 중 / 시나리오·정답 | 핵심 실험 기반 | 뒤늦은 평가 설계 | policy/replay `IMPLEMENTED`; 본 실험 `PLANNED` |
+| Event metadata + snapshot | 사건 근거와 오류 분석 | 중 / 저장 정책 | 실험 증거 | 개인정보·용량 | PC·Orin file/P430 snapshot `VERIFIED`; 보존 정책·실제 사건 평가 `PLANNED` |
+| B0~B4 benchmark/ablation | baseline·spatial·temporal 기여 비교 | 중 / 시나리오·정답 | 핵심 실험 기반 | 뒤늦은 평가 설계 | policy/replay/B4 연결 `IMPLEMENTED`·합성 `VERIFIED`; 본 실험 `PLANNED` |
 | FPS·latency·RAM·temperature 기록 | 엣지 실행 가능성 평가 | 중 / 측정 도구 | 성능·제약 분석 | 측정 방법 차이 | `DECISION` |
 
 세부 operational definition, scenario, ablation과 제외 범위는 `mvp-research-specification.md`를 따른다. model·runtime·threshold·K/N·정량 목표는 baseline 이후 결정한다.
@@ -178,7 +204,7 @@
 
 MVP 범위는 [MVP Research Specification](mvp-research-specification.md)에 확정돼 있다. 기능을 승격하거나 범위를 변경할 때는 아래 조건을 다시 확인한다.
 
-1. 2026-10-31까지 Jetson Orin Nano에서 통합·검증 가능하다.
+1. 2026-11-20 모델·설정 동결과 11월30일 개발·평가 마감을 지킬 수 있다.
 2. 기존 single-frame alert와 구조적 차이가 명확하다.
 3. 최종 데모에서 판단 이유를 설명할 수 있다.
 4. 동일 입력과 정답 기준으로 정량 평가할 수 있다.
@@ -201,11 +227,11 @@ IMPLEMENTED
 + EVIDENCE RECORDED
 ```
 
-10월 31일 개발 동결 판단 항목은 다음과 같다. 기능별 operational definition은 MVP Research Specification을 따른다.
+11월 모델 동결·통합·최종 평가의 완료 판단 항목은 다음과 같다. 기능별 operational definition은 MVP Research Specification을 따른다.
 
 - baseline과 proposed를 같은 버전·입력·설정으로 실행할 수 있다.
 - 카메라→탐지→판단→GPIO/기록 전체 경로가 Orin Nano에서 작동한다.
-- 네트워크 없이 핵심 경로가 유지된다.
+- 외부 인터넷 없이 핵심 경로가 유지된다. RTSP 카메라와 Orin 사이의 로컬 네트워크는 필요하다.
 - 설정, 모델 버전, threshold, 실행 명령이 기록된다.
 - 사건 정답과 지표 산출 절차가 정의된다.
 - 반복 실행 결과와 실패 사례의 증거 위치가 남는다.
@@ -217,13 +243,12 @@ IMPLEMENTED
 ### 비교 구조
 
 ```text
-Baseline: weapon detection → threshold → immediate alarm
-
-Proposed: detection + selected context
-          → threat decision/state machine → alarm
+B0: current-frame knife evidence → shared state machine → alarm
+B1/B2/B3: temporal / geometry / both → shared state machine → alarm
+B4: learned Holding + same temporal policy → shared state machine → alarm
 ```
 
-두 방식은 동일 영상·해상도·모델·threshold·장비 조건에서 비교한다. context 이외의 조건이 달라지면 별도 실험으로 분리한다.
+B0~B4는 동일 영상·해상도·detector·confidence threshold·장비와 공통 FSM에서 비교한다. B0는 모든 positive frame마다 새 경보를 생성한다는 뜻이 아니다. B4 관계 모델·threshold는 별도 기록하며, context 이외의 조건이 달라지면 별도 실험으로 분리한다.
 
 ### 후보 지표
 
@@ -243,16 +268,18 @@ Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP
 
 ## 8. Platform Strategy
 
-- 신규 시스템의 기준은 **Jetson Orin Nano Developer Kit + JetPack 7.2.1 / Jetson Linux 39.2.1**로 고정한다. 재현성을 위해 개발 중 임의로 최신 버전으로 자동 추종하지 않고, 변경 시 별도 결정을 남긴다.
-- JetPack7.2.1 기준 구성은 Ubuntu24.04, kernel6.8, CUDA13.2.2, cuDNN9.20.0, TensorRT10.16.2, VPI4.1.3이다. 2026-10-27 공식 배포 정보를 재확인해 이전 CUDA13.2.1 표기를 정정했다. 이는 기준 배포 구성이고 실제39.2.0 보드/venv와 구분한다.
+- 계획 기준은 **Jetson Orin Nano Developer Kit + JetPack 7.2.1 / Jetson Linux 39.2.1**이며 실제 검증 보드는 **L4T 39.2.0 native**다. 이 차이와 실행 환경을 보존하고 정식 동결은 별도로 결정한다. 계획에 맞추려고 자동 업그레이드하지 않는다.
+- 아래는 계획 플랫폼의 배포 구성 기록이다. 실제 native pilot과 구분한다. JetPack7.2.1 기준 구성은 Ubuntu24.04, kernel6.8, CUDA13.2.2, cuDNN9.20.0, TensorRT10.16.2, VPI4.1.3이다. 2026-10-27 공식 배포 정보를 재확인해 이전 CUDA13.2.1 표기를 정정했다. 이는 기준 배포 구성이고 실제39.2.0 보드/venv와 구분한다.
 - detector용 PyTorch/Ultralytics와 NVIDIA container image는 JetPack 7.2.1 및 실제 보드에서 smoke test한 뒤 고정한다. NVIDIA 문서의 예시 container tag를 프로젝트 의존성으로 그대로 채택하지 않는다.
 - 공통 domain·spatial·temporal·state-machine·ablation 로직은 Python 3.10~3.12에서 동작하는 platform-neutral package로 만들고, camera·detector·GPIO·resource monitor를 adapter로 분리한다.
-- detector runtime은 JetPack 7.2.1 실제 보드에서 native PyTorch·Ultralytics smoke를 먼저 수행하고, container는 재현성과 호스트 OS 분리를 위한 대안으로 비교한다. 순수 core와 PC replay test는 두 runtime 없이도 실행 가능해야 한다.
+- detector runtime은 실제 L4T 39.2.0의 native PyTorch·Ultralytics 파일·P430 경로를 검증했다. 정식 runtime 동결과 container 채택은 별도 결정이다. 순수 core와 PC replay test는 ML runtime 없이도 실행 가능해야 한다.
 - 기존 Jetson Nano 4GB와 구형 JetPack 환경은 legacy 보존·선택적 cross-device 비교 대상이다. 신규 코드를 Python 3.6 또는 JetPack 4 제약에 맞추지 않는다.
-- B0~B3는 동일 Orin 장비, 동일 detector, 동일 입력과 설정에서 비교한다. Nano 대 Orin 비교는 context ablation과 분리된 하드웨어 실험으로만 수행한다.
-- PC/recorded-detection 테스트와 Orin 실기기 검증을 별도 증거로 기록한다. 실제 Orin 측정 전에는 FPS 목표나 TensorRT 필요성을 확정하지 않는다.
+- B0~B4는 동일 Orin 장비·detector·입력과 공통 설정에서 비교하며 B4 관계 모델·threshold만 별도 기록한다. Nano 대 Orin 비교는 context ablation과 분리된 하드웨어 실험으로만 수행한다.
+- PC/recorded-detection 테스트와 Orin 실기기 검증을 별도 증거로 기록한다. 최종 모델·입력 조건의 Orin 측정 전에는 정식 FPS 목표나 TensorRT 필요성을 확정하지 않는다.
 
-## 9. Timeline
+## 9. Timeline — 11월 일정은 위 승인 계획을 우선
+
+아래 9~10월 표는 초기 계획 이력이다. 날짜가 지났다는 이유로 완료를 뜻하지 않는다.
 
 | 기간 | 목표 | 종료 증거 |
 |---|---|---|
@@ -260,11 +287,11 @@ Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP
 | 9월 후반 | legacy 128장 사람 검수, 공개 source audit, controlled scenario·split 세부 설계 | 검수 기록·source gate·annotation 규칙 |
 | 10월 전반 | 승인된 데이터의 CUDA baseline 학습, Orin 입고 시 runtime·camera·GPIO smoke | 고정 run evidence·장비 inventory·통합 이슈 |
 | 10월 후반 | Orin 통합, GPIO, benchmark harness, controlled dataset 준비 | 반복 실행과 실기기 증거 |
-| 2026-10-31 | practical development freeze / 실험 착수 가능 상태 | DoD 점검표, 고정 commit·config |
+| 2026-10-31 | 초기 practical freeze 목표 — `SUPERSEDED` | DoD 점검표, 고정 commit·config |
 | 11월 | Orin benchmark·ablation·오류 분석, 가능 시 Nano/Orin 별도 비교, 논문·보고서 | 원시 결과, 요약표·그래프, 해석 |
 | 12월 초 | 최종 데모·영상·최종보고서·졸업논문 정리 | 제출본과 재현 절차 |
 
-11월의 새 기능은 실험을 막는 결함 수정 또는 명시적으로 승인된 작은 확장만 허용한다. 핵심 알고리즘 변경 시 실험 버전과 결과를 분리한다.
+11월에는 11/05 승인된 YOLO 데이터 개선·독립 HOI/B4 범위를 수행하며 추가 확장은 실험을 막는 결함 수정이나 별도 승인 범위로 제한한다. 핵심 알고리즘 변경 시 실험 버전과 결과를 분리한다.
 
 ## 10. Risks and Mitigation
 
@@ -280,7 +307,7 @@ Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP
 | 오탐·미탐 trade-off | 안전성과 성능 해석 오류 | event recall·false alarm·latency 동시 보고 |
 | 위험한 촬영 | 인적·윤리 위험 | 실제 흉기 금지, 안전한 모형·통제 장소·동의 절차 사용 |
 | Orin 사용 일정 지연 | 실기기 통합 지연 | PC core·recorded replay·mock adapter를 먼저 완성하고 hardware adapter를 후속 연결 |
-| 일정 초과 | 실험·논문 시간 부족 | 10월 31일 동결, stretch goal 승격 조건 적용 |
+| 일정 초과 | 실험·논문 시간 부족 | 11월20일 모델 동결/11월30일 마감, 선택 실험 수 축소 |
 | 문서 부채 | 결과 재현·보고서 작성 실패 | 개발 로그와 검증 증거를 작업 완료 조건에 포함 |
 
 ## 11. Documentation and Evidence Strategy
@@ -316,6 +343,8 @@ Positive P1~P4와 negative/hard-negative N1~N5의 확정된 시나리오는 [MVP
 주간보고서는 매주 금요일 제출 요구에 맞춰 최신 주차가 앞에 오도록 누적하되, 상세 기술 근거는 개발 로그와 검증 문서를 링크한다. 원본 영상·사진·대용량 결과·개인정보는 Git에 넣지 않고 통제된 로컬 저장 위치와 식별자만 기록한다.
 
 ## 12. Current Work Gate
+
+현재: M2 단일 recipe 기술 준비·실제 촬영/bbox/Holding GT·T1/HOI·GPIO/독립 평가가 남는다. RAW4종과 추가 GPU 환경은 완료됐다. 아래 9~10월 순서는 역사 기록이며 다시 수행할 대기 목록이 아니다.
 
 2026-10-26 갱신: DEV-SOHAS 예비 학습3개와 오류 분석, 새 best.pt + COCO person의 PC13 CUDA 영상/동일 JSONL B0~B3/metadata/snapshot/mock alarm 통합을 검증했다. 검수 사이트는 추가150장 배포 완료이며 학습 승인은 별도다. 다음은 source gate를 통과한 실사 보강과 Orin 접속·실제 영상/사건 정답·카메라/GPIO 통합이다. [PC 통합 증거](../reports/runtime/development-best-video-2026-10-26/report.md)는 train 이미지 조합 smoke이며 실영상 성능·최종 detector·실기기 DoD 완료를 뜻하지 않는다. 아래09-26 항목은 원래의 gate 순서로 보존한다.
 

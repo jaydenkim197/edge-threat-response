@@ -1,5 +1,15 @@
 # CUDA / Colab Training Handoff
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 사용 경로 — 2026-11-06
+
+PC13은 기준 데이터 저장소와 기존 RAW 학습 노드다. PC11/12/14도 독립 clone·venv에서 CUDA FP32·AMP, 각 32개 테스트와 checkpoint 재로딩 검증을 마쳤다([PC11·12](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md), [PC14](../reports/training/pc14-cuda-readiness-2026-11-06/report.md)). 추가 노드는 source `cb5cb700`에 고정했다. PC13의 기존 학습 checkout과 평가 worktree도 각 run 기록을 보존하며 일괄 갱신하지 않는다.
+
+기존 RAW 4종은 [학습·비교 완료](../reports/evaluation/raw-detector-selection-2026-11-06/report.md) 상태다. 다음 실행에는 새 M2/T1 manifest, recipe·config 지원, 해시를 검증한 데이터 전송과 GPU preflight가 필요하다. 아래 legacy·정식 reviewed R1/H1의 승인 조건과 11/05 허용 RAW 계약은 구분한다.
+
+GPU당 동시 전체 학습 1개를 기본으로 한다. 독립 노드 실행과 분산 학습은 다르며, Orin native 환경과 Windows cu124 venv를 혼용하지 않는다.
+<!-- docs-refresh-20261106:end -->
+
 <!-- pc11-pc12-cuda-ready-20261106:begin -->
 ## 2026-11-06 — PC11·PC12도 동일 학습 환경 VERIFIED
 

@@ -1,5 +1,20 @@
 # Model and Dataset Readiness Plan
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 데이터·모델 준비 기준 — 2026-11-06
+
+- RAW R1/H1/M1-n/M1-s는 각각 50 epoch·35,600 update를 완료했다. M1-n은 후속 주력 후보이며 최종 D*는 미동결이다([비교 결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)).
+- RAW 자료는 총 14,224장으로 train 11,378 / val 1,423 / test 1,423이다. Catargiu 검수 표본 793장은 학습 원본 전체 수와 다르다. 검수 정상 1,805장은 이미 M1 train에 있고, 문제·불확실 판정 88장은 후속 정제 대상이다([대조 결과](../reports/datasets/reviewed-next-training-2026-11-06/report.md)).
+- 별도 Q1 학습을 후순위로 두고 정제를 M2 n/640에 반영하며, 촬영 자료 확보 시 T1·HOI를 우선하는 안은 `PROPOSAL`이다. 새 M2/T1 데이터 구성과 학습은 미실행이다.
+- 이미 열어본 6개 개발셋과 확대 US Mock 83장 전체의 source·유사 그룹은 새 train에서 보호한다. RAW test는 최종 독립 사건 평가를 대신하지 않는다.
+- PC13 및 PC11/12/14의 CUDA 환경과 P430/Orin의 R1 연동은 확인했다. 새 M1·T1 모델의 Orin 비용, 실제 HOI, GPIO와 독립 평가는 남아 있다.
+- 정식 reviewed, DEV, RAW는 입력과 승인 범위가 다르다. RAW의 사람 검수 전 사용 허용도 기술 검사·사용 조건·분할 보호를 생략한다는 뜻은 아니다. 초기 D2/D3의 검수 대기 조건을 모든 RAW 실행에 다시 적용하지 않는다.
+- 신규 제한 자료는 제공 조건과 비공개 접근 환경을 준비한 뒤 반입한다([원칙](research-overview-en.md)).
+<!-- docs-refresh-20261106:end -->
+
+<details>
+<summary>날짜별 모델·데이터 진행 기록 (현재 작업은 위 요약 우선)</summary>
+
 <!-- cctv-candidate-check-20261106:begin -->
 ## 2026-11-06 — Q1·M2·T1 권장 순서 구체화
 
@@ -56,6 +71,8 @@ YOLO default predict와 validator의 multi-label 차이를 확인해 default/v2�
 직접 사용자 요청으로 DEV-SOHAS reserved test23장을 개발 모델 비교에 열었다. **이23장은 더 이상 unseen final test가 아니며**, 이후 정식 평가는 별도 독립 holdout이 필요하다. 이전 test 보관 방침은 이 범위에서 `SUPERSEDED`다. 원본 split/manifest/승인 파일은 그대로 보존하고 평가 truth에 개발 비교/원 split을 명시했다. source 전체 채택·좌표/실제 session·최종 평가 승인은 추가하지 않았다.
 
 PC13 CUDA에서 기존 custom n640 / COCO n640 / COCO x640 / COCO x1280을 동일 val23·test23, square/FP32/batch1로 재평가했다. test knife AP50은 각각34.43/6.33/19.44/24.98%, 고정 conf.25·IoU.5 recall35/0/5/5%다. val에서는 x1280 AP50이 더 높아 표본 일반화는 금한다. 기성 x로 즉시 교체할 근거가 없고 custom도 충분하지 않다. 최종 D*는 미확정이며 보강/학습 gate를 유지한다. [조건·수치·hash·한계](../reports/evaluation/ready-yolo-comparison-2026-11-04/report.md).
+
+</details>
 
 ## 1. Confirmed legacy inventory
 
@@ -136,7 +153,7 @@ PC13 CUDA에서 기존 custom n640 / COCO n640 / COCO x640 / COCO x1280을 동�
 
 구현은 `src/edge_threat_response/dataset/`에 있으며 CLI는 `etr-dataset audit`과 `etr-dataset plan-split`이다. 13개 표준 라이브러리 단위·통합 테스트와 전체 legacy read-only audit를 통과했다. 실제 결과는 `reports/datasets/legacy-2026-09-14/`에 보존한다. 이는 label 구조 검증이며 image 내용·시각적 annotation 품질·license 검증이 아니다.
 
-### D2 — exporter/review tooling `IMPLEMENTED`, human approval/import `PLANNED`
+### D2 — exporter/review/import `IMPLEMENTED`, 정식 human 승인과 RAW 예비 허용 구분
 
 - legacy image decode/손상 검사와 deterministic visual-review pack 생성
 - source·객체 크기·annotation 형식별 표본, review CSV와 contact sheet 생성
@@ -168,7 +185,7 @@ COCO/Open Images 전용 downloader를 일반화해 미리 만들지 않는다. �
 
 실행은 repository root의 활성 Python 환경에서 위 README 명령을 사용한다. 새 출력 디렉터리가 필요하며 exit `0`은 구조 audit 실행 성공, `1`은 기록된 구조 오류, `2`는 입력/실행 오류다. exit `0`도 채택·권리·negative 진위·좌표 검증을 뜻하지 않는다. [Cloud dry-run 근거](../reports/datasets/sohas-dasci-metadata-2026-10-02/report.md#cloud-voc-dry-run--2026-10-02)와 검수 gate를 함께 확인한다.
 
-### D3 — training runner/CPU smoke/CUDA handoff `IMPLEMENTED`, CUDA execution `PLANNED`
+### D3 — training runner·CUDA execution `VERIFIED`, 새 recipe는 별도 준비
 
 - YOLO26n primary와 YOLO11n fallback을 development proposal로 둔 config-driven train/evaluate/infer command
 - run ID, Git commit, dataset manifest/version, split, seed, model/checkpoint, config, hardware와 command 기록

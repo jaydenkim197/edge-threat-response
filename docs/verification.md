@@ -1,5 +1,20 @@
 # Verification Matrix
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 검증 요약 — 2026-11-06
+
+| 대상 | 완료 증거 | 남은 검증 |
+|---|---|---|
+| RAW 4종·공통 개발 평가 | 각 50 epoch·35,600 update, 8개 모델 조건×6개 개발셋, 960 추론 비교 ([보고서](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)) | M2/T1·D*·독립 최종 성능 |
+| P430/Orin R1/B3 | main/sub 각각 300 valid frame, metadata·snapshot·mock 경보·표시 ([보고서](../reports/runtime/p430-yolo26n-2026-11-05/report.md)) | 새 모델의 실물 비용·물리 GPIO·독립 사건 성능 |
+| HOI/B4 | 합성 CPU·Orin CUDA, sidecar·replay·평가기 연결 ([보고서](../reports/runtime/hoi-b4-integration-2026-11-05/report.md)) | 실제 pair 정답·학습·Holding 및 사건 효과 |
+| 추가 GPU 노드 | PC11/12/14 각 32개 테스트, FP32·AMP·재로딩·43개 버전 대조 ([PC11·12](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md), [PC14](../reports/training/pc14-cuda-readiness-2026-11-06/report.md)) | 실제 전체 자료 학습·분산 학습·장시간 실행 |
+| 검수 집계 | 20:35 KST 읽기 전용 조회: 준비 3,625 / 판정 2,673 / 정상 2,527 / 보류 146 | 정상 판정은 source 전체 채택·Holding 정답·학습 승인을 뜻하지 않음 |
+| 서버 주소 | 11/06 hostname 복구 기록: `pc13.tail37c267.ts.net` | 실제 휴대폰 홈 화면 실행·재부팅 복구 등 기존 미검증 항목 |
+
+아래는 실행 당시의 날짜별 기록이다. 과거 카메라 미연결·첫 학습 대기·실패 상태를 현재 상태로 읽지 않는다. 이번 갱신은 새 제품 테스트·학습·하드웨어 검증이 아닌 문서 점검이다. [점검 목록](../reports/documentation/current-docs-audit-2026-11-06/report.md).
+<!-- docs-refresh-20261106:end -->
+
 <!-- pc11-pc12-cuda-ready-20261106:begin -->
 2026-11-06 PC11/12 후속: 각기존Python3.12.4·독립clone/venv·source cb5cb700·PC14reference43패키지버전전부일치/추가패키지없음확인(프로젝트제외). 두장치의기존driver610.88유지, 각training15+RAW10+HOI7=32tests·pip check·compile/CLI·CUDA forward/backward·실제YOLO FP32/AMP합성8train/4val/1epoch·best/last생성/재추론·합성G/VG CPU학습후CUDA추론/B4연결VERIFIED. 새SSH Git provenance/repo clean통과. PC11의첫2회pip다운로드시도는중단보존/공식wheel2,532,302,369bytes·SHA3313061c…검증설치로복구했다. 실사정확도·실제HOI CUDA학습·full corpus·DDP·Orin성능은검증하지않았다. [각PC JSON·테스트로그·버전대조](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md).
 <!-- pc11-pc12-cuda-ready-20261106:end -->

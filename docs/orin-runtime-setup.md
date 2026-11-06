@@ -1,5 +1,13 @@
 # Orin 원격 접속과 native runtime — 2026-10-27
 
+<!-- docs-refresh-20261106:begin -->
+## 최신 적용 범위 — 2026-11-06
+
+파일 GPU smoke와 THP 후속 검증에 더해, 11/05 P430 RTSP main/sub → R1/B3를 각각 300 frame 실행하고 snapshot·mock 경보·모니터 표시를 확인했다([증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md), [카메라 안내](p430-camera-setup.md)).
+
+아래 10/27 환경과 절차는 고정된 시범 환경의 재현 기록이다. 새 M1 배포, 물리 GPIO, 정식 FPS·최종 사건 성능, TensorRT·재부팅 복구 완료를 뜻하지 않는다. 실행 전 현재 원격 접속과 DISPLAY 세션을 재확인하며 설치·OS 업데이트 명령을 무조건 반복하지 않는다.
+<!-- docs-refresh-20261106:end -->
+
 현재 보드의 native GPU·파일 영상 경로를 검증했다. **실제 환경은 L4T39.2.0이며 프로젝트 기준39.2.1과 다르다.** 이 절차는 현재 장비의 pilot 재현용이고 정식 플랫폼 변경 결정이 아니다. OS·firmware·드라이버·전력 모드를 자동 변경하지 않는다.
 
 ## 접속·위치
@@ -8,7 +16,7 @@
 - Orin 작업공간: `$HOME/edge-threat-response`, 격리 Python: `.venv-orin/bin/python`.
 - 학습 원본과 대용량 검수 자료는 PC13에 보관한다. Orin에는 실행 코드·가상환경·개발 weight2개·약4.6MB 시험 영상만 옮겼다. legacy submodule 전체와 학습 dataset은 clone하지 않았다.
 
-## 확인된 실제 환경
+## 확인된 실제 환경 — 2026-10-27 inventory
 
 | 항목 | 관측 |
 |---|---|
@@ -106,4 +114,4 @@ smaps의 Rss/Pss_Anon/AnonHugePages는 warmup 이후와 종료 시에만 기록�
 
 `file_processing_fps`는 warmup 이후 반복 파일의 decode·추론·판단·저장·로그를 포함한 처리율이다. 영상의 논리 timestamp와 실제 경과 시간은 다르며 camera FPS나 사건 경보 지연으로 사용하지 않는다. scalar latency 목록과 mock alarm 이력은 실행 길이에 따라 여전히 증가하므로 무기한 운용/24시간 안정성 증거가 아니다. [이번 실기기 결과](../reports/runtime/orin-readiness-2026-10-27/report.md).
 
-다음은 플랫폼 patch 기준의 유지/변경 결정, 카메라·GPIO 확보/통합, 실제 촬영과 사건 정답, 정식 benchmark다. 원격 재부팅 후 접속 유지·장시간 운용·TensorRT는 아직 검증하지 않았다.
+다음은정식patch/runtime동결,새M1/T1배포·물리GPIO,실제촬영/사건정답·자원/독립평가다. P430카메라연결은이미pilot을통과했다. 원격 재부팅 후 접속 유지·장시간 운용·TensorRT는 아직 검증하지 않았다.

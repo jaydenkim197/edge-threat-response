@@ -1,5 +1,13 @@
 # Documentation Governance
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 문서 운영 보완 — 2026-11-06
+
+목적·일정·현재 단계는 [Master Plan](project-plan.md), 실제 검증 여부는 [Verification](verification.md)의 실행 증거를 확인한다. 날짜별 진행·실패 기록과 과거 보고서는 보존하고 현재 요약과 구분한다. 초기 10/31·B0~B3 범위보다 최신 11월 B4 승인 범위를 우선한다.
+
+[영문 연구 소개](research-overview-en.md)는 외부 연구자용 요약이며 새로운 성능·사용 권한·보안 검증의 근거가 아니다. README·영문·핵심 한국어 문서의 상태를 같은 증거로 맞춘다. 검수 집계에는 조회 시각을 표시하고 표본·원본·실제 학습량을 구분한다. 미완료 항목을 일괄 `VERIFIED`로 바꾸거나 전체 문서의 날짜를 일괄 치환하지 않는다. [이번 점검 목록](../reports/documentation/current-docs-audit-2026-11-06/report.md).
+<!-- docs-refresh-20261106:end -->
+
 ## 목적
 
 이 문서는 현재 무엇이 사실인지, 어떤 선택이 왜 이루어졌는지, 무엇이 아직 검증되지 않았는지를 빠르게 복원하기 위한 운영 규칙이다.
@@ -34,7 +42,7 @@
 | `open-decisions.md` | 미확정 선택과 결정 기준 | 선택지가 생기거나 확정될 때 |
 | `architecture.md` | 현재 시스템 경계와 계약 | 구조·통신·저장 경계 변경 시 |
 | `verification.md` | 요구사항별 검증 계획과 증거 | 테스트 계획·결과 변경 시 |
-| `pre-orin-work-plan.md` | 실기기 전 남은 작업과 gate | 장비·dataset·학습 의존성 변경 시 |
+| `pre-orin-work-plan.md` | 현재 Orin 통합·학습·평가 작업표와 과거 준비 기록 | 장비·dataset·학습 의존성 변경 시 |
 | `training-cuda-handoff.md` | 승인된 데이터의 CUDA 학습·반입 절차 | training runner·GPU workflow 변경 시 |
 
 ## Source-of-truth hierarchy

@@ -1,5 +1,26 @@
 # PC 준비와 Orin 통합 작업 계획
 
+## 현재 남은 작업 — 2026-11-06
+
+이 파일은 **현재 Orin 통합·평가 작업표**로 사용한다. 완료된 core·RAW 학습·카메라 시범 연동은 아래 과거 준비 기록과 구분한다.
+
+| 순서 | 다음 작업 | 완료 기준 |
+|---|---|---|
+| 1 | 정제를 반영한 M2 n/640 준비 `PROPOSAL` | 문제·불확실 88장 제외, 새 source 기술 검사, US Mock 83장을 포함한 보호 그룹 확인, manifest·config·hash·실행 ID 지원과 CUDA preflight. 별도 Q1 전체 학습은 후순위 |
+| 병행 | P430·스마트폰 촬영과 bbox·Holding·사건 정답 | 동의·보존 범위, 설치 조건, 원본 영상·시간축, 동시 촬영 그룹, train·tuning·final 분리 |
+| 2 | T1·HOI 실제 학습 | 촬영 자료 확보 시 우선 진행. 실제 pair 정답·불확실 사례 처리·weight·metrics·hash 보존 |
+| 3 | D*·B4 Orin 통합과 물리 GPIO | 모델·입력 조건 동결, snapshot·실물 경보, 지연·drop·RAM·온도, 장애·재시작 검증 |
+| 4 | 독립 B0~B4 최종 평가 | 같은 detector·영상·JSONL·공통 FSM, 독립 final 정답, 사건 precision/recall·시간당 오경보·지연·오류 분석 |
+
+완료 기반은 [RAW 4종 학습·PC 비교](../reports/evaluation/raw-detector-selection-2026-11-06/report.md), [P430/Orin R1/B3 시범 연동](../reports/runtime/p430-yolo26n-2026-11-05/report.md), [합성 HOI/B4 연결](../reports/runtime/hoi-b4-integration-2026-11-05/report.md), [PC11/12](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md)·[PC14 CUDA 환경](../reports/training/pc14-cuda-readiness-2026-11-06/report.md)이다.
+
+PC13은 기준 source·검수 DB 저장소다. 각 GPU에는 실험별 허용 데이터와 모델을 해시 확인 후 전송하고 GPU당 1개 run을 기본으로 한다. M2/T1은 기존 RAW 4개 실행 ID에 포함되지 않으므로 지원·설정을 따로 준비해야 한다.
+
+일정은 11/20 모델 동결, 11/25~27 독립 평가, 11/30 마감이다. 팀원의 L0 재현은 병렬 트랙이다. 신규 제한 자료는 제공 조건과 비공개 접근 환경을 준비한 뒤 반입한다.
+
+<details>
+<summary>2026-10-27까지의 초기 준비 계획 (당시 상태·근거 보존)</summary>
+
 기준일: 2026-10-27
 
 상태: PC core·replay·dataset tooling·video adapter·CUDA handoff와 새 개발 best.pt PC13 영상 통합 `IMPLEMENTED`/PC `VERIFIED`; source 전체 정식 학습·실영상 사건 평가·Orin 통합 `PLANNED`
@@ -44,3 +65,5 @@ L0와 신규 R 트랙은 병렬이며 L0 검수 완료가 R-1/R-2의 선행 gate
 - TensorRT/FP16은 PyTorch 또는 선택 runtime의 기준 성능을 얻은 뒤 필요성과 효과를 판단하는 Stretch다.
 - 동일 detector·입력·설정의 B0~B3 사건 비교에는 시간 순서와 수동 event start/end 정답이 필요하다.
 - 검수 후보 전체의 결과를 기다리느라 승인된 R1/H1 첫 학습을 지연하지 않는다. 사용 가능한 실사 보강분을 합친 M1은 후속 제안이며 source별 중복/권리/분할 gate, common tuning 평가와 budget을 유지한다. Synthetic과 독립 평가 source를 전량 train으로 합치지 않는다.
+
+</details>

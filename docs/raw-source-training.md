@@ -1,14 +1,22 @@
 # 미검수 원본 기반 예비 학습
 
+<!-- docs-refresh-20261106:begin -->
+## 현재 RAW 실행 상태 — 2026-11-06
+
+기존 RAW 4종 학습, AP·predict 평가 복구와 8개 모델 조건의 공통 개발 비교를 완료했다([결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)). 640으로 학습한 M1-n/s의 960 추론 비교도 완료했으나 960 재학습은 아니다.
+
+새 M2/T1 실행, 최종 D* 선정과 M1의 Orin 배포는 남아 있다. 아래 queue·복구 절차는 고정 run 재현용이다. `RAW_RECIPES`는 기존 4개 ID만 허용하므로 M2/T1의 실행 지원·설정을 별도로 준비해야 한다. 기존 입력·출력·checkout을 덮어쓰지 않는다.
+<!-- docs-refresh-20261106:end -->
+
 ## 2026-11-06 완료·평가 복구
 
 복구 완료: `runs/raw-followup-20261106-recovery-v1`에서 AP와predict 모두 `passed`다. 기존실패state/AP프로토콜·결과162개파일hash를보존하고미실행predict만계산했다. 별도 `runs/raw-resolution-20261106-v1`에서640-trained M1-n/s의960추론을확인했다. [비교표·권장안·재현자료](../reports/evaluation/raw-detector-selection-2026-11-06/report.md). 다음은아직권장안이며재학습·D*선정·Orin모델교체는하지않았다.
 
 PC13의 기존 `runs/watch-raw-training.ps1`은 복구된 평가 상태를 표시하도록 갱신했다. 이전 상태 파일은 그대로 보존하며, 현재 모니터는 학습4/4·평가passed를 표시한다.
 
-PC13 queue의 네 모델이 모두50epoch/`passed`다. 후속AP track의8개 모델×6개 개발셋 예측은 저장됐으나 집계 보고의 선택 메타데이터 `policy` 누락으로 최종 출력에서 중단됐다. 원본 모델/예측/실패state는 보존한다. 집계기는 누락된 선택 메타데이터를 명시적으로null/플래그로 남기고, truth/model/protocol/prediction hash와 fixed metric 재계산 검사는 계속 강제한다. 이후 생성하는 AP/predict 프로토콜에는 해당 track의 후보 convention을 포함한policy를 넣는다.
+**복구 전 진단(현재는 해결됨):** PC13 queue의 네 모델이 모두50 epoch/`passed`인 시점에 후속AP track의8개 모델×6개 개발셋 예측은 저장됐으나 집계 보고의 선택 메타데이터 `policy` 누락으로 최종 출력에서 중단됐다. 원본 모델/예측/실패state는 보존한다. 집계기는 누락된 선택 메타데이터를 명시적으로null/플래그로 남기고, truth/model/protocol/prediction hash와 fixed metric 재계산 검사는 계속 강제한다. 이후 생성하는 AP/predict 프로토콜에는 해당 track의 후보 convention을 포함한policy를 넣는다.
 
-복구는 새 출력 폴더에서 기존AP 예측을 동일 프로토콜 bytes로 재검증·집계하고, 미실행predict track만 GPU 단독 claim으로 실행한다. 재학습이나 이전 AP 예측 덮어쓰기를 하지 않는다. 복구 완료/모델 방향은 실제 공통 결과를 확인한 후 별도 기록한다.
+복구는 새 출력 폴더에서 기존AP 예측을 동일 프로토콜 bytes로 재검증·집계하고, 미실행predict track만 GPU 단독 claim으로 실행한다. 재학습이나 이전 AP 예측 덮어쓰기를 하지 않는다. 이후 복구와 공통 평가 완료를 위 링크에 기록했다. 아래 복구 명령을 현재 미완료 작업으로 다시 실행하지 않는다.
 
 2026-11-05 사용자 결정: 후보 자료의 사람 검수 완료를 기다리지 않고 원본 annotation으로 예비 학습한다. 품질 검수 합격이나 최종 연구 평가 승인을 뜻하지 않는다. 기존 검수 사이트/DB/판정/배정은 이 경로에서 읽거나 수정하지 않는다.
 

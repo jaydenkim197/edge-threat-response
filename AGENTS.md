@@ -13,14 +13,14 @@
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.
 - 프로젝트 방향·일정·평가 가능성과 충돌하는 요청은 충돌을 먼저 명시하고 범위를 조정한다.
 - `PROPOSAL`을 팀 결정 없이 `DECISION`으로 바꾸지 않는다.
-- 신규 시스템은 Jetson Orin Nano Developer Kit와 고정된 JetPack 7.2.1 환경을 기준으로 설계한다. 실제 보드에서 확인하지 않은 드라이버·모델 런타임·GPIO·카메라 동작은 `VERIFIED`로 표기하지 않는다.
+- 신규 시스템의 계획 기준은 Jetson Orin Nano Developer Kit와 JetPack 7.2.1/L4T 39.2.1이다. 실제 검증 보드는 L4T 39.2.0 native이며 이 차이를 기록하고 정식 환경은 별도로 동결한다. 계획에 맞추려고 OS·런타임을 자동 업그레이드하지 않는다. 실제 보드에서 확인하지 않은 드라이버·모델 런타임·GPIO·카메라 동작은 `VERIFIED`로 표기하지 않는다.
 - 기존 Jetson Nano 4GB와 JetPack 4 계열 코드는 legacy baseline으로 격리한다. 신규 공통 로직을 Python 3.6이나 구형 CUDA 제약에 맞추지 않는다.
 - legacy dataset의 raw class ID는 신규 canonical ID로 추정하지 않는다. source-specific class map을 명시하고, 동일 source/session group을 train과 test에 나누지 않는다.
-- 논문 평가 방법이 없거나 10월 31일 동결을 위협하는 기능을 핵심 범위에 임의로 추가하지 않는다.
+- 논문 평가 방법이 없거나 11월20일 모델·설정 동결/11월30일 개발·평가 마감을 위협하는 기능을 필수 범위에 임의로 추가하지 않는다. 10월31일은 대체된 과거 목표다.
 - 기존 MIDAS 결과를 신규 시스템의 검증 결과처럼 사용하지 않는다.
-- MVP는 knife only, geometry-only association, K-of-N, 4-state, metadata+snapshot, B0~B3 ablation을 기준으로 한다. 이 범위를 넓히는 기능은 stretch로 취급한다.
+- B0~B3 기준선은 knife only, geometry-only association, K-of-N, 4-state, metadata+snapshot이다. 2026-11-05 승인된 독립 Holding HOI/B4는 11월 병렬 범위이며 stretch로 되돌리지 않는다. Tracking·movement·추가 class 등은 별도 조건부다.
 - Jetson 의존 코드(camera, GPIO, TensorRT, tegrastats)는 PC에서 검증 가능한 순수 로직과 인터페이스로 분리한다.
-- B0~B3 ablation은 동일 Orin 장비·detector·입력·설정에서 수행한다. Nano와 Orin의 장비 비교는 별도 실험으로 취급한다.
+- 최종 B0~B4 비교는 동일 Orin 장비·frozen detector·입력·공통 K/N·FSM에서 수행하고 B4 관계 점수만 별도로 연결한다. Nano와 Orin의 장비 비교는 별도 실험으로 취급한다.
 - 측정하지 않은 정확도, FPS, 지연시간, 전력, 온도, 안정성 수치를 만들거나 추정값처럼 기록하지 않는다.
 - 실기기 검증과 개발 PC/영상 파일 검증을 구분한다.
 - 비밀값, API 키, 개인식별정보, 원본 민감 영상·음성은 코드·문서·커밋에 넣지 않는다.

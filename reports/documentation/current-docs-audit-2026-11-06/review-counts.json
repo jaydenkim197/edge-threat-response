@@ -1,0 +1,67 @@
+{
+  "captured_at_utc": "2026-11-06T11:35:57.254011+00:00",
+  "captured_at_kst": "2026-11-06T20:35:57.254011+09:00",
+  "datasets": {
+    "sohas": {
+      "prepared": 1150,
+      "reviewed": 1149,
+      "ok": 1114,
+      "held": 35
+    },
+    "dasci-unique": {
+      "prepared": 93,
+      "reviewed": 93,
+      "ok": 93,
+      "held": 0
+    },
+    "simuletic": {
+      "prepared": 114,
+      "reviewed": 113,
+      "ok": 106,
+      "held": 7
+    },
+    "us-mock": {
+      "prepared": 100,
+      "reviewed": 99,
+      "ok": 83,
+      "held": 16
+    },
+    "dangerous-items": {
+      "prepared": 400,
+      "reviewed": 150,
+      "ok": 124,
+      "held": 26
+    },
+    "open-images": {
+      "prepared": 610,
+      "reviewed": 30,
+      "ok": 29,
+      "held": 1
+    },
+    "legacy": {
+      "prepared": 128,
+      "reviewed": 128,
+      "ok": 123,
+      "held": 5
+    },
+    "catargiu": {
+      "prepared": 793,
+      "reviewed": 790,
+      "ok": 734,
+      "held": 56
+    },
+    "simuletic-atm": {
+      "prepared": 237,
+      "reviewed": 121,
+      "ok": 121,
+      "held": 0
+    }
+  },
+  "totals": {
+    "prepared": 3625,
+    "reviewed": 2673,
+    "ok": 2527,
+    "held": 146
+  },
+  "production_db_modified": false
+}

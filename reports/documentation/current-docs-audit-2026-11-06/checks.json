@@ -1,0 +1,19 @@
+{
+  "checked_at_utc": "2026-11-06T12:01:26.853192+00:00",
+  "base_commit": "b9ffe5ab57ec1433533fa13a12d93716cf47eadb",
+  "scope": "Documentation candidates only; no product tests, training or hardware experiment rerun",
+  "updated_documents": 22,
+  "markdown_files_examined": 64,
+  "relative_links_examined": 449,
+  "heading_links_examined": 24,
+  "tables_examined": 49,
+  "introduced_link_errors": [],
+  "preexisting_link_issues_remaining": [],
+  "resolved_link_issues": [],
+  "markdown_structure_issues": [],
+  "review_aggregate_arithmetic": "PASS",
+  "added_text_secret_pattern_flags": [],
+  "git_diff_check": "PASS",
+  "product_tests_rerun": false,
+  "production_db_modified_by_this_task": false
+}
