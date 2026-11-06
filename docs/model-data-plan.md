@@ -1,5 +1,13 @@
 # Model and Dataset Readiness Plan
 
+<!-- cctv-candidate-check-20261106:begin -->
+## 2026-11-06 — Q1·M2·T1 권장 순서 구체화
+
+Q1별도50epoch보다**88장정제를M2단일n/640 recipe에흡수**하는후속안을권장한다(PROPOSAL). 정제/추가데이터개별인과효과를주장하지않고기존M1대비전체recipe개선으로보고한다. 신규Roboflow CCTV V3/499는각최대50장표본조사후고유한작은knife/혼동음성가치가있을때만추가후보로삼는다. overview수와증강export수·class변환을구분한다. 새샘플/학습실행은아직없다.
+
+Catargiu26,528은4class전체/v11+NoGun v5이며기존v11 knife-positive5,429조사/M1 Catargiu5,424준비/train5,100과크게겹친다. 미사용NoGun조사는가능하지만이름/객체라벨만으로knife음성을확정하지않는다. 새import는확대US Mock83장전체와기존평가그룹을보호한다. 합성/싸움라벨/일반감시영상을knife/Holding정답으로자동변환하지않는다. 공개조사와독립CCTV T1·HOI 촬영/라벨을병행하고자료가준비되면T1을우선한다. [사실·실행경계·한계](../reports/datasets/cctv-candidate-check-2026-11-06/report.md).
+<!-- cctv-candidate-check-20261106:end -->
+
 <!-- reviewed-next-training-20261106:begin -->
 ## 2026-11-06 — 검수 반영 후 다음 recipe 제안
 

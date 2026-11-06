@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- cctv-candidate-check-20261106:begin -->
+## 2026-11-06 — 신규 CCTV 후보 원출처 확인·일정 우선 권장안
+
+- 목적/범위: 사용자전달후보의실제수량/버전/주석역할과기존확보분을대조한다. 완료기준은원출처확인·현재코드/기록근거·새학습범위제안이며다운로드/운영DB/검수판정/기존split/학습queue변경은범위밖이다.
+- 확인: Roboflow CCTV V3 overview2614/11class와exportv1증강4424·grayscale416/class변환을구분했다. CCTV499는v8버전목록을확인했지만v8직접fetch실패로v1설정을옮겨단정하지않았다. Catargiu26528은v11+NoGun v5의4class전체이고기존전체knife조사5429/M1 Catargiu준비5424/train5100과크게겹친다.
+- 역할: Simuletic114/6초영상은합성,NTU Fights는싸움구간GT,VIRAT약8.5h는Ground release2.0 일반활동자료다. knife/Holding/완전음성으로자동변환하지않는다. 실제CCTV비율/새원본중복/라벨은미검증이다.
+- 결정영향: 일정우선권장안을별도Q1학습후순위/88정제M2흡수·M2 n640하나·CCTV확보즉시T1/HOI우선으로구체화했다(PROPOSAL,사용자확정아님). 신규Roboflow각최대50표본조사는후속제안이며M2/T1선행gate가아니다. 새import는기존opened셋과확대US Mock83전체를보호해야한다.
+- 기록/검증: [보고서](../reports/datasets/cctv-candidate-check-2026-11-06/report.md)에공식URL·프로젝트기록·전처리/버전/검사미실행경계를기록했다. 기존importer재사용가능성을확인했으며새코드/의존성/원본반입은없다. 문서링크/사실/수치/diff검증후관련블록만commit/push하고타채팅미커밋은보존한다. 제품테스트/실제샘플검사/학습통과를주장하지않는다. commit은Git이력으로추적한다.
+<!-- cctv-candidate-check-20261106:end -->
+
 <!-- pc11-pc12-cuda-ready-20261106:begin -->
 ## 2026-11-06 — PC11·PC12 격리 CUDA 학습 환경·검증 완료
 

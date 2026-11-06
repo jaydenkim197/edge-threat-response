@@ -1,5 +1,11 @@
 # Master Project Plan
 
+<!-- cctv-candidate-check-20261106:begin -->
+## 2026-11-06 — 일정 우선의 후속 학습 권장안 조정
+
+최신권장안은 **별도Q1 full run후순위 → 88장제외를M2(n/640)1개후보에반영 → 실제CCTV자료확보즉시T1·HOI병행**이다(`PROPOSAL`). 앞선Q1 독립학습우선권장안은현일정에서이권장안으로대체한다. 사용자확정/학습실행을뜻하지않는다. 신규Roboflow CCTV V3/499 후보는각최대50장표본의제한조사를권장하며확보대기를M2/T1선행gate로추가하지않는다. Catargiu칼포함자료는이미전체조사/M1에사용돼26,528장을신규자료로세지않는다. Simuletic은별도합성,NTU Fights/VIRAT은현11월필수학습범위에추가하지않는다. 11/20모델동결·11/30마감은유지한다. [원출처대조·현재확보분·권장범위](../reports/datasets/cctv-candidate-check-2026-11-06/report.md).
+<!-- cctv-candidate-check-20261106:end -->
+
 <!-- reviewed-next-training-20261106:begin -->
 ## 2026-11-06 — 검수 대조·확대 CCTV 진단·현재 마일스톤
 

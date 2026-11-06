@@ -1,5 +1,9 @@
 # Dataset Source Strategy
 
+<!-- cctv-candidate-check-20261106:begin -->
+2026-11-06 원출처재확인: 신규Roboflow CCTV V3(overview2614/exportv1증강4424·grayscale416·class변환)/CCTV499(버전별수량·설정상이)는제한표본조사후보이며최종채택아님. Catargiu26528을새knife데이터로중복계상하지않는다(기존전체v11 knife조사/M1반입). NTU Fights는fight구간GT,VIRAT은일반활동GT여서현재M2/HOI직접학습후순위이고Simuletic114는기존합성역할유지다. 88장정제는M21회에흡수/Q1독립run후순위·Roboflow각최대50장조사안은PROPOSAL이며새원본/검수/학습은실행하지않았다. 새import의보호범위는확대US Mock83장전체를포함한다. 촬영/T1·HOI준비를공개후보대기로늦추지않는다. [공식링크·전처리·현재확보분·한계](../reports/datasets/cctv-candidate-check-2026-11-06/report.md).
+<!-- cctv-candidate-check-20261106:end -->
+
 <!-- reviewed-next-training-20261106:begin -->
 2026-11-06 검수 감사: 준비3,625/완료2,673/정상2,527/보류146이다. 정상1,805장은 이미M1학습에 포함돼 중복 증량하지 않는다. Q1 정제안은 기존train88장 보류 후11,290장, 추가실사39장은 별도M2 후보(최종 전이적 그룹검사 미완료)다. 역할은 US Mock외부평가·OI정상29개발평가·DaSCI보호연결·Legacy L0·synthetic S1을 유지한다. OI별도train 웹표본580/Dangerous추가250은이snapshot에서미검수다. 확대 US Mock83장/31GT에서도 M1-n640 0TP·960 1TP라 목표CCTV train적응을 우선한다. Q1/새recipe는PROPOSAL이며원본/DB/split/학습반입은변경하지않았다. [감사·recipe·마일스톤](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
 <!-- reviewed-next-training-20261106:end -->
