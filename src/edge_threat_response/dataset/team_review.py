@@ -16,6 +16,8 @@ from urllib.parse import urlsplit
 
 from .review_web import BatchReviewStore, ConflictError, ReviewStore, review_verdict
 
+ASSIGNMENT_TIMEOUT_SECONDS = 15 * 60
+
 
 class TeamDatabase:
     def __init__(self, path: Path):
@@ -24,6 +26,30 @@ class TeamDatabase:
         with self.connect() as connection:
             connection.execute("CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, code_hash TEXT NOT NULL, admin INTEGER NOT NULL, active INTEGER NOT NULL DEFAULT 1)")
             connection.execute("CREATE TABLE IF NOT EXISTS assignments (pack TEXT NOT NULL, sample INTEGER NOT NULL, user TEXT NOT NULL, PRIMARY KEY(pack,sample))")
+            connection.execute("CREATE TABLE IF NOT EXISTS assignment_activity (pack TEXT NOT NULL, sample INTEGER NOT NULL, user TEXT NOT NULL, last_seen REAL NOT NULL, PRIMARY KEY(pack,sample))")
+            # Additive migration: retain legacy owners and give them a fresh grace period.
+            connection.execute("INSERT OR IGNORE INTO assignment_activity SELECT pack,sample,user,? FROM assignments", (time.time(),))
+
+    @staticmethod
+    def touch_assignment(connection, pack, sample, user):
+        connection.execute("INSERT OR REPLACE INTO assignment_activity VALUES (?,?,?,?)", (pack, sample, user, time.time()))
+
+    @staticmethod
+    def expire_pending(connection, pack, items):
+        pending = {item["id"] for item in items if not item["version"]}
+        now = time.time()
+        connection.execute("INSERT OR IGNORE INTO assignment_activity SELECT pack,sample,user,? FROM assignments WHERE pack=?", (now, pack))
+        expired = list(connection.execute(
+            "SELECT a.sample FROM assignments a JOIN assignment_activity l "
+            "ON a.pack=l.pack AND a.sample=l.sample AND a.user=l.user WHERE a.pack=? AND l.last_seen<=?",
+            (pack, now - ASSIGNMENT_TIMEOUT_SECONDS)))
+        released = 0
+        for row in expired:
+            if row["sample"] in pending:
+                connection.execute("DELETE FROM assignments WHERE pack=? AND sample=?", (pack, row["sample"]))
+                connection.execute("DELETE FROM assignment_activity WHERE pack=? AND sample=?", (pack, row["sample"]))
+                released += 1
+        return released
 
     @contextmanager
     def connect(self):
@@ -241,7 +267,7 @@ def create_app(config_path: Path):
         entries = []
         for entry in catalog:
             store = stores.get(entry["id"])
-            items = store.items() if store else []
+            items, _ = assigned_items(entry["id"], store) if store else ([], {})
             reviewed = [item for item in items if item["version"]]
             entries.append({key: value for key, value in entry.items() if key not in {"review_dir", "review_batches"}} | {
                 "available": bool(store), "total": len(items), "reviewed": len(reviewed),
@@ -259,22 +285,26 @@ def create_app(config_path: Path):
             abort(404)
         return pack, stores[pack]
 
-    def owner_map(pack):
+    def assigned_items(pack, store):
         with team.connect() as connection:
-            return {row["sample"]: row["user"] for row in connection.execute("SELECT sample,user FROM assignments WHERE pack=?", (pack,))}
+            connection.execute("BEGIN IMMEDIATE")
+            result = store.items()
+            team.expire_pending(connection, pack, result)
+            owners = {row["sample"]: row["user"] for row in connection.execute("SELECT sample,user FROM assignments WHERE pack=?", (pack,))}
+        return result, owners
 
     @app.get("/api/items")
     def items():
         pack, store = current_store()
-        owners = owner_map(pack)
-        result = store.items()
+        result, owners = assigned_items(pack, store)
         for item in result:
             item["image_url"] = f"/api/packs/{pack}/images/{item['id']}"
             item["editable"] = bool(not g.user["admin"] and owners.get(item["id"]) == g.user["id"])
             item["assigned_elsewhere"] = item["id"] in owners and owners[item["id"]] != g.user["id"]
             item["coordinate_status"] = store.evidence[item["id"]].get("coordinate_status", "unconfirmed")
         return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema="simple-v2", team=True,
-                       reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False)
+                       reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False,
+                       assignment_timeout_seconds=ASSIGNMENT_TIMEOUT_SECONDS)
 
     @app.post("/api/claim")
     def claim():
@@ -287,22 +317,42 @@ def create_app(config_path: Path):
         known_total = body.get("known_total")
         if known_total is not None and (type(known_total) is not int or known_total < 1):
             raise ValueError("Invalid client sample count")
-        result = store.items()
         with team.connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
+            result = store.items()
+            team.expire_pending(connection, pack, result)
             owners = {row["sample"]: row["user"] for row in connection.execute("SELECT sample,user FROM assignments WHERE pack=?", (pack,))}
             candidate = next((item for item in result if not item["version"] and owners.get(item["id"]) == g.user["id"]), None)
             if candidate is None:
                 candidate = next((item for item in result if not item["version"] and item["id"] not in owners), None)
             if candidate is None:
-                return jsonify(id=None)
+                return jsonify(id=None, pending_assigned=sum(not item["version"] for item in result))
             # Old open tabs know only the original IDs. Do not assign an ID
             # their cached item array cannot display; old saves remain valid.
             client_count = known_total if known_total is not None else len(store.parts[0][2].rows) if isinstance(store, BatchReviewStore) else len(store.rows)
             if candidate["id"] >= client_count:
                 return jsonify(id=None, refresh_required=True)
             connection.execute("INSERT OR IGNORE INTO assignments VALUES (?,?,?)", (pack, candidate["id"], g.user["id"]))
+            team.touch_assignment(connection, pack, candidate["id"], g.user["id"])
         return jsonify(id=candidate["id"])
+
+    @app.post("/api/heartbeat")
+    def heartbeat():
+        if g.user["admin"]:
+            abort(403)
+        pack, store = current_store()
+        body = request.get_json()
+        sample = body.get("id") if isinstance(body, dict) else None
+        if type(sample) is not int or not 0 <= sample < len(store.rows):
+            raise ValueError("Unknown sample")
+        with team.connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            team.expire_pending(connection, pack, store.items())
+            owner = connection.execute("SELECT user FROM assignments WHERE pack=? AND sample=?", (pack, sample)).fetchone()
+            if not owner or owner["user"] != g.user["id"]:
+                return jsonify(assignment_lost=True, error="배정이 만료되거나 회수됐습니다. 다음 미검수를 받아주세요."), 409
+            team.touch_assignment(connection, pack, sample, g.user["id"])
+        return jsonify(ok=True)
 
     @app.post("/api/review")
     def save():
@@ -313,11 +363,19 @@ def create_app(config_path: Path):
         sample = body.get("id")
         if type(sample) is not int or not 0 <= sample < len(store.rows):
             raise ValueError("Unknown sample")
-        owners = owner_map(pack)
-        if g.user["admin"] or owners.get(sample) != g.user["id"]:
+        if g.user["admin"]:
             abort(403)
         fields = {**body["fields"], "reviewer": g.user["name"], "review_schema": "simple-v2"}
-        return jsonify(store.save(sample, body.get("version"), fields))
+        # Hold the ownership lock until the review commits. Reclaim cannot race a save.
+        with team.connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            team.expire_pending(connection, pack, store.items())
+            owner = connection.execute("SELECT user FROM assignments WHERE pack=? AND sample=?", (pack, sample)).fetchone()
+            if not owner or owner["user"] != g.user["id"]:
+                return jsonify(assignment_lost=True, error="배정이 만료되거나 회수됐습니다. 입력은 임시 보관되며 다음 미검수를 받을 수 있습니다."), 403 if owner else 409
+            result = store.save(sample, body.get("version"), fields)
+            team.touch_assignment(connection, pack, sample, g.user["id"])
+        return jsonify(result)
 
     @app.get("/api/packs/<pack>/images/<int:sample>")
     def image(pack, sample):
@@ -346,6 +404,7 @@ def create_app(config_path: Path):
         with team.connect() as connection:
             connection.execute("UPDATE users SET active=0 WHERE id=?", (user_id,))
             connection.execute("DELETE FROM assignments WHERE user=?", (user_id,))
+            connection.execute("DELETE FROM assignment_activity WHERE user=?", (user_id,))
         return jsonify(ok=True)
 
     @app.post("/api/release")
@@ -357,11 +416,23 @@ def create_app(config_path: Path):
         with team.connect() as connection:
             if g.user["admin"]:
                 connection.execute("DELETE FROM assignments WHERE pack=? AND sample=?", (pack, sample))
+                connection.execute("DELETE FROM assignment_activity WHERE pack=? AND sample=?", (pack, sample))
             else:
                 connection.execute("DELETE FROM assignments WHERE pack=? AND sample=? AND user=?", (pack, sample, g.user["id"]))
+                connection.execute("DELETE FROM assignment_activity WHERE pack=? AND sample=? AND user=?", (pack, sample, g.user["id"]))
         return jsonify(ok=True)
 
     return app
+
+
+def reclaim_expired_assignments(app):
+    team = app.extensions["review_team"]
+    released = 0
+    with team.connect() as connection:
+        connection.execute("BEGIN IMMEDIATE")
+        for pack, store in app.extensions["review_stores"].items():
+            released += team.expire_pending(connection, pack, store.items())
+    return released
 
 
 def backup_databases(app, directory: Path):
@@ -401,6 +472,14 @@ def main():
                 print(f"Review DB backup failed: {type(error).__name__}", flush=True)
             time.sleep(1800)
     threading.Thread(target=backup_loop, daemon=True).start()
+    def reclaim_loop():
+        while True:
+            try:
+                reclaim_expired_assignments(app)
+            except Exception as error:
+                print(f"Assignment reclaim failed: {type(error).__name__}", flush=True)
+            time.sleep(60)
+    threading.Thread(target=reclaim_loop, daemon=True).start()
     print(f"Authenticated review listening on loopback:{args.port}", flush=True)
     serve(app, host="127.0.0.1", port=args.port, threads=8, max_request_body_size=16384,
           channel_timeout=30, clear_untrusted_proxy_headers=True)

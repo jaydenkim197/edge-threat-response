@@ -5,7 +5,10 @@ import re
 import sqlite3
 import struct
 import tempfile
+import time
+import threading
 import unittest
+from unittest.mock import patch
 from contextlib import closing
 from pathlib import Path
 
@@ -57,6 +60,124 @@ class TeamReviewTests(unittest.TestCase):
 
     def post(self, client, headers, path, body):
         return client.post(path, base_url=self.url, headers=headers, json=body)
+
+    def age_assignment(self, sample, seconds=901):
+        with self.team.connect() as connection:
+            connection.execute("UPDATE assignment_activity SET last_seen=? WHERE pack='fixture' AND sample=?", (time.time()-seconds, sample))
+
+    def test_expired_pending_reassigned_and_previous_owner_cannot_write(self):
+        ca, ha = self.login(self.a)
+        cb, hb = self.login(self.b)
+        sample = self.post(ca, ha, "/api/claim?dataset=fixture", {}).json["id"]
+        self.age_assignment(sample)
+        self.assertEqual(sample, self.post(cb, hb, "/api/claim?dataset=fixture", {}).json["id"])
+        payload = {"id": sample, "version": 0, "fields": {"domain": "target_cctv", "annotation_verdict": "ok"}}
+        self.assertEqual(403, self.post(ca, ha, "/api/review?dataset=fixture", payload).status_code)
+        self.assertEqual(409, self.post(ca, ha, "/api/heartbeat?dataset=fixture", {"id": sample}).status_code)
+        self.assertEqual(200, self.post(cb, hb, "/api/review?dataset=fixture", payload).status_code)
+        item = cb.get("/api/items?dataset=fixture", base_url=self.url).json["items"][sample]
+        self.assertEqual(self.b["name"], item["review"]["reviewer"])
+        self.assertEqual(1, item["version"])
+
+    def test_expired_owner_save_fails_even_before_another_claim(self):
+        client, headers = self.login(self.a)
+        sample = self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"]
+        self.age_assignment(sample)
+        response = self.post(client, headers, "/api/review?dataset=fixture", {
+            "id": sample, "version": 0, "fields": {"domain": "non_target", "annotation_verdict": "ok"}})
+        self.assertEqual(409, response.status_code)
+        self.assertTrue(response.json["assignment_lost"])
+        self.assertEqual(0, client.get("/api/items?dataset=fixture", base_url=self.url).json["items"][sample]["version"])
+
+    def test_activity_renews_pending_but_polling_does_not(self):
+        client, headers = self.login(self.a)
+        other, other_headers = self.login(self.b)
+        sample = self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"]
+        self.age_assignment(sample, 850)
+        with self.team.connect() as connection:
+            old = connection.execute("SELECT last_seen FROM assignment_activity WHERE pack='fixture' AND sample=?", (sample,)).fetchone()[0]
+        client.get("/api/items?dataset=fixture", base_url=self.url)
+        client.get("/api/catalog", base_url=self.url)
+        self.assertEqual(409, self.post(other, other_headers, "/api/heartbeat?dataset=fixture", {"id": sample}).status_code)
+        with self.team.connect() as connection:
+            self.assertEqual(old, connection.execute("SELECT last_seen FROM assignment_activity WHERE pack='fixture' AND sample=?", (sample,)).fetchone()[0])
+        self.assertEqual(200, self.post(client, headers, "/api/heartbeat?dataset=fixture", {"id": sample}).status_code)
+        with self.team.connect() as connection:
+            self.assertGreater(connection.execute("SELECT last_seen FROM assignment_activity WHERE pack='fixture' AND sample=?", (sample,)).fetchone()[0], old+800)
+        self.assertEqual(403, self.post(client, {**headers, "Origin": "https://attacker.test"}, "/api/heartbeat?dataset=fixture", {"id": sample}).status_code)
+
+    def test_reaper_preserves_completed_reviews_history_and_edit_ownership(self):
+        from edge_threat_response.dataset.team_review import reclaim_expired_assignments
+        client, headers = self.login(self.a)
+        done = self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"]
+        payload = {"id": done, "version": 0, "fields": {"domain": "target_cctv", "annotation_verdict": "ok"}}
+        self.assertEqual(200, self.post(client, headers, "/api/review?dataset=fixture", payload).status_code)
+        pending = self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"]
+        self.age_assignment(done); self.age_assignment(pending)
+        self.assertEqual(1, reclaim_expired_assignments(self.app))
+        items = client.get("/api/items?dataset=fixture", base_url=self.url).json["items"]
+        self.assertTrue(items[done]["editable"])
+        self.assertFalse(items[pending]["editable"])
+        self.assertEqual(1, items[done]["version"])
+        payload["version"] = 1
+        self.assertEqual(200, self.post(client, headers, "/api/review?dataset=fixture", payload).status_code)
+        store = self.app.extensions["review_stores"]["fixture"]
+        with store.connect() as connection:
+            self.assertEqual(2, connection.execute("SELECT COUNT(*) FROM history").fetchone()[0])
+
+    def test_legacy_owners_get_additive_activity_migration_and_grace_period(self):
+        from edge_threat_response.dataset.team_review import TeamDatabase
+        client, headers = self.login(self.a)
+        sample = self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"]
+        with self.team.connect() as connection:
+            old = list(connection.execute("SELECT * FROM assignments"))
+            connection.execute("DROP TABLE assignment_activity")
+        migrated = TeamDatabase(self.team.path)
+        with migrated.connect() as connection:
+            self.assertEqual([tuple(x) for x in old], [tuple(x) for x in connection.execute("SELECT * FROM assignments")])
+            self.assertEqual(3, len(connection.execute("PRAGMA table_info(assignments)").fetchall()))
+            self.assertEqual(1, connection.execute("SELECT COUNT(*) FROM assignment_activity").fetchone()[0])
+        self.assertEqual(sample, self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"])
+
+    def test_catalog_reclaims_stale_lock_and_claim_reports_active_work(self):
+        client, headers = self.login(self.a)
+        other, other_headers = self.login(self.b)
+        first = self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"]
+        second = self.post(other, other_headers, "/api/claim?dataset=fixture", {}).json["id"]
+        extra = self.team.create_user("fixture-third")
+        third, third_headers = self.login(extra)
+        unavailable = self.post(third, third_headers, "/api/claim?dataset=fixture", {}).json
+        self.assertIsNone(unavailable["id"]); self.assertEqual(2, unavailable["pending_assigned"])
+        self.age_assignment(first)
+        third.get("/api/catalog", base_url=self.url)
+        self.assertEqual(first, self.post(third, third_headers, "/api/claim?dataset=fixture", {}).json["id"])
+        self.assertNotEqual(first, second)
+
+    def test_claim_waits_for_inflight_save_before_reading_review_state(self):
+        ca, ha = self.login(self.a)
+        cb, hb = self.login(self.b)
+        first = self.post(ca, ha, "/api/claim?dataset=fixture", {}).json["id"]
+        store = self.app.extensions["review_stores"]["fixture"]
+        original = store.save
+        saving, finish, claiming, claimed = (threading.Event() for _ in range(4))
+        results = {}
+        def slow_save(*args):
+            saving.set()
+            if not finish.wait(5): raise RuntimeError("Test save gate timed out")
+            return original(*args)
+        def save():
+            results["save"] = self.post(ca, ha, "/api/review?dataset=fixture", {"id": first,"version":0,"fields":{"domain":"non_target","annotation_verdict":"ok"}})
+        def claim():
+            claiming.set()
+            results["claim"] = self.post(cb, hb, "/api/claim?dataset=fixture", {})
+            claimed.set()
+        with patch.object(store, "save", side_effect=slow_save):
+            a = threading.Thread(target=save); b = threading.Thread(target=claim)
+            a.start(); self.assertTrue(saving.wait(5)); b.start(); self.assertTrue(claiming.wait(5))
+            try: self.assertFalse(claimed.wait(.15))
+            finally: finish.set(); a.join(5); b.join(5)
+        self.assertEqual(200, results["save"].status_code)
+        self.assertNotEqual(first, results["claim"].json["id"])
 
     def enable_name_login(self):
         from edge_threat_response.dataset.team_review import create_app

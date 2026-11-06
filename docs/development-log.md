@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- review-assignment-timeout-20261106:begin -->
+## 2026-11-06 — 미완료 배정 15분 미활동 회수
+
+- 요청/범위: 사용자승인으로기존판정을보존하고방치된미완료배정만해제하며재발을방지한다. 원인은배정영구유지/활동시각부재였다. 사진·질문·검수정답·학습입력은변경하지않는다.
+- search-first/구현: 기존SQLite·assignment·release·version충돌·localStorage draft를재사용했다. 기존assignments3열은유지하고활동table을추가했다. visible화면의새활동heartbeat30초, 미활동15분,60초worker+요청시회수를사용한다. 완료판정/version/history·완료소유권은제외하고save와claim은Team write lock으로직렬화한다. 만료draft보존/모바일하단새배정/마지막이미지이동도보완했다.
+- verification-loop: PC13격리archive+정확한변경overlay에서관련20tests통과,전체193개실행OK(skip2),JS syntax통과. 새회귀는실제DB시각을과거로조정해만료·회수·heartbeat·migration·이전소유자쓰기거부·완료판정보존과실제thread저장/claim경합을검사한다. 운영DBQA판정은쓰지않는다.
+- 상태/다음: 운영배포와초기방치배정회수는별도일관백업·전후table/hash확인후진행한다. isolated raw/fixture/log는PC13 ignored `data/review/assignment-timeout-20261106-v1/`, `data/work/assignment-timeout-qa-20261106/`다. 최종browser·운영결과는후속기록으로연결한다. 본코드와문서의commit은Git이력으로추적한다.
+<!-- review-assignment-timeout-20261106:end -->
+
 <!-- english-research-overview-20261106:begin -->
 ## 2026-11-06 — 데이터 요청용 영어 진입 문서·README 상태 갱신
 

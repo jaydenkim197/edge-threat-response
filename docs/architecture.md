@@ -145,6 +145,14 @@ MVP에는 tracking이 없으므로 프레임 간 동일 person identity를 보�
 
 ## 팀 데이터셋 검수 도구
 
+<!-- review-assignment-timeout-20261106:begin -->
+검수 배정에는 15분 미활동 유효기간을 둔다. Team SQLite의 기존3열 `assignments`는 유지하고 별도 `assignment_activity`에 소유자·서버수신시각을 기록한다. 기존 배정은 migration 시 grace period를 받으며, 초기 방치 미완료는 별도 백업/운영 절차로 회수한다. 완료판정/version/history와 완료사진의 수정권한은 자동 회수하지 않는다.
+
+화면이 보일 때 새 pointer/keyboard/input/scroll 활동만30초 주기로 heartbeat에 반영한다. 단순목록조회는 갱신하지 않는다. 주서비스의60초 회수 worker 및 catalog/items/claim/save/heartbeat의 만료검사가15분지난미완료만반납한다. save는Team의 `BEGIN IMMEDIATE` 소유권잠금을ReviewStore commit까지유지해회수와저장경합을막는다. 기존version409검사도유지한다.
+
+회수된 옛화면의저장은거부하고localStorage draft는남긴다. 모바일하단버튼은읽기전용/만료상태에서도새미검수배정을받을수있다. 이전버전의열린탭에는heartbeat가없으므로배포후새로고침이필요하다. 실제휴대폰OS/Safari는별도검증하며,아래문단의기존배치/출처/학습경계는유지한다.
+<!-- review-assignment-timeout-20261106:end -->
+
 학습 전 검수용 웹 도구는 runtime 경보 시스템과 별도로 PC13에서 실행한다. 기존 Flask/Waitress·ReviewStore·SQLite 이력과 공통 두 질문 UI를 재사용한다. 사용자 선택에 따라 공개 이름 드롭다운으로 검수자를 지정하고 30일 session을 유지한다. 이는 본인 인증이 아닌 self-declared identity다. 관리자 route는 별도의 코드와 8시간 session을 사용한다. 이름·raw pack·DB·비밀값은 ignored runtime에 보관한다.
 
 모바일은 같은 웹 페이지에 responsive layout·manifest·Apple touch icon을 추가한다. 홈 화면 start URL에서 브라우저가 보관한 최근 후보를 찾아 서버의 남은 담당 배정을 이어간다. 판정 완료는 PC13 SQLite 응답으로 확인하고, 미완성 입력은 검수자별 localStorage draft로만 보관한다. 원본·판정 오프라인 캐시는 없다. 상세 사용·접근 경계와 검증은 [팀 검수 운영](team-review-deployment.md)을 따른다.

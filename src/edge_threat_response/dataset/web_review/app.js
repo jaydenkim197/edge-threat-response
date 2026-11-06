@@ -8,6 +8,27 @@ let items = [], current = 0, csrf = "", pack = "", values = {}, dirty = false, s
 const teamDataset=location.pathname.startsWith("/review/")?location.pathname.split("/")[2]:"";
 const apiUrl=path=>path+(teamDataset?`?dataset=${encodeURIComponent(teamDataset)}`:"");
 let team=false, signedReviewer="", teamAdmin=false;
+let leaseEnabled=false, leaseActivity=false, heartbeatBusy=false;
+function assignmentLost(id) {
+  items[id].editable=false;
+  if(id!==current)return;
+  clearTimeout(timer);
+  document.querySelectorAll(".choices button").forEach(button=>button.disabled=true);
+  $("notes").readOnly=true;$("save-next").disabled=false;$("save-next").textContent="다음 미검수 받기 →";$("next").disabled=false;
+  $("saved-badge").textContent="배정 만료 · 입력은 임시 보관";
+  status("배정이 만료됐습니다. 작성 중인 내용은 임시 보관됩니다. ‘다음 미검수 받기’를 눌러주세요.","error");
+}
+async function heartbeat() {
+  if(!leaseEnabled || !team || teamAdmin || !leaseActivity || heartbeatBusy || document.visibilityState!=="visible")return;
+  const id=current;if(!items[id]?.editable || items[id].version)return;
+  leaseActivity=false;heartbeatBusy=true;
+  try {
+    const response=await fetch(apiUrl("/api/heartbeat"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id})});
+    if(response.status===409)assignmentLost(id);
+    else if(!response.ok)leaseActivity=true;
+  } catch {leaseActivity=true;}
+  finally {heartbeatBusy=false;}
+}
 let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
 function draftKey() { return `etr-draft:${pack}:${team ? `${signedReviewer}:` : ""}${current}`; }
@@ -93,8 +114,8 @@ function show(index) {
   }
   $("image-view").classList.remove("zoom2","zoom3"); $("image-view").scrollTop=0; $("image-view").scrollLeft=0; $("zoom").textContent="확대 1×";
   dirty=restoredDraft; paintChoices(); refreshProgress();
-  if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=!item.editable;$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
-  $("previous").disabled=current===0; $("next").disabled=current===items.length-1;
+  if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=teamAdmin;$("save-next").textContent=item.editable?"저장하고 다음 →":"다음 미검수 받기 →";$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
+  $("previous").disabled=current===0; $("next").disabled=!team&&current===items.length-1;
   status(item.version ? `자동 저장됨 · 수정 ${item.version}회` : "선택하면 자동 저장됩니다.",item.version?"saved":"");
   if(window.matchMedia("(max-width: 750px)").matches)window.scrollTo(0,0);
 }
@@ -112,13 +133,14 @@ function changed() {
 async function save(force=false) {
   clearTimeout(timer);
   if (!dirty) return true;
+  if(team&&!items[current].editable)return false;
   if (!complete()) { if(force) status("이름과 두 질문을 확인해주세요. 문제 있음은 한 줄 메모가 필요합니다.","error"); return false; }
   if(saving) return false;
   saving=true; const id=current; const captured=JSON.stringify(values); let succeeded=false;
   $("save-next").disabled=true; status("저장 중…");
   try {
     const response=await fetch(apiUrl("/api/review"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id,version:items[id].version,fields:values})});
-    const result=await response.json(); if(!response.ok) throw new Error(result.error || "저장 실패");
+    const result=await response.json(); if(result.assignment_lost){assignmentLost(id);return false;} if(!response.ok) throw new Error(result.error || "저장 실패");
     items[id].version=result.version; items[id].review=result.review;
     succeeded=true;
     if(id===current && captured===JSON.stringify(values)) {dirty=false; localStorage.removeItem(draftKey());}
@@ -126,11 +148,11 @@ async function save(force=false) {
     $("saved-badge").textContent="검수 기록 있음"; refreshProgress(); status(team?"자동 저장됨 · PC13에 기록했습니다.":"자동 저장됨 · 이 PC에 안전하게 기록했습니다.","saved");
     return !dirty;
   } catch(error) {status(error.message,"error"); return false;}
-  finally {saving=false; $("save-next").disabled=false; if(succeeded && dirty && complete()) timer=setTimeout(()=>save(),500);}
+  finally {saving=false; $("save-next").disabled=team&&teamAdmin; if(succeeded && dirty && complete()) timer=setTimeout(()=>save(),500);}
 }
 async function move(delta) {
   if(saving) return;
-  if(dirty && complete() && !await save()) return;
+  if(dirty && complete() && (!team||items[current].editable) && !await save()) return;
   if(team&&delta>0){await claimNext();return;}
   const visible=visibleItems(); const next=delta>0 ? visible.find(item=>item.id>current) : [...visible].reverse().find(item=>item.id<current);
   if(next) show(next.id); else status("이 필터의 마지막 이미지입니다.");
@@ -147,11 +169,12 @@ async function claimNext(){
     if(data.items.length<=items.length){status("새 표본 준비 중입니다. 잠시 후 새로고침해주세요.");return;}
     items=data.items;csrf=data.csrf;await claimNext();return;
   }
-  if(result.id===null){status("배정 가능한 미검수가 없습니다. 후보 목록에서 다른 데이터셋을 선택하세요.","saved");return;}
+  if(result.id===null){status(result.pending_assigned?"남은 사진은 다른 검수자에게 배정돼 있습니다. 15분간 활동이 없으면 자동 회수됩니다.":"이 데이터셋의 검수가 완료됐습니다. 다른 데이터셋을 선택하세요.","saved");return;}
   items[result.id].editable=true;show(result.id);
 }
-async function jump(index) {if(saving)return; if(dirty && complete() && !await save())return; show(index);}
+async function jump(index) {if(saving)return; if(dirty && complete() && (!team||items[current].editable) && !await save())return; show(index);}
 function quick(kind) {
+  if(team&&!items[current].editable)return;
   values.annotation_verdict={keep:"ok",reject:"problem",hold:"unclear"}[kind];
   paintChoices(); changed();
 }
@@ -162,6 +185,12 @@ async function init() {
   if(data.review_schema!=="simple-v2") throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
+  leaseEnabled=Boolean(data.assignment_timeout_seconds);
+  if(leaseEnabled){
+    for(const event of ["pointerdown","keydown","input","scroll"])document.addEventListener(event,()=>{leaseActivity=true;},{passive:true,capture:true});
+    document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"){leaseActivity=true;heartbeat();}});
+    setInterval(heartbeat,30000);
+  }
   if(team){
     document.body.classList.add("team-review");
     if(!teamAdmin && data.reviewer_id)localStorage.setItem(`etr-last-pack:${data.reviewer_id}`,teamDataset);
@@ -170,7 +199,7 @@ async function init() {
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));
-  $("save-next").addEventListener("click",async()=>{if(await save(true))await move(1);});
+  $("save-next").addEventListener("click",async()=>{if(team&&!items[current].editable){await claimNext();return;}if(await save(true))await move(1);});
   $("jump").addEventListener("change",()=>jump(Number($("jump").value)));
   $("filter").addEventListener("change",async()=>{if(dirty&&complete())await save();refreshProgress();const visible=visibleItems();if(visible.length)await jump(visible[0].id);else status("이 조건에 해당하는 이미지가 없습니다.");});
   $("show-boxes").addEventListener("change",()=>$("image-view").classList.toggle("hide-boxes",!$("show-boxes").checked));
