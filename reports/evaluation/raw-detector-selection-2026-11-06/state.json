@@ -1,0 +1,22 @@
+{
+  "active_model": null,
+  "all_preserved_hashes_unchanged": true,
+  "comparison_scope": "opened development datasets, not independent CCTV final evaluation",
+  "datasets": 6,
+  "final_detector_selected": false,
+  "models": 8,
+  "preserved_original_files": 162,
+  "queue_sha256": "983430cce0dd12cd6b0c36092b2e439a76a24945f761c56c1a27e377b923e030",
+  "recovered_from": "C:\\Class6\\edge-threat-response\\runs\\raw-followup-20261105-v3",
+  "source_commit": "e29558681a76b2da82425b3e0ac096616c425eda",
+  "started_at_utc": "2026-11-06T07:49:24.796602+00:00",
+  "status": "passed",
+  "track": "predict",
+  "tracks": [
+    "ap",
+    "predict"
+  ],
+  "training_started": false,
+  "updated_at_utc": "2026-11-06T07:52:00.355939+00:00",
+  "worker_sha256": "816b86812afc4055fe0b4d2c42d76af40e3d244bb73864e87422143299b4314e"
+}

@@ -1,0 +1,15 @@
+{
+  "status": "PROPOSAL",
+  "recommended_candidate": "raw-m1-n-640",
+  "checkpoint_sha256": "d95d63568d4939b5271784156ebeafbaf701887c444c0b06ef295d5b06e79320",
+  "data_recipe": "SOHAS + Dangerous VOC + Catargiu corrected",
+  "default_inference_candidate": 640,
+  "conditional_inference_candidate": 960,
+  "resolution_probe_used_640_trained_weights": true,
+  "next_training_axis": "fixed YOLO26n and budget; M1 vs technically audited additional-real-data M2; later target-camera adaptation",
+  "final_detector_selected": false,
+  "new_training_started": false,
+  "target_camera_accuracy_verified": false,
+  "model_replaced_on_orin": false,
+  "raw_annotations_human_review_complete": false
+}

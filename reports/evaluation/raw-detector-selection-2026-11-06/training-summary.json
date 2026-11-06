@@ -1,0 +1,150 @@
+{
+  "RAW-R1-n": {
+    "status": "passed",
+    "started_at": "2026-11-05T02:32:53.482862+00:00",
+    "finished_at": "2026-11-05T07:28:58.633391+00:00",
+    "duration_seconds": 17765.03099999996,
+    "git_commit": "cd60f3b494b891c1c371f6551f5b11f7cd2ab374",
+    "observed_optimizer_updates": 35600,
+    "loader_budget": {
+      "accumulate": 1,
+      "batch_size": 16,
+      "batches_per_epoch": 712,
+      "train_dataset_length": 11392,
+      "validation_dataset_length": 1423
+    },
+    "metrics": {
+      "fitness": 0.05371997701847745,
+      "metrics/mAP50(B)": 0.18129327703323822,
+      "metrics/mAP50-95(B)": 0.05371997701847745,
+      "metrics/precision(B)": 0.35654329469984086,
+      "metrics/recall(B)": 0.27976190476190477
+    },
+    "model": "C:/Class6/edge-threat-response/yolo26n.pt",
+    "environment": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    }
+  },
+  "RAW-H1-n": {
+    "status": "passed",
+    "started_at": "2026-11-05T07:29:04.096600+00:00",
+    "finished_at": "2026-11-05T12:08:41.850825+00:00",
+    "duration_seconds": 16777.703000000096,
+    "git_commit": "cd60f3b494b891c1c371f6551f5b11f7cd2ab374",
+    "observed_optimizer_updates": 35600,
+    "loader_budget": {
+      "accumulate": 1,
+      "batch_size": 16,
+      "batches_per_epoch": 712,
+      "train_dataset_length": 11392,
+      "validation_dataset_length": 1423
+    },
+    "metrics": {
+      "fitness": 0.059666446904230605,
+      "metrics/mAP50(B)": 0.18048465130374614,
+      "metrics/mAP50-95(B)": 0.059666446904230605,
+      "metrics/precision(B)": 0.31744332859359253,
+      "metrics/recall(B)": 0.3373015873015873
+    },
+    "model": "C:/Class6/edge-threat-response/yolo26n.pt",
+    "environment": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    }
+  },
+  "RAW-M1-n": {
+    "status": "passed",
+    "started_at": "2026-11-05T12:09:12.106387+00:00",
+    "finished_at": "2026-11-05T16:34:35.388227+00:00",
+    "duration_seconds": 15923.234999999986,
+    "git_commit": "cd60f3b494b891c1c371f6551f5b11f7cd2ab374",
+    "observed_optimizer_updates": 35600,
+    "loader_budget": {
+      "accumulate": 1,
+      "batch_size": 16,
+      "batches_per_epoch": 712,
+      "train_dataset_length": 11392,
+      "validation_dataset_length": 1423
+    },
+    "metrics": {
+      "fitness": 0.2755948560114768,
+      "metrics/mAP50(B)": 0.5080765273812728,
+      "metrics/mAP50-95(B)": 0.2755948560114768,
+      "metrics/precision(B)": 0.5408020470242901,
+      "metrics/recall(B)": 0.6028758381776196
+    },
+    "model": "C:/Class6/edge-threat-response/yolo26n.pt",
+    "environment": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    }
+  },
+  "RAW-M1-s": {
+    "status": "passed",
+    "started_at": "2026-11-05T16:34:49.416205+00:00",
+    "finished_at": "2026-11-05T23:27:54.543504+00:00",
+    "duration_seconds": 24784.906000000075,
+    "git_commit": "cd60f3b494b891c1c371f6551f5b11f7cd2ab374",
+    "observed_optimizer_updates": 35600,
+    "loader_budget": {
+      "accumulate": 1,
+      "batch_size": 16,
+      "batches_per_epoch": 712,
+      "train_dataset_length": 11392,
+      "validation_dataset_length": 1423
+    },
+    "metrics": {
+      "fitness": 0.22562647118247883,
+      "metrics/mAP50(B)": 0.45735610375609914,
+      "metrics/mAP50-95(B)": 0.22562647118247883,
+      "metrics/precision(B)": 0.504453667127747,
+      "metrics/recall(B)": 0.5257936507936508
+    },
+    "model": "C:/Class6/edge-threat-response/models/pretrained/yolo26s.pt",
+    "environment": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    }
+  }
+}

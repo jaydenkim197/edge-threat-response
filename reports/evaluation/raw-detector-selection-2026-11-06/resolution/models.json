@@ -1,0 +1,51 @@
+{
+  "cases": [
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\raw-real-20261105-v2-raw-m1-n\\weights\\best.pt",
+      "checkpoint_sha256": "d95d63568d4939b5271784156ebeafbaf701887c444c0b06ef295d5b06e79320",
+      "id": "raw-m1-n-960",
+      "imgsz": 960,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "3d122b58a7f36a557956f979dc834a5432c940502556cca5f074873c24da5bd3",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\raw-real-20261105-v2-raw-m1-s\\weights\\best.pt",
+      "checkpoint_sha256": "76345e0b31c00f437cbe6e58ec96f3046b22e50fcd2f2cca14e92a845cb5f9cd",
+      "id": "raw-m1-s-960",
+      "imgsz": 960,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "b2545a5a164aa19c36dd5b98f970318feb41322d0a2dea94a048a6429da92bfc",
+      "ultralytics_multi_label": false
+    }
+  ],
+  "experiment": "640-trained weights; resolution-only inference probe",
+  "policy": {
+    "COCO_AP_IoU": ".50:.05:.95",
+    "batch": 1,
+    "coco_AP_max_dets": 100,
+    "fixed_confidence": 0.25,
+    "fixed_iou": 0.5,
+    "fixed_max_detections": 300,
+    "inference_warmup": "3 synthetic blank images",
+    "model_native_preprocessing": true,
+    "normalized_small_area": 0.02,
+    "prediction_floor": 0.001,
+    "tf32": false,
+    "threshold_tuned_on_test": false,
+    "ultralytics_candidate_convention": "default predict single-label candidates"
+  },
+  "schema_version": 1,
+  "status": "frozen_development_comparison",
+  "suite_sha256": "e74e6f8d6dd7864cf9b1e14ed1aa3fd25ac7567f4028ed5f2354fed04e3fa67e",
+  "track": "predict",
+  "training_started": false
+}

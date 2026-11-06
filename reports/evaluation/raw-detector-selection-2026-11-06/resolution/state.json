@@ -1,0 +1,13 @@
+{
+  "active_model": null,
+  "cases": 4,
+  "datasets": 6,
+  "experiment": "640-trained weights at 640 vs 960 inference",
+  "final_detector_selected": false,
+  "original_640_protocol_preserved": true,
+  "source_commit": "e29558681a76b2da82425b3e0ac096616c425eda",
+  "status": "passed",
+  "training_started": false,
+  "updated_at_utc": "2026-11-06T07:56:53.386108+00:00",
+  "worker_sha256": "f7b3236f7d0b5c6a75615babffce518ab2370de0c9388d78491a7a19b4d9d8db"
+}

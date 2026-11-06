@@ -1,5 +1,14 @@
 # Model and Dataset Readiness Plan
 
+<!-- raw-results-20261106:begin -->
+## 2026-11-06 완료 결과와 다음 학습 후보
+
+- R1-n/H1-n/M1-n/M1-s의 실제35600 update를 모두 확인했고, 8모델×6개 개발셋의AP/predict를 분리 평가했다. 권장 후보는 **M1-n**이다(`PROPOSAL`, D* 미확정). SOHAS opened dev23의predict AP50/recall은기존D0 35.7/35.0→M1-n88.3/80.0%다. 같은조건의M1-s는85.2/70.0%이며, 일부val/F2에서는s가좋은조건도 있다.
+- 기존640-trained M1-n의960 추론은 SOHAS small TP13→14/16, DaSCI59→71/88로 증가했다. 실제CCTV US8GT는계속0/8이고 Open Images AP는감소했다. 해상도·모델크기만으로field 문제가해결됐다고하지 않는다.
+- 다음은 n/640·같은예산의M1 vs 추가실사M2 recipe 비교를 권장한다. 확보한Open Images train594장 등은전역중복/보호그룹·annotation/source를검사한뒤별도recipe로준비한다. 자체CCTV train 적응은새로운run으로분리하며tuning/final session을보호한다. 사람검수완료를RAW선행gate로되살리지않는다. HOI에는별도관계정답이필요하다.
+- 960 학습/Orin운영해상도는실제CCTV tuning 이득과Orin지연/메모리확인후결정한다. 현재Orin의R1과새M1은다른checkpoint다. [정량표·raw 위치·통제조건·한계](../reports/evaluation/raw-detector-selection-2026-11-06/report.md). 새학습/교체/최종D*선정은아직실행하지않았다.
+<!-- raw-results-20261106:end -->
+
 <!-- hoi-b4-implementation-20261105:begin -->
 ## 2026-11-05 실행 갱신
 

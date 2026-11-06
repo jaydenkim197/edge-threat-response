@@ -1,0 +1,22 @@
+{
+  "RAW-H1-n": {
+    "checkpoint_sha256": "52d32ac058f76c8bc6546d7df0d64823e3544d7a38d93e5b0d4ef527eca52797",
+    "invocation_sha256": "6b4fffd57e6020da08f53183b06a5d8af6db6a6949dc0c500b2133ed9eb0a42e",
+    "observed_optimizer_updates": 35600
+  },
+  "RAW-M1-n": {
+    "checkpoint_sha256": "d95d63568d4939b5271784156ebeafbaf701887c444c0b06ef295d5b06e79320",
+    "invocation_sha256": "3d122b58a7f36a557956f979dc834a5432c940502556cca5f074873c24da5bd3",
+    "observed_optimizer_updates": 35600
+  },
+  "RAW-M1-s": {
+    "checkpoint_sha256": "76345e0b31c00f437cbe6e58ec96f3046b22e50fcd2f2cca14e92a845cb5f9cd",
+    "invocation_sha256": "b2545a5a164aa19c36dd5b98f970318feb41322d0a2dea94a048a6429da92bfc",
+    "observed_optimizer_updates": 35600
+  },
+  "RAW-R1-n": {
+    "checkpoint_sha256": "c8006bf63e7d5ab9a71f89a0794c7d9723dc493970ba34918d51aea2480a7775",
+    "invocation_sha256": "5f3da7098c85f1bcb02b988afa8c1b2ada6d8057320e3ef6bb627a27dc093408",
+    "observed_optimizer_updates": 35600
+  }
+}

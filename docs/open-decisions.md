@@ -2,6 +2,8 @@
 
 권장안은 확정 전까지 `PROPOSAL`이다. 결정 후 행을 삭제하지 않고 상태와 근거를 갱신하며, `development-log.md`의 해당 기록을 연결한다.
 
+2026-11-06 모델 권장안: 실제완료된RAW4개/공통8모델평가에서 **M1-n을후속주력후보**, 640기준/960조건부추론을권장한다(`PROPOSAL`). M1-s/R1/RF기준선을보존하며n의항상우위·최종D*를선언하지않는다. 다음미결정은M2추가실사recipe의기술검사·목표CCTV train/tuning/final 촬영·Orin M1/960 비용·HOI관계정답이다. 새학습은시작하지않았다. [수치·반례·권장순서](../reports/evaluation/raw-detector-selection-2026-11-06/report.md).
+
 | ID | 우선순위 | 결정 사항 | 현재 권장안 | 선택 기준 / 필요한 증거 | 결정 시점 | 상태 |
 |---|---|---|---|---|---|---|
 | P0-01 | P0 | Orin Nano 실기기 inventory와 기준 patch 차이 | 계획39.2.1 유지/실제39.2.0 채택 또는 업데이트를 별도로 결정. NVMe에서 pilot 진행 | 2026-10-27 SSH key 접속·device-tree p3767-0005 Super·약8GB·NVMe238.5GiB·UEFI/L4T39.2.0·CUDA13.2.2·25W 및 GPU 파일 smoke 확인. 카메라/GPIO·실물 모듈/냉각 상세 미검증 | 정식 환경 동결 전 | inventory/file smoke `VERIFIED`; patch 결정 `PROPOSAL` |

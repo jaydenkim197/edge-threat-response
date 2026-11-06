@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- raw-results-20261106:begin -->
+2026-11-06: RAW4모델50epoch/각35600 updates/queue passed, 체크포인트·invocationhash 확인. AP8×6기존캐시재검증·predict8×6완료·원본162파일hash보존·수정source e295586의PC13평가venv 전체186 tests/22.970초/skip0 통과. 같은640-trained M1-n/s의960추론2×6도passed다. source별CSV·모든protocol·학습환경/CSV·그림과한계는 [공통결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)에있다. 새데이터/모델학습·최종D*·실제사건정확도·M1/960 Orin비용은미검증/미실행으로구분했다. PC14 tailnet/SSH응답만확인했고계정인증/GPU는아직미검증이다.
+<!-- raw-results-20261106:end -->
+
 <!-- p430-live-confirmed-20261105:begin -->
 2026-11-05 실제CCTV: auth200·sub640×360/120frame·main3840×2160/60frame probe와 각각YOLO26n/B3 300valid frames/action error0을 확인했다. local GUI30frame smoke·지속표시591frame/활성 창·사용자 실제화면 확인까지 통과했다. core8a52fc8 PC13 평가venv 전체184 tests/17.553초/skip0 통과. 로컬 관련RTSP3 tests·viewer help/compile 통과. 로컬 전체HTTP Win10053 오류1/skip2 및 Orin 전체 선택pi_heif 누락 오류1/skip2는 미통과로 남겼다. [간단LAN 기록](cctv-local-network-setup.md), [raw 위치·성능 측정 경계·한계](../reports/runtime/p430-yolo26n-2026-11-05/report.md). 정확도/HOI/GPIO/WAN 제거/재부팅·장시간 안정성은 승격하지 않는다.
 <!-- p430-live-confirmed-20261105:end -->

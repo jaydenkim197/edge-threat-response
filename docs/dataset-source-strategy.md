@@ -1,5 +1,9 @@
 # Dataset Source Strategy
 
+<!-- raw-results-20261106:begin -->
+2026-11-06: SOHAS/Dangerous VOC/Catargiu 혼합M1-n이현재후속주력후보다(`PROPOSAL`). 같은263개개발이미지에서source별결과를확인했고, US CCTV8GT의미검출과Open Images 취약성이남았다. 다음보강은기존n모델의데이터축을고정해검증한다. Open Images train594장과자체CCTV는현재학습/평가에자동반입하지않고전역중복·보호그룹/세션·source/라벨기술검사후각기별도recipe로사용한다. RAW의사람검수대기는필수gate가아니며새bbox/HOI GT생성은별개다. [공통결과·데이터방향](../reports/evaluation/raw-detector-selection-2026-11-06/report.md).
+<!-- raw-results-20261106:end -->
+
 <!-- november-integration-evidence-20261105:begin -->
 2026-11-05 후속 확보: PC13에 Legacy normalized export7361장(전송 전후 image/archive hash 확인), Open Images **별도 train**594장/820 knife boxes(공식 metadata·원 주석·attribution 보존)를 보관했다. 현재 RAW queue에는 추가하지 않았으며 전역 중복/보호 그룹을 검사해 후속 recipe로 구성한다. 미검수 상태와 개별 권리 미확인을 유지한다. [확보 내역](../reports/datasets/additional-train-sources-2026-11-05/report.md).
 <!-- november-integration-evidence-20261105:end -->

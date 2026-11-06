@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- raw-results-20261106:begin -->
+## 2026-11-06 — 공통 비교 완료·M1-n 권장·960 추론 진단
+
+- 네RAW50epoch가11/06 08:28KST까지완료됐고invocation별실제35600 updates·loader/batch·checkpointSHA를확인했다. 실패한후속AP의모델/예측/상태162개hash를보존하고새출력에서집계·predict8모델×6개/263장비교를완료했다. 복구e295586의PC13평가환경전체186 tests/22.970초/skip0 통과를확인했다. 검수DB/원본/기존split/학습checkout은변경하지않았다.
+- 실제predict SOHAS dev23에서D0 AP50/R35.7/35.0→M1-n88.3/80.0%, M1-s85.2/70.0%다. DaSCI related92의M1-n AP50은76.4%다. US CCTV8GT는M1-n/s0/8로목표domain문제가남고Open Images는RF-Large가더좋다. AP/predict track을혼합하거나source평균으로최종승자를선언하지않았다.
+- 재학습없이같은M1 checkpoint로960추론2모델×6개를추가검증했다. M1-n SOHAS small TP13→14/16·DaSCI59→71/88이나US0/8 유지/Open Images AP감소다. 후속주력은n/M1, 640기준선·960조건부추론·M1 vs 추가실사M2/목표CCTV적응을권장한다(PROPOSAL). 새학습·D*동결·Orin교체는하지않았다.
+- 결과CSV/프로토콜/환경/선정곡선/학습CSV/원본보존hash와PNG/SVG/PDF정량그림을 [보고서](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)에내보냈다. raw예측/로그는PC13두run에남겼다. 단일seed·opened자료·DaSCI1연관group·synthetic분리·US8GT·이미지지표/사건지표차이를기록했다.
+- PC14는사용자제공사진과tailnet에서동일장치온라인·Windows SSH22응답을확인했다. 현재키의pc14사용자로그인은거부돼실제Windows계정/공개키등록을요청했다. GPU/환경/학습은미확인이다. 키포함현장안내는Git밖의수업폴더 `261106_PC14_원격접속_준비.md`에보관했고비밀번호를요청하지않았다. 모델관련문서만갱신하고타채팅의미커밋변경은보존했다. 문서commit은본Git이력으로추적한다.
+<!-- raw-results-20261106:end -->
+
 <!-- raw-comparison-recovery-fix-20261106:begin -->
 ## 2026-11-06 — RAW 네 모델 완료·보고 메타데이터 오류 수정
 
