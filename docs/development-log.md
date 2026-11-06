@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- pc14-cuda-ready-20261106:begin -->
+## 2026-11-06 — PC14 격리 CUDA 학습 환경과 PC11·12 연결 복구
+
+- 목적/범위: 사용자요청으로PC14만학습환경을설치하고PC11/12공개키등록명령을재제공했다. 완료기준은격리clone/venv·driver/전역Python보존·CUDA forward/backward·YOLO checkpoint재로딩·관련테스트다. 전체학습/실제데이터반입은범위밖이다.
+- search-first로기존PC13pin/requirements·training smoke·HOI도구를확인해REUSE했다. 기존경로없음을확인한PC14 `C:\Class6\edge-threat-response`에clone/source cb5cb700고정,공식SHA검증MinGit2.51.2/venv/PyTorch2.6.0+cu124/Ultralytics8.4.152등동일주요버전을설치했다. 기존전역Anaconda/driver는유지했고사용자PATH는백업후Git경로만추가했다.
+- verification-loop: pip check/compile/CLI·training15+RAW10+HOI7=32tests통과. 실제CUDA FP32/AMP 합성8train/4val/1epoch학습·validation·best/last생성·재추론및G/VG합성CPU학습후CUDA추론/B4연결을검증했다. 이는실제HOI CUDA학습/정확도검증이아니다. 초기CWD Ultralytics설정/폰트2파일만확인해hash보존으로ignored runs내이동했고새configdir의CUDA재추론/repo clean을확인했다.
+- 사용자PC11/12등록완료회신후각BatchMode SSH·whoami조회성공. 둘다i9-13900/RAM31.75GiB/RTX3060 12288MiB·driver610.88, C여유196.23/179.42GiB다. 기본python은WindowsApps경로이므로실제interpreter설치판정은보류한다. 두PC학습환경은설치하지않았다. 로컬SSH config는백업후pc11/12/14 alias를추가했다.
+- 기록/한계: 설치/검증state·freeze·테스트로그·JSON·원시경로를 [보고서](../reports/training/pc14-cuda-readiness-2026-11-06/report.md)에보존했다. 실제dataset/검수DB/split/full training은변경/실행하지않았고다음은Q1 manifest·run별전송/preflight다. 문서블록만stage하고타채팅미커밋을보존/검증/commit·push한다. Git commit은본이력으로추적한다.
+<!-- pc14-cuda-ready-20261106:end -->
+
 <!-- gpu-host-connections-20261106:begin -->
 ## 2026-11-06 — PC11·PC12·PC14 원격 연결 확인
 

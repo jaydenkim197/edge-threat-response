@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "generated_cache_only": true,
+  "cache_files_sha256_preserved": {
+    "Arial.ttf": "525979822591a3447cfc49d943d6f7683508e25543407871c0ed8fed05fd2bd9",
+    "settings.json": "273fd92ad0bdc541f04d8c0f8ecabca85c8f83e56047625a4b66f3003d7d57f8"
+  },
+  "config_dir": "C:\\Class6\\edge-threat-response\\runs\\yolo-config\\Ultralytics",
+  "cuda_inference_after_relocation": "passed",
+  "git_status_clean": true
+}

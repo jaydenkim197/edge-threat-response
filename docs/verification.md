@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- pc14-cuda-ready-20261106:begin -->
+2026-11-06 후속: 사용자키등록후PC11/12 SSH 인증·whoami·GPU조회VERIFIED(각RTX3060 12288MiB/i9-13900/RAM31.75GiB/driver610.88/C여유196.23·179.42GiB). 이전키인증거부는해결됐다. PC14는cb5cb700독립clone·venv에PC13pin설치/driver유지, pip check·compile·training15+RAW10+HOI7=**32 tests**·CLI·실제CUDA FP32/AMP합성학습8train/4val/1epoch·checkpoint생성/재추론·합성G/VG CUDA추론/B4연결을통과했다. config/font cache의hash보존이동후추론과repo clean, 새SSH Git provenance도확인했다. 실사정확도/full run/Orin성능/실제HOI CUDA학습의증거는아니다. PC11/12학습환경은아직미설치/미검증이다. [환경·검증JSON·테스트로그·경로](../reports/training/pc14-cuda-readiness-2026-11-06/report.md).
+<!-- pc14-cuda-ready-20261106:end -->
+
 <!-- gpu-host-connections-20261106:begin -->
 2026-11-06 추가 GPU PC 접속 점검: PC14 `pc14@100.69.149.56`는 지정 ED25519 키/BatchMode SSH로 `desktop-bd5oamn\pc14` 인증·원격 명령 실행을 확인했다. i9-13900/RAM31.75GiB/C드라이브 여유143.41GiB/RTX3060 12288MiB·driver560.94/GPU사용0%·메모리0MiB(snapshot), Python3.12.4를 읽기 전용 확인했다. 기본 Anaconda 환경에는 torch/torchvision/ultralytics/OpenCV가 없고 git은PATH에서발견되지않았다. CUDA kernel/학습준비완료는미검증이다. PC11 `pc11@100.120.195.40`/PC12 `pc12@100.78.203.54`는SSH까지응답하나동일키의인증은거부됐다. 공개키등록이필요하며GPU/런타임은미검증이다. 설치·원격설정·데이터전송·학습은실행하지않았다.
 <!-- gpu-host-connections-20261106:end -->

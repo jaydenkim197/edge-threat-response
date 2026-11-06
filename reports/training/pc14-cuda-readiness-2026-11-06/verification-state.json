@@ -1,0 +1,14 @@
+{
+  "status": "passed",
+  "full_training_started": false,
+  "real_data_used": false,
+  "source_commit": "cb5cb7002558e6c3c04273ffdc3154a48fd628ec",
+  "worker_sha256": "a01997706f267db2bfec36ea4a08ec8748326aef44d51f50551b5d6673f6e10d",
+  "step": null,
+  "updated_at_utc": "2026-11-06T09:29:39.421774+00:00",
+  "cuda": "12.4",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "fp32_smoke": "passed",
+  "amp_smoke": "passed",
+  "hoi_synthetic_cuda_inference": "passed"
+}

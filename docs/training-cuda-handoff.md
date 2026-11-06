@@ -1,5 +1,13 @@
 # CUDA / Colab Training Handoff
 
+<!-- pc14-cuda-ready-20261106:begin -->
+## 2026-11-06 — PC14 추가 학습 환경 VERIFIED
+
+PC14 `C:\Class6\edge-threat-response`의독립clone/`.venv-ml`에PC13검증조합(torch2.6.0+cu124/torchvision0.21.0+cu124/Ultralytics8.4.152/NumPy1.26.4/OpenCV4.11.0.86/Pillow12.3.0)을설치했다. source는cb5cb700 detached로고정하고driver560.94/전역Anaconda는유지했다. 공식SHA검증한MinGit2.51.2를별도tools경로에두고사용자PATH만보존추가했다. 새SSH세션의git provenance도확인했다.
+
+**32개관련테스트·pip check·compile·CLI·CUDA forward/backward·FP32/AMP실제1epoch/재로딩·합성HOI CUDA추론/B4연결을통과**했다. 실제데이터전송/full training·실제HOI학습은아직시작하지않았다. 설정cache는미리만든`runs/yolo-config/Ultralytics`에보관하며raw/검수DB는변경하지않았다. [경로·재사용명령·증거·한계](../reports/training/pc14-cuda-readiness-2026-11-06/report.md). PC11/12도키접속·RTX3060 12GB/RAM32GB를확인했지만학습환경은미검증이다. GPU별독립run은가능한자원이늘어난것이며현재3대학습준비완료로승격하지않는다.
+<!-- pc14-cuda-ready-20261106:end -->
+
 상태: runner·config·preflight·notebook `IMPLEMENTED`, PC contract·RTX 3060 smoke 및 SOHAS183장 개발 예비 학습 `VERIFIED`, source 전체 정식 학습 `PLANNED`
 
 ## 목적과 gate
