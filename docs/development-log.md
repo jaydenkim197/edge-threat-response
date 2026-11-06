@@ -9,6 +9,7 @@
 - search-first/구현: 기존SQLite·assignment·release·version충돌·localStorage draft를재사용했다. 기존assignments3열은유지하고활동table을추가했다. visible화면의새활동heartbeat30초, 미활동15분,60초worker+요청시회수를사용한다. 완료판정/version/history·완료소유권은제외하고save와claim은Team write lock으로직렬화한다. 만료draft보존/모바일하단새배정/마지막이미지이동도보완했다.
 - verification-loop: PC13격리archive+정확한변경overlay에서관련20tests통과,전체193개실행OK(skip2),JS syntax통과. 새회귀는실제DB시각을과거로조정해만료·회수·heartbeat·migration·이전소유자쓰기거부·완료판정보존과실제thread저장/claim경합을검사한다. 운영DBQA판정은쓰지않는다.
 - 상태/다음: 운영배포와초기방치배정회수는별도일관백업·전후table/hash확인후진행한다. isolated raw/fixture/log는PC13 ignored `data/review/assignment-timeout-20261106-v1/`, `data/work/assignment-timeout-qa-20261106/`다. 최종browser·운영결과는후속기록으로연결한다. 본코드와문서의commit은Git이력으로추적한다.
+- 배포완료: code8a6ed6c·consistent backup후미완료8개만회수했다(SOHAS1/Simuletic1/Mock1/Catargiu3/ATM2). 기존2,673판정/version/history·완료배정·계정/registry/config를보존했다. 공개900초정책·두mobile크기의만료/재배정/draft복원/쓰기차단검증과QA/터널정리·운영Running을확인했다. [최종보고](../reports/runtime/review-assignment-timeout-2026-11-06/report.md).
 <!-- review-assignment-timeout-20261106:end -->
 
 <!-- english-research-overview-20261106:begin -->
