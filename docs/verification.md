@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- gpu-host-connections-20261106:begin -->
+2026-11-06 추가 GPU PC 접속 점검: PC14 `pc14@100.69.149.56`는 지정 ED25519 키/BatchMode SSH로 `desktop-bd5oamn\pc14` 인증·원격 명령 실행을 확인했다. i9-13900/RAM31.75GiB/C드라이브 여유143.41GiB/RTX3060 12288MiB·driver560.94/GPU사용0%·메모리0MiB(snapshot), Python3.12.4를 읽기 전용 확인했다. 기본 Anaconda 환경에는 torch/torchvision/ultralytics/OpenCV가 없고 git은PATH에서발견되지않았다. CUDA kernel/학습준비완료는미검증이다. PC11 `pc11@100.120.195.40`/PC12 `pc12@100.78.203.54`는SSH까지응답하나동일키의인증은거부됐다. 공개키등록이필요하며GPU/런타임은미검증이다. 설치·원격설정·데이터전송·학습은실행하지않았다.
+<!-- gpu-host-connections-20261106:end -->
+
 <!-- reviewed-next-training-20261106:begin -->
 2026-11-06 검수 후속: SQLite read-only transaction/팩·이미지hash·기존RAWgroup·bbox대조로 정상2,527장(고유SHA2,527), 기존학습정상1,805/보류88/새실사직접검사후보39를 확인했다. 새39의전체전이적그룹검사·materialization은미완료다. 기존평가source e295586/격리venv에서US Mock정상83장·31GT·52음성·16sequence에대해5모델조건실제inference/집계passed, sourcehash보존을확인했다. M1-n640 TP0/31·FP2,960 TP1/31·FP2다. threshold캐시진단도완료했으며운영설정/리뷰DB/기존split은수정하지않았다. v1suite정책누락은inference전실패보존/v2정확한정책으로통과. 새전체학습·Orin교체·최종사건평가는미실행이며186테스트는이전실행기록이다. [수치·raw·해시·한계](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
 <!-- reviewed-next-training-20261106:end -->

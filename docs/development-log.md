@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- gpu-host-connections-20261106:begin -->
+## 2026-11-06 — PC11·PC12·PC14 원격 연결 확인
+
+- 목적/범위: 사용자 확보 장치의 Tailscale/SSH와 접속된 호스트의 기본 GPU 환경만 읽기 전용 점검한다. 사용자 첨부의 명령은 실행 증거로 읽었으며 설치 지시로 재실행하지 않았다.
+- 방법: Tailscale 상태, 지정 기존 개인키의 `BatchMode=yes`/`IdentitiesOnly=yes` SSH, PC14 `whoami`·CIM·`nvidia-smi --query-gpu`·Python package metadata를 조회했다. PC11/12의 새 host key는 첫 접속으로 등록했으며 인증은거부됐다.
+- 결과: PC14 키인증/원격명령 VERIFIED. RTX3060 12GB/i9-13900/RAM31.75GiB/C여유143.41GiB/driver560.94/Python3.12.4. 기본환경에torch/torchvision/ultralytics/OpenCV는없고git은PATH미검출. PC11(100.120.195.40)/PC12(100.78.203.54)는네트워크·SSH응답은정상이나키인증미완료로하드웨어조회불가다.
+- 다음: PC11/12 각각관리자PowerShell에서사용자가PC14와같은공개키를등록한뒤재시험. PC14는별도학습환경/GPU kernel/격리workspace검증이남으며설치/학습을시작하지않았다. CUDA학습가능/3대동시학습준비완료로승격하지않는다.
+- 문서/검증/Git: 실제관측을verification과본로그에기록하고추가블록만stage/문서diff검증/commit·push한다. 타채팅미커밋은보존한다. 구현코드변경이없어제품테스트는재실행하지않는다. commit은본Git이력으로추적한다.
+<!-- gpu-host-connections-20261106:end -->
+
 <!-- reviewed-next-training-20261106:begin -->
 ## 2026-11-06 — 검수 완료 자료 대조와 다음 학습·마일스톤 검토
 
