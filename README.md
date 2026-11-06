@@ -1,5 +1,27 @@
 # 상황 인지형 Edge AI 흉기 위협 대응 시스템
 
+## English summary
+
+**Context-Aware Edge AI Threat Response System** is a non-commercial undergraduate capstone at **Yeungnam University, South Korea (Fall 2026)**, investigating whether spatial/temporal context and learned person–knife holding assessment can reduce unnecessary surveillance alerts.
+
+**Target setting:** Jetson Orin Nano + Reolink P430; a planned fixed indoor camera approximately 3 m high, looking downward at an angle. Small and occluded knives are a central challenge.
+
+**Full pipeline (B3/B4):** camera → person/knife detection → spatial association (B3) or learned Holding/Not Holding assessment (B4) → K-of-N temporal confirmation → four-state machine (`CLEAR / CANDIDATE / CONFIRMED / COOLDOWN`) → alarm output, event metadata, and snapshot. Physical GPIO integration remains pending.
+
+**Evaluation plan:** compare detection-only evidence (B0), temporal confirmation (B1), spatial association (B2), their combination (B3), and learned holding plus temporal confirmation (B4). Use the same frozen detector and recordings to measure event precision/recall, false alerts per hour, and alert delay. Evaluate detector improvements separately.
+
+**Scope:** the system does not infer violent intent or criminal behavior. Geometry-based association does not prove physical possession; real-data Holding accuracy is still unverified.
+
+**Status — 6 November 2026:** four exploratory YOLO26n/s training runs and PC comparisons are complete. Live P430 input and YOLO26n/B3 inference have been verified on Orin with a development checkpoint. HOI/B4 has synthetic integration checks; target-camera adaptation, real Holding evaluation, physical GPIO, and independent final evaluation remain pending. Published metrics are development results, not final deployment performance.
+
+**Data handling:** requested third-party data will be used under the provider's agreed terms. Restricted originals and derived images will not be committed to GitHub, redistributed, or added to public review endpoints without explicit permission. Legacy submodule assets require separate permission checks.
+
+[Research overview and data-handling commitments (English)](docs/research-overview-en.md) · [Training and development comparisons](reports/evaluation/raw-detector-selection-2026-11-06/report.md) · [Orin camera verification](reports/runtime/p430-yolo26n-2026-11-05/report.md)
+
+Most detailed engineering records are in Korean. Contact: [22211897@yu.ac.kr](mailto:22211897@yu.ac.kr).
+
+## 한국어 개요
+
 > Context-Aware Edge AI Threat Response System · 2026-2 종합설계과제(1)
 
 Jetson Orin Nano에서 사람과 칼을 탐지하고 **공간·시간 문맥과 학습 기반 소지 관계**로 경보를 판단하는 엣지 AI 시스템을 개발합니다. 같은 영상에서 판단 방법을 비교해 불필요한 경보가 줄어드는지 검증합니다.
@@ -17,26 +39,31 @@ Jetson Orin Nano에서 사람과 칼을 탐지하고 **공간·시간 문맥과 
 ```text
 Camera
   -> Person/Knife Detector
-  -> Person–Knife Spatial Association + K-of-N Temporal Confirmation
+  -> Spatial Association (B3) / Learned Holding (B4)
+  -> K-of-N Temporal Confirmation
   -> CLEAR / CANDIDATE / CONFIRMED / COOLDOWN
   -> GPIO Alarm + Event Metadata + Snapshot
 ```
 
 ## 현재 개발 상태
 
-- **설계:** 11월30일 개발·평가 마감, YOLO26n/s 데이터 보강 및 B0~B4 비교가 `DECISION`입니다. B4의 실제 Holding 정확도는 아직 검증 전입니다.
-- **PC에서 검증됨:** 판단 core, replay, dataset audit/export/review tooling, detector/video/snapshot scaffold, CUDA training handoff가 구현·검증되었습니다.
-- **Orin에서 확인됨(2026-10-27):** 실제 L4T39.2.0 보드에서 CUDA 연산과 새 개발 모델의 파일 영상→B0~B3→metadata/snapshot/mock alarm 경로를 검증했습니다. 학습 이미지 조합 영상의 연결 시험이며 실제 사건 성능이나 카메라/GPIO 검증은 아닙니다. [실기기 증거](reports/runtime/orin-native-smoke-2026-10-27/report.md).
-- **데이터 전략:** 약 3 m 고정형 실내 CCTV가 목표입니다. 사용자 승인으로 사람 검수 전 원본 주석의 개발 예비 학습을 시작합니다. SOHAS 기준(R1)·음성 제외(H1)·Dangerous Items/Catargiu 혼합(M1)을 공통 분할·학습 예산으로 비교하며, 미검수 상태를 명시합니다. 합성은 별도, US Mock은 외부 평가용입니다. [예비 학습 규격](docs/raw-source-training.md).
-- **신규 구현:** G/VG 관계 학습기, 해시로 연결한 관계 점수 파일, B4 replay/사건 평가·영상 snapshot 경로를 가상 자료에서 검증했습니다. HOI 관계 정답은 사이트 담당이 별도로 수집합니다. [인계·사용법](docs/hoi-annotation-contract.md).
-- **학습 진행:** 소규모 개발 학습3회 이후, 새 RAW R1/H1/M1-n/M1-s 순차 queue를 PC13에서 시작했습니다. 결과·최종 detector 선정은 아직 미확정입니다.
-- **아직 남음:** 실제 HOI 관계 정답·학습, 자체 촬영 적응, camera·GPIO·독립 사건 평가입니다. 실제 Orin L4T39.2.0 환경은 보존하며 TensorRT는 후속 최적화입니다.
-- **증거 원칙:** 기존 MIDAS 성능 수치는 재현 조건이 부족해 이번 프로젝트의 공식 결과로 사용하지 않습니다.
-- **일정 목표:** 2026-11-20 모델·설정 동결 → 11/25~27 독립 CCTV 평가 → **11/30 개발·평가 마감**입니다.
+기준일: **2026-11-06**. 개발 결과와 목표를 구분합니다.
+
+- **설계:** 11월30일 개발·평가 마감, YOLO26n/s 데이터 보강 및 B0~B4 비교가 `DECISION`입니다. 최종 detector D*와 실제 Holding 정확도는 아직 확정·검증 전입니다.
+- **PC에서 검증됨:** 판단 core, replay·사건 평가기, dataset audit/export/review, detector/video/snapshot, CUDA 학습 경로가 구현·검증되었습니다. PC11·PC12·PC14도 격리 학습 환경과 각32개 관련 테스트·FP32/AMP smoke를 통과했습니다([추가 GPU 환경](reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md)).
+- **학습·개발 평가 완료:** PC13의 RAW-R1-n/H1-n/M1-n/M1-s가 각각50epoch·35,600updates를 완료했습니다. 8모델×동일6개 개발셋 비교와 M1-n/s의960 추론 진단을 기록했습니다. 현재 주력 권장 후보는 **M1-n(`PROPOSAL`)**이며 최종 채택은 아닙니다([결과·한계](reports/evaluation/raw-detector-selection-2026-11-06/report.md)).
+- **실제 카메라·Orin에서 검증됨(2026-11-05):** P430 main/sub RTSP 수신, 기존 RAW-R1-n 개발 checkpoint의 YOLO26n/B3 각각300 valid frame, metadata/snapshot·mock alarm, 모니터 실시간 표시를 확인했습니다. 새 M1의 Orin 배포나 실제 사건 정확도·물리 GPIO 검증은 아닙니다([실기기 증거](reports/runtime/p430-yolo26n-2026-11-05/report.md)).
+- **현재 어려움:** 확대된 실제 CCTV 개발 표본83장/knife 정답31개에서 M1-n/640의 TP는0, 같은 checkpoint의960 추론은1이었습니다. 작은 칼·가림의 목표 환경 적응이 필요하며 이 표본을 독립 final test로 주장하지 않습니다([확대 평가](reports/datasets/reviewed-next-training-2026-11-06/report.md)).
+- **데이터·후속 학습:** 약3m 고정형 실내 CCTV가 목표입니다. 검수 전 원본 주석을 쓴 RAW 예비 학습은 미검수 상태를 보존합니다. 88장 정제를 M2 실사 보강에 반영하고, 촬영 자료 확보 즉시 T1·HOI를 병행하는 안을 권장합니다. 새 M2/T1 학습은 아직 시작하지 않았습니다. 합성은 별도, US Mock은 외부 개발 평가용입니다([후보·경계](reports/datasets/cctv-candidate-check-2026-11-06/report.md)).
+- **HOI/B4:** G/VG 관계 학습기, detector/frame/model hash로 연결한 관계 점수, B4 replay/사건 평가·snapshot 경로를 합성 자료 PC/Orin CUDA에서 검증했습니다. 실제 Holding/Not Holding 관계 정답 수집·학습·정확도는 아직 미검증입니다([규격·인계](docs/hoi-annotation-contract.md)).
+- **남은 검증:** 자체 촬영 적응, 실제 HOI 성능, 물리 GPIO, 독립 사건 평가와 실제 배치 조건의 지연·자원·안정성입니다. 실제 Orin L4T39.2.0 환경을 보존하며 TensorRT는 후속 최적화입니다.
+- **증거 원칙·일정:** 기존 MIDAS 수치는 재현 조건이 부족해 신규 공식 성능으로 사용하지 않습니다. 2026-11-20 모델·설정 동결 → 11/25~27 독립 CCTV 평가 → **11/30 개발·평가 마감**을 목표로 합니다. 완료 목표는 검증 완료를 의미하지 않습니다.
 
 자세한 구조는 [아키텍처](docs/architecture.md), 연구 범위는 [Master Project Plan](docs/project-plan.md), 검증 증거는 [검증 매트릭스](docs/verification.md)에서 확인할 수 있습니다.
 
 ## 문서 안내
+
+- [Research overview (English)](docs/research-overview-en.md): 연구 목적, B0~B4 설계, 현재 검증과 데이터 처리 원칙의 영문 안내
 
 처음 읽는 경우 아래 순서를 권장합니다.
 
@@ -63,7 +90,7 @@ Camera
 
 ## Legacy source checkout
 
-2025-2의 전체 모델·데이터셋·학습 소스는 용량과 원본 보존을 위해 Git submodule로 연결한다. 처음 clone할 때는 다음 명령을 사용한다.
+2025-2의 모델·데이터셋·학습 소스는 별도 upstream Git submodule로 참조합니다. 하위 저장소에는 과거 이미지와 checkpoint가 포함되며, 재사용·재배포 조건은 source별로 확인해야 합니다. 신규 제공 제한 자료의 비공개 처리 원칙과 이 역사적 참조를 구분합니다. 신규 코드만 확인할 때는 일반 clone으로 충분하고, legacy 분석이 필요할 때 아래 명령으로 하위 저장소를 함께 받습니다.
 
 ```bash
 git clone --recurse-submodules https://github.com/jaydenkim197/edge-threat-response.git
@@ -120,7 +147,7 @@ etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --out
 
 ### 버튼으로 이미지 검수하기
 
-팀원 공동 검수는 [PC13 팀 검수 사이트](https://pc13.tail37c267.ts.net/)에서 **본인 이름을 선택**해 시작한다([운영 안내](docs/team-review-deployment.md)). 후보를 고르면 첫 이미지가 자동 배정된다. **모든 후보에서 같은 두 질문**—CCTV형 장면인지, 칼 라벨이 정상인지—만 답하면 자동 저장되며 `문제 있음`일 때만 메모 칸이 나타난다. 아이폰 Safari·안드로이드 Chrome의 **홈 화면에 추가**로 열고 최근 검수를 이어갈 수 있다. CSV·개발 환경은 필요 없다. 모바일 Chrome/WebKit의 합성 fixture 저장·재접속은 검증했으며 실제 휴대폰 설치는 별도 확인한다. 이미지와 판정은 PC13에 저장한다. ACF는 원본 접근 장애로 잠겨 있고 Dangerous Items의 칼 class 매핑은 임시 판정이므로 학습에 쓰지 않는다.
+팀원 공동 검수는 [PC13 팀 검수 사이트](https://pc13.tail37c267.ts.net/)에서 **본인 이름을 선택**해 시작한다([운영 안내](docs/team-review-deployment.md)). 후보를 고르면 첫 이미지가 자동 배정된다. **모든 후보에서 같은 두 질문**—CCTV형 장면인지, 칼 라벨이 정상인지—만 답하면 자동 저장되며 `문제 있음`일 때만 메모 칸이 나타난다. 아이폰 Safari·안드로이드 Chrome의 **홈 화면에 추가**로 열고 최근 검수를 이어갈 수 있다. CSV·개발 환경은 필요 없다. 모바일 Chrome/WebKit의 합성 fixture 저장·재접속은 검증했으며 실제 휴대폰 설치는 별도 확인한다. 이미지와 판정은 PC13에 저장한다. ACF는 원본 미확보로 현재 활성 목록에서 제외돼 있습니다. Dangerous Items의 VOC semantic class 매핑은 확인해 RAW 예비 학습에 사용했으며, 웹 품질 판정과 정식 dataset 채택은 구분합니다. 현재 이름 선택 방식은 제한 자료의 접근 인증 수단이 아니므로, 새 제한 자료를 공개 검수 화면에 반입하지 않습니다.
 
 아래 명령은 기존 **단일 PC 로컬 SOHAS 검수 도구**가 필요한 경우에만 사용한다. 중앙 서비스 사용을 시작한 뒤 같은 표본을 로컬 DB에서 병행 수정하면 판정이 갈라진다. 현재 로컬 100장 pack은 `data/review/sohas-click-review-20261003/`이며 Git에는 이미지가 포함되지 않는다.
 
@@ -176,7 +203,7 @@ etr-replay --input tests/fixtures/replay/basic.jsonl --config configs/replay/dev
 
 수동 사건 정답과 동일 detection JSONL의 B0~B3 replay를 `etr-evaluate`로 비교한다. 사건 precision/recall/F1, 반복·배경 오경보, 영상 시간축의 판단 지연과 원시 매칭·입력 hash를 기록한다. 구현·가상 검증은 완료됐으며 실제 시스템 성능이나 GPIO 지연을 측정한 결과는 아니다.
 
-[통제 촬영·평가 절차](docs/controlled-experiment-protocol.md)에 실행 명령, P1~P4/N1~N5 촬영표, start/end 정답 양식과 세션별 pilot/tuning/final-test 분리가 있다. 실제 거리·허용 오차·반복 횟수는 첫 pilot 후 확정한다. [R1/H1 학습 준비](docs/training-cuda-handoff.md#r1h1-실행-준비--2026-10-04)는 검수·source/recipe 승인 전 전체 학습을 차단한다.
+[통제 촬영·평가 절차](docs/controlled-experiment-protocol.md)에 실행 명령, P1~P4/N1~N5 촬영표, start/end 정답 양식과 세션별 pilot/tuning/final-test 분리가 있다. 실제 거리·허용 오차·반복 횟수는 첫 pilot 후 확정한다. 정식 검수 recipe의 [R1/H1 학습 준비](docs/training-cuda-handoff.md#r1h1-실행-준비--2026-10-04)와, 사용자 허용으로 진행한 [원본 주석 RAW 예비 학습](docs/raw-source-training.md)은 별도 경로입니다. B4 최종 비교에는 별도로 사람 관계 정답으로 학습한 checkpoint와 [관계 sidecar 규격](docs/hoi-annotation-contract.md)이 필요합니다.
 
 ## Non-goals (현재 단계)
 

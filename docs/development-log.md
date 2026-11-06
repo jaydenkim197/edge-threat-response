@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- english-research-overview-20261106:begin -->
+## 2026-11-06 — 데이터 요청용 영어 진입 문서·README 상태 갱신
+
+- 목적/범위: 데이터 제공 연구자가 프로젝트·검증 증거·자료 처리 원칙을 확인하도록 README 한국어 제목 바로 아래 English summary와 `docs/research-overview-en.md`를 작성한다. 전체 한국어 문서 번역·메일 발송·검수 서버/인증/데이터 변경은 범위 밖이다.
+- 사실 대조: RAW4종50epoch 완료/공통개발평가, P430→Orin 실제R1/B3 main·sub각300frame/mock경보/모니터확인, 합성HOI/B4 연결과 실제관계학습·GPIO·독립final 미완료를 기존 보고서/코드와 대조했다. English summary에서B0~B4/3m는목표설정/개발결과와최종성능을구분하고제공받은연락처를명시했다.
+- 데이터 정책: 고정legacy submodule에이미지/checkpoint가있고standalone LICENSE파일을찾지못했으며, 운영config의reviewer_login=name을비밀값없이읽기전용확인했다. 따라서전자료재배포권한확보나제한자료인증구현을주장하지않는다. 신규제한자료의제공조건·비공개저장/공개endpoint미반입·재배포허가·보존/동의·source/session보호원칙을영어로기록했다. 이는새제한자료처리요건이며private서비스구현완료를뜻하지않는다.
+- README 한국어도최신학습·P430검증·Dangerous VOC매핑/RAW와정식검수recipe 구분을갱신했다. legacy는선택submodule참조/별도권리확인으로안내한다. 작업중타채팅의hostname복구commit865c5d6이반영된README검수URL은보존했다.
+- 검증/한계: 제공초안의간결한영문형식을따랐으며검증보고서·코드·고정submodule tree/config와상태를대조했다. 문서내부링크/anchor·fence·표/heading·diff·공개범위/비밀값을확인한다. 코드변경이없어제품테스트/하드웨어시험은재실행하지않는다. 실제새dataset반입/저장접근통제/메일발송을수행했다고보고하지않는다.
+- 결과/Git: README·영문소개·이로그의추가블록만stage/commit/push하고타채팅미커밋은보존한다. 후속은사용자가메일에서공개repo/영문소개링크를참조하고제공자의조건확정후별도private반입을준비하는것이다. commit식별자는본Git이력으로추적한다.
+<!-- english-research-overview-20261106:end -->
+
 <!-- review-hostname-recovery-20261106:begin -->
 ## 2026-11-06 — 검수 사이트 DNS/Funnel/app 주소 복구
 
