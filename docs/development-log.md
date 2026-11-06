@@ -2,6 +2,15 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- review-hostname-recovery-20261106:begin -->
+## 2026-11-06 — 검수 사이트 DNS/Funnel/app 주소 복구
+
+- 요청/원인: 사용자의 사이트 접속 실패를 재현했다. PC13 SSH/task/8770은 정상이지만 기존 URL은 DNS 실패, 실제 Tailscale DNSName/CertDomains는pc13, Funnel/app public_url은예전이름이었다. Host를지정한local200으로앱장애와구분했다.
+- 변경/보존: consistent DB/config backup·Funnel export후기존8770을새domain에연결하고public_url만변경/앱task만재시작했다. 기존3,625자료/2,673판정/계정/배정/history/registry의전후전체count/hash와session secret이일치했다. backend보안조건·dataset·질문·학습run·Windows/Tailscale장치명은변경하지않았다. 사용자는새주소유지를선택했다.
+- verification-loop: 실제config admin/catalog/batch image smoke·team_review13 tests·새Host local200·public ingress IP 지정HTTPS200/TLS verify0·Edge Chromium Android/iPhone크기의새주소login/질문2/정렬/old/new이미지/overflow0을확인했다. Claim차단/review POST차단으로운영QA판정/배정0이다. 실제휴대폰재설치는미검증이다.
+- 기록/다음: [복구보고](../reports/runtime/review-hostname-recovery-2026-11-06/report.md), README·운영안내의현재링크를수정했다. 원시backup/보존비교는PC13 ignored `data/review/hostname-recovery-20261106-v1/`다. 옛홈화면아이콘/즐겨찾기는새주소로교체한다. 장치명변경시DNS/Funnel/public_url동기확인필요. commit은본Git이력으로추적한다.
+<!-- review-hostname-recovery-20261106:end -->
+
 <!-- cctv-candidate-check-20261106:begin -->
 ## 2026-11-06 — 신규 CCTV 후보 원출처 확인·일정 우선 권장안
 
