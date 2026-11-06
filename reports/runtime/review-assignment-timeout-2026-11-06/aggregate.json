@@ -1,0 +1,113 @@
+{
+  "date": "2026-11-06",
+  "code_commit": "8a6ed6cad2b840304ff80778de013f4d12184acd",
+  "policy": {
+    "timeout_seconds": 900,
+    "activity_upload_interval_seconds": 30,
+    "reaper_interval_seconds": 60,
+    "only_unsaved_assignments_expire": true,
+    "completed_review_edit_ownership_preserved": true
+  },
+  "preservation": {
+    "timeout_seconds": 900,
+    "stale_released": 8,
+    "released_by_source": {
+      "catargiu": 3,
+      "simuletic": 1,
+      "simuletic-atm": 2,
+      "sohas": 1,
+      "us-mock": 1
+    },
+    "active_pending_preserved": 0,
+    "review_databases_unchanged": true,
+    "completed_assignments_preserved": true,
+    "users_registry_config_preserved": true,
+    "new_review_rows_written": 0,
+    "source_head": "8a6ed6cad2b840304ff80778de013f4d12184acd",
+    "prepared": 3625,
+    "reviewed": 2673
+  },
+  "unit_tests": {
+    "team_review": 20,
+    "full_run": 193,
+    "skipped": 2,
+    "status": "OK"
+  },
+  "browser_qa": [
+    {
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "timeoutSeconds": 900,
+      "automaticHeartbeatObserved": true,
+      "expiryAndReclaim": true,
+      "staleSaveBlocked": true,
+      "draftPreserved": true,
+      "resumedAndSaved": true,
+      "lastImageCanClaim": true,
+      "twoQuestions": true,
+      "oldReviewsPreserved": true,
+      "productionWrites": 0
+    },
+    {
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "timeoutSeconds": 900,
+      "automaticHeartbeatObserved": false,
+      "expiryAndReclaim": true,
+      "staleSaveBlocked": true,
+      "draftPreserved": true,
+      "resumedAndSaved": true,
+      "lastImageCanClaim": true,
+      "twoQuestions": true,
+      "oldReviewsPreserved": true,
+      "productionWrites": 0
+    }
+  ],
+  "public_qa": [
+    {
+      "profile": "android",
+      "engine": "Edge Chromium",
+      "sources": {
+        "sohas": 1150,
+        "dangerous-items": 400,
+        "open-images": 610
+      },
+      "total": 3625,
+      "remainingSorted": true,
+      "assignmentTimeoutSeconds": 900,
+      "twoQuestions": true,
+      "noHorizontalOverflow": true,
+      "oldAndNewImagesHTTP200": true,
+      "productionJudgmentsWritten": 0,
+      "productionAssignmentsWritten": 0,
+      "claimRequestsIntercepted": 3
+    },
+    {
+      "profile": "iphone-size",
+      "engine": "Edge Chromium",
+      "sources": {
+        "sohas": 1150,
+        "dangerous-items": 400,
+        "open-images": 610
+      },
+      "total": 3625,
+      "remainingSorted": true,
+      "assignmentTimeoutSeconds": 900,
+      "twoQuestions": true,
+      "noHorizontalOverflow": true,
+      "oldAndNewImagesHTTP200": true,
+      "productionJudgmentsWritten": 0,
+      "productionAssignmentsWritten": 0,
+      "claimRequestsIntercepted": 3
+    }
+  ],
+  "script_sha256": {
+    "operations.py": "a3a4a3818e413e5cce96cf8e2c682416b38dc0fffda9a5638f52a061deaca606",
+    "deploy.ps1": "7b9fe38b1915ec36308dae32418ba3f68cbe2629507962ae2285766812387e36",
+    "qa.py": "26bec41d8cab512e066e3ea8026780fc03568df45ad164d7b1aa4b5cf65477c1",
+    "browser-qa.cjs": "c112577324923e01c26b915ba6965add7250325900b2d95b92f13f2feee28e1d",
+    "public-check.cjs": "8739e37cfeb1980efc83743cdae0b0b324e4e8ade1ee78591cf4afb66b93cf31"
+  },
+  "initial_release_age_source": "latest saved review per owner; old schema had no activity timestamp",
+  "actual_phone_safari_verified": false
+}
