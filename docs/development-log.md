@@ -2,6 +2,14 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- raw-comparison-recovery-fix-20261106:begin -->
+## 2026-11-06 — RAW 네 모델 완료·보고 메타데이터 오류 수정
+
+- PC13 재접속 후 R1-n/H1-n/M1-n/M1-s 각각50epoch와queue passed를 확인했다. 후속AP8모델×6개 예측은 완료됐으나 `summarize_detector_comparison.py`의 `models['policy']` KeyError로 집계 단계가 실패한 것을 실제로그에서 재현했다. 모델/평가 입력이나 학습 오류와 구분한다.
+- 기존 집계기를 재사용해 선택 보고 메타데이터가 없는 frozen protocol을null/명시flag로 보고한다. 모든 기존truth/model/protocol/prediction hash·fixed metric 재계산 검사는 유지한다. 향후후속 프로토콜에는 원래policy와 AP/predict별 후보convention을 포함한다.
+- 새 synthetic end-to-end 집계회귀2개로 metadata유무·원본hash보존·prediction변조 거부를 확인했고, 기존fail-stop queue 회귀1개도 통과했다. 기존AP/실패state는 보존하며 새출력에서 AP집계/남은predict만 복구한다. 실제 모델 선정/최종CCTV 정확도는 아직 확정하지 않았다. code commit으로 수정범위를 추적한다.
+<!-- raw-comparison-recovery-fix-20261106:end -->
+
 <!-- p430-live-confirmed-20261105:begin -->
 ## 2026-11-05 — 실제 CCTV YOLO 통합·로컬 화면 확인
 

@@ -85,7 +85,10 @@ def finish(root: Path, queue_path: Path, output: Path, wait_hours: float):
                 track_root = output/track
                 track_root.mkdir()
                 protocol = {"schema_version": 1, "suite_sha256": _sha256_file(suite), "training_started": False,
-                            "status": "frozen_development_comparison", "track": track, "cases": []}
+                            "status": "frozen_development_comparison", "track": track, "cases": [],
+                            "policy": {**existing["policy"], "ultralytics_candidate_convention":
+                                       "per-class candidates (validator convention)" if track == "ap"
+                                       else "default predict single-label candidates"}}
                 for c in cases:
                     entry = dict(c)
                     if c["backend"] == "ultralytics": entry["ultralytics_multi_label"] = track == "ap"

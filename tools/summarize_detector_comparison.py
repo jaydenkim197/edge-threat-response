@@ -90,7 +90,8 @@ def summarize(args):
     args.output.mkdir(parents=True)
     _write_json(args.output/"aggregate.json", {"status": "completed_development_comparison",
                                                "suite_sha256": suite_hash, "model_protocol_sha256": model_hash,
-                                               "protocol": models["policy"],
+                                               "protocol": models.get("policy"),
+                                               "protocol_metadata_missing": "policy" not in models,
                                                "policy": POLICY, "reference": reference_name,
                                                "datasets": summary,
                                                "environments": {n: r["environment"] for n, (_, r) in completed.items()},
