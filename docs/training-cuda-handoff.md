@@ -1,5 +1,13 @@
 # CUDA / Colab Training Handoff
 
+<!-- pc11-pc12-cuda-ready-20261106:begin -->
+## 2026-11-06 — PC11·PC12도 동일 학습 환경 VERIFIED
+
+PC11/PC12의`C:\Class6\edge-threat-response`/`.venv-ml`에기존Python3.12.4로격리환경을구성했다. PC14실제freeze의43개패키지를고정해설치/버전대조했고, source는PC14와같은cb5cb700 detached다. 두PC의기존driver610.88/전역Python은유지했다. **각32tests·pip check·compile·CLI·CUDA forward/backward·YOLO FP32/AMP 합성1epoch/checkpoint재추론·합성HOI CUDA추론/B4연결**을통과했다. 새SSH Git provenance/repo clean도확인했다.
+
+공통원격PowerShell환경설정/실행명령은아래PC14기록과동일하며반드시프로젝트venv를사용한다. PC11/12/14가각각독립run을실행할준비는됐지만실제데이터전송/full run·DDP·전체corpus성능은아직검증하지않았다. PC11의pip대용량다운로드정체는공식wheel직접다운로드/공식SHA대조후설치로해결했고원래시도는보존했다. [환경·43버전대조·검증·경로·한계](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md).
+<!-- pc11-pc12-cuda-ready-20261106:end -->
+
 <!-- pc14-cuda-ready-20261106:begin -->
 ## 2026-11-06 — PC14 추가 학습 환경 VERIFIED
 

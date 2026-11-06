@@ -1,0 +1,56 @@
+{
+  "accuracy_claim": false,
+  "camera_gpio_verified": false,
+  "data_kind": "synthetic_only",
+  "environment": {
+    "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+    "logical_cpu_count": 32,
+    "packages": {
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "ultralytics": "8.4.152"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+  },
+  "forced_wiring_threshold": 0.0,
+  "git_commit": "cb5cb7002558e6c3c04273ffdc3154a48fd628ec",
+  "inference_device": "cuda:0",
+  "live_events": 1,
+  "live_frames": 4,
+  "live_snapshots": 1,
+  "models": {
+    "G": {
+      "checkpoint_sha256": "c42585a822cd89361f88a43457b7748984b032523fba26d2372a4ac1b8a314c6",
+      "duration_seconds": 0.6880000000819564,
+      "reload_identical": true,
+      "status": "passed"
+    },
+    "VG": {
+      "checkpoint_sha256": "ef5fc1a5834ca9f1e8a64b039c385c5b9bd9366b706d6d3337303588f4e143e5",
+      "duration_seconds": 0.3279999999795109,
+      "reload_identical": true,
+      "status": "passed"
+    }
+  },
+  "native_memory_policy": null,
+  "pretrained_visual_weights_tested": false,
+  "score_export": {
+    "frames": 4,
+    "relations_sha256": "77707d29fa954a97bc0f627840705e157074b310ff21cbdd083d39bbe35d9352",
+    "threshold": 0.05
+  },
+  "source_sha256": {
+    "src/edge_threat_response/hoi.py": "9b8083850d53b0daf07de8b9a6081fcb6e31e552b32ae5a0430dc74287bae77e",
+    "src/edge_threat_response/pipeline.py": "150a102eb3d8f275603832be1f163cea706166302f1dbcdf1ce36a3f550d4331",
+    "src/edge_threat_response/relations.py": "3ae732f1bf943fe7c517f5dad70ffb32bf1f63b4f7542f0009f9ecb607b48389",
+    "src/edge_threat_response/replay_cli.py": "bccf1694594235b4890bdad8fdb6571b7b520e5fe4d273e1b4f970d05a4a610c",
+    "src/edge_threat_response/runtime.py": "4fdf7d75a6b8dccfaaf0dff6d08250f035b4c89d35bdc373595d134432ed61c0",
+    "tools/verify_hoi_smoke.py": "eefd89a9d7ffc55bf714223e813ee66d8dc670432194257c266e6ca82d7db280"
+  },
+  "status": "passed",
+  "target_cuda_inference_verified": true
+}

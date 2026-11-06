@@ -1,0 +1,5 @@
+----------------------------------------------------------------------
+Ran 15 tests in 1.947s
+
+OK
+{"status": "completed_development_diagnostics", "test_used": false, "categories": {"train": {"detected": 7}, "val": {"detected": 3}}}

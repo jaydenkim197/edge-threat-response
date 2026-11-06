@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "full_training_started": false,
+  "source_commit": "cb5cb7002558e6c3c04273ffdc3154a48fd628ec",
+  "worker_sha256": "dd2ccd178cd268e33d7e799877fcf76eb49048b0ae1c0f17ffea49b3a8792271",
+  "step": "install-torch",
+  "updated_at_utc": "2026-11-06T09:43:34.745168+00:00",
+  "error": "CalledProcessError: Command '['C:\\\\Class6\\\\edge-threat-response\\\\.venv-ml\\\\Scripts\\\\python.exe', '-m', 'pip', 'install', '--no-cache-dir', 'torch==2.6.0', 'torchvision==0.21.0', '--index-url', 'https://download.pytorch.org/whl/cu124']' returned non-zero exit status 4294967295."
+}

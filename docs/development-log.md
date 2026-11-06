@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- pc11-pc12-cuda-ready-20261106:begin -->
+## 2026-11-06 — PC11·PC12 격리 CUDA 학습 환경·검증 완료
+
+- 목적/범위: 사용자요청으로두PC를PC14와같이설정/검증한다. 완료기준은독립clone/venv·Python3.12.4/43패키지버전일치·각32tests·CUDA실제학습/재로딩이며기존전역Python/driver/다른폴더/검수DB/실제dataset은변경하지않는다.
+- search-first 재사용: 기존PC14 bootstrap/검증절차·PC13requirements·CUDA/HOI smoke도구를사용했다. PC11 ProgramData Anaconda/PC12 사용자Anaconda의기존3.12.4를확인해venv를구성하고cb5cb700 checkout을고정했다. PC14freeze에서프로젝트항목을분리한43버전목록으로설치했고새SSH에서모든버전/commit/repo clean을대조했다. MinGit공식SHA검증/사용자PATH백업추가,YOLO cache선생성도수행했다.
+- PC11복구: pip가대용량wheel다운로드에서진행되지않아각해당자식프로세스만확인후중단/로그보존했다. 공식URL urllib다운로드2,532,302,369bytes와공식index SHA3313061c…를확인해로컬wheel로설치완료했다. 근본정체원인은확정하지않았다. clone/전역환경/다른작업을초기화하지않았다.
+- verification-loop 결과: PC11 training15/1.782s+RAW10/0.649s+HOI7/0.168s, PC12 15/1.947s+10/0.731s+7/0.168s 모두통과. 두PC모두pip check/compile/CLI·CUDA유한gradient·YOLO FP32/AMP합성8train/4val/1epoch/validation/checkpoint재로딩·합성HOI G/VG CUDA추론/B4연결을통과했다. HOI학습은도구의CPU경로이며실제HOI CUDA학습/정확도/Orin성능으로주장하지않는다.
+- 증거/한계/다음: [보고서](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md)에각PC state/freeze/43버전대조/테스트로그/원시경로를보관했다. 다음은실험별manifest·weight/config/SHA를보존한데이터전송/preflight다. 실제corpus학습·DDP·장시간안정성은미실행/미검증이다. 제품코드변경없음,문서수치/링크/JSON/diff를검증하고관련블록만commit/push한다. 타채팅미커밋은보존하며commit은본Git이력으로추적한다.
+<!-- pc11-pc12-cuda-ready-20261106:end -->
+
 <!-- pc14-cuda-ready-20261106:begin -->
 ## 2026-11-06 — PC14 격리 CUDA 학습 환경과 PC11·12 연결 복구
 

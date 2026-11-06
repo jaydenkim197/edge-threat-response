@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- pc11-pc12-cuda-ready-20261106:begin -->
+2026-11-06 PC11/12 후속: 각기존Python3.12.4·독립clone/venv·source cb5cb700·PC14reference43패키지버전전부일치/추가패키지없음확인(프로젝트제외). 두장치의기존driver610.88유지, 각training15+RAW10+HOI7=32tests·pip check·compile/CLI·CUDA forward/backward·실제YOLO FP32/AMP합성8train/4val/1epoch·best/last생성/재추론·합성G/VG CPU학습후CUDA추론/B4연결VERIFIED. 새SSH Git provenance/repo clean통과. PC11의첫2회pip다운로드시도는중단보존/공식wheel2,532,302,369bytes·SHA3313061c…검증설치로복구했다. 실사정확도·실제HOI CUDA학습·full corpus·DDP·Orin성능은검증하지않았다. [각PC JSON·테스트로그·버전대조](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md).
+<!-- pc11-pc12-cuda-ready-20261106:end -->
+
 <!-- pc14-cuda-ready-20261106:begin -->
 2026-11-06 후속: 사용자키등록후PC11/12 SSH 인증·whoami·GPU조회VERIFIED(각RTX3060 12288MiB/i9-13900/RAM31.75GiB/driver610.88/C여유196.23·179.42GiB). 이전키인증거부는해결됐다. PC14는cb5cb700독립clone·venv에PC13pin설치/driver유지, pip check·compile·training15+RAW10+HOI7=**32 tests**·CLI·실제CUDA FP32/AMP합성학습8train/4val/1epoch·checkpoint생성/재추론·합성G/VG CUDA추론/B4연결을통과했다. config/font cache의hash보존이동후추론과repo clean, 새SSH Git provenance도확인했다. 실사정확도/full run/Orin성능/실제HOI CUDA학습의증거는아니다. PC11/12학습환경은아직미설치/미검증이다. [환경·검증JSON·테스트로그·경로](../reports/training/pc14-cuda-readiness-2026-11-06/report.md).
 <!-- pc14-cuda-ready-20261106:end -->

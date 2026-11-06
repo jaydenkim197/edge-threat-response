@@ -1,0 +1,10 @@
+{
+  "status": "environment_installed",
+  "full_training_started": false,
+  "source_commit": "cb5cb7002558e6c3c04273ffdc3154a48fd628ec",
+  "worker_sha256": "145c68bd686d0cd854ed45252660e3cdd6357999306f7582065433b825534315",
+  "step": null,
+  "updated_at_utc": "2026-11-06T09:42:17.367560+00:00",
+  "portable_git_sha256": "8f0a7bc389c0bccc9daf6107cff4efb176348e34b8d787f02a36679a5588e072",
+  "next_step": "CUDA kernel and YOLO FP32/AMP smoke verification; not full data training"
+}

@@ -1,0 +1,12 @@
+{
+  "status": "passed",
+  "python": "3.12.4",
+  "source_commit": "cb5cb7002558e6c3c04273ffdc3154a48fd628ec",
+  "reference_packages": 43,
+  "all_reference_versions_equal": true,
+  "unexpected_packages": {},
+  "reference_sha256": "749512e9c79be826f1f1d2f9ef66104f2aa59f181f4375cf3ffba776dd6fc33b",
+  "git_status_clean": true,
+  "git_in_fresh_ssh_session": true,
+  "base_interpreter": "C:\\ProgramData\\anaconda3"
+}

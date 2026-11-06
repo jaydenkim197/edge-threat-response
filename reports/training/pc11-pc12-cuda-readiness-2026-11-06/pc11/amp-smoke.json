@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "scope": "synthetic CUDA plumbing only",
+  "gpu": "NVIDIA GeForce RTX 3060",
+  "torch": "2.6.0+cu124",
+  "cuda_runtime": "12.4",
+  "train_images": 8,
+  "val_images": 4,
+  "training_duration_seconds": 5.2189999998081475,
+  "checkpoint_reload_inference": "passed",
+  "amp_requested": true,
+  "amp_active": true,
+  "cublas_workspace_config": ":4096:8",
+  "smoke_script_sha256": "0606fd68e951283a4c49b8e15e4bf67e187f1f8c23da964128bf5a00af42cd00"
+}
