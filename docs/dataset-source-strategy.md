@@ -1,5 +1,9 @@
 # Dataset Source Strategy
 
+<!-- reviewed-next-training-20261106:begin -->
+2026-11-06 검수 감사: 준비3,625/완료2,673/정상2,527/보류146이다. 정상1,805장은 이미M1학습에 포함돼 중복 증량하지 않는다. Q1 정제안은 기존train88장 보류 후11,290장, 추가실사39장은 별도M2 후보(최종 전이적 그룹검사 미완료)다. 역할은 US Mock외부평가·OI정상29개발평가·DaSCI보호연결·Legacy L0·synthetic S1을 유지한다. OI별도train 웹표본580/Dangerous추가250은이snapshot에서미검수다. 확대 US Mock83장/31GT에서도 M1-n640 0TP·960 1TP라 목표CCTV train적응을 우선한다. Q1/새recipe는PROPOSAL이며원본/DB/split/학습반입은변경하지않았다. [감사·recipe·마일스톤](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
+<!-- reviewed-next-training-20261106:end -->
+
 <!-- raw-results-20261106:begin -->
 2026-11-06: SOHAS/Dangerous VOC/Catargiu 혼합M1-n이현재후속주력후보다(`PROPOSAL`). 같은263개개발이미지에서source별결과를확인했고, US CCTV8GT의미검출과Open Images 취약성이남았다. 다음보강은기존n모델의데이터축을고정해검증한다. Open Images train594장과자체CCTV는현재학습/평가에자동반입하지않고전역중복·보호그룹/세션·source/라벨기술검사후각기별도recipe로사용한다. RAW의사람검수대기는필수gate가아니며새bbox/HOI GT생성은별개다. [공통결과·데이터방향](../reports/evaluation/raw-detector-selection-2026-11-06/report.md).
 <!-- raw-results-20261106:end -->

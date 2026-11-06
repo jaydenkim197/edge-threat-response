@@ -1,0 +1,87 @@
+{
+  "cases": [
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\sohas-reviewed-development-20261026-smallscale-v1\\weights\\best.pt",
+      "checkpoint_sha256": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+      "id": "custom-n-640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "rfdetr",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\models\\multi-model-20261104\\rf-detr-large-2026.pth",
+      "checkpoint_sha256": "0f4e20e19a99c0f8a62b5685f57f6c8b5c371c59081feda6752a0561a79ccf38",
+      "id": "rf-large-704",
+      "imgsz": 704,
+      "knife_class_id": 49,
+      "model_class": "RFDETRLarge",
+      "precision": "float32"
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\raw-real-20261105-v2-raw-m1-n\\weights\\best.pt",
+      "checkpoint_sha256": "d95d63568d4939b5271784156ebeafbaf701887c444c0b06ef295d5b06e79320",
+      "id": "raw-m1-n-640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "3d122b58a7f36a557956f979dc834a5432c940502556cca5f074873c24da5bd3",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\raw-real-20261105-v2-raw-m1-s\\weights\\best.pt",
+      "checkpoint_sha256": "76345e0b31c00f437cbe6e58ec96f3046b22e50fcd2f2cca14e92a845cb5f9cd",
+      "id": "raw-m1-s-640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "b2545a5a164aa19c36dd5b98f970318feb41322d0a2dea94a048a6429da92bfc",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\raw-real-20261105-v2-raw-m1-n\\weights\\best.pt",
+      "checkpoint_sha256": "d95d63568d4939b5271784156ebeafbaf701887c444c0b06ef295d5b06e79320",
+      "id": "raw-m1-n-960",
+      "imgsz": 960,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "3d122b58a7f36a557956f979dc834a5432c940502556cca5f074873c24da5bd3",
+      "ultralytics_multi_label": false
+    }
+  ],
+  "experiment": "reviewed external CCTV expansion; no model retraining or final-test claim",
+  "policy": {
+    "COCO_AP_IoU": ".50:.05:.95",
+    "batch": 1,
+    "coco_AP_max_dets": 100,
+    "fixed_confidence": 0.25,
+    "fixed_iou": 0.5,
+    "fixed_max_detections": 300,
+    "inference_warmup": "3 synthetic blank images",
+    "model_native_preprocessing": true,
+    "normalized_small_area": 0.02,
+    "prediction_floor": 0.001,
+    "tf32": false,
+    "threshold_tuned_on_test": false,
+    "ultralytics_candidate_convention": "default predict single-label candidates"
+  },
+  "schema_version": 1,
+  "status": "frozen_development_comparison",
+  "suite_sha256": "6e15c477f4aed9ded9342f2d6a820b000be4d00fda620a836a2b3c8edf18e93e",
+  "track": "predict",
+  "training_started": false
+}

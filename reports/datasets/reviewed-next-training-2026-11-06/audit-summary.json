@@ -1,0 +1,252 @@
+{
+  "captured_at_utc": "2026-11-06T08:31:32.659181+00:00",
+  "database_snapshots": {
+    "catargiu/20261026-cctv-v1": {
+      "pack_hash": "b8f5cabcba7f0960c554e7c01a2999683cae89cec89ebc7ddf90ac62db0cfb3d",
+      "review_count": 14,
+      "reviews_sha256": "d09c0e8d4b1ee736b2cf583dfaabdde4085affc22a21a1e6a4b9b6118285bb06"
+    },
+    "catargiu/20261026-full-scan-v2": {
+      "pack_hash": "48d0613cfb3d82c516ff6eac56d84cf98c7bbd12a87ad211be4dbf08f2adbc24",
+      "review_count": 760,
+      "reviews_sha256": "216f26a4cf9e0a5afcda35cd919e5fd054456a2b371bd84cac9a1fca1212ed89"
+    },
+    "catargiu/initial": {
+      "pack_hash": "320833ca708f28803240860312b96d1648afbf5028de67d041e2a14f694f223b",
+      "review_count": 16,
+      "reviews_sha256": "3eea7aab0b1bd9f59e9cf7a66559f733baafcdda45b4d40c14dea1416009eeaa"
+    },
+    "dangerous-items/20261026-voc-small-v1": {
+      "pack_hash": "c0f1f03a45c082fb63c135176fb5f612419f9e73770cd63cae876863f1d2a3f6",
+      "review_count": 50,
+      "reviews_sha256": "ab3e2dda75840b079a5b036e18e2923089a8db5a779bbaeaaa11ba1b7c3cef9e"
+    },
+    "dangerous-items/20261105-quality-v1": {
+      "pack_hash": "3fe55a8140c0df0aff2f1833a928651665cf4fe038ce3f84b60d1bd952259da6",
+      "review_count": 0,
+      "reviews_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "dangerous-items/initial": {
+      "pack_hash": "118d22d862561c8d64dac543674047d05de92bbf2b993f88bc22a92e8b0c6bbe",
+      "review_count": 100,
+      "reviews_sha256": "9eb7dedb2ae54fe1b181be612e8272f682732c76fec3f547598270e9681ef956"
+    },
+    "dasci-unique/initial": {
+      "pack_hash": "23eb7ff4241dc1da5fb00e4d6893f4eb5cdbc9e60b8c0f5a7cf3b600279cbab1",
+      "review_count": 93,
+      "reviews_sha256": "8ba5bad6cd931d08b97d90aeb6d3e1d64403df181c8ee39d271d8d96a28601dd"
+    },
+    "legacy/initial": {
+      "pack_hash": "afbfec43601f6efb2c0ab3b4399741fe8bc859c7bc8b35cec8ef5875a0614439",
+      "review_count": 128,
+      "reviews_sha256": "a696a2861ede0c7d6bf05881c4ebda6fa73394fd025790577453245f0d73f8f8"
+    },
+    "open-images/20261105-quality-v1": {
+      "pack_hash": "285ef9ac474fe92d6aa4b5cfccc48635ad314943d9e2eb85814fdfdc352d9371",
+      "review_count": 0,
+      "reviews_sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    "open-images/initial": {
+      "pack_hash": "4706b77bab7c7a8c16d282b7a031d7a85631098236939d90376145ebc02fc317",
+      "review_count": 30,
+      "reviews_sha256": "8a5877ab0f15d72c889abc230c262fe6c2558eb9e280362616bf187e3cad05b9"
+    },
+    "simuletic-atm/initial": {
+      "pack_hash": "71fc504bae8207bae323d46c2cf4e434b48f8d6b4c6d8c6a2a94e94ca54eea0f",
+      "review_count": 121,
+      "reviews_sha256": "2301b70085f25faeed777723d3b1632e1e449d33db264f8b6f2abf37cb5d1cca"
+    },
+    "simuletic/initial": {
+      "pack_hash": "afb68f71f12f2e2e29decfccf8dbe101d2411dd53fd1292cabd98be5f0831fa7",
+      "review_count": 113,
+      "reviews_sha256": "55bc41700108666a638524ecfc8099fa20ebd826220e2ebf5f99a34e0a6dee91"
+    },
+    "sohas/20261004-b01": {
+      "pack_hash": "5d0b9f816a6c471d3cdc824b1117fc8bab5d258b8e3d9e6235355939b00ce7ca",
+      "review_count": 100,
+      "reviews_sha256": "a42862ef90ebdbb9ae1c0fc6646c42ba5182295ddcb5e419082cb5da4443d9a2"
+    },
+    "sohas/20261026-negative-mined-v1": {
+      "pack_hash": "ffbaf8aa7f7d53d1482b473187b934dbfb2de4ac54aa81578c72d9e0da28bf31",
+      "review_count": 50,
+      "reviews_sha256": "4fb2df3dc2e795c70e14622bc15ec3228328139f063a2c03e6c18246dad7dc6c"
+    },
+    "sohas/20261026-small-positive-v1": {
+      "pack_hash": "21b13448a4e1db110ca2af2c3d0dbd7743ac97d5afb4faf236566205e942289b",
+      "review_count": 100,
+      "reviews_sha256": "38e14abe424a172411710ea9aeb486c0784cc46841f14602c987fdc146a7b11b"
+    },
+    "sohas/20261105-quality-v1": {
+      "pack_hash": "76b0b2771e70564be59e181cb57f654b63f9922148a96d08fea8f9f0df3ce4e4",
+      "review_count": 799,
+      "reviews_sha256": "d7a7dddae5e91970870e9308307225c6dfd21e542780df51332fd7a2193c4736"
+    },
+    "sohas/initial": {
+      "pack_hash": "695b0069fd69a358d6d5b59d57a18ae8b00a96258510da1c29ceba970f604102",
+      "review_count": 100,
+      "reviews_sha256": "49a892120072b5905478407318011c9a991acd7a61e41c120f83d1cc3499debe"
+    },
+    "us-mock/initial": {
+      "pack_hash": "59b2e5f42f8b45ee97ba6f7bc47fe6e03034e12e5addcbf492a72730d128a4c4",
+      "review_count": 99,
+      "reviews_sha256": "eacd6c5d099987653b21116d40886b7cd5fbca1af0561eb620e99c590809c7ab"
+    }
+  },
+  "datasets": {
+    "catargiu": {
+      "ok_domain_non_target": 256,
+      "ok_domain_target_cctv": 7,
+      "ok_domain_unclear": 471,
+      "ok_negative": 11,
+      "ok_negative_absence_confirmed": 11,
+      "ok_not_in_raw_source_cache": 11,
+      "ok_novel_direct_protected": 0,
+      "ok_novel_direct_unprotected": 11,
+      "ok_positive": 723,
+      "ok_protected_group": 20,
+      "ok_raw_train": 703,
+      "ok_raw_train_overlay_match": 703,
+      "ok_small_images": 715,
+      "prepared": 793,
+      "reviewed": 790,
+      "verdict_ok": 734,
+      "verdict_problem": 29,
+      "verdict_unclear": 27
+    },
+    "dangerous-items": {
+      "ok_domain_non_target": 109,
+      "ok_domain_target_cctv": 15,
+      "ok_negative": 64,
+      "ok_negative_absence_confirmed": 64,
+      "ok_not_in_raw_source_cache": 28,
+      "ok_novel_direct_protected": 0,
+      "ok_novel_direct_unprotected": 28,
+      "ok_positive": 60,
+      "ok_protected_group": 58,
+      "ok_raw_train": 38,
+      "ok_raw_train_overlay_match": 38,
+      "ok_small_images": 49,
+      "prepared": 400,
+      "reviewed": 150,
+      "verdict_ok": 124,
+      "verdict_problem": 19,
+      "verdict_unclear": 7
+    },
+    "dasci-unique": {
+      "ok_domain_non_target": 90,
+      "ok_domain_target_cctv": 2,
+      "ok_domain_unclear": 1,
+      "ok_not_in_raw_source_cache": 1,
+      "ok_novel_direct_protected": 1,
+      "ok_novel_direct_unprotected": 0,
+      "ok_positive": 93,
+      "ok_protected_group": 92,
+      "ok_small_images": 85,
+      "prepared": 93,
+      "reviewed": 93,
+      "verdict_ok": 93
+    },
+    "legacy": {
+      "ok_domain_non_target": 123,
+      "ok_not_in_raw_source_cache": 123,
+      "ok_novel_direct_protected": 0,
+      "ok_novel_direct_unprotected": 123,
+      "ok_positive": 123,
+      "ok_small_images": 27,
+      "prepared": 128,
+      "reviewed": 128,
+      "verdict_ok": 123,
+      "verdict_problem": 1,
+      "verdict_unclear": 4
+    },
+    "open-images": {
+      "ok_domain_non_target": 29,
+      "ok_novel_direct_protected": 0,
+      "ok_novel_direct_unprotected": 0,
+      "ok_positive": 29,
+      "ok_protected_group": 29,
+      "prepared": 610,
+      "reviewed": 30,
+      "verdict_ok": 29,
+      "verdict_unclear": 1
+    },
+    "simuletic": {
+      "ok_domain_non_target": 6,
+      "ok_domain_target_cctv": 93,
+      "ok_domain_unclear": 7,
+      "ok_negative": 15,
+      "ok_negative_absence_confirmed": 15,
+      "ok_not_in_raw_source_cache": 31,
+      "ok_novel_direct_protected": 15,
+      "ok_novel_direct_unprotected": 16,
+      "ok_positive": 91,
+      "ok_protected_group": 75,
+      "ok_small_images": 91,
+      "prepared": 114,
+      "reviewed": 113,
+      "verdict_ok": 106,
+      "verdict_unclear": 7
+    },
+    "simuletic-atm": {
+      "ok_domain_non_target": 47,
+      "ok_domain_target_cctv": 74,
+      "ok_negative": 118,
+      "ok_negative_absence_confirmed": 118,
+      "ok_not_in_raw_source_cache": 121,
+      "ok_novel_direct_protected": 0,
+      "ok_novel_direct_unprotected": 121,
+      "ok_positive": 3,
+      "ok_small_images": 3,
+      "prepared": 237,
+      "reviewed": 121,
+      "verdict_ok": 121
+    },
+    "sohas": {
+      "ok_domain_non_target": 276,
+      "ok_domain_target_cctv": 33,
+      "ok_domain_unclear": 803,
+      "ok_domain_useful_real": 2,
+      "ok_negative": 301,
+      "ok_negative_absence_confirmed": 301,
+      "ok_novel_direct_protected": 0,
+      "ok_novel_direct_unprotected": 0,
+      "ok_positive": 813,
+      "ok_protected_group": 50,
+      "ok_raw_train": 1064,
+      "ok_raw_train_overlay_match": 1064,
+      "ok_small_images": 198,
+      "prepared": 1150,
+      "reviewed": 1149,
+      "verdict_ok": 1114,
+      "verdict_problem": 23,
+      "verdict_unclear": 12
+    },
+    "us-mock": {
+      "ok_domain_target_cctv": 83,
+      "ok_negative": 52,
+      "ok_negative_absence_confirmed": 52,
+      "ok_not_in_raw_source_cache": 62,
+      "ok_novel_direct_protected": 27,
+      "ok_novel_direct_unprotected": 35,
+      "ok_positive": 31,
+      "ok_protected_group": 21,
+      "ok_small_images": 31,
+      "prepared": 100,
+      "reviewed": 99,
+      "verdict_ok": 83,
+      "verdict_problem": 8,
+      "verdict_unclear": 8
+    }
+  },
+  "near_check_scope": "direct dHash4 and existing Roboflow-family links to frozen source/holdout groups; no novel-novel transitive approval",
+  "novel_signature_count": 422,
+  "production_review_db_modified": false,
+  "raw_inventory_sha256": "95e3cd89c126dad48db9586b4584422cc2e1e1e552678e9c7e4267b29219176d",
+  "raw_train_conflicting_verdict_sha": 0,
+  "raw_train_held_different_overlay": 0,
+  "raw_train_held_same_overlay": 88,
+  "raw_train_images": 11378,
+  "raw_train_reviewed_ok_same_overlay": 1805,
+  "reviewed_ok_unique": 2527,
+  "training_materialized": false
+}

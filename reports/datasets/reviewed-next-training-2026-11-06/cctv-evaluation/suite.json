@@ -1,0 +1,25 @@
+{
+  "datasets": {
+    "us-mock-reviewed": {
+      "groups": 16,
+      "images": 83,
+      "knife_objects": 31,
+      "previous_opened_images": 21,
+      "role": "external real CCTV development evaluation only",
+      "truth": "C:\\Class6\\edge-threat-response\\runs\\reviewed-cctv-20261106-v2\\truth.json",
+      "truth_sha256": "61c08bd33a00f3036eda5fb8df2824cc6a223d0a0d94dcf94953e332887f1676"
+    }
+  },
+  "inputs": {
+    "C:\\Class6\\edge-threat-response\\runs\\reviewed-cctv-20261106-v2\\selection.json": "c3dbf9a11fc71830b95741e3cb6ec6e9ceb639a42a978b0d806520526e9c81ff"
+  },
+  "policy": {
+    "confidence": 0.25,
+    "iou": 0.5,
+    "schema_version": 1,
+    "small_area_max": 0.02,
+    "status": "development"
+  },
+  "schema_version": 1,
+  "status": "development_authorized"
+}

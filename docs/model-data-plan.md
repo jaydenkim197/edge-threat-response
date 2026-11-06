@@ -1,5 +1,13 @@
 # Model and Dataset Readiness Plan
 
+<!-- reviewed-next-training-20261106:begin -->
+## 2026-11-06 — 검수 반영 후 다음 recipe 제안
+
+정상2,527장 전체를 신규 train으로 세지 않는다. M1 기존 train/표시라벨 일치 정상1,805장, 보류88장(문제49/불확실39), 새 실사 직접 검사 통과 후보39장(양성5/음성34)이다. **Q1-clean-n**은 기존11,378−88=**11,290장**, 같은 pretrained 초기weight/n/640·50epoch·11,392draws/epoch·35,600updates의 정제 recipe 비교를 권장한다(`PROPOSAL`, 미실행). val/test 각1,423장과 기존 평가 보호그룹은 유지한다. 미검수 RAW 사용 허용은 유지하며 정상만1,805장으로 전체를 축소하지 않는다.
+
+새39장은 전체 신규 간 전이적 그룹/source 검사 후 별도 M2 후보로 보존한다(모두 추가 시 최대11,329장, 확정 아님). Open Images 별도train과 Dangerous 보강은 역할/중복검사 후 판단한다. US Mock83장·Open Images 정상29장·DaSCI 보호연결93장은 train으로 전환하지 않으며 합성은S1/Legacy는L0로 분리한다. 확대 US CCTV31GT에서 M1-n640은0TP,960은1TP여서 자체CCTV T1의 train/tuning/final 세션 분리와 HOI pair GT 준비가 핵심이다. [증거·조건·남은 검사](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
+<!-- reviewed-next-training-20261106:end -->
+
 <!-- raw-results-20261106:begin -->
 ## 2026-11-06 완료 결과와 다음 학습 후보
 

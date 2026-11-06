@@ -1,0 +1,3 @@
+# Preserve original experiment source bytes and their recorded SHA-256.
+audit-worker.py -text whitespace=cr-at-eol
+cctv-evaluation/evaluation-worker.py -text whitespace=cr-at-eol

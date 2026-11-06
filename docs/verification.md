@@ -1,5 +1,9 @@
 # Verification Matrix
 
+<!-- reviewed-next-training-20261106:begin -->
+2026-11-06 검수 후속: SQLite read-only transaction/팩·이미지hash·기존RAWgroup·bbox대조로 정상2,527장(고유SHA2,527), 기존학습정상1,805/보류88/새실사직접검사후보39를 확인했다. 새39의전체전이적그룹검사·materialization은미완료다. 기존평가source e295586/격리venv에서US Mock정상83장·31GT·52음성·16sequence에대해5모델조건실제inference/집계passed, sourcehash보존을확인했다. M1-n640 TP0/31·FP2,960 TP1/31·FP2다. threshold캐시진단도완료했으며운영설정/리뷰DB/기존split은수정하지않았다. v1suite정책누락은inference전실패보존/v2정확한정책으로통과. 새전체학습·Orin교체·최종사건평가는미실행이며186테스트는이전실행기록이다. [수치·raw·해시·한계](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
+<!-- reviewed-next-training-20261106:end -->
+
 <!-- raw-results-20261106:begin -->
 2026-11-06: RAW4모델50epoch/각35600 updates/queue passed, 체크포인트·invocationhash 확인. AP8×6기존캐시재검증·predict8×6완료·원본162파일hash보존·수정source e295586의PC13평가venv 전체186 tests/22.970초/skip0 통과. 같은640-trained M1-n/s의960추론2×6도passed다. source별CSV·모든protocol·학습환경/CSV·그림과한계는 [공통결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)에있다. 새데이터/모델학습·최종D*·실제사건정확도·M1/960 Orin비용은미검증/미실행으로구분했다. PC14 tailnet/SSH응답만확인했고계정인증/GPU는아직미검증이다.
 <!-- raw-results-20261106:end -->

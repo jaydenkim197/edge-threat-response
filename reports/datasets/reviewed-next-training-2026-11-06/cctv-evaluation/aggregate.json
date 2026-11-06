@@ -1,0 +1,504 @@
+{
+  "all_source_hashes_preserved": true,
+  "datasets": {
+    "us-mock-reviewed": {
+      "group_basis": "source sequence; includes previously opened development images",
+      "groups": 16,
+      "images": 83,
+      "knife_objects": 31,
+      "models": {
+        "custom-n-640": {
+          "case_summary_sha256": "06fbb25c64afb14c2d8a19134846a7079fc24d1ad27650d5bf75b04fc84faec2",
+          "coco": {
+            "ap50": 0.0007614871751630564,
+            "ap50_95": 0.00018713253366274923,
+            "ap75": 0.0,
+            "area": "all",
+            "confidence_floor": 0.001,
+            "implementation": "pycocotools.COCOeval",
+            "iou_thresholds": [
+              0.5,
+              0.55,
+              0.6,
+              0.65,
+              0.7,
+              0.75,
+              0.8,
+              0.85,
+              0.9,
+              0.95
+            ],
+            "knife_category_id": 1,
+            "max_dets": 100,
+            "recall_points": 101
+          },
+          "fixed": {
+            "counts": {
+              "fn": 30,
+              "fp": 83,
+              "negative_fp_boxes": 50,
+              "negative_images": 52,
+              "negative_images_with_fp": 34,
+              "small_gt": 31,
+              "small_tp": 1,
+              "tp": 1
+            },
+            "f1": 0.017391304347826087,
+            "fp_boxes_per_negative_image": 0.9615384615384616,
+            "images": 83,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.6538461538461539,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.011904761904761904,
+            "recall": 0.03225806451612903,
+            "schema_version": 1,
+            "small_box_recall": 0.03225806451612903,
+            "status": "development_image_boxes"
+          },
+          "paired_recall_vs_custom": {
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "delta_recall": 0.0,
+            "groups": 16,
+            "limits": "descriptive; group proxies and small samples do not establish general superiority",
+            "method": "paired percentile group bootstrap",
+            "positive_groups": 9,
+            "repetitions": 2000,
+            "seed": 20261104,
+            "valid_replicates": 2000
+          },
+          "predictions_sha256": "60ca9b41abc687c1e8295df341e439383217c88923380a043bf42810fba0eedf"
+        },
+        "raw-m1-n-640": {
+          "case_summary_sha256": "f414c7cef2c797b369571c3768ea4d74128bec4cbf685a7bc8bf1925fb4e67eb",
+          "coco": {
+            "ap50": 0.020384391380314504,
+            "ap50_95": 0.010398279646969223,
+            "ap75": 0.009900990099009901,
+            "area": "all",
+            "confidence_floor": 0.001,
+            "implementation": "pycocotools.COCOeval",
+            "iou_thresholds": [
+              0.5,
+              0.55,
+              0.6,
+              0.65,
+              0.7,
+              0.75,
+              0.8,
+              0.85,
+              0.9,
+              0.95
+            ],
+            "knife_category_id": 1,
+            "max_dets": 100,
+            "recall_points": 101
+          },
+          "fixed": {
+            "counts": {
+              "fn": 31,
+              "fp": 2,
+              "negative_fp_boxes": 0,
+              "negative_images": 52,
+              "negative_images_with_fp": 0,
+              "small_gt": 31,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 83,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.0,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          "paired_recall_vs_custom": {
+            "ci95": [
+              -0.10349364791288566,
+              0.0
+            ],
+            "delta_recall": -0.03225806451612903,
+            "groups": 16,
+            "limits": "descriptive; group proxies and small samples do not establish general superiority",
+            "method": "paired percentile group bootstrap",
+            "positive_groups": 9,
+            "repetitions": 2000,
+            "seed": 20261104,
+            "valid_replicates": 2000
+          },
+          "predictions_sha256": "0ee9c8d9c71043138e267f736be618c4e025d52994227f4cb0c5c5ca3e5355f2"
+        },
+        "raw-m1-n-960": {
+          "case_summary_sha256": "b5e415d1ef5101498029e24492c80bfeaf347203c18fa0e5109bc290aa1660f4",
+          "coco": {
+            "ap50": 0.015407611575377721,
+            "ap50_95": 0.008031804470584672,
+            "ap75": 0.0014935696551306506,
+            "area": "all",
+            "confidence_floor": 0.001,
+            "implementation": "pycocotools.COCOeval",
+            "iou_thresholds": [
+              0.5,
+              0.55,
+              0.6,
+              0.65,
+              0.7,
+              0.75,
+              0.8,
+              0.85,
+              0.9,
+              0.95
+            ],
+            "knife_category_id": 1,
+            "max_dets": 100,
+            "recall_points": 101
+          },
+          "fixed": {
+            "counts": {
+              "fn": 30,
+              "fp": 2,
+              "negative_fp_boxes": 1,
+              "negative_images": 52,
+              "negative_images_with_fp": 1,
+              "small_gt": 31,
+              "small_tp": 1,
+              "tp": 1
+            },
+            "f1": 0.058823529411764705,
+            "fp_boxes_per_negative_image": 0.019230769230769232,
+            "images": 83,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.019230769230769232,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 0.3333333333333333,
+            "recall": 0.03225806451612903,
+            "schema_version": 1,
+            "small_box_recall": 0.03225806451612903,
+            "status": "development_image_boxes"
+          },
+          "paired_recall_vs_custom": {
+            "ci95": [
+              0.0,
+              0.0
+            ],
+            "delta_recall": 0.0,
+            "groups": 16,
+            "limits": "descriptive; group proxies and small samples do not establish general superiority",
+            "method": "paired percentile group bootstrap",
+            "positive_groups": 9,
+            "repetitions": 2000,
+            "seed": 20261104,
+            "valid_replicates": 2000
+          },
+          "predictions_sha256": "7bcea58c22afdc345ee4879fd34212c1408e71969e85f6e120127926fd7f7fca"
+        },
+        "raw-m1-s-640": {
+          "case_summary_sha256": "5ddbf5a100295cd538a490bb45c1857366c1f32ca9ba8f8c38be473b7a948985",
+          "coco": {
+            "ap50": 0.0017219113215669393,
+            "ap50_95": 0.00030921505352693316,
+            "ap75": 0.0,
+            "area": "all",
+            "confidence_floor": 0.001,
+            "implementation": "pycocotools.COCOeval",
+            "iou_thresholds": [
+              0.5,
+              0.55,
+              0.6,
+              0.65,
+              0.7,
+              0.75,
+              0.8,
+              0.85,
+              0.9,
+              0.95
+            ],
+            "knife_category_id": 1,
+            "max_dets": 100,
+            "recall_points": 101
+          },
+          "fixed": {
+            "counts": {
+              "fn": 31,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 52,
+              "negative_images_with_fp": 0,
+              "small_gt": 31,
+              "small_tp": 0,
+              "tp": 0
+            },
+            "f1": 0.0,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 83,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": null,
+            "recall": 0.0,
+            "schema_version": 1,
+            "small_box_recall": 0.0,
+            "status": "development_image_boxes"
+          },
+          "paired_recall_vs_custom": {
+            "ci95": [
+              -0.10349364791288566,
+              0.0
+            ],
+            "delta_recall": -0.03225806451612903,
+            "groups": 16,
+            "limits": "descriptive; group proxies and small samples do not establish general superiority",
+            "method": "paired percentile group bootstrap",
+            "positive_groups": 9,
+            "repetitions": 2000,
+            "seed": 20261104,
+            "valid_replicates": 2000
+          },
+          "predictions_sha256": "1151839f718acca66dd4086e74932f40fa9497ac82e87d67882eac54e94a3fc1"
+        },
+        "rf-large-704": {
+          "case_summary_sha256": "88f8ace48a16e8f4543305fd3a880fa0e6cddc0cd21a9376eecb4d2a8292b4f2",
+          "coco": {
+            "ap50": 0.06845693854784383,
+            "ap50_95": 0.03667701067191619,
+            "ap75": 0.04445563835838305,
+            "area": "all",
+            "confidence_floor": 0.001,
+            "implementation": "pycocotools.COCOeval",
+            "iou_thresholds": [
+              0.5,
+              0.55,
+              0.6,
+              0.65,
+              0.7,
+              0.75,
+              0.8,
+              0.85,
+              0.9,
+              0.95
+            ],
+            "knife_category_id": 1,
+            "max_dets": 100,
+            "recall_points": 101
+          },
+          "fixed": {
+            "counts": {
+              "fn": 30,
+              "fp": 0,
+              "negative_fp_boxes": 0,
+              "negative_images": 52,
+              "negative_images_with_fp": 0,
+              "small_gt": 31,
+              "small_tp": 1,
+              "tp": 1
+            },
+            "f1": 0.0625,
+            "fp_boxes_per_negative_image": 0.0,
+            "images": 83,
+            "limits": [
+              "normalized bbox area is not physical distance",
+              "fixed-threshold greedy IoU matching, not mAP",
+              "image metrics are not event false alerts/hour or GPIO latency",
+              "annotation approval and frozen status are declarations, not cryptographic identity verification"
+            ],
+            "negative_image_fp_fraction": 0.0,
+            "partition": "tuning",
+            "policy": {
+              "confidence": 0.25,
+              "iou": 0.5,
+              "schema_version": 1,
+              "small_area_max": 0.02,
+              "status": "development"
+            },
+            "precision": 1.0,
+            "recall": 0.03225806451612903,
+            "schema_version": 1,
+            "small_box_recall": 0.03225806451612903,
+            "status": "development_image_boxes"
+          },
+          "paired_recall_vs_custom": {
+            "ci95": [
+              -0.0967741935483871,
+              0.07142857142857142
+            ],
+            "delta_recall": 0.0,
+            "groups": 16,
+            "limits": "descriptive; group proxies and small samples do not establish general superiority",
+            "method": "paired percentile group bootstrap",
+            "positive_groups": 9,
+            "repetitions": 2000,
+            "seed": 20261104,
+            "valid_replicates": 2000
+          },
+          "predictions_sha256": "ac8bea396f98a43700d50731ea2c1cd1f4ea48e3337e70fad5aea2dae4c89129"
+        }
+      },
+      "previous_opened_images": 21,
+      "role": "external real CCTV development evaluation only",
+      "same_family_as_protected_images": 0,
+      "truth_sha256": "61c08bd33a00f3036eda5fb8df2824cc6a223d0a0d94dcf94953e332887f1676"
+    }
+  },
+  "environments": {
+    "custom-n-640": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-evaluation-20261104\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    },
+    "raw-m1-n-640": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-evaluation-20261104\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    },
+    "raw-m1-n-960": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-evaluation-20261104\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    },
+    "raw-m1-s-640": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-evaluation-20261104\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    },
+    "rf-large-704": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-evaluation-20261104\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    }
+  },
+  "extra_packages": {
+    "pycocotools": "2.0.11",
+    "rfdetr": "1.11.2",
+    "safetensors": "0.8.0",
+    "timm": "1.0.31",
+    "transformers": "5.22.1"
+  },
+  "model_protocol_sha256": "ba55bc34dad7b6c756db1fe4736fc9a3004b6393ded3f5879dbd4da4cf76a546",
+  "policy": {
+    "confidence": 0.25,
+    "iou": 0.5,
+    "schema_version": 1,
+    "small_area_max": 0.02,
+    "status": "development"
+  },
+  "protocol": {
+    "COCO_AP_IoU": ".50:.05:.95",
+    "batch": 1,
+    "coco_AP_max_dets": 100,
+    "fixed_confidence": 0.25,
+    "fixed_iou": 0.5,
+    "fixed_max_detections": 300,
+    "inference_warmup": "3 synthetic blank images",
+    "model_native_preprocessing": true,
+    "normalized_small_area": 0.02,
+    "prediction_floor": 0.001,
+    "tf32": false,
+    "threshold_tuned_on_test": false,
+    "ultralytics_candidate_convention": "default predict single-label candidates"
+  },
+  "protocol_metadata_missing": false,
+  "reference": "custom-n-640",
+  "status": "completed_development_comparison",
+  "suite_sha256": "6e15c477f4aed9ded9342f2d6a820b000be4d00fda620a836a2b3c8edf18e93e",
+  "training_started": false
+}

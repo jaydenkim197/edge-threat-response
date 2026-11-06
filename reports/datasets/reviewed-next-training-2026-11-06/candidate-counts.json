@@ -1,0 +1,14 @@
+{
+  "base_raw_train": 11378,
+  "review_held_same_overlay": 88,
+  "clean_existing_train": 11290,
+  "new_reviewed_real_direct_unprotected": 39,
+  "maximum_clean_plus_new_train": 11329,
+  "reviewed_only_same_overlay_existing": 1805,
+  "maximum_reviewed_only_plus_new": 1844,
+  "new_box_invalid": 0,
+  "final_materialization_done": false,
+  "full_novel_transitive_group_check_done": false,
+  "new_real_positive": 5,
+  "new_real_negative": 34
+}

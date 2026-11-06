@@ -1,5 +1,13 @@
 # Master Project Plan
 
+<!-- reviewed-next-training-20261106:begin -->
+## 2026-11-06 — 검수 대조·확대 CCTV 진단·현재 마일스톤
+
+현재 위치는 **공개 데이터 baseline 비교 완료 → 정제·목표 CCTV 적응 준비**다. 검수 snapshot은 3,625장 중 완료2,673/정상2,527이며, 정상1,805장은 이미 M1 train과 동일 라벨이다. 기존 train88장은 문제·불확실 판정이므로 **Q1-clean-n/640, train11,290장**을 다음 공개 데이터 실험 후보로 권장한다(`PROPOSAL`). 신규 실사39장은 별도 반입 후보이며 전이적 그룹 검사가 남아 있다. Q1과 동시에 추가하고 순수 정제 효과로 해석하지 않는다. 기존 포괄적 M2 권장안의 구체화이며 새 학습은 시작하지 않았다.
+
+확대 US CCTV83장/31knife GT의 M1-n/s640 TP는0/31, 같은n weight960은1/31이었다. 따라서 가장 중요한 후속 학습은 **독립 train 세션의 실제 CCTV T1 적응**이다. 11/9~12 촬영·bbox/Holding GT, 11/13~16 YOLO/HOI 학습, 11/20 동결, 11/25~27 독립 B0~B4 평가, 11/30 마감은 유지한다. 사용자는 실제 촬영 영상·Holding 관계 라벨이 아직 없다고 확인했다. HOI 실제 학습·물리GPIO·사건 정확도·D*는 미완료다. P430/기존R1 Orin 실시간 연결 검증을 새 모델 정확도 검증으로 승격하지 않는다. [집계·권장 recipe·마일스톤](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
+<!-- reviewed-next-training-20261106:end -->
+
 ## 2026-11-06 — RAW 학습 완료와 후속 권장안
 
 네 RAW 모델의50epoch·실제35,600 optimizer updates가 모두 완료됐고, 8개 모델×동일6개 개발셋의 AP/predict 비교 및 M1-n/s의960 추론 진단을 확인했다. 결과와 다음 모델/학습 권장안은 [공통 비교 보고서](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)에 있다.

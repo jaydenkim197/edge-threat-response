@@ -1,0 +1,15 @@
+{
+  "active_model": null,
+  "final_detector_selected": false,
+  "images": 83,
+  "knife_gt": 31,
+  "models": 5,
+  "negative_images": 52,
+  "previous_opened_images": 21,
+  "review_database_modified": false,
+  "source_commit": "e29558681a76b2da82425b3e0ac096616c425eda",
+  "status": "passed",
+  "training_started": false,
+  "updated_at_utc": "2026-11-06T08:44:21.162896+00:00",
+  "worker_sha256": "e6241ddbe8c143d705c93e4097d590bd699c40888646c923affc20864588f30e"
+}
