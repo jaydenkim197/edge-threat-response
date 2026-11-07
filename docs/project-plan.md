@@ -9,7 +9,7 @@
 |---|---|
 | 일정 | 11/20 모델·설정 동결, 11/25~27 독립 B0~B4 평가, 11/30 개발·평가 마감 `DECISION` |
 | RAW detector | 4종 모두 50 epoch·35,600 update 완료. 8개 모델 조건을 같은 6개 개발셋에서 비교 `VERIFIED` ([결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)) |
-| 다음 학습 | M1-n을 주력 후보로 두고, 88장 정제를 M2 n/640에 반영하며 별도 Q1 학습은 후순위로 권장 `PROPOSAL`. 촬영 자료 확보 시 T1·HOI를 우선한다. M2/T1은 미실행 |
+| 다음 학습 | **M2 n/640 실행 중** `IMPLEMENTED`: train11,884(88장 제외+OI594), frozen val/test 각1,423. 50epoch·37,150update 계획, CUDA/실제loader 확인. 완료·공통비교는 대기. 다음 주 촬영 후 T1·실제HOI 우선 [M2 실행 증거](../reports/training/m2-real-2026-11-07/report.md) |
 | 실기기 | 실제 L4T 39.2.0에서 P430 main/sub → R1/B3를 각각 300 frame 실행하고 snapshot·mock 경보·화면 표시 확인 `VERIFIED` ([증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md)). 계획 버전 39.2.1과의 차이는 별도 관리 |
 | HOI/B4 | 코드와 합성 자료의 CPU·CUDA 연결 `VERIFIED`. 실제 Holding 정답·학습·성능 검증은 `PLANNED` ([규격](hoi-annotation-contract.md)) |
 | GPU 자원 | PC13의 기존 학습과 PC11/12/14의 CUDA 환경 검증 완료. 각 GPU의 독립 실행이며 분산 학습 검증은 아님 |

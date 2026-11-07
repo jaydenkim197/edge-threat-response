@@ -5,7 +5,7 @@
 
 기존 RAW 4종 학습, AP·predict 평가 복구와 8개 모델 조건의 공통 개발 비교를 완료했다([결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)). 640으로 학습한 M1-n/s의 960 추론 비교도 완료했으나 960 재학습은 아니다.
 
-M2 train11,884/val1,423/test1,423의 준비·보호 검사를 완료했고 `RAW-M2-n` 명시 선택과 격리 source/runtime 실행을 지원한다. 전체 학습·비교는 아래 실행 기록을 따른다([M2 증거](../reports/training/m2-real-2026-11-07/report.md)). T1·최종 D*·새 모델 Orin 배포는 남아 있다. 과거 queue·복구 절차는 고정 run 재현용이며 기존 입력·출력·checkout을 덮어쓰지 않는다.
+M2 train11,884/val1,423/test1,423의 준비·보호 검사를 완료했고 `RAW-M2-n` 명시 선택과 격리 source/runtime 실행을 지원한다. M2 전체 학습은 실행 중이며 완료 후 공통 비교가 대기한다. 상태는 아래 실행 기록을 따른다([M2 증거](../reports/training/m2-real-2026-11-07/report.md)). T1·최종 D*·새 모델 Orin 배포는 남아 있다. 과거 queue·복구 절차는 고정 run 재현용이며 기존 입력·출력·checkout을 덮어쓰지 않는다.
 <!-- docs-refresh-20261106:end -->
 
 ## M2 단일 후보
@@ -21,7 +21,7 @@ $python = Join-Path $runtime '.venv-ml\Scripts\python.exe'
 $env:PYTHONPATH = Join-Path $source 'src'
 & $python (Join-Path $source 'tools\prepare_m2_pc13.py') --root $runtime --output-dir "$runtime\data\processed\m2-real-20261107-v1"
 & $python -m edge_threat_response.raw_training prepare --recipe RAW-M2-n --plan "$source\configs\training\m2-real.pc13.json" --inventory "$runtime\data\processed\m2-real-20261107-v1\inventory.jsonl" --checkpoint-n "$runtime\yolo26n.pt" --output-dir "$runtime\data\processed\m2-real-20261107-v1-profiles" --authorization-reference user-directive-20261107-continue-with-acquired-data
-& "$source\tools\start_raw_training.ps1" -Queue "$runtime\data\processed\m2-real-20261107-v1-profiles\queue.json" -RuntimeRoot $runtime
+& powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File "$source\tools\start_raw_training.ps1" -Queue "$runtime\data\processed\m2-real-20261107-v1-profiles\queue.json" -RuntimeRoot $runtime
 ```
 
 `-RuntimeRoot`는 기존 venv·로그·GPU lock·학습 결과 위치만 지정한다. 실행 source는 script가 속한 격리 worktree이며 서비스 checkout의 코드나 패키지를 덮어쓰지 않는다. 기본값은 기존과 같이 source repo다.

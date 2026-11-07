@@ -1,0 +1,103 @@
+{
+  "observed_at_utc": "2026-11-07T03:15:39.060132+00:00",
+  "source_commit": "06936e8721e10278bdcc75e92b4870891f39fed4",
+  "queue_sha256": "80c14125237bb712de8a5be7169bfd17b9fad7455a3cd0fea2594e5f56f5ab7c",
+  "run_id": "m2-real-20261107-v1-raw-m2-n",
+  "training_status": "running",
+  "observed_optimizer_updates_at_snapshot": 743,
+  "loader_budget": {
+    "accumulate": 1,
+    "batch_size": 16,
+    "batches_per_epoch": 743,
+    "train_dataset_length": 11888,
+    "validation_dataset_length": 1423
+  },
+  "planned_optimizer_updates": 37150,
+  "unique_train": 11884,
+  "train_sources": {
+    "catargiu": 5047,
+    "dangerous": 1294,
+    "open-images-train": 594,
+    "sohas": 4949
+  },
+  "same_pretrained_and_training_arguments_as_m1_verified": true,
+  "environment": {
+    "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+    "logical_cpu_count": 32,
+    "packages": {
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "ultralytics": "8.4.152"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+  },
+  "pretrained": {
+    "path": "C:\\Class6\\edge-threat-response\\yolo26n.pt",
+    "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+    "size_bytes": 5544453
+  },
+  "approval": {
+    "approval_id": "m2-real-20261107-v1-raw-authorization",
+    "approval_sha256": "db6ffba22cc9ca831e994b7772e4fe53dc0758386bb3ca0133c47975c39b8d12",
+    "bound_inputs": {
+      "config": "24b272f31cbed351f280e1810328d9c50abfd145c67ceea0550a83d61af141bc",
+      "data_yaml": "369e715f921046b74943be674790f4057e5148f1f88636e31b40163ec4ee787b",
+      "dataset_manifest": "959f4d36deb81dc27d0d57b9607e8c6148dac60758849b27f9914120b718591f",
+      "pretrained": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+      "test_list": "7f1a0c8cd015ed37f59d376a12403dd09204c583ecd0db151edb1209312a698b",
+      "train_list": "a8ca928e39912c1678351642bf99858fb0c042f8815c49a3e7f47ddc6ca170a7",
+      "val_list": "20f986e5693e7be84cc394c2ba7a4bc8699453bb3f7925c3b23eb3a61a2a2f57"
+    },
+    "final_evaluation_allowed": false,
+    "pair_id": "m2-real-20261107-v1",
+    "planned_optimizer_updates": 37150,
+    "scope": "raw_source_annotations_development_only",
+    "train_draw_count": 11888,
+    "validation_image_count": 1423
+  },
+  "launch": {
+    "pid": 14188,
+    "queue": "C:\\Class6\\edge-threat-response\\data\\processed\\m2-real-20261107-v1-profiles\\queue.json",
+    "git_commit": "06936e8721e10278bdcc75e92b4870891f39fed4",
+    "created_utc": "2026-11-07T03:08:20.3706890Z"
+  },
+  "followup_launch": {
+    "pid": 16192,
+    "created_utc": "2026-11-07T03:09:30.9641806Z",
+    "script": "C:\\Class6\\edge-threat-response\\runs\\m2-preparation-20261107\\followup-worker.py"
+  },
+  "followup": {
+    "final_detector_selected": false,
+    "preflight": {
+      "expanded_suite_sha256": "6e15c477f4aed9ded9342f2d6a820b000be4d00fda620a836a2b3c8edf18e93e",
+      "packages": {
+        "pycocotools": "2.0.11",
+        "rfdetr": "1.11.2",
+        "safetensors": "0.8.0",
+        "timm": "1.0.31",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "transformers": "5.22.1",
+        "ultralytics": "8.4.152"
+      },
+      "python": "C:\\Class6\\edge-threat-response\\.venv-evaluation-20261104\\Scripts\\python.exe",
+      "reference_models_sha256": "5406500edd86ba6a73abf3b57cc5d3189b678147f2ba8f266e948138a49c12c2",
+      "status": "passed"
+    },
+    "review_database_modified": false,
+    "source_commit": "06936e8721e10278bdcc75e92b4870891f39fed4",
+    "status": "waiting_for_training",
+    "updated_at_utc": "2026-11-07T03:09:31.248211+00:00",
+    "worker_sha256": "3199c1bcf33c54177825b65ee5d4cfcee463aed790dd3cbae0bd18b357c27f6b"
+  },
+  "gpu": "NVIDIA GeForce RTX 3060, 5491 MiB, 26 %",
+  "input_summary_sha256": "3023a8f77bc94415239d9822261a2f74047c0e0a2029b086d3fcadd270015942",
+  "training_complete": false,
+  "new_model_accuracy_verified": false,
+  "final_evaluation_allowed": false,
+  "completed_epoch_rows": 1
+}

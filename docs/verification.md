@@ -6,6 +6,8 @@
 M1 train 문제·불확실88장 제외 + Open Images 별도train594장으로 train11,884/val1,423/test1,423을 준비했다. 기존 holdout 이미지·라벨·identity 순서를 보존하고 source15,545개+US Mock100개+새594개 proxy graph를 검사했다. 신규 보호/기존 source 그룹 교차에 의한 추가 제외는 없었다. RAW-M2-n 단일 선택·hash-bound 승인·격리 source/runtime launcher와 기준 checkpoint 선택 평가를 구현했다.
 
 PC13 ML 전체201tests 실행(199통과/2 optional 비교skip), 평가 환경 비교8+reference1 통과, 실제 데이터 hash/decode/좌표/사본·holdout 보존, compileall·PowerShell parser 통과다. 전체 학습·새 정확도·Orin·독립 final은 이 준비 검증에 포함하지 않는다. M2는50epoch·37,150updates로 M1의35,600과 다르며 순수 정제 ablation이 아니다. [수량·해시·검증·실행 기록](../reports/training/m2-real-2026-11-07/report.md).
+실행 후 확인: CUDA preflight passed, M1과 동일 초기 checkpoint/전체학습인자 일치, source06936e8/queue80c14125…로 detached 학습 시작. 실제loader train11,888/batches743/batch16/val1,423/accumulate1 통과, GPU 연산 중이다. dependent 평가 worker의 환경·reference/확대suite hash preflight와 waiting 상태를 확인했다. 전체50epoch·37,150update·후속 정확도는 아직 미검증이다.
+추가 실행 검증: 첫1/50epoch의 train·validation과 results.csv 1행 저장, 실제743updates를 확인했다. 전체50epoch 완료·새 정확도 결론은 아직 아니다.
 <!-- m2-real-20261107:end -->
 
 <!-- roboflow-cctv-v3-20261107:begin -->

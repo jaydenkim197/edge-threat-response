@@ -11,6 +11,8 @@
 - verification-loop: PC13 ML 전체201tests(199통과/2 optional skip), 평가환경 관련8+reference1 통과, 데이터 전체 hash/strict decode/bbox/copy·입력 전후 hash·holdout 보존, compileall·PS parser 통과. 코드/데이터 준비 VERIFIED이며 전체 학습/평가·새 Orin 성능은 아직 PLANNED다.
 - 설정·해석: 동일 pretrained n/640·50epoch·batch16·기존 optimizer/증강/seed. M2는37,150updates로 M1의35,600과 달라 순수 데이터 효과/동일연산예산으로 주장하지 않는다. 실제 완료 상태와 source commit은 후속 invocation에 기록한다.
 - 문서·증거·다음: [M2 보고서](../reports/training/m2-real-2026-11-07/report.md), raw-source-training·verification·설정 갱신. 다음은 CUDA preflight→M2 한 번 실행→동일 개발셋 비교, 다음 주 촬영/T1·실제 HOI·Orin/GPIO/독립 평가. 이 작업 파일만 commit/push하고 다른 채팅의 미커밋 문서는 보존한다.
+- 실행 확인: source06936e8721e10278bdcc75e92b4870891f39fed4, queue80c14125…로 PC13의 RAW-M2-n을 2026-11-07 12:08 KST에 시작했다. CUDA preflight·기존M1 초기weight/전hyperparameter 일치·실제loader(11,888draws/743batches/val1,423/accumulate1)를 확인했다. 완료 후 M1-n·COCO26n과 AP/predict 및 확대US83을 비교하는 detached dependent worker도 waiting 상태다. 학습 완료·새 성능은 아직 미검증이다. [관측 snapshot·후속 worker](../reports/training/m2-real-2026-11-07/report.md).
+추가 실행 검증: 첫1/50epoch의 train·validation과 results.csv 1행 저장, 실제743updates를 확인했다. 전체50epoch 완료·새 정확도 결론은 아직 아니다.
 <!-- m2-real-20261107:end -->
 
 <!-- label-first-workflow-20261107:begin -->

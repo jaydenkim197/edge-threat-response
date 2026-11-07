@@ -8,7 +8,7 @@
 | Source | 현재 역할과 사용 범위 |
 |---|---|
 | SOHAS / Dangerous VOC / Catargiu v11 수정 라벨 | RAW 기준·혼합 학습 완료. 준비량은 각각 4,986 / 3,814 / 5,424장, train은 4,982 / 1,296 / 5,100장 |
-| Open Images 별도 train 594장 | 추가 학습 후보. 웹 검수용 train 표본 580장과 범위를 구분하며 아직 M1에 미반입. 기존 평가 29장은 train으로 전환하지 않음 |
+| Open Images 별도 train 594장 | 전량 기술 검사 후 M2 train에 추가·n/640 실행 중. 기존 평가29장은 그대로 보호하며 웹 검수 표본580장·사람검수 완료와 구분한다([M2 증거](../reports/training/m2-real-2026-11-07/report.md)) |
 | DaSCI 93장 / US Mock 정상 83장 | 이미 열어본 개발 평가 자료. 새 train 반입 시 관련 source·유사 그룹 전체를 보호 |
 | Legacy | 팀원의 L0 재현 트랙. 표본 검수 완료만으로 원본 전체 학습을 승인하지 않음 |
 | Simuletic CCTV / ATM | 합성 효과를 보는 S1 후보. 실사 M2에 자동 병합하지 않음 |
@@ -18,7 +18,7 @@
 
 11/07 [CCTV V3 실물 표본·중복·분할 감사](../reports/datasets/roboflow-cctv-v3-2026-11-07/report.md)를 반영했다. 검수 사이트용 7장 팩은 준비 상태이며 운영 등록·사람 판정·학습 승인은 별도다. 다른 source 수량은 각 원 보고서 조회 시점의 값이다.
 
-권장 M2는 88장 정제를 반영한 n/640 단일 후보이며, 별도 Q1 학습은 후순위다. 실제 CCTV 자료 확보 시 T1·HOI를 우선한다([후속 후보 검토](../reports/datasets/cctv-candidate-check-2026-11-06/report.md)). 검수 전 RAW 예비 사용과 정식 reviewed 승인은 구분한다.
+M2는 88장 정제+OI594를 반영한 n/640 단일 후보로 실행 중이며, 별도 Q1 학습은 생략했다. 전체 완료·새 성능·D*는 대기다. 실제 CCTV 자료 확보 시 T1·HOI를 우선한다([후속 후보 검토](../reports/datasets/cctv-candidate-check-2026-11-06/report.md)). 검수 전 RAW 예비 사용과 정식 reviewed 승인은 구분한다.
 
 제공자가 제한한 자료는 조건 확인과 비공개 접근 준비 전 공개 검수 서비스나 Git에 넣지 않는다([처리 원칙](research-overview-en.md)). [현재 수량·이력 대조](../reports/datasets/reviewed-next-training-2026-11-06/report.md).
 <!-- docs-refresh-20261106:end -->

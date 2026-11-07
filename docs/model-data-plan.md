@@ -1,5 +1,15 @@
 # Model and Dataset Readiness Plan
 
+<!-- m2-real-20261107:begin -->
+## 2026-11-07 — M2 n/640 실행
+
+M1 train11,378에서 문제·불확실88장 제외, 별도 Open Images train594장/820knife 추가로 **train11,884/val1,423/test1,423**을 준비했다. 기존 holdout identity·image/label bytes·순서는 고정하고 보호263개 포함 source15,545+US Mock100+새594 proxy graph를 검사했다. 운영 검수 DB·기존 모델/학습 입력은 보존한다. 실제 세션 완전성·개별 권리·CCTV 비율·사람검수 완료를 주장하지 않는다.
+
+`RAW-M2-n`을 source06936e8 격리worktree에서 PC13 CUDA로 시작했다. M1과 동일 초기 pretrained n/640·50epoch·batch16·optimizer/증강/seed이며 새37,150updates는 기존35,600과 달라 순수 정제/증량 ablation이 아니다. 실제 loader11,888draws·743batches·val1,423·accumulate1을 확인했다. 완료 후 M1-n/COCO26n과 공통6개 개발셋 AP/predict·확대US83을 비교하는 dependent worker가 대기 중이다. 새 정확도·D*·Orin·독립 final은 미검증이다.
+
+사용자는 다음 주 촬영 예정이라고 확인했다. T1·실제 Holding GT/학습은 그 자료를 확보한 뒤 진행하며 Roboflow 추가 접근 정보 대기를 선행gate로 두지 않는다. [구성·해시·실행·한계](../reports/training/m2-real-2026-11-07/report.md).
+<!-- m2-real-20261107:end -->
+
 <!-- docs-refresh-20261106:begin -->
 ## 현재 데이터·모델 준비 기준 — 2026-11-06
 

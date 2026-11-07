@@ -1,14 +1,14 @@
 # PC 준비와 Orin 통합 작업 계획
 
-## 현재 남은 작업 — 2026-11-06
+## 현재 남은 작업 — 2026-11-07
 
-11/07 데이터 처리 방식은 제공 라벨 자동 추출·코드 검사, 별도 시각 판단은 검수 사이트로 정했다. 남은 후보의 확보가 지연되면 현재 확보 자료로 M2 구성을 진행하며 P430 촬영·T1/HOI를 기다리게 하지 않는다. 새 학습 시작을 뜻하지 않는다.
+11/07 데이터 처리 방식은 제공 라벨 자동 추출·코드 검사, 별도 시각 판단은 검수 사이트로 정했다. 남은 후보의 확보가 지연되면 현재 확보 자료로 M2 구성을 진행하며 P430 촬영·T1/HOI를 기다리게 하지 않는다. M2는 88장 제외+OI594를 반영해 PC13에서 실행 중이며 전체 완료·비교는 대기다. 사용자 촬영은 다음 주 예정으로 T1·실제HOI는 이후 진행한다.
 
 이 파일은 **현재 Orin 통합·평가 작업표**로 사용한다. 완료된 core·RAW 학습·카메라 시범 연동은 아래 과거 준비 기록과 구분한다.
 
 | 순서 | 다음 작업 | 완료 기준 |
 |---|---|---|
-| 1 | 제공 라벨 자동 추출·정제를 반영한 M2 n/640 데이터 구성 `PROPOSAL` | 문제·불확실 88장 제외, 새 source 기술 검사, US Mock 83장을 포함한 보호 그룹 확인, manifest·config·hash·실행 ID 지원과 CUDA preflight. 별도 Q1 전체 학습은 후순위 |
+| 1 | M2 n/640 실행 `IMPLEMENTED`, 입력/CUDA/loader `VERIFIED` | train11,884/val1,423/test1,423 고정, 50epoch·37,150updates 완료 후 M1-n/COCO26n 공통 개발 비교·확대US83 진단. [증거](../reports/training/m2-real-2026-11-07/report.md) |
 | 병행 | P430·스마트폰 촬영과 bbox·Holding·사건 정답 | 동의·보존 범위, 설치 조건, 원본 영상·시간축, 동시 촬영 그룹, train·tuning·final 분리 |
 | 2 | T1·HOI 실제 학습 | 촬영 자료 확보 시 우선 진행. 실제 pair 정답·불확실 사례 처리·weight·metrics·hash 보존 |
 | 3 | D*·B4 Orin 통합과 물리 GPIO | 모델·입력 조건 동결, snapshot·실물 경보, 지연·drop·RAM·온도, 장애·재시작 검증 |
@@ -16,7 +16,7 @@
 
 완료 기반은 [RAW 4종 학습·PC 비교](../reports/evaluation/raw-detector-selection-2026-11-06/report.md), [P430/Orin R1/B3 시범 연동](../reports/runtime/p430-yolo26n-2026-11-05/report.md), [합성 HOI/B4 연결](../reports/runtime/hoi-b4-integration-2026-11-05/report.md), [PC11/12](../reports/training/pc11-pc12-cuda-readiness-2026-11-06/report.md)·[PC14 CUDA 환경](../reports/training/pc14-cuda-readiness-2026-11-06/report.md)이다.
 
-PC13은 기준 source·검수 DB 저장소다. 각 GPU에는 실험별 허용 데이터와 모델을 해시 확인 후 전송하고 GPU당 1개 run을 기본으로 한다. M2/T1은 기존 RAW 4개 실행 ID에 포함되지 않으므로 지원·설정을 따로 준비해야 한다.
+PC13은 기준 source·검수 DB 저장소다. 각 GPU에는 실험별 허용 데이터와 모델을 해시 확인 후 전송하고 GPU당 1개 run을 기본으로 한다. M2는 `RAW-M2-n` 명시 선택과 별도 설정을 구현했다. T1 실행 지원·설정은 촬영 자료와 함께 별도 준비한다.
 
 일정은 11/20 모델 동결, 11/25~27 독립 평가, 11/30 마감이다. 팀원의 L0 재현은 병렬 트랙이다. 신규 제한 자료는 제공 조건과 비공개 접근 환경을 준비한 뒤 반입한다.
 

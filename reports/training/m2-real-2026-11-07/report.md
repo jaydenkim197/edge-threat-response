@@ -1,6 +1,6 @@
 # M2 실사 보강 — 2026-11-07
 
-**M1 train의 문제·불확실 88장을 제외하고 별도 Open Images train 594장을 추가한 M2 입력을 준비했다.** train 11,884 / val 1,423 / test 1,423이며, 기존 val/test의 이미지·라벨 bytes와 identity 순서를 보존했다. 데이터 준비는 `VERIFIED`, 전체 학습·공통 비교는 이 기록 작성 시점에 `PLANNED`다. 실행 후 별도 상태를 아래에 추가한다.
+**M1 train의 문제·불확실 88장을 제외하고 별도 Open Images train 594장을 추가해 M2 YOLO26n/640 학습을 시작했다.** train 11,884 / val 1,423 / test 1,423이며, 기존 val/test의 이미지·라벨 bytes와 identity 순서를 보존했다. 입력·CUDA·실제 loader 검증은 `VERIFIED`, 실행 경로는 `IMPLEMENTED`다. 전체 학습 완료·새 성능·공통 비교는 아직 대기다.
 
 ## 목적·범위·사용자 결정
 
@@ -44,6 +44,14 @@ val/test 각1,423장의 이미지 ID·SHA·label SHA·knife 수·순서를 보�
 - 실제 데이터 전체 hash·strict image decode/JPEG EOF·bbox 검사/사본 생성, source/evidence 전후 hash 일치 및 frozen holdout identity 검증 통과.
 - 로컬 Python3.11 `compileall`, PowerShell launcher parser 통과. PC13 학습 환경은 기존 Python3.12.4/torch2.6.0+cu124/Ultralytics8.4.152/RTX3060 12GB다. 전체 학습 완료·새 성능·Orin 검증은 아직 아니다.
 
+## 실제 실행 상태
+
+- 2026-11-07 12:08 KST에 PC13 detached worker를 시작했다. source commit은 `06936e8721e10278bdcc75e92b4870891f39fed4`, queue SHA-256은 `80c14125237bb712de8a5be7169bfd17b9fad7455a3cd0fea2594e5f56f5ab7c`다. 운영 source checkout은 바꾸지 않았다.
+- CUDA preflight `passed`, M1 초기 pretrained SHA `9b09cc8b…`와 전체 학습 인자 일치를 확인했다. 실제 train loader는11,888draws/743batches/batch16/accumulate1, validation은1,423장이다. stdout에서 첫 epoch의 실제 batch 진행과 GPU 연산을 확인했다. 추가로 첫1/50epoch의 train·validation, results.csv 1행 저장과 실제743updates를 확인했다. 전체50epoch 완료를 뜻하지 않는다.
+- [관측 snapshot](execution-snapshot.json)은 관측 시점의 상태이며 현재 live 상태를 대신하지 않는다. invocation update counter는 epoch 경계에서 flush하므로 첫 epoch 도중에는0으로 보일 수 있다. 완료 여부는 queue/invocation의 `passed`와 실제37,150updates·완성 weight hash로 확인한다.
+- 기존 평가 환경·reference checkpoint·확대CCTV suite hash preflight를 통과한 [후속 worker](followup-worker.py)를 별도 detached 실행했다. 현재 `waiting_for_training`이며, 성공한 queue만 공통6셋 AP/predict → 같은83장 확대CCTV 진단으로 이어간다. 실패 시 state/log를 보존하고 자동 재학습·기존 결과 덮어쓰기는 하지 않는다. 원격 SSH나 노트북 종료와 분리해 실행한다. PC13 전원은 켜져 있어야 한다.
+- 첫 launcher 호출은 PC13의 기본 PowerShell execution policy로 script 실행 전에 거부됐다. 기존 실행 절차의 프로세스 한정 `RemoteSigned`로 다시 호출해 성공했다. 전역 실행 정책이나 서비스 설정을 바꾸지 않았다.
+
 ## 원시 증거·다음 단계
 
 PC13 기준:
@@ -52,6 +60,10 @@ PC13 기준:
 - 원 Open Images 및 attribution: `data/source-audit/open-images-train-20261105`
 - 고정 검수 snapshot: `data/work/reviewed-next-training-20261106/review-evidence-snapshot.jsonl`
 - 준비·전체 테스트 log: `runs/m2-preparation-20261107`
+- 실행 profile/승인/queue: `data/processed/m2-real-20261107-v1-profiles`
+- 학습: `runs/training/m2-real-20261107-v1-raw-m2-n`, queue/invocation JSON은 같은 상위 폴더
+- detached launcher: `runs/launch-m2-real-20261107-v1`
+- 후속 worker 상태/log: `runs/m2-preparation-20261107/followup-worker-state.json`, 결과: `runs/m2-followup-20261107-v1` 및 `cctv-expanded`
 - 설정: [m2-real.pc13.json](../../../configs/training/m2-real.pc13.json), 사용법: [RAW 실행 계약](../../../docs/raw-source-training.md)
 
 의도한 코드·설정·보고서·관련 문서만 commit/push한다. 기존 다른 채팅의 Catargiu/검수 사이트 문서 미커밋 변경은 보존한다. 실행 source commit과 queue/weight/결과 hash는 실제 실행 evidence에 기록한다. 다음은 M2 실행·공통 비교 후 개선 여부 판단, 다음 주 촬영·bbox/Holding/event GT 분리, T1/HOI, Orin/GPIO와 독립 최종 평가다.
