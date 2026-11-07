@@ -1,9 +1,9 @@
 # Open Decisions
 
 <!-- docs-refresh-20261106:begin -->
-## 현재 읽는 방법 — 2026-11-06
+## 현재 읽는 방법 — 2026-11-07
 
-아래 표는 완료된 실행과 남은 결정을 구분한다. M1-n을 주력 후보로 삼고 Q1을 후순위로 두는 M2·T1 순서는 권장안 `PROPOSAL`이며, 새 학습 실행이나 최종 detector D* 선정으로 해석하지 않는다.
+아래 표는 완료된 실행과 남은 결정을 구분한다. 사용자 요청으로 M2 기본n640과 PC11 n960·PC12 mild augmentation·PC14 seed2를 실행했다. 입력·CUDA·실제loader 검증과 전체 학습 완료/새모델 정확도를 구분한다([실행 증거](../reports/training/m2-parallel-2026-11-07/report.md)). D*·최종해상도/threshold·앙상블 배포 채택은 미확정이며 T1·실제HOI는 다음 주 촬영 자료 후 진행한다.
 
 실제 촬영 정답, 최종 정량 목표와 threshold, Orin 정식 환경, 제한 자료의 반입 조건이 남아 있다. [현재 마일스톤](project-plan.md), [영문 개요](research-overview-en.md).
 <!-- docs-refresh-20261106:end -->

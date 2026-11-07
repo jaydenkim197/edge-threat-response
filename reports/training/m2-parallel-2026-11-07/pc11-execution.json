@@ -1,0 +1,135 @@
+{
+  "node": "pc11",
+  "observed_at_utc": "2026-11-07T03:46:08.517996+00:00",
+  "source_commit": "8316b41fc9038f3a85be61414f52f95ecb34da19",
+  "dataset_inventory_sha256": "120a05f7eb48da60ca70bbc2c0fb67a3320ea52ab60a39c55c5af37fcf311f56",
+  "queue_sha256": "32c89cc63bb773a03973503eb72aa06c7858f15795701033d5894766ac92a574",
+  "pretrained_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+  "run_name": "m2-res960-20261107-v1-raw-m2-n",
+  "arguments": {
+    "amp": false,
+    "batch": 16,
+    "cache": false,
+    "close_mosaic": 10,
+    "copy_paste": 0.0,
+    "cos_lr": false,
+    "degrees": 0.0,
+    "deterministic": true,
+    "device": 0,
+    "epochs": 50,
+    "fliplr": 0.5,
+    "flipud": 0.0,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "imgsz": 960,
+    "lr0": 0.001,
+    "lrf": 0.01,
+    "mixup": 0.0,
+    "momentum": 0.937,
+    "mosaic": 1.0,
+    "nbs": 16,
+    "optimizer": "AdamW",
+    "patience": 0,
+    "perspective": 0.0,
+    "plots": true,
+    "pretrained": true,
+    "save": true,
+    "save_period": 10,
+    "scale": 0.9,
+    "seed": 20261004,
+    "shear": 0.0,
+    "translate": 0.1,
+    "val": true,
+    "verbose": true,
+    "warmup_epochs": 0.0,
+    "weight_decay": 0.0005,
+    "workers": 0
+  },
+  "planned_updates": 37150,
+  "cuda_preflight": {
+    "approval": {
+      "approval_id": "m2-res960-20261107-v1-raw-authorization",
+      "approval_sha256": "4326237a5b84004ffcd43527e26416be9e52846ab49affe3ba3b6eb6feaeecf9",
+      "bound_inputs": {
+        "config": "b4f3b17d76b4cf4c52a555492049279fe14d9259b20167dc8b53b59460b37be2",
+        "data_yaml": "eee6a3a72c69d71c9708b2012e507849c1451cdb09287bf6b5ba7e6db9880a72",
+        "dataset_manifest": "959f4d36deb81dc27d0d57b9607e8c6148dac60758849b27f9914120b718591f",
+        "pretrained": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+        "test_list": "7f1a0c8cd015ed37f59d376a12403dd09204c583ecd0db151edb1209312a698b",
+        "train_list": "a8ca928e39912c1678351642bf99858fb0c042f8815c49a3e7f47ddc6ca170a7",
+        "val_list": "20f986e5693e7be84cc394c2ba7a4bc8699453bb3f7925c3b23eb3a61a2a2f57"
+      },
+      "final_evaluation_allowed": false,
+      "pair_id": "m2-res960-20261107-v1",
+      "planned_optimizer_updates": 37150,
+      "scope": "raw_source_annotations_development_only",
+      "train_draw_count": 11888,
+      "validation_image_count": 1423
+    },
+    "checked_at": "2026-11-07T03:41:09.248468+00:00",
+    "config_path": "C:\\Class6\\edge-threat-response\\data\\processed\\m2-res960-20261107-v1-profiles\\RAW-M2-n-training.json",
+    "config_sha256": "b4f3b17d76b4cf4c52a555492049279fe14d9259b20167dc8b53b59460b37be2",
+    "cuda": {
+      "available": true,
+      "device_count": 1,
+      "devices": [
+        "NVIDIA GeForce RTX 3060"
+      ],
+      "required": true
+    },
+    "data_yaml": "C:\\Class6\\edge-threat-response\\data\\processed\\m2-res960-20261107-v1-profiles\\RAW-M2-n-data.yaml",
+    "data_yaml_sha256": "eee6a3a72c69d71c9708b2012e507849c1451cdb09287bf6b5ba7e6db9880a72",
+    "dataset_manifest": {
+      "path": "C:\\Class6\\edge-threat-response\\data\\processed\\m2-res960-20261107-v1-profiles\\RAW-M2-n-manifest.jsonl",
+      "sha256": "959f4d36deb81dc27d0d57b9607e8c6148dac60758849b27f9914120b718591f"
+    },
+    "environment": {
+      "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+      "logical_cpu_count": 32,
+      "packages": {
+        "numpy": "1.26.4",
+        "opencv-python": "4.11.0.86",
+        "torch": "2.6.0+cu124",
+        "torchvision": "0.21.0+cu124",
+        "ultralytics": "8.4.152"
+      },
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+      "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+    },
+    "errors": [],
+    "git_commit": "8316b41fc9038f3a85be61414f52f95ecb34da19",
+    "profile_id": "RAW-M2-n",
+    "schema_version": 1,
+    "status": "passed"
+  },
+  "transfer_sha256": "f391b24372fb14474d4f72b710005e3b7070afbdd6e423f5894aa191e469837e",
+  "tests": {
+    "test_m2_profiles.py.log": 1,
+    "test_raw_followup.py.log": 1,
+    "test_raw_training.py.log": 11
+  },
+  "queue_state": {
+    "status": "running",
+    "active": "RAW-M2-n"
+  },
+  "invocation": {
+    "status": "running",
+    "observed_optimizer_updates": 0,
+    "loader_budget": {
+      "accumulate": 1,
+      "batch_size": 16,
+      "batches_per_epoch": 743,
+      "train_dataset_length": 11888,
+      "validation_dataset_length": 1423
+    },
+    "git_commit": "8316b41fc9038f3a85be61414f52f95ecb34da19"
+  },
+  "latest_stdout_progress": {
+    "epoch": 1,
+    "batch": 300,
+    "batches": 743
+  },
+  "gpu": "NVIDIA GeForce RTX 3060, 12052 MiB, 0 %"
+}

@@ -1,5 +1,13 @@
 # Model and Dataset Readiness Plan
 
+<!-- m2-parallel-20261107:begin -->
+## 2026-11-07 — 추가 GPU의 해상도·증강·seed 비교
+
+사용자 요청으로 PC11 n960, PC12 n640+mosaic.5/scale.5/close20, PC14 n640+seed20261107을 **실제 학습 시작**했다. 기본 PC13 M2는 유지하며 동일train11,884/val1,423/test1,423·초기weight·50epoch·batch16·37,150updates를 공유한다. source8316b41이며 학습 코드는 기존06936e8과 동일하다. 각13tests·CUDA·실제로더/다수batch 진행을 확인했고 전체 완료·정확도·Orin 비용은 대기다.
+
+캐시 M1-n+s NMS 앙상블은 일부 source recall 증가와 FP 증가를 보였고 확대US83은여전히0/31TP다. 자동 배포 채택하지 않는다. 완료 후 같은 자료의640/9602×2와source별지표로 비교하고, 실제촬영/T1·HOI를우선한다. [설정·수치·노드별 증거·한계](../reports/training/m2-parallel-2026-11-07/report.md).
+<!-- m2-parallel-20261107:end -->
+
 <!-- m2-real-20261107:begin -->
 ## 2026-11-07 — M2 n/640 실행
 

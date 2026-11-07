@@ -1,0 +1,8 @@
+{
+  "status": "passed",
+  "batch": 16,
+  "imgsz": 960,
+  "peak_allocated_bytes": 9431771648,
+  "peak_reserved_bytes": 12031361024,
+  "scope": "synthetic single train batch; not real data or accuracy verification"
+}

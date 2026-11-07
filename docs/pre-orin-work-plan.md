@@ -8,7 +8,7 @@
 
 | 순서 | 다음 작업 | 완료 기준 |
 |---|---|---|
-| 1 | M2 n/640 실행 `IMPLEMENTED`, 입력/CUDA/loader `VERIFIED` | train11,884/val1,423/test1,423 고정, 50epoch·37,150updates 완료 후 M1-n/COCO26n 공통 개발 비교·확대US83 진단. [증거](../reports/training/m2-real-2026-11-07/report.md) |
+| 1 | M2 n/640 실행 `IMPLEMENTED`, 입력/CUDA/loader `VERIFIED` | train11,884/val1,423/test1,423 고정, 기본M2와PC11해상도·PC12증강·PC14seed변형의50epoch·37,150updates 완료 후 공통 개발 비교·확대US83 진단. [증거](../reports/training/m2-real-2026-11-07/report.md) |
 | 병행 | P430·스마트폰 촬영과 bbox·Holding·사건 정답 | 동의·보존 범위, 설치 조건, 원본 영상·시간축, 동시 촬영 그룹, train·tuning·final 분리 |
 | 2 | T1·HOI 실제 학습 | 촬영 자료 확보 시 우선 진행. 실제 pair 정답·불확실 사례 처리·weight·metrics·hash 보존 |
 | 3 | D*·B4 Orin 통합과 물리 GPIO | 모델·입력 조건 동결, snapshot·실물 경보, 지연·drop·RAM·온도, 장애·재시작 검증 |

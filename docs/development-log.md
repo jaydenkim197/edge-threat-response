@@ -8,8 +8,9 @@
 - 사용자 요청에 따라 기존 M2는 유지하고 PC11 n960, PC12 n640 mild augmentation(mosaic.5/scale.5/close20), PC14 n640 seed20261107을 준비한다. 같은 데이터/frozen val-test/pretrained/50epoch·batch16·37,150update를 유지하며 각 장치의 실행은 별도 검증한다. 2.48GB 해시고정 ZIP을 노트북 저장 없이 전달 중이다. 다음 주 촬영/T1·실제 HOI 일정을 대체하지 않는다.
 - search-first: 기존 RAW-M2-n/config/launcher/COCO·fixed·bootstrap 평가를 재사용했다. 새 의존성·데이터 증식·DDP 없음. 원본·검수 운영 DB·판정·기존 학습은 유지한다.
 - 캐시 M1-n+s pooling/NMS.7 앙상블을 실제 평가했다. DaSCI TP66→74/FP23→42, OI TP8→12/FP18→24, SOHAS test TP16동일/FP1→2, 확대US83은0/31TP·FP2동일이다. Orin 비용을 측정하지 않았고 앙상블을 기본 채택하지 않는다.
-- M2 후속 reference에 집계기 필수D0가 빠진 것을 발견해 waiting 평가만 중지·v1보존·D0포함v2재시작했다. 학습은 계속된다. 기준누락 사전 거부 회귀검증을 추가했다. 비교10+reference1+설정축1=12tests와 compileall, 실제 앙상블 hash/집계, v2 preflight/waiting 검증 통과다. 새3학습의 실행/완료는 아직이다.
+- M2 후속 reference에 집계기 필수D0가 빠진 것을 발견해 waiting 평가만 중지·v1보존·D0포함v2재시작했다. 학습은 계속된다. 기준누락 사전 거부 회귀검증을 추가했다. 비교10+reference1+설정축1=12tests와 compileall, 실제 앙상블 hash/집계, v2 preflight/waiting 검증 통과다. 새3학습의 실행 상태는 아래 후속 기록을 따른다.
 - [범위·설정·수치·원시 증거·한계](../reports/training/m2-parallel-2026-11-07/report.md). 이 작업 파일만 commit/push하며 실제 source commit·환경·학습 상태는 invocation/후속 기록에 남긴다.
+- 실행 후속: 12:41KST source8316b41의 새worktree/RuntimeRoot 분리에서 PC11/12/14 각각 full run을 시작했다. 약2.48GB 전송 SHA·전체 image/label·동일inventory/pretrained 검증, 각13tests·CUDA·실제11,888draws/743batches/batch16/val1,423/accumulate1 및 다수batch 진행 확인. PC11은 먼저 합성960/batch16/FP32 1epoch·validation도 통과했다. 모델/설정·환경·큐·관측은 보고서의 각노드execution JSON에 보관한다. 전체50epoch/새비교/Orin은 대기이며 기존PC13M2는 계속된다. 공통비교는640-trained/960-trained×640/960추론으로 분리해 준비한다.
 <!-- m2-parallel-20261107:end -->
 
 <!-- m2-real-20261107:begin -->
