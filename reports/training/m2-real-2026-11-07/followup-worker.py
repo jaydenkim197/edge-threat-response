@@ -11,8 +11,8 @@ from pathlib import Path
 
 ROOT = Path(r"C:\Class6\edge-threat-response")
 SOURCE = Path(r"C:\Class6\etr-worktrees\m2-20261107-run")
-OUTPUT = ROOT/"runs/m2-followup-20261107-v1"
-EVIDENCE = ROOT/"runs/m2-preparation-20261107"
+OUTPUT = ROOT/"runs/m2-followup-20261107-v2"
+EVIDENCE = ROOT/"runs/m2-preparation-20261107/followup-v2"
 sys.path[:0] = [str(SOURCE/"src"), str(SOURCE/"tools")]
 import finish_raw_training as followup
 from edge_threat_response.training import _sha256_file, _write_json, _git_commit, gpu_training_lock
@@ -21,7 +21,7 @@ from edge_threat_response.training import _sha256_file, _write_json, _git_commit
 def preflight():
     result = followup.preflight_environment()
     reference = ROOT/"runs/raw-followup-20261106-recovery-v1/ap/models.json"
-    followup.reference_cases(reference, ["raw-m1-n-640", "coco-n-640"])
+    followup.reference_cases(reference, ["custom-n-640", "raw-m1-n-640", "coco-n-640"])
     expanded = ROOT/"runs/reviewed-cctv-20261106-v2/suite.json"
     suite = json.loads(expanded.read_text())
     data = suite["datasets"]["us-mock-reviewed"]
@@ -42,6 +42,7 @@ def main():
         print(json.dumps(readiness))
         return
     # A detached launch is claimed exactly once, including failed launches.
+    EVIDENCE.mkdir(parents=True, exist_ok=True)
     with (EVIDENCE/"followup-worker-claim").open("x"):
         pass
     sys.stdout = (EVIDENCE/"followup-worker.log").open("x", encoding="utf-8", buffering=1)
@@ -58,7 +59,7 @@ def main():
         record()
         followup.finish(ROOT, ROOT/"data/processed/m2-real-20261107-v1-profiles/queue.json", OUTPUT, 36,
             reference_models=ROOT/"runs/raw-followup-20261106-recovery-v1/ap/models.json",
-            reference_ids=["raw-m1-n-640", "coco-n-640"])
+            reference_ids=["custom-n-640", "raw-m1-n-640", "coco-n-640"])
         record(status="evaluating_expanded_cctv")
         extra = OUTPUT/"cctv-expanded"
         extra.mkdir()

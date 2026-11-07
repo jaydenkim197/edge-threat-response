@@ -28,7 +28,7 @@ $env:PYTHONPATH = Join-Path $source 'src'
 
 M2는50epoch·37,150updates, 기존 M1은50epoch·35,600updates다. 같은 epoch/증강/optimizer를 유지하며 늘어난 draw/update를 기록한다. 같은 연산 예산이나 순수 정제 효과라고 해석하지 않는다. 기본4종 동작은 유지하며 M2는 `--recipe RAW-M2-n`을 지정해야 한다.
 
-후속 평가에는 `finish_raw_training.py --reference-models <기존 고정 models.json> --reference-case raw-m1-n-640 --reference-case coco-n-640`를 사용해 선택한 기준과 새 M2를 비교한다. reference checkpoint 해시를 검사하고 성공한 queue/실제 budget만 이어받는다. AP/predict를 분리하고 D*를 자동 채택하지 않는다.
+후속 평가에는 `finish_raw_training.py --reference-models <기존 고정 models.json> --reference-case custom-n-640 --reference-case raw-m1-n-640 --reference-case coco-n-640`를 사용해 선택한 기준과 새 M2를 비교한다. reference checkpoint 해시를 검사하고 성공한 queue/실제 budget만 이어받는다. AP/predict를 분리하고 D*를 자동 채택하지 않는다.
 
 ## 2026-11-06 완료·평가 복구
 

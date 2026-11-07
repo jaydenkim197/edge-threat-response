@@ -41,6 +41,8 @@ def reference_cases(path: Path, ids: list[str]) -> list[dict]:
         if _sha256_file(Path(case["checkpoint"])) != case["checkpoint_sha256"]:
             raise ValueError("Frozen reference checkpoint changed")
         selected.append(case)
+    if "custom-n-640" not in ids:
+        raise ValueError("The common aggregate requires its frozen custom-n-640 reference")
     return selected
 
 

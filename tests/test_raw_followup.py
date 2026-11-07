@@ -18,12 +18,14 @@ class FollowupReferenceTests(unittest.TestCase):
             weight = root/"m1.pt"
             weight.write_bytes(b"frozen-m1")
             protocol = root/"models.json"
-            protocol.write_text(json.dumps({"cases": [{"id": "m1", "checkpoint": str(weight),
-                "checkpoint_sha256": _sha256_file(weight)}, {"id": "unused"}]}))
-            self.assertEqual(["m1"], [c["id"] for c in module.reference_cases(protocol, ["m1"])])
-            for ids in ([], ["missing"], ["m1", "m1"]):
+            case = {"checkpoint": str(weight), "checkpoint_sha256": _sha256_file(weight)}
+            protocol.write_text(json.dumps({"cases": [{"id": "m1", **case},
+                {"id": "custom-n-640", **case}, {"id": "unused"}]}))
+            selected = ["custom-n-640", "m1"]
+            self.assertEqual(selected, [c["id"] for c in module.reference_cases(protocol, selected)])
+            for ids in ([], ["missing"], ["m1", "m1"], ["m1"]):
                 with self.assertRaises(ValueError):
                     module.reference_cases(protocol, ids)
             weight.write_bytes(b"changed")
             with self.assertRaisesRegex(ValueError, "changed"):
-                module.reference_cases(protocol, ["m1"])
+                module.reference_cases(protocol, selected)

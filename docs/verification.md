@@ -1,5 +1,11 @@
 # Verification Matrix
 
+<!-- m2-parallel-20261107:begin -->
+## 2026-11-07 — 병렬 M2 설정·앙상블 검증
+
+신규3개 profile의 차이를 해상도/증강bundle/seed로 제한하고 공통50epoch·batch16을 검증했다. 관련12tests·compileall 통과. 캐시 앙상블의 source/frame·입력 SHA·COCO/fixed/paired bootstrap 재계산 통과이며, 확대US83에서 TP0/31·FP2로 기존n과 같다. 검수 DB·기존 학습은 유지한다. 필수D0누락 후속평가를 training과 분리해 v2로 교체하고 새waiting/preflight를 확인했다. 새3학습 실행·정확도·Orin은 아직 미검증이다. [상세 증거](../reports/training/m2-parallel-2026-11-07/report.md).
+<!-- m2-parallel-20261107:end -->
+
 <!-- m2-real-20261107:begin -->
 ## 2026-11-07 — M2 입력·실행 지원 검증
 

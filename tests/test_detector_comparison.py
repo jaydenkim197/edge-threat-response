@@ -4,7 +4,7 @@ import unittest
 
 from edge_threat_response.detector_comparison import (
     canonical_prediction, coco_metrics, paired_group_recall_interval,
-    select_f2_operating_point,
+    select_f2_operating_point, nms_ensemble,
 )
 
 
@@ -20,6 +20,35 @@ def fixture():
 
 
 class DetectorComparisonTests(unittest.TestCase):
+    def test_cached_ensemble_merges_complementary_detections_without_double_counting(self):
+        import copy
+        truth, perfect, empty = fixture()
+        left, right = copy.deepcopy(empty), copy.deepcopy(empty)
+        left[0] = copy.deepcopy(perfect[0])
+        right[1] = copy.deepcopy(perfect[1])
+        right[0] = copy.deepcopy(perfect[0])
+        right[0]["detections"][0]["confidence"] = .7
+        before = copy.deepcopy([left, right])
+        result = nms_ensemble(truth, [left, right])
+        self.assertEqual([1, 1], [len(p["detections"]) for p in result])
+        self.assertEqual(.8, result[0]["detections"][0]["confidence"])
+        self.assertEqual(before, [left, right])
+
+    def test_cached_ensemble_rejects_missing_failed_final_or_invalid_members(self):
+        import copy
+        truth, perfect, empty = fixture()
+        for members, overlap in (([perfect], .7), ([perfect, empty], float("nan")), ([perfect, empty[:-1]], .7)):
+            with self.assertRaises(ValueError):
+                nms_ensemble(truth, members, overlap=overlap)
+        failed = copy.deepcopy(empty)
+        failed[0]["status"] = "detector_error"
+        with self.assertRaises(ValueError):
+            nms_ensemble(truth, [perfect, failed])
+        truth["status"] = "approved"
+        truth["partition"] = "final_test"
+        with self.assertRaisesRegex(ValueError, "development"):
+            nms_ensemble(truth, [perfect, empty])
+
     def test_f2_threshold_uses_tuning_and_rewards_recall_without_final_selection(self):
         truth, perfect, _ = fixture()
         perfect[1]["detections"][0]["confidence"] = .2

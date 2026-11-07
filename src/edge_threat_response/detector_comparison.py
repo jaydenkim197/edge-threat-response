@@ -11,11 +11,44 @@ import math
 import random
 from collections import defaultdict
 
-from .detection_evaluation import evaluate_boxes
+from .detection_evaluation import evaluate_boxes, iou
+from .domain import BBox
 
 
 POLICY = {"schema_version": 1, "status": "development", "confidence": .25,
           "iou": .5, "small_area_max": .02}
+
+
+def nms_ensemble(truth: dict, members: list[list[dict]], *, overlap: float = .7) -> list[dict]:
+    """Pool cached knife candidates and retain max-score boxes with NMS.
+
+    This is an uncalibrated development ensemble, not WBF or a deployable
+    runtime. Every member must cover exactly the same truth image identities.
+    """
+    if len(members) < 2 or type(overlap) not in {int, float} or not math.isfinite(overlap) or not 0 < overlap <= 1:
+        raise ValueError("Need two or more members and finite NMS IoU in (0,1]")
+    if truth.get("status") != "development_authorized":
+        raise ValueError("Cached ensemble exploration requires development truth")
+    indexed = []
+    for predictions in members:
+        evaluate_boxes(truth, predictions, POLICY)
+        indexed.append({(p["source_id"], p["frame_index"]): p for p in predictions})
+    output = []
+    for image in truth["images"]:
+        key = image["source_id"], image["frame_index"]
+        pool = [dict(d) for model in indexed for d in model[key]["detections"] if d["label"] == "knife"]
+        pool.sort(key=lambda d: (-d["confidence"], tuple(d["bbox_xyxy"])))
+        kept, kept_boxes = [], []
+        for detection in pool:
+            box = BBox(*detection["bbox_xyxy"])
+            if all(iou(box, other) <= overlap for other in kept_boxes):
+                kept.append(detection)
+                kept_boxes.append(box)
+                if len(kept) == 300:
+                    break
+        output.append({"source_id": key[0], "frame_index": key[1], "timestamp_s": 0,
+                       "status": "valid", "detections": kept})
+    return output
 
 
 def select_f2_operating_point(truth: dict, predictions: list[dict]) -> dict:
