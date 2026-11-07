@@ -2,6 +2,16 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- roboflow-cctv-v3-20261107:begin -->
+## 2026-11-07 — CCTV V3 표본 감사 완료·선별 7장 인계
+
+- 목적·범위: 사용자 요청의 후보 조사가 일정과 맞는지 확인하고 V3 최대 50장으로 조사했다. 공개 원본 전체 확보를 M2/T1 선행 조건으로 추가하지 않았다. 중단 전 수집 자료를 재확인해 PC13에 보관하고 검수 후보 준비까지 마쳤다. ACF 요청 메일 11/06 20:58 발송은 사용자 확인으로 기록하며 원본·회신은 아직 없다.
+- search-first: 기존 image_signature/similarity_pairs, proxy_components, prepare_team_review.write_pack, ReviewStore를 재사용했다. 브라우저의 공개 Raw Data와 관측된 이미지 자산으로 50장 주석·47장 이미지 약 5MB를 확보했다. SDK·새 학습 importer·제품 코드·모델 변경 없이 일회성 감사 worker로 조합했다.
+- 결과·해석: 칼 40장/44 boxes, 목표 고각 유사 1장·다른 고정 실내 6장이다. 15,645개 참조에서 exact byte 0이지만 유사 후보 14장·보호 그룹 직접 연결 4장이고 같은 실내 장면의 원 train/valid 교차도 있다. 전체 V3를 M2 주력으로 쓰는 것은 보류 권장 `PROPOSAL`, 7장만 사람 검수 후보로 준비했다. AI 사전 분류와 source co-occurrence를 사람 판정/Holding 정답으로 쓰지 않는다.
+- verification-loop: 47장 decode/치수/hash/knife 좌표, 두 팩의 실제 loader·빈 reviewer·격리 reviews/history 0, 기존 테스트 5+7=12개 통과. 참조·운영 config hash 동일, 운영 사이트·DB·배정·이력·학습 manifest·weight 변경과 학습 실행은 없다. 검증 보고서·CSV·worker·원시 경로는 [감사 기록](../reports/datasets/roboflow-cctv-v3-2026-11-07/report.md)에 남겼다.
+- 다음·한계: [사이트 인계](handoffs/2026-11-07-roboflow-cctv-v3-review.md)의 7장 팩만 등록 검토 대상이다. 사람 검수·공개 등록/모바일 QA·원 이미지 출처·정확한 session·완전한 중복 보호는 별도다. ②/③ 표본 검사는 아직 미실행이며 실제 P430 촬영·T1/HOI가 우선이다. 관련 문서·보고서만 선택 commit/push하고 기존 타 채팅 미커밋을 보존한다. commit은 본 Git 이력으로 추적한다.
+<!-- roboflow-cctv-v3-20261107:end -->
+
 <!-- docs-refresh-20261106:begin -->
 ## 2026-11-06 — GitHub 주요 문서 최신화
 

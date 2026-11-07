@@ -1,0 +1,61 @@
+{
+  "finished_at_utc": "2026-11-07T01:47:18.510698+00:00",
+  "git_commit": "8a6ed6cad2b840304ff80778de013f4d12184acd",
+  "worker_sha256": "0d6025068af9b4c4e4f3aaecc5454864a6efa7eaef72049b59aad3bb999ab474",
+  "archive_sha256": "3d46ab82c263b6f8429301b6d7b6863c53db49fa11d9d05f0092484ed604149d",
+  "metadata_images": 50,
+  "images_downloaded_decoded": 47,
+  "missing_original_images": 3,
+  "knife_images": 40,
+  "knife_objects": 44,
+  "class_objects": {
+    "weapon": 2,
+    "person": 61,
+    "rifle": 5,
+    "knife": 44,
+    "hand": 1,
+    "gun": 8
+  },
+  "knife_and_person_labeled_images": 34,
+  "small_knife_images_area_le_02": 30,
+  "knife_area_range": [
+    0.0017401699218749947,
+    0.653256749260355
+  ],
+  "byte_exact_reference_images": 0,
+  "standard_near_reference_images": 7,
+  "any_dhash4_reference_images": 14,
+  "protected_direct_link_images": 4,
+  "reference_counts": {
+    "sohas": 5858,
+    "dangerous": 4000,
+    "catargiu": 5424,
+    "protected": 263,
+    "us-mock-review": 100
+  },
+  "source_and_production_config_hashes_unchanged": true,
+  "candidate_pack_images": 40,
+  "live_site_registered": false,
+  "training_inputs_modified": false,
+  "training_approved": false,
+  "human_verdicts_written": 0,
+  "visual_pre_review": "AI-assisted visual triage; human verdicts pending",
+  "completed_date_kst": "2026-11-07",
+  "visual_categories": {
+    "target_like_high_angle_candidate": 1,
+    "fixed_room_small_knife_candidate": 6,
+    "low_angle_office_demo": 16,
+    "office_closeup": 5,
+    "other_non_target_knife": 12,
+    "firearm_or_generic_weapon": 7
+  },
+  "ai_visually_same_image_resamples": 10,
+  "ai_visually_related_scene_candidates": 4,
+  "shortlist_images": 7,
+  "shortlist_proxy_scene_families": 2,
+  "within_sample_similarity_candidates": 14,
+  "within_sample_cross_split_candidates": 2,
+  "raw_export_version_mapping_verified": false,
+  "full_source_training_recommendation": "defer; not primary M2 source",
+  "recommendation_status": "PROPOSAL"
+}

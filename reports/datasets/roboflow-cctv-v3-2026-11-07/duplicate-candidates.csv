@@ -1,0 +1,59 @@
+﻿sample_no,image_id,reference_dataset,reference_id,exact_bytes,hamming_distance,standard_aspect_gate,screen_type,gray_mae_64,protected_group_link
+4,02CBzjDOodu1fah6ONGa,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_344.jpg,False,0,False,dhash4_stretch_candidate,0.617919921875,False
+4,02CBzjDOodu1fah6ONGa,catargiu,catargiu/train/images/knife_344_jpg.rf.2945e182247e1a0c364b1b4e74e4bc6e.jpg,False,0,True,dhash4_aspect,18.8125,False
+9,0CI4rCwCiirfkKZvsjAr,catargiu,catargiu/train/images/136_jpg.rf.a56f02df28af9c158953c6d67f9d83ca.jpg,False,1,True,dhash4_aspect,15.54931640625,False
+9,0CI4rCwCiirfkKZvsjAr,catargiu,catargiu/train/images/155_jpg.rf.f8602db5729cc09430173d1aeb1a8f60.jpg,False,2,True,dhash4_aspect,15.58984375,False
+9,0CI4rCwCiirfkKZvsjAr,catargiu,catargiu/train/images/133_jpg.rf.a2080a3590a96e3911eb132be4f87695.jpg,False,1,True,dhash4_aspect,15.598876953125,False
+9,0CI4rCwCiirfkKZvsjAr,catargiu,catargiu/valid/images/174_jpg.rf.2fe034947bc74b8483bc90785a401281.jpg,False,1,True,dhash4_aspect,15.64111328125,False
+9,0CI4rCwCiirfkKZvsjAr,catargiu,catargiu/train/images/152_jpg.rf.6d6180e7383cc5f6d3cd093ce98b1753.jpg,False,1,True,dhash4_aspect,16.160888671875,False
+13,0OVsuMKLqmhbJJW52nSv,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_570.jpg,False,0,False,dhash4_stretch_candidate,0.537353515625,False
+13,0OVsuMKLqmhbJJW52nSv,catargiu,catargiu/train/images/knife_570_jpg.rf.b8d6bb3e90354ae4ab518e9529e508cb.jpg,False,2,True,dhash4_aspect,16.1083984375,False
+14,0QjRuYi99IApWp1z62l4,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/KravMagaTraining20890.jpg,False,1,False,dhash4_stretch_candidate,0.5009765625,True
+19,0uLgZldd5aFYeL5nL3hW,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_616.jpg,False,0,False,dhash4_stretch_candidate,0.5283203125,False
+19,0uLgZldd5aFYeL5nL3hW,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_715.jpg,False,2,False,dhash4_stretch_candidate,4.3544921875,False
+19,0uLgZldd5aFYeL5nL3hW,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_711.jpg,False,2,False,dhash4_stretch_candidate,4.874755859375,False
+19,0uLgZldd5aFYeL5nL3hW,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_762.jpg,False,4,False,dhash4_stretch_candidate,6.760498046875,False
+20,0xQkHw8O4r8qGmBdQ859,catargiu,catargiu/train/images/136_jpg.rf.a56f02df28af9c158953c6d67f9d83ca.jpg,False,0,True,dhash4_aspect,14.347900390625,False
+20,0xQkHw8O4r8qGmBdQ859,catargiu,catargiu/train/images/133_jpg.rf.a2080a3590a96e3911eb132be4f87695.jpg,False,0,True,dhash4_aspect,14.61865234375,False
+20,0xQkHw8O4r8qGmBdQ859,catargiu,catargiu/train/images/155_jpg.rf.f8602db5729cc09430173d1aeb1a8f60.jpg,False,1,True,dhash4_aspect,14.961669921875,False
+20,0xQkHw8O4r8qGmBdQ859,catargiu,catargiu/valid/images/174_jpg.rf.2fe034947bc74b8483bc90785a401281.jpg,False,0,True,dhash4_aspect,15.289794921875,False
+20,0xQkHw8O4r8qGmBdQ859,catargiu,catargiu/train/images/152_jpg.rf.6d6180e7383cc5f6d3cd093ce98b1753.jpg,False,0,True,dhash4_aspect,15.64111328125,False
+22,13VPB8oHtCnq7IAt4RLj,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/knife_581.jpg,False,1,False,dhash4_stretch_candidate,0.271240234375,False
+24,1QuGxc5GNcpkmvvZ1FoV,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_199.jpg,False,0,False,dhash4_stretch_candidate,0.516357421875,False
+24,1QuGxc5GNcpkmvvZ1FoV,catargiu,catargiu/train/images/knife_199_jpg.rf.90fcd9803d7f752784606eda68fdef21.jpg,False,3,True,dhash4_aspect,48.483154296875,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1189.jpg,False,1,False,dhash4_stretch_candidate,0.52783203125,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1179.jpg,False,2,False,dhash4_stretch_candidate,2.093994140625,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/knife_1166.jpg,False,4,False,dhash4_stretch_candidate,5.935791015625,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/knife_1190.jpg,False,4,False,dhash4_stretch_candidate,6.081787109375,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1260.jpg,False,4,False,dhash4_stretch_candidate,6.30126953125,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1251.jpg,False,2,False,dhash4_stretch_candidate,6.302001953125,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1240.jpg,False,4,False,dhash4_stretch_candidate,6.39404296875,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1184.jpg,False,3,False,dhash4_stretch_candidate,6.9462890625,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1199.jpg,False,4,False,dhash4_stretch_candidate,7.0341796875,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1169.jpg,False,3,False,dhash4_stretch_candidate,7.853271484375,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1234.jpg,False,4,False,dhash4_stretch_candidate,10.55029296875,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1160.jpg,False,4,False,dhash4_stretch_candidate,10.702880859375,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1262.jpg,False,4,False,dhash4_stretch_candidate,10.810791015625,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1263.jpg,False,4,False,dhash4_stretch_candidate,10.98876953125,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/knife_1261.jpg,False,4,False,dhash4_stretch_candidate,11.081787109375,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1174.jpg,False,4,False,dhash4_stretch_candidate,11.390380859375,False
+36,2ALpbKt9O9iEJsvvIm77,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1217.jpg,False,4,False,dhash4_stretch_candidate,11.48828125,False
+37,2ESiL9Jwe1KpoerXX6mc,catargiu,catargiu/train/images/245_jpg.rf.b9390b65e74dfac88849e1df1a21aad8.jpg,False,3,True,dhash4_aspect,20.795166015625,True
+40,2nNTn4qUfiidqIu1mnXC,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/KravMagaTraining21167.jpg,False,1,False,dhash4_stretch_candidate,0.528076171875,True
+40,2nNTn4qUfiidqIu1mnXC,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/KravMagaTraining21168.jpg,False,3,False,dhash4_stretch_candidate,8.6591796875,True
+43,2vIKMFHXhZ9q6UABMg60,catargiu,catargiu/train/images/106_jpg.rf.20e87d7ea4a2a7f07a51ec6499e12b24.jpg,False,4,True,dhash4_aspect,20.93603515625,True
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1180.jpg,False,1,False,dhash4_stretch_candidate,0.53125,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1198.jpg,False,2,False,dhash4_stretch_candidate,3.442138671875,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1231.jpg,False,2,False,dhash4_stretch_candidate,3.455810546875,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1187.jpg,False,3,False,dhash4_stretch_candidate,3.547607421875,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1185.jpg,False,2,False,dhash4_stretch_candidate,3.743408203125,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1267.jpg,False,1,False,dhash4_stretch_candidate,3.943603515625,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1183.jpg,False,2,False,dhash4_stretch_candidate,4.736572265625,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1175.jpg,False,2,False,dhash4_stretch_candidate,4.989990234375,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images_test/knife_1253.jpg,False,4,False,dhash4_stretch_candidate,10.48876953125,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1208.jpg,False,4,False,dhash4_stretch_candidate,10.539794921875,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1193.jpg,False,4,False,dhash4_stretch_candidate,10.54541015625,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1195.jpg,False,3,False,dhash4_stretch_candidate,10.707763671875,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1160.jpg,False,4,False,dhash4_stretch_candidate,11.1025390625,False
+46,3GZ0DeGzyEvYL6NlgLSm,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/knife_1263.jpg,False,4,False,dhash4_stretch_candidate,11.507080078125,False
+48,3LhO1a4O4lQxM2p5yqHO,sohas,sohas/Weapons and similar handled objects/Sohas_weapon-Detection/images/RusoClases336.jpg,False,0,False,dhash4_stretch_candidate,0.48681640625,False

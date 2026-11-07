@@ -1,7 +1,7 @@
 # Dataset Source Strategy
 
 <!-- docs-refresh-20261106:begin -->
-## 현재 데이터셋 역할 — 2026-11-06
+## 현재 데이터셋 역할 — 2026-11-07
 
 | Source | 현재 역할과 사용 범위 |
 |---|---|
@@ -10,8 +10,11 @@
 | DaSCI 93장 / US Mock 정상 83장 | 이미 열어본 개발 평가 자료. 새 train 반입 시 관련 source·유사 그룹 전체를 보호 |
 | Legacy | 팀원의 L0 재현 트랙. 표본 검수 완료만으로 원본 전체 학습을 승인하지 않음 |
 | Simuletic CCTV / ATM | 합성 효과를 보는 S1 후보. 실사 M2에 자동 병합하지 않음 |
-| ACF | 원본 미확보. 요청·접근 조건 확인과 실제 반입·라벨 검증을 구분 |
-| Roboflow CCTV V3 / 499 | 각각 최대 50장 표본 조사 권장 `PROPOSAL`. 원본 확보·검사·채택은 미완료 |
+| ACF | 원본 미확보·회신 대기. 요청 메일 11/06 20:58 발송을 사용자가 확인. 메일함·원본·라벨 검증과 구분 |
+| Roboflow CCTV V3 | 50장 주석·47장 이미지 제한 감사 완료 `VERIFIED`. 고각 유사 1장+다른 고정 실내 6장만 사람 검수 후보 준비. 전체 source의 M2 주력 채택 보류 권장 `PROPOSAL`; 운영·학습 미반입 |
+| Roboflow BaranGuclu 499 / Person Weapon Knife Detection 7,946 | 다음 제한 조사 후보 `PROPOSAL`. 실제 표본 검사·채택은 미완료. 이미지 수가 칼·실제 CCTV 수를 뜻하지 않음 |
+
+11/07 [CCTV V3 실물 표본·중복·분할 감사](../reports/datasets/roboflow-cctv-v3-2026-11-07/report.md)를 반영했다. 검수 사이트용 7장 팩은 준비 상태이며 운영 등록·사람 판정·학습 승인은 별도다. 다른 source 수량은 각 원 보고서 조회 시점의 값이다.
 
 권장 M2는 88장 정제를 반영한 n/640 단일 후보이며, 별도 Q1 학습은 후순위다. 실제 CCTV 자료 확보 시 T1·HOI를 우선한다([후속 후보 검토](../reports/datasets/cctv-candidate-check-2026-11-06/report.md)). 검수 전 RAW 예비 사용과 정식 reviewed 승인은 구분한다.
 

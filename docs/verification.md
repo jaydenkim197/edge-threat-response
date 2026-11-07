@@ -1,5 +1,13 @@
 # Verification Matrix
 
+<!-- roboflow-cctv-v3-20261107:begin -->
+## 2026-11-07 — CCTV V3 제한 감사·7장 검수 후보 준비
+
+50장 주석에서 47장 이미지를 확보해 SHA/decode/치수/knife 좌표를 검사했다. 칼 40장·44 boxes, 기존 15,645개 참조와 exact byte 중복 0 / dHash≤4 후보 14장 / 보호 그룹 직접 연결 4장을 확인했다. 표본 내부 원 split 교차 유사 pair는 2쌍이다. 동일 byte가 아니라는 이유로 새 자료로 승인하지 않는다.
+
+7장 선별 팩과 40장 감사 팩을 별도 QA DB의 기존 ReviewStore로 로드하고, 이미지 hash·빈 reviewer·reviews/history 0을 확인했다. PC13의 기존 image screening 5개+review web 7개 테스트가 통과했다. 원 source 참조·운영 config hash는 불변이다. 운영 ReviewStore/판정/배정·모델·학습 자료는 변경하지 않았다. 실제 사람 판정·운영 등록/모바일 QA·데이터 채택·성능 검증은 남아 있다. [수치·범위·증거](../reports/datasets/roboflow-cctv-v3-2026-11-07/report.md), [사이트 인계](handoffs/2026-11-07-roboflow-cctv-v3-review.md).
+<!-- roboflow-cctv-v3-20261107:end -->
+
 <!-- docs-refresh-20261106:begin -->
 ## 현재 검증 요약 — 2026-11-06
 

@@ -1,7 +1,7 @@
 # Master Project Plan
 
 <!-- docs-refresh-20261106:begin -->
-## 현재 기준 — 2026-11-06
+## 현재 기준 — 2026-11-07
 
 **현재 마일스톤은 공개 데이터 detector 비교와 P430/Orin 시범 연동을 마치고, 목표 CCTV 데이터·실제 HOI 학습·최종 평가를 준비하는 단계다.**
 
@@ -13,6 +13,7 @@
 | 실기기 | 실제 L4T 39.2.0에서 P430 main/sub → R1/B3를 각각 300 frame 실행하고 snapshot·mock 경보·화면 표시 확인 `VERIFIED` ([증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md)). 계획 버전 39.2.1과의 차이는 별도 관리 |
 | HOI/B4 | 코드와 합성 자료의 CPU·CUDA 연결 `VERIFIED`. 실제 Holding 정답·학습·성능 검증은 `PLANNED` ([규격](hoi-annotation-contract.md)) |
 | GPU 자원 | PC13의 기존 학습과 PC11/12/14의 CUDA 환경 검증 완료. 각 GPU의 독립 실행이며 분산 학습 검증은 아님 |
+| 공개 후보 감사 | 11/07 CCTV V3: 50장 주석·47장 이미지 검사, 7장 사람 검수 후보 준비. 운영·학습 미반입. 전체 주력 채택은 보류 권장 `PROPOSAL` ([근거](../reports/datasets/roboflow-cctv-v3-2026-11-07/report.md)) |
 | 남은 필수 작업 | 자체 촬영과 사건·관계 정답, 새 모델의 Orin 측정, 물리 GPIO, 독립 사건 평가, 장시간 운용·장애 복구 검증 |
 
 신규 제한 자료는 제공 조건과 비공개 접근 환경을 준비한 뒤 반입한다([처리 원칙](research-overview-en.md)). 아래 과거 진행 기록과 초기 일정은 현재 기준과 구분해 보존한다.

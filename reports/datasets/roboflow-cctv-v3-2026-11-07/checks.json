@@ -1,0 +1,65 @@
+{
+  "checked_at_utc": "2026-11-07T01:53:29.021593+00:00",
+  "tests": [
+    {
+      "pattern": "test_image_screening.py",
+      "returncode": 0,
+      "tail": [
+        "----------------------------------------------------------------------",
+        "Ran 5 tests in 0.227s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "pattern": "test_review_web.py",
+      "returncode": 0,
+      "tail": [
+        "----------------------------------------------------------------------",
+        "Ran 7 tests in 0.864s",
+        "",
+        "OK"
+      ]
+    }
+  ],
+  "packs": [
+    {
+      "name": "roboflow-cctv-v3",
+      "images": 40,
+      "pack_hash": "1ddea198b828632875a3df133f451bdae46926b376d703c6e6b3c482b08766f7",
+      "all_image_sha256_match": true,
+      "all_reviewer_fields_blank": true,
+      "human_db_created_in_pack": false
+    },
+    {
+      "name": "roboflow-cctv-v3-target-shortlist",
+      "images": 7,
+      "pack_hash": "29309739de304388ee8124b0d268234de4bbe041c1f6646ca170baa002094d32",
+      "all_image_sha256_match": true,
+      "all_reviewer_fields_blank": true,
+      "human_db_created_in_pack": false
+    }
+  ],
+  "reference_inputs_and_production_config_unchanged": true,
+  "production_review_store_instantiated": false,
+  "production_verdicts_written": 0,
+  "training_launched": false,
+  "live_site_registered": false,
+  "limitations": [
+    "No live-site registration or mobile UI QA for this new candidate pack.",
+    "No performance evaluation or hardware test in this task."
+  ],
+  "documentation_checks": {
+    "checked_at_utc": "2026-11-07T02:00:08.274588+00:00",
+    "base_commit": "cfb0f09754ebdb491cfe39877930e537f141588c",
+    "relative_links_examined": 468,
+    "heading_links_examined": 24,
+    "introduced_link_errors": [],
+    "markdown_fences_and_details": "PASS",
+    "json_csv_and_record_counts": "PASS",
+    "evidence_worker_sha256_match": "PASS",
+    "python_source_compile": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "handoff_on_pc13_hash_verified": true
+}
