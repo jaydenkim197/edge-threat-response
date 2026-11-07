@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- m2-variants-comparison-20261107:begin -->
+## 2026-11-07 — 완료 모델 회수·9조건 공통 개발 평가
+
+- 목적·범위: 사용자승인에따라PC11/12/14를M1/M2와동일평가, 학습/추론해상도2×2와confidence별P/R/F1/FP를분리했다. 실제Orin/독립final·추가학습·threshold자동채택은제외했다.
+- search-first: 기존run_detector_comparison/summarizer/evaluate_boxes/COCO/paired bootstrap를조합한일회성재현driver만추가했다. 새제품API·의존성없음. 완료50epoch·37,150update/peer best.pt 원artifactSHA/전송사본·변경축외hyperparameter일치를확인하고PC13에모았다.
+- 실험: source9de95ce의격리worktree/기존평가venv/RTX3060, FP32/batch1/square640·960/conf floor.001/IoU.7 NMS, fixedconf.25·매칭IoU.5. 9조건(7weights)×7개개발셋×2tracks, 346entries/고유325images, US21/83중복을분리했다. 22:54KST양track완료, threshold693행×2/paired M1·M2대비/좌표크기진단·그림2개저장.
+- 결과: 새3모델의CCTV.25 TP0/31, FP는PC11infer6402/infer9601·PC1247·PC147. 기존M2/960추론TP1/FP2만소폭이득. M1.10도3/31TP·14FP여서confidence만으로해결하지못했다. PC12는DaSCI/OI recall이좋지만CCTV FP악화. D*를선정하지않고M1·기본M2를T1비교기준유지권장(PROPOSAL)한다.
+- verification-loop: 관련12tests·worker2compileall·실제inference/집계통과. 52기준partition fixed/AP50재현, 126fixed=curve.25일치, 원입력·모델·truth·prediction/protocol hash·기존학습/검수자료보존, 그림직접확인. 새Orin성능·Holding·GPIO·최종사건성능은미검증이다.
+- 문서·원시·다음: [공통평가보고서](../reports/evaluation/m2-variants-2026-11-07/report.md)의CSV/curve/paired/그림/worker·source·환경·한계를기록했다. 원시예측은PC13 runs/m2-variants-comparison-20261107-v1. 현재상태문서만갱신하고타채팅dirty변경을보존한채commit/push한다. 다음주촬영·T1/실제HOI·Orin/GPIO·독립final을우선하며추가public학습은시작하지않았다. Gitcommit은본이력으로추적한다.
+<!-- m2-variants-comparison-20261107:end -->
+
 <!-- m2-parallel-20261107:begin -->
 ## 2026-11-07 — 추가GPU 3개 실험·캐시 앙상블
 

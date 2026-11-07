@@ -1,0 +1,439 @@
+{
+  "confidence_grid": [
+    0.001,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.35,
+    0.4,
+    0.45,
+    0.5
+  ],
+  "final_detector_selected": false,
+  "fixed_rows_each_track": 63,
+  "orin_verified": false,
+  "repeated_baseline_checks": [
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock-reviewed",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock-reviewed",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock-reviewed",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock-reviewed",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "predict"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "custom-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "raw-m1-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "coco-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "dasci-unique",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "open-images",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "simuletic",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-test",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "sohas-val",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    },
+    {
+      "ap50_identical": true,
+      "dataset": "us-mock",
+      "fixed_metrics_identical": true,
+      "model": "raw-m2-n-640",
+      "prediction_hash_identical": true,
+      "track": "ap"
+    }
+  ],
+  "status": "passed",
+  "threshold025_reproduces_fixed_metrics": true,
+  "threshold_rows_each_track": 693
+}

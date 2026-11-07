@@ -1,0 +1,14 @@
+{
+  "active": null,
+  "cases": 9,
+  "datasets": 7,
+  "final_detector_selected": false,
+  "orin_verified": false,
+  "source_commit": "9de95cee0b12548219ea1e18e660300338327d28",
+  "status": "passed",
+  "track": null,
+  "training_started": false,
+  "unique_images": 325,
+  "updated_at_utc": "2026-11-07T13:54:11.216786+00:00",
+  "worker_sha256": "667b38bce5a901c219aca7ee5e2821ddcf82f6a5498d6223ab68405130b61275"
+}

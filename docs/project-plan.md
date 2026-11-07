@@ -9,10 +9,10 @@
 |---|---|
 | 일정 | 11/20 모델·설정 동결, 11/25~27 독립 B0~B4 평가, 11/30 개발·평가 마감 `DECISION` |
 | RAW detector | 4종 모두 50 epoch·35,600 update 완료. 8개 모델 조건을 같은 6개 개발셋에서 비교 `VERIFIED` ([결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)) |
-| 다음 학습 | **M2 n/640 실행 중** `IMPLEMENTED`: train11,884(88장 제외+OI594), frozen val/test 각1,423. 50epoch·37,150update 계획, CUDA/실제loader 확인. 완료·공통비교는 대기. 다음 주 촬영 후 T1·실제HOI 우선 [M2 실행 증거](../reports/training/m2-real-2026-11-07/report.md) |
+| 다음 학습 | M2 기본·960·증강완화·seed2 **네 모델 모두50epoch/37,150update 완료** `VERIFIED`. PC13의동일9조건×7개개발셋/AP·predict·confidence 분석완료. 새변형CCTV는0/31, 기존M2/960추론은1/31. D*미확정이며촬영후T1·실제HOI를우선한다. [공통 평가·confidence 분석](../reports/evaluation/m2-variants-2026-11-07/report.md) |
 | 실기기 | 실제 L4T 39.2.0에서 P430 main/sub → R1/B3를 각각 300 frame 실행하고 snapshot·mock 경보·화면 표시 확인 `VERIFIED` ([증거](../reports/runtime/p430-yolo26n-2026-11-05/report.md)). 계획 버전 39.2.1과의 차이는 별도 관리 |
 | HOI/B4 | 코드와 합성 자료의 CPU·CUDA 연결 `VERIFIED`. 실제 Holding 정답·학습·성능 검증은 `PLANNED` ([규격](hoi-annotation-contract.md)) |
-| GPU 자원 | PC13 기본M2 + PC11 n960·PC12 mild augmentation·PC14 seed2를 11/07에 각각 독립 실행. 세 추가 장비 각13tests/CUDA/실제로더 통과, 전체 완료·공통 비교는 대기. [병렬 실행·앙상블 결과](../reports/training/m2-parallel-2026-11-07/report.md) |
+| GPU 자원 | PC11/12/13/14 full run 완료·artifact SHA 검증/PC13수집·공통평가완료. 독립단일GPU이며DDP검증은아님. [공통 평가·confidence 분석](../reports/evaluation/m2-variants-2026-11-07/report.md) |
 | 공개 후보 감사 | 11/07 CCTV V3: 50장 주석·47장 이미지 검사, 7장 사람 검수 후보 준비. 운영·학습 미반입. 전체 주력 채택은 보류 권장 `PROPOSAL` ([근거](../reports/datasets/roboflow-cctv-v3-2026-11-07/report.md)) |
 | 남은 필수 작업 | 자체 촬영과 사건·관계 정답, 새 모델의 Orin 측정, 물리 GPIO, 독립 사건 평가, 장시간 운용·장애 복구 검증 |
 

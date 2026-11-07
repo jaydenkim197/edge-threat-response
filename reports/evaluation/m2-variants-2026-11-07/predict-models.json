@@ -1,0 +1,158 @@
+{
+  "cases": [
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\sohas-reviewed-development-20261026-smallscale-v1\\weights\\best.pt",
+      "checkpoint_sha256": "d8eff85efff890041d67f9aea80d3d0d7a9530312eb7c2da2baace5e3840c043",
+      "id": "custom-n-640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\raw-real-20261105-v2-raw-m1-n\\weights\\best.pt",
+      "checkpoint_sha256": "d95d63568d4939b5271784156ebeafbaf701887c444c0b06ef295d5b06e79320",
+      "id": "raw-m1-n-640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "3d122b58a7f36a557956f979dc834a5432c940502556cca5f074873c24da5bd3",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\yolo26n.pt",
+      "checkpoint_sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+      "id": "coco-n-640",
+      "imgsz": 640,
+      "knife_class_id": 43,
+      "model_class": null,
+      "precision": "float32",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\m2-real-20261107-v1-raw-m2-n\\weights\\best.pt",
+      "checkpoint_sha256": "68cc342139f2755ca5a86649a02882a2c4f3f37330222a0f135cf1eb0c8a5569",
+      "id": "raw-m2-n-640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "619e0961717207255d426cd20bfa7c5d04bfcb8f8801086cf53267f7401fb43c",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\runs\\training\\m2-real-20261107-v1-raw-m2-n\\weights\\best.pt",
+      "checkpoint_sha256": "68cc342139f2755ca5a86649a02882a2c4f3f37330222a0f135cf1eb0c8a5569",
+      "id": "raw-m2-n-960",
+      "imgsz": 960,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "619e0961717207255d426cd20bfa7c5d04bfcb8f8801086cf53267f7401fb43c",
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\data\\work\\m2-comparison-20261107\\pc11-best.pt",
+      "checkpoint_sha256": "9007b80f045eb1b00e17ccbbb136539d289c0989cf1e3c5dc0e45934c4697d4c",
+      "id": "pc11-infer640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "b36f0d728cddd6e4e79fabce07c0a87eddaafefde35c68e1bb428f99417d4e59",
+      "training_source_commit": "8316b41fc9038f3a85be61414f52f95ecb34da19",
+      "training_variant": {
+        "imgsz": 960
+      },
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\data\\work\\m2-comparison-20261107\\pc11-best.pt",
+      "checkpoint_sha256": "9007b80f045eb1b00e17ccbbb136539d289c0989cf1e3c5dc0e45934c4697d4c",
+      "id": "pc11-infer960",
+      "imgsz": 960,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "b36f0d728cddd6e4e79fabce07c0a87eddaafefde35c68e1bb428f99417d4e59",
+      "training_source_commit": "8316b41fc9038f3a85be61414f52f95ecb34da19",
+      "training_variant": {
+        "imgsz": 960
+      },
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\data\\work\\m2-comparison-20261107\\pc12-best.pt",
+      "checkpoint_sha256": "21c70e9b9f4c87277da64ee51c88ad5b68e98fa985fbda1169958670565eda88",
+      "id": "pc12-infer640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "f51a56c00f76d209a74d2ba7176f99a2f7b17d045792530bf0589b414f808ff5",
+      "training_source_commit": "8316b41fc9038f3a85be61414f52f95ecb34da19",
+      "training_variant": {
+        "close_mosaic": 20,
+        "mosaic": 0.5,
+        "scale": 0.5
+      },
+      "ultralytics_multi_label": false
+    },
+    {
+      "backend": "ultralytics",
+      "batch": 1,
+      "checkpoint": "C:\\Class6\\edge-threat-response\\data\\work\\m2-comparison-20261107\\pc14-best.pt",
+      "checkpoint_sha256": "affb9c83c433520cfd05e536bc74fe220a5f43b611e540a734d4b92d99b3127b",
+      "id": "pc14-infer640",
+      "imgsz": 640,
+      "knife_class_id": 0,
+      "model_class": null,
+      "precision": "float32",
+      "training_invocation_sha256": "77722f805f8b2d6c9079d8d98882ae1ffb759d6decbd8564ac9bba8b39688f32",
+      "training_source_commit": "8316b41fc9038f3a85be61414f52f95ecb34da19",
+      "training_variant": {
+        "seed": 20261107
+      },
+      "ultralytics_multi_label": false
+    }
+  ],
+  "policy": {
+    "COCO_AP_IoU": ".50:.05:.95",
+    "batch": 1,
+    "coco_AP_max_dets": 100,
+    "comparison": "opened development; fixed axes; not final test",
+    "fixed_confidence": 0.25,
+    "fixed_iou": 0.5,
+    "fixed_max_detections": 300,
+    "inference_warmup": "3 synthetic blank images",
+    "model_native_preprocessing": true,
+    "normalized_small_area": 0.02,
+    "prediction_floor": 0.001,
+    "tf32": false,
+    "threshold_tuned_on_test": false,
+    "ultralytics_candidate_convention": "default predict single-label candidates"
+  },
+  "schema_version": 1,
+  "status": "frozen_development_comparison",
+  "suite_sha256": "258caf410b16887fe4aedc55366871eff65faed183a143642e308b59eef33bae",
+  "track": "predict",
+  "training_started": false
+}

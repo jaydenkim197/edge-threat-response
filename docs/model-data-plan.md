@@ -1,5 +1,13 @@
 # Model and Dataset Readiness Plan
 
+<!-- m2-variants-comparison-20261107:begin -->
+## 2026-11-07 — M2 네 실험 완료·동일 조건 공통 평가
+
+네M2 run 모두50epoch/37,150updates·passed와best.pt artifact/전송hash를확인했다. PC13의같은환경에서9조건(7checkpoint)×7개개발셋×AP/predict를평가하고confidence.10~.50/.05step 및.001/.05진단을계산했다. 346image entries/실제고유325개이며US21과US83을독립합산하지않는다. 학습/추론해상도640/9602×2를분리했다.
+
+추가세모델은CCTV83/31GT에서.25기준TP0, FP는PC11/6402·PC11/9601·PC1247·PC147이다. 기존M2/960추론은TP1/FP2, M1/640은TP0/FP2다. PC12의DaSCI/OI개선이나960재학습으로D*를확정하지않는다. M1·기본M2를T1착수비교기준으로유지권장(PROPOSAL), 촬영/T1·실제HOI가다음핵심이다. Orin/물리GPIO/독립final은미검증이다. [전체표·threshold·paired통계·그림·한계](../reports/evaluation/m2-variants-2026-11-07/report.md).
+<!-- m2-variants-comparison-20261107:end -->
+
 <!-- m2-parallel-20261107:begin -->
 ## 2026-11-07 — 추가 GPU의 해상도·증강·seed 비교
 

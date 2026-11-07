@@ -1,5 +1,9 @@
 # M2 실사 보강 — 2026-11-07
 
+## 후속 상태 — 2026-11-07
+
+네M2 학습 모두50epoch/37,150updates를 완료했고, PC11·12·14 회수 및 동일9조건·7개개발셋·confidence/해상도2×2 비교도 완료했다. [최신 결과·검증·한계](../../evaluation/m2-variants-2026-11-07/report.md)를 우선한다. 아래는 실행 착수 당시의 기록과 관측으로 보존한다.
+
 **M1 train의 문제·불확실 88장을 제외하고 별도 Open Images train 594장을 추가해 M2 YOLO26n/640 학습을 시작했다.** train 11,884 / val 1,423 / test 1,423이며, 기존 val/test의 이미지·라벨 bytes와 identity 순서를 보존했다. 입력·CUDA·실제 loader 검증은 `VERIFIED`, 실행 경로는 `IMPLEMENTED`다. 전체 학습 완료·새 성능·공통 비교는 아직 대기다.
 
 ## 목적·범위·사용자 결정

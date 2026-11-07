@@ -1,0 +1,78 @@
+{
+  "analyze-worker.py": {
+    "sha256": "ed33d220601a6dc8b0a6e8fa4223ac68e866256884708d300333974b398060b6",
+    "bytes": 7214
+  },
+  "ap-comparison.csv": {
+    "sha256": "c7dd79816693ebfcca463a806a17012662e9e2ca182fad824266322fb1a1bcd0",
+    "bytes": 23545
+  },
+  "ap-models.json": {
+    "sha256": "5f38d8e8b616b5faa6b29153eec58e8a205e4f39102e24af457ae37c5e1cc050",
+    "bytes": 6036
+  },
+  "ap-paired-vs-m1-m2.json": {
+    "sha256": "3f4b04a46c38460195c7930d052849c918fe2e497db58378760293b82e1bb064",
+    "bytes": 57028
+  },
+  "ap-thresholds.csv": {
+    "sha256": "6406fd5f61c3c459d0871946aab96cea1a5192d3f20fbe906c0a216cc7361a09",
+    "bytes": 70360
+  },
+  "cctv-confidence.png": {
+    "sha256": "290e43d67e5c4f213d745a77a8384fa038c1c03309170f13fb375373c90097fb",
+    "bytes": 132499
+  },
+  "cctv-projected-size.json": {
+    "sha256": "c631a5696de33b5bf11cde3818fc3debec83cbaef26caa0ab7d741db81876388",
+    "bytes": 2048
+  },
+  "diagnose-worker.py": {
+    "sha256": "11f3ea164cdb0da5a8999282d61d316df1fdbe5f293194b36a6493e16bdd9b1f",
+    "bytes": 1613
+  },
+  "evaluation-state.json": {
+    "sha256": "4361391c17ad36a1e5faf87ba8bf99db02ffdfdb577ec26b6adbd62709218133",
+    "bytes": 412
+  },
+  "evaluation-worker.py": {
+    "sha256": "667b38bce5a901c219aca7ee5e2821ddcf82f6a5498d6223ab68405130b61275",
+    "bytes": 12629
+  },
+  "iou-diagnostic.csv": {
+    "sha256": "14b113b5dcf95c90cc690f2ba6325d710ffe426983a0df9580a6ecaf9a0d6f47",
+    "bytes": 2612
+  },
+  "plot-environment.json": {
+    "sha256": "8af9b3db90d09574ea5bcdee4abf5aa36b95c740af4db284581edf132a5e2709",
+    "bytes": 50
+  },
+  "predict-comparison.csv": {
+    "sha256": "733fc941977d1192bac5a8f88c109a009228de735ac5f3feecc221d7b08d683d",
+    "bytes": 23520
+  },
+  "predict-comparison.png": {
+    "sha256": "488427e9c9cbc9d2c00b9df07470ab5c95e793294a77055d245162548d9ed8f9",
+    "bytes": 219342
+  },
+  "predict-models.json": {
+    "sha256": "1f28214937802f8b0b6a5cfa0ca557a3e51fbe1b4ef3f70789d674bcc1a63016",
+    "bytes": 6050
+  },
+  "predict-paired-vs-m1-m2.json": {
+    "sha256": "3f4b04a46c38460195c7930d052849c918fe2e497db58378760293b82e1bb064",
+    "bytes": 57028
+  },
+  "predict-thresholds.csv": {
+    "sha256": "d644f6c8bacc506d406beb2e0cb05bd9ae1d2f7435d03e7385aa77584163f022",
+    "bytes": 73726
+  },
+  "training-evidence.json": {
+    "sha256": "cf9ddd95918473f232be5161644af78bd7f666fad46195aa15b92407904410c0",
+    "bytes": 5236
+  },
+  "verification.json": {
+    "sha256": "5bead2d9561678bc4c6719d249e2bd80d901597a142cdac51524caf4d7d1a893",
+    "bytes": 11154
+  }
+}

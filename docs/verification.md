@@ -1,5 +1,13 @@
 # Verification Matrix
 
+<!-- m2-variants-comparison-20261107:begin -->
+## 2026-11-07 — 완료된 M2 변형의 공통 비교 VERIFIED
+
+학습4종의50epoch/37,150update/완료state/best.pt SHA·반입을검증했다. 기존평가10+집계2=12tests/compileall, PC13동일9조건×7셋×2tracks완료(126partitions), confidence693행×2를검증했다. 이전52reference partition의fixed/AP50재현, .25curve=126fixed집계일치, 원입력/모델/예측/프로토콜SHA보존과그림레이아웃을확인했다. source9de95ce+기록된driver SHA다.
+
+새3모델CCTV0/31, 기존M2/960추론1/31이며seed/증강/해상도효과는source별로엇갈린다. 연구용개발평가VERIFIED이고실제Orin비용/실제Holding/물리GPIO/독립final/D*는아니다. [CSV·재검산·재현driver·관측·한계](../reports/evaluation/m2-variants-2026-11-07/report.md).
+<!-- m2-variants-comparison-20261107:end -->
+
 <!-- m2-parallel-20261107:begin -->
 ## 2026-11-07 — 병렬 M2 설정·앙상블 검증
 
