@@ -1,0 +1,43 @@
+{
+  "accepted_additional_images": 594,
+  "additional_candidates": 594,
+  "additional_input_sha256": {
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\image-evidence.jsonl": "b43cd6b8b67b96698f0cbb753a2a38a940ff8467f9f449455f208898dd153f45",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\open-images-train-20261105\\candidates.jsonl": "f480dbf5ca6eaeae1d1a17b98bff3c4ae35ba791ad4caba5a95c7025c6dc07b4"
+  },
+  "baseline_holdouts_preserved": true,
+  "baseline_images": 14224,
+  "exclusions": {
+    "known_quality_hold": 88
+  },
+  "final_evaluation_allowed": false,
+  "frozen_holdout_identity_sha256": {
+    "test": "a72990f6a3063563384471bd51982af6ee8494576b3fefac6f3176e3a306948a",
+    "val": "717dd0da384aacb8ac9ab1cab2b72a431cc04723e52608139074f4296bb36e94"
+  },
+  "group_policy": "cached source components + new hash/dhash/stretch + filename proxies; not verified sessions",
+  "human_review_complete": false,
+  "input_sha256": {
+    "C:\\Class6\\edge-threat-response\\data\\processed\\raw-real-20261105-v2\\signatures.jsonl": "fdcf36959985dfff1291ea56bf71456168db399c63f5853e322fe0ee82c3da03",
+    "C:\\Class6\\edge-threat-response\\data\\processed\\raw-real-20261105-v2\\similarity-pairs.jsonl": "671c49d5cda721b432b4ce42681467d4032778f56b04f63fcbd53ac81694d8a6",
+    "C:\\Class6\\edge-threat-response\\data\\processed\\raw-real-20261105-v3\\inventory.jsonl": "95e3cd89c126dad48db9586b4584422cc2e1e1e552678e9c7e4267b29219176d",
+    "C:\\Class6\\edge-threat-response\\data\\work\\reviewed-next-training-20261106\\review-evidence-snapshot.jsonl": "228a9edc185dc3d41fae8be1c2be2f2d556f78206d47dadfd1f7cbd579d6cfd2"
+  },
+  "inventory_sha256": "120a05f7eb48da60ca70bbc2c0fb67a3320ea52ab60a39c55c5af37fcf311f56",
+  "known_quality_exclusions": 88,
+  "production_review_modified": false,
+  "protected_extra_images": 100,
+  "schema_version": 1,
+  "split_counts": {
+    "test": 1423,
+    "train": 11884,
+    "val": 1423
+  },
+  "status": "prepared_raw_followup_not_final",
+  "train_sources": {
+    "catargiu": 5047,
+    "dangerous": 1294,
+    "open-images-train": 594,
+    "sohas": 4949
+  }
+}

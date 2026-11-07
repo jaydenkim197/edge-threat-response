@@ -18,7 +18,7 @@ from contextlib import contextmanager
 
 
 TRAINING_GATES = ("rights", "human_review", "labels_coordinates", "negative_absence", "duplicates_groups", "split", "recipe")
-RAW_RECIPES = {"RAW-R1-n", "RAW-H1-n", "RAW-M1-n", "RAW-M1-s"}
+RAW_RECIPES = {"RAW-R1-n", "RAW-H1-n", "RAW-M1-n", "RAW-M1-s", "RAW-M2-n"}
 
 
 @contextmanager

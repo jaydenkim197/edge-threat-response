@@ -28,7 +28,24 @@ def preflight_environment():
     return {"status": "passed", "python": sys.executable, "packages": packages}
 
 
-def finish(root: Path, queue_path: Path, output: Path, wait_hours: float):
+def reference_cases(path: Path, ids: list[str]) -> list[dict]:
+    protocol = json.loads(path.read_text(encoding="utf-8-sig"))
+    if not ids or len(ids) != len(set(ids)):
+        raise ValueError("Select explicit unique reference cases")
+    cases = {c["id"]: c for c in protocol["cases"]}
+    selected = []
+    for case_id in ids:
+        if case_id not in cases:
+            raise ValueError("Unknown frozen reference case: "+case_id)
+        case = dict(cases[case_id])
+        if _sha256_file(Path(case["checkpoint"])) != case["checkpoint_sha256"]:
+            raise ValueError("Frozen reference checkpoint changed")
+        selected.append(case)
+    return selected
+
+
+def finish(root: Path, queue_path: Path, output: Path, wait_hours: float,
+           *, reference_models: Path | None = None, reference_ids: list[str] | None = None):
     if not math.isfinite(wait_hours) or not 0 < wait_hours <= 72:
         raise ValueError("Wait limit must be finite and in (0,72] hours")
     if output.exists(): raise ValueError("Fresh follow-up output required")
@@ -36,8 +53,11 @@ def finish(root: Path, queue_path: Path, output: Path, wait_hours: float):
     queue = json.loads(queue_path.read_text(encoding="utf-8-sig"))
     queue_hash = _sha256_file(queue_path)
     state_path = root/"runs/training"/(queue["suite_id"]+"-queue-state.json")
+    references = reference_cases(reference_models, reference_ids or []) if reference_models else None
     status = {"status": "waiting_for_training", "queue_sha256": queue_hash,
               "source_commit": _git_commit(), "script_sha256": _sha256_file(Path(__file__)), "final_detector_selected": False}
+    if reference_models:
+        status["reference_protocol_sha256"] = _sha256_file(reference_models)
     _write_json(output/"state.json", status)
     deadline = time.monotonic()+wait_hours*3600
     try:
@@ -57,9 +77,10 @@ def finish(root: Path, queue_path: Path, output: Path, wait_hours: float):
         source = Path(__file__).resolve().parents[1]
         existing = json.loads((root/"data/work/multi-model-20261104/models-val-candidates.json").read_text())
         kept = {c["id"]: c for c in existing["cases"] if c["id"] in {"custom-n-640", "coco-n-640", "rf-large-704"}}
-        cases = [kept[k] for k in ("custom-n-640", "coco-n-640", "rf-large-704")]
-        s = root/"models/pretrained/yolo26s.pt"
-        cases.append({**kept["coco-n-640"], "id": "coco-s-640", "checkpoint": str(s), "checkpoint_sha256": _sha256_file(s)})
+        cases = references if references is not None else [kept[k] for k in ("custom-n-640", "coco-n-640", "rf-large-704")]
+        if references is None:
+            s = root/"models/pretrained/yolo26s.pt"
+            cases.append({**kept["coco-n-640"], "id": "coco-s-640", "checkpoint": str(s), "checkpoint_sha256": _sha256_file(s)})
         for item in queue["queue"]:
             config = json.loads(Path(item["config"]).read_text())
             invocation = root/"runs/training"/(config["run_name"]+"-invocation.json")
@@ -117,7 +138,7 @@ def finish(root: Path, queue_path: Path, output: Path, wait_hours: float):
                       comparison_scope="opened development images; not unseen final CCTV evaluation", final_detector_selected=False)
         rows = list(csv.DictReader((output/"ap/aggregate/comparison.csv").open(encoding="utf-8-sig")))
         text = ["# RAW 학습 후 공통 개발 평가", "",
-                "새 RAW 네 모델, 기존 D0, COCO YOLO26n/s, RF-DETR Large를 동일한 6개 개발 자료에서 비교했다.",
+                f"새 RAW {len(queue['queue'])}개와 기준 모델 {len(cases)-len(queue['queue'])}개를 동일한 6개 개발 자료에서 비교했다.",
                 "YOLO validator 방식 AP와 실제 predict 방식은 ap/predict 폴더로 분리했다. 학습 원본은 미검수이며 이 평가는 새로운 독립 CCTV final test가 아니다.",
                 "DaSCI의 기존 자료 연관성·합성 분리·소표본 한계는 원래 frozen suite와 동일하다. D* 채택이나 최종 사건 성능을 확정하지 않는다.", "",
                 "| Dataset | Model | AP50 | AP50–95 | P@.25 | R@.25 | Small R@.25 | FP |", "|---|---|---:|---:|---:|---:|---:|---:|"]
@@ -141,8 +162,11 @@ if __name__ == "__main__":
     for name in ("root", "queue", "output-dir"): p.add_argument("--"+name, type=Path, required=True)
     p.add_argument("--wait-hours", type=float, default=36)
     p.add_argument("--preflight-only", action="store_true")
+    p.add_argument("--reference-models", type=Path)
+    p.add_argument("--reference-case", action="append", default=[])
     a = p.parse_args()
     readiness = preflight_environment()
     print(json.dumps(readiness), flush=True)
     if not a.preflight_only:
-        print(json.dumps(finish(a.root.resolve(), a.queue.resolve(), a.output_dir.resolve(), a.wait_hours)))
+        print(json.dumps(finish(a.root.resolve(), a.queue.resolve(), a.output_dir.resolve(), a.wait_hours,
+                               reference_models=a.reference_models, reference_ids=a.reference_case)))

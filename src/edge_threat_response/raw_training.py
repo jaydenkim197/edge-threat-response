@@ -21,12 +21,16 @@ from .training_pair import load_plan
 
 
 def prepare_suite(plan_path: Path, inventory: Path, checkpoints: dict[str, Path],
-                  output: Path, authorization_reference: str) -> dict:
+                  output: Path, authorization_reference: str, *, recipes: list[str] | None = None) -> dict:
     plan = load_plan(plan_path)
     if output.exists() or not authorization_reference.strip():
         raise ValueError("New output and explicit user authorization reference required")
-    if set(checkpoints) != {"n", "s"} or any(not p.is_file() for p in checkpoints.values()):
-        raise ValueError("Pinned local YOLO26n/s pretrained checkpoints required")
+    selected_recipes = recipes if recipes is not None else ["RAW-R1-n", "RAW-H1-n", "RAW-M1-n", "RAW-M1-s"]
+    known = {"RAW-R1-n": "n", "RAW-H1-n": "n", "RAW-M1-n": "n", "RAW-M1-s": "s", "RAW-M2-n": "n"}
+    if not selected_recipes or len(set(selected_recipes)) != len(selected_recipes) or any(r not in known for r in selected_recipes):
+        raise ValueError("Explicit nonempty unique supported raw recipes required")
+    if any(known[r] not in checkpoints or not checkpoints[known[r]].is_file() for r in selected_recipes):
+        raise ValueError("Pinned local YOLO26 pretrained checkpoints required for selected recipes")
     rows = [json.loads(x) for x in inventory.read_text(encoding="utf-8-sig").splitlines() if x.strip()]
     groups, seen = {}, set()
     for row in rows:
@@ -72,8 +76,10 @@ def prepare_suite(plan_path: Path, inventory: Path, checkpoints: dict[str, Path]
         "negative_absence_verified": False, "final_evaluation_allowed": False, "recipes": {},
     }
     queue = []
-    for recipe, selected, size in (("RAW-R1-n", sohas, "n"), ("RAW-H1-n", positive, "n"),
-                                   ("RAW-M1-n", splits["train"], "n"), ("RAW-M1-s", splits["train"], "s")):
+    selections = {"RAW-R1-n": sohas, "RAW-H1-n": positive,
+                  "RAW-M1-n": splits["train"], "RAW-M1-s": splits["train"], "RAW-M2-n": splits["train"]}
+    for recipe in selected_recipes:
+        selected, size = selections[recipe], known[recipe]
         repeated = selected * (draws // len(selected))
         repeated += random.Random(plan["arguments"]["seed"]).sample(selected, draws % len(selected))
         counts = Counter(r["image"] for r in repeated)
@@ -155,15 +161,20 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     subs = parser.add_subparsers(dest="command", required=True)
     prep = subs.add_parser("prepare")
-    for name in ("plan", "inventory", "checkpoint-n", "checkpoint-s", "output-dir"):
+    for name in ("plan", "inventory", "checkpoint-n", "output-dir"):
         prep.add_argument("--" + name, type=Path, required=True)
+    prep.add_argument("--checkpoint-s", type=Path)
+    prep.add_argument("--recipe", action="append", dest="recipes")
     prep.add_argument("--authorization-reference", required=True)
     run = subs.add_parser("run")
     run.add_argument("--queue", type=Path, required=True)
     run.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args(argv)
     if args.command == "prepare":
-        result = prepare_suite(args.plan, args.inventory, {"n": args.checkpoint_n, "s": args.checkpoint_s}, args.output_dir, args.authorization_reference)
+        checkpoints = {"n": args.checkpoint_n}
+        if args.checkpoint_s is not None:
+            checkpoints["s"] = args.checkpoint_s
+        result = prepare_suite(args.plan, args.inventory, checkpoints, args.output_dir, args.authorization_reference, recipes=args.recipes)
     else:
         result = run_queue(args.queue, args.output_dir)
     print(json.dumps(result, ensure_ascii=False))

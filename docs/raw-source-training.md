@@ -1,12 +1,34 @@
 # 미검수 원본 기반 예비 학습
 
 <!-- docs-refresh-20261106:begin -->
-## 현재 RAW 실행 상태 — 2026-11-06
+## 현재 RAW 실행 상태 — 2026-11-07
 
 기존 RAW 4종 학습, AP·predict 평가 복구와 8개 모델 조건의 공통 개발 비교를 완료했다([결과](../reports/evaluation/raw-detector-selection-2026-11-06/report.md)). 640으로 학습한 M1-n/s의 960 추론 비교도 완료했으나 960 재학습은 아니다.
 
-새 M2/T1 실행, 최종 D* 선정과 M1의 Orin 배포는 남아 있다. 아래 queue·복구 절차는 고정 run 재현용이다. `RAW_RECIPES`는 기존 4개 ID만 허용하므로 M2/T1의 실행 지원·설정을 별도로 준비해야 한다. 기존 입력·출력·checkout을 덮어쓰지 않는다.
+M2 train11,884/val1,423/test1,423의 준비·보호 검사를 완료했고 `RAW-M2-n` 명시 선택과 격리 source/runtime 실행을 지원한다. 전체 학습·비교는 아래 실행 기록을 따른다([M2 증거](../reports/training/m2-real-2026-11-07/report.md)). T1·최종 D*·새 모델 Orin 배포는 남아 있다. 과거 queue·복구 절차는 고정 run 재현용이며 기존 입력·출력·checkout을 덮어쓰지 않는다.
 <!-- docs-refresh-20261106:end -->
+
+## M2 단일 후보
+
+기존 M1에서 고정 검수 증거의88장만 train 제외하고, 이미 확보한 Open Images 공식 train Knife594장을 추가한다. `tools/prepare_m2_pc13.py`는 별도 폴더에 사본을 만들며 기존 val/test를 재분할하지 않는다. source와 확대 US100개 팩을 보수적 proxy graph로 보호하고 운영 DB를 읽거나 수정하지 않는다.
+
+PC13에서 새 source worktree의 `src`를 `PYTHONPATH`로 지정하고 기존 런타임 환경을 사용한다. 아래 경로는 실제 일회성 출력이므로 존재할 때 재실행하지 않는다.
+
+```powershell
+$runtime = 'C:\Class6\edge-threat-response'
+$source = '<검증된 격리 source worktree 절대경로>'
+$python = Join-Path $runtime '.venv-ml\Scripts\python.exe'
+$env:PYTHONPATH = Join-Path $source 'src'
+& $python (Join-Path $source 'tools\prepare_m2_pc13.py') --root $runtime --output-dir "$runtime\data\processed\m2-real-20261107-v1"
+& $python -m edge_threat_response.raw_training prepare --recipe RAW-M2-n --plan "$source\configs\training\m2-real.pc13.json" --inventory "$runtime\data\processed\m2-real-20261107-v1\inventory.jsonl" --checkpoint-n "$runtime\yolo26n.pt" --output-dir "$runtime\data\processed\m2-real-20261107-v1-profiles" --authorization-reference user-directive-20261107-continue-with-acquired-data
+& "$source\tools\start_raw_training.ps1" -Queue "$runtime\data\processed\m2-real-20261107-v1-profiles\queue.json" -RuntimeRoot $runtime
+```
+
+`-RuntimeRoot`는 기존 venv·로그·GPU lock·학습 결과 위치만 지정한다. 실행 source는 script가 속한 격리 worktree이며 서비스 checkout의 코드나 패키지를 덮어쓰지 않는다. 기본값은 기존과 같이 source repo다.
+
+M2는50epoch·37,150updates, 기존 M1은50epoch·35,600updates다. 같은 epoch/증강/optimizer를 유지하며 늘어난 draw/update를 기록한다. 같은 연산 예산이나 순수 정제 효과라고 해석하지 않는다. 기본4종 동작은 유지하며 M2는 `--recipe RAW-M2-n`을 지정해야 한다.
+
+후속 평가에는 `finish_raw_training.py --reference-models <기존 고정 models.json> --reference-case raw-m1-n-640 --reference-case coco-n-640`를 사용해 선택한 기준과 새 M2를 비교한다. reference checkpoint 해시를 검사하고 성공한 queue/실제 budget만 이어받는다. AP/predict를 분리하고 D*를 자동 채택하지 않는다.
 
 ## 2026-11-06 완료·평가 복구
 

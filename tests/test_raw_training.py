@@ -69,7 +69,7 @@ class RawTrainingTests(unittest.TestCase):
         trainer.batch_size = 1
         with self.assertRaisesRegex(ValueError, "matched budget"):
             _raw_loader_contract(trainer, 6, 2, 1)
-    def prepare(self, root):
+    def prepare(self, root, *, recipes=None):
         (root/"images").mkdir()
         (root/"labels").mkdir()
         rows = []
@@ -92,7 +92,20 @@ class RawTrainingTests(unittest.TestCase):
         checkpoints = {s: root/f"{s}.pt" for s in ("n", "s")}
         for s, p in checkpoints.items(): p.write_bytes(s.encode())
         output = root/"suite"
-        return prepare_suite(path, inventory, checkpoints, output, "user authorized raw source experiments 2026-11-05"), output
+        if recipes == ["RAW-M2-n"]:
+            checkpoints.pop("s")
+        return prepare_suite(path, inventory, checkpoints, output, "user authorized raw source experiments 2026-11-05", recipes=recipes), output
+
+    def test_m2_is_explicit_single_recipe_and_preserves_existing_approval_checks(self):
+        with tempfile.TemporaryDirectory() as d:
+            suite, output = self.prepare(Path(d), recipes=["RAW-M2-n"])
+            self.assertEqual(["RAW-M2-n"], [r["recipe"] for r in suite["queue"]])
+            item = suite["queue"][0]
+            config = TrainingConfig.load(Path(item["config"]))
+            auth = validate_training_approval(Path(item["config"]), config, Path(item["data"]), Path(item["manifest"]), output/"raw-authorization.json")
+            self.assertEqual(6, auth["train_draw_count"])
+            self.assertFalse(auth["final_evaluation_allowed"])
+            self.assertEqual(5, item["unique_train"])
 
     def test_matched_budget_common_holdouts_and_honest_scope(self):
         with tempfile.TemporaryDirectory() as d:

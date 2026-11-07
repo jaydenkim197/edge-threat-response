@@ -2,6 +2,17 @@
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
+<!-- m2-real-20261107:begin -->
+## 2026-11-07 — 확보 자료로 M2 단일 후보 준비·실행 지원
+
+- 사용자 확인: 촬영은 다음 주, Roboflow 추가 접근 정보 없음. 이미 확보한 Open Images로 계속한다. 목적은 촬영 전 M2 공개 데이터 후보1개 준비이며 Q1 별도 full run·신규 source 대규모 탐색·검수 사이트 변경은 하지 않는다.
+- search-first: 기존 parser/signature/proxy graph/RAW 승인·runner·평가를 재사용해 frozen holdout을 재분할하지 않는 follow-up 사본 경로와 RAW-M2-n 명시 선택만 추가했다. runtime root를 분리해 운영 checkout 대신 격리 worktree에서 실행한다. 의존성·driver 변경 없음.
+- 결과: M1 train11,378-문제·불확실88+OItrain594=11,884, val/test 각1,423 identity/bytes/순서 보존. 보호263개 포함 기존source15,545+US100+새594 전이적 proxy 검사 완료. 새 자료의 추가 보호/기존 그룹 제외는0이다. 원본·모델·운영 DB를 수정하지 않았다.
+- verification-loop: PC13 ML 전체201tests(199통과/2 optional skip), 평가환경 관련8+reference1 통과, 데이터 전체 hash/strict decode/bbox/copy·입력 전후 hash·holdout 보존, compileall·PS parser 통과. 코드/데이터 준비 VERIFIED이며 전체 학습/평가·새 Orin 성능은 아직 PLANNED다.
+- 설정·해석: 동일 pretrained n/640·50epoch·batch16·기존 optimizer/증강/seed. M2는37,150updates로 M1의35,600과 달라 순수 데이터 효과/동일연산예산으로 주장하지 않는다. 실제 완료 상태와 source commit은 후속 invocation에 기록한다.
+- 문서·증거·다음: [M2 보고서](../reports/training/m2-real-2026-11-07/report.md), raw-source-training·verification·설정 갱신. 다음은 CUDA preflight→M2 한 번 실행→동일 개발셋 비교, 다음 주 촬영/T1·실제 HOI·Orin/GPIO/독립 평가. 이 작업 파일만 commit/push하고 다른 채팅의 미커밋 문서는 보존한다.
+<!-- m2-real-20261107:end -->
+
 <!-- label-first-workflow-20261107:begin -->
 ## 2026-11-07 — 라벨 자동 추출·검수 사이트 중심 운영 확정
 
