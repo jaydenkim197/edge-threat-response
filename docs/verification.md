@@ -1,14 +1,12 @@
 # Verification Matrix
 
 <!-- s1-synthetic-20261108:begin -->
-## 2026-11-08 — S1 준비·실행 검증
+## 2026-11-08 — S1 학습·공통 평가 VERIFIED
 
-- **준비 `VERIFIED`:** ZIP checksum/CRC, 60장의 COCO/YOLO 좌표, source class, 이미지/라벨 hash, strict decode, 전역 그룹·보호 검사, M2 실사/holdout identity와 순서 보존. 합성 176장(양성 161/음성 15, knife 163개), train 12,060장, val/test 각 1,423장이다. 고유 평가 325장과 train의 exact 교차는 0이다.
-- **코드 검증:** 관련 회귀 25개 통과. 전체 210 tests 중 208개 통과·선택 의존성 2개 skip. 별도 평가 환경에서 비교 테스트 12개 통과. 로컬 compileall 통과.
-- **실행 `VERIFIED`:** source `ebc7f20`, M2와 같은 초기 weight·전체 hyperparameter, hash-bound RAW 승인과 CUDA preflight를 확인했다. 실제 로더 12,064 draws/754 batches/batch 16/accumulate 1, val 1,423장과 다수 batch·GPU 연산을 관측했다.
-- **아직 미검증:** 전체 학습·새 정확도·Orin·실제 HOI·독립 final. 7개 평가셋 후속 worker는 preflight 통과 후 `waiting_for_training`이다.
-
-[S1 실험 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+- 준비: 합성176장(양성161/음성15·knife163), train12,060/val·test 각1,423. 기존 M2 실사·holdout identity/순서/hash와 고유325개 평가 이미지 보호를 확인했다. 준비 당시210tests(208pass/2skip), 별도 평가12pass는 [실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md)에 보존한다.
+- 완료: queue/invocation `passed`, 50 epoch·실제37,700 update, best/last/CSV artifact SHA 확인. 4checkpoint×7셋×2tracks=56개 partition, 각28 fixed/308 threshold행이다.
+- 이번 재검산: frozen 입력·GT·이미지·checkpoint·protocol·prediction SHA, 56개 fixed metrics, S1의14개 AP50/AP50–95 재계산과 기존 기준42개 partition 재현이 모두 일치했다. 그림 PNG/SVG/PDF도 생성·확인했다.
+- 결과 한계: S1의 일부 공개/합성 Recall 개선은 실제 CCTV 검출 개선으로 이어지지 않았다(모두0/31). 단일 seed/불완전 source·세션 proxy/열린 개발 평가이며 D*·Orin·실제 HOI·독립 final은 미검증이다. [S1 대 M1·M2 결과](../reports/evaluation/s1-synthetic-2026-11-08/report.md).
 <!-- s1-synthetic-20261108:end -->
 
 <!-- m2-variants-comparison-20261107:begin -->

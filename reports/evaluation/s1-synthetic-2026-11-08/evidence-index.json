@@ -1,0 +1,78 @@
+{
+  "ap-comparison.csv": {
+    "sha256": "cfc0f20708a566e594ea27ac960fd4a23ccaba2fa59ed06fbafcb02c2a7121af",
+    "bytes": 10740
+  },
+  "ap-models.json": {
+    "sha256": "f404eb8bd9f8e50ebb0730f9886d3e854476f491d04021e639882b496ab5acaa",
+    "bytes": 2906
+  },
+  "ap-paired-vs-m1-m2.json": {
+    "sha256": "f25de3bfffd3e1fa1054f57d869664a50aa7a229cb2616c80de6e2a6ff61b7d7",
+    "bytes": 25199
+  },
+  "ap-reference-reproduction.json": {
+    "sha256": "8c11438cb2d08877a8a8f4a415193fe3b89bac59d4155111c8ccd57dedbadeee",
+    "bytes": 136
+  },
+  "ap-thresholds.csv": {
+    "sha256": "02ce96468a0aa1a6213c7d3bdcbb02b83344926fbfc29e61aff7606230bb79fb",
+    "bytes": 32863
+  },
+  "evaluation-state.json": {
+    "sha256": "b0c5b65f0d3c34a858535b9033ae5596893dc63aa83bbf9aaa337b2846d727fd",
+    "bytes": 658
+  },
+  "m1-m2-s1.pdf": {
+    "sha256": "9e1e5df22d6d7cb2240abab0154b97ade266f3c7dd19c3b00a8948b9cf54b337",
+    "bytes": 29930
+  },
+  "m1-m2-s1.png": {
+    "sha256": "1d39b1aec1679654013f90a3c9885e49e3c5419bfee6be666f6985cad59fe074",
+    "bytes": 185319
+  },
+  "m1-m2-s1.svg": {
+    "sha256": "180fca2724552e6a12b391463c76108d6bb168b896d2729c81ca1a85e36acceb",
+    "bytes": 40530
+  },
+  "plot-driver.py": {
+    "sha256": "1a716dc8bdc88d61918b81740efd79ef6b181eb3ac7b152a2292c27b593b633d",
+    "bytes": 2162
+  },
+  "plot-environment.json": {
+    "sha256": "1733935e838d8a53c6343a1ac3f8d1c2692347a533e30d109981aeef39113376",
+    "bytes": 54
+  },
+  "predict-comparison.csv": {
+    "sha256": "cfc0f20708a566e594ea27ac960fd4a23ccaba2fa59ed06fbafcb02c2a7121af",
+    "bytes": 10740
+  },
+  "predict-models.json": {
+    "sha256": "1e1b3a83053af8dc201400d32f69095448151749dacc9224d08beecac3aefb51",
+    "bytes": 2915
+  },
+  "predict-paired-vs-m1-m2.json": {
+    "sha256": "f25de3bfffd3e1fa1054f57d869664a50aa7a229cb2616c80de6e2a6ff61b7d7",
+    "bytes": 25199
+  },
+  "predict-reference-reproduction.json": {
+    "sha256": "f2f9a3ee10ff3f8cd976125243ba1b743c239a361d0e931907cc411b145fe5b2",
+    "bytes": 136
+  },
+  "predict-thresholds.csv": {
+    "sha256": "dc65b82393f755977d23932ed875ec380381ba833d91f45594f6cda493336cd4",
+    "bytes": 34403
+  },
+  "training-invocation.json": {
+    "sha256": "ac52764bf0ed50c1d3f24931152ed7bb55753dabd4f82f835ba016c7088bedda",
+    "bytes": 6463
+  },
+  "verification.json": {
+    "sha256": "356a0d04edf67598c5db2868c96c73c94837113c029ec47aecdcbeafe19bb833",
+    "bytes": 788
+  },
+  "verify-driver.py": {
+    "sha256": "1c515e2becbd876e162e00c33e9403fe321e62d43434f4dce3446a83ac2ee896",
+    "bytes": 4409
+  }
+}

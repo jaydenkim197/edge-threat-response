@@ -1,13 +1,11 @@
 # Model and Dataset Readiness Plan
 
 <!-- s1-synthetic-20261108:begin -->
-## 2026-11-08 — 사용자 승인 S1 합성 보강
+## 2026-11-08 — S1 합성 보강 완료·공통 비교
 
-ATM 116장 + 새 CCTV 60장 = **합성 176장**(양성 161/음성 15, knife 163개)의 자동 검사를 마쳤다. M2 실사 11,884장과 고정 val/test 각 1,423장을 유지하고 train 12,060장으로 준비했다. 준비는 `VERIFIED`다. 일반적인 knife_번호 파일명은 새 source 내부에서만 그룹화하고, 전역 이미지·보호 그룹 검사는 유지한다.
+ATM116 + 새 CCTV60의 합성176장(양성161/음성15·knife163)과 M2 실사11,884장으로 S1을 학습했다. train12,060/frozen val·test 각1,423, 같은 COCO YOLO26n 초기 weight·640·50 epoch·나머지 hyperparameter다. 실제37,700 update와 best.pt SHA를 확인했다. M2의37,150과 update가 달라 전체 recipe 비교로 해석한다.
 
-PC13의 source `ebc7f20`에서 15:36 KST에 학습을 시작했다. 실제 로더 12,064 draws/754 batches/batch 16/accumulate 1과 GPU 연산을 확인했다. 같은 pretrained YOLO26n·640·50 epoch이며 계획 37,700 update는 M2의 37,150과 다르다. 전체 recipe 비교로 해석한다.
-
-같은 7개 개발셋의 AP/predict·confidence 분석과 기준 42개 partition 재현을 수행할 worker는 학습 성공을 기다린다. 전체 학습·새 성능·D*/Orin·독립 final은 아직 미검증이다. [S1 실험 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+동일7셋 AP/predict·confidence·paired 비교와 기준42개 partition 재현이 완료됐다. S1은 SOHAS/DaSCI/합성 Recall에서 M2보다 높지만 OI는 낮으며, 실제 CCTV는 M1/M2/S1 모두0/31이다. 최종 D* 채택은 보류하고 S1을 비교 후보로 보존한다. 다음은 실제 촬영/T1·관계 정답·HOI다. 실제 Orin/독립 final은 아직 미검증이다. [S1 대 M1·M2 결과](../reports/evaluation/s1-synthetic-2026-11-08/report.md).
 <!-- s1-synthetic-20261108:end -->
 
 <!-- m2-variants-comparison-20261107:begin -->

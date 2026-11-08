@@ -1,0 +1,160 @@
+{
+  "approval": {
+    "approval_id": "s1-synthetic-20261108-v2-raw-authorization",
+    "approval_sha256": "d0ef8a4636de7a8b6320cef0a5767ad1465011984bad567d8a0d292fc742c65b",
+    "bound_inputs": {
+      "config": "ad15561682c8158a40bbec125c4115891bc86b2bf5848e96835e037300d6775a",
+      "data_yaml": "e90a41090aa83c883712faa13ef92682a903c9c2f7d0dfc1baf8bba9b85c5a8d",
+      "dataset_manifest": "5e62e19208b91f2ea249fee1b55570b643f80d8848a5636bfc5eff0866404712",
+      "pretrained": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+      "test_list": "11ce03adc85f4dd42121b522143d9a459857ebf687ba056251662a045c5864cd",
+      "train_list": "a6db4575e5491ae51c37ffae091e03e1cb08086b64a79a0af2c916607a48354a",
+      "val_list": "afcbbae681baa939d51f005a094f20ddc0a994e22e1b3f3768fbfea2b3a5e43b"
+    },
+    "final_evaluation_allowed": false,
+    "pair_id": "s1-synthetic-20261108-v2",
+    "planned_optimizer_updates": 37700,
+    "scope": "raw_source_annotations_development_only",
+    "train_draw_count": 12064,
+    "validation_image_count": 1423
+  },
+  "arguments": {
+    "amp": false,
+    "batch": 16,
+    "cache": false,
+    "close_mosaic": 10,
+    "copy_paste": 0.0,
+    "cos_lr": false,
+    "data": "C:\\Class6\\edge-threat-response\\data\\processed\\s1-synthetic-20261108-v2-profiles\\RAW-S1-n-data.yaml",
+    "degrees": 0.0,
+    "deterministic": true,
+    "device": 0,
+    "epochs": 50,
+    "exist_ok": false,
+    "fliplr": 0.5,
+    "flipud": 0.0,
+    "hsv_h": 0.015,
+    "hsv_s": 0.7,
+    "hsv_v": 0.4,
+    "imgsz": 640,
+    "lr0": 0.001,
+    "lrf": 0.01,
+    "mixup": 0.0,
+    "momentum": 0.937,
+    "mosaic": 1.0,
+    "name": "s1-synthetic-20261108-v2-raw-s1-n",
+    "nbs": 16,
+    "optimizer": "AdamW",
+    "patience": 0,
+    "perspective": 0.0,
+    "plots": true,
+    "pretrained": true,
+    "project": "C:\\Class6\\edge-threat-response\\runs\\training",
+    "save": true,
+    "save_period": 10,
+    "scale": 0.9,
+    "seed": 20261004,
+    "shear": 0.0,
+    "translate": 0.1,
+    "val": true,
+    "verbose": true,
+    "warmup_epochs": 0.0,
+    "weight_decay": 0.0005,
+    "workers": 0
+  },
+  "artifacts": [
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\results.csv",
+      "sha256": "df50f500204354b21afa306c5a768bf2d88a9a507f09f535503be5619572e47c",
+      "size_bytes": 6149
+    },
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\best.pt",
+      "sha256": "2ac5c5bb112886c1e4e7c7e5a3d68579f9ad3ac029d71d86a5397ae4bad2e358",
+      "size_bytes": 5368382
+    },
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\epoch0.pt",
+      "sha256": "a00bbee47c1da9df1503417b7374058dfb814421b4f46039e48ae65a3209f8d7",
+      "size_bytes": 20740920
+    },
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\epoch10.pt",
+      "sha256": "a1f19a83fd2149d176535eec4e9b8fc4bf3cd4ddb761d756dd2407e9ae4efec5",
+      "size_bytes": 20742200
+    },
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\epoch20.pt",
+      "sha256": "5033c7f14584cf4d4517c716585b414d85886854e24114a9d3f66bb00054ba31",
+      "size_bytes": 20743480
+    },
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\epoch30.pt",
+      "sha256": "5bac58c697ee364b8795931528623b80a4beb5bb2e3b3746749f6fe830b9dd52",
+      "size_bytes": 20744760
+    },
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\epoch40.pt",
+      "sha256": "e7c84a6a4dc19d604c4f7ea86056ccd991aaa268a5da1195d4338a6211110e71",
+      "size_bytes": 20746040
+    },
+    {
+      "path": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\last.pt",
+      "sha256": "892428efa717ef07bbe6a23b7191abde5297d6d86bec751b12ef9123b9feab93",
+      "size_bytes": 5368382
+    }
+  ],
+  "config_path": "C:\\Class6\\edge-threat-response\\data\\processed\\s1-synthetic-20261108-v2-profiles\\RAW-S1-n-training.json",
+  "config_sha256": "ad15561682c8158a40bbec125c4115891bc86b2bf5848e96835e037300d6775a",
+  "data_yaml": "C:\\Class6\\edge-threat-response\\data\\processed\\s1-synthetic-20261108-v2-profiles\\RAW-S1-n-data.yaml",
+  "data_yaml_sha256": "e90a41090aa83c883712faa13ef92682a903c9c2f7d0dfc1baf8bba9b85c5a8d",
+  "dataset_manifest": {
+    "path": "C:\\Class6\\edge-threat-response\\data\\processed\\s1-synthetic-20261108-v2-profiles\\RAW-S1-n-manifest.jsonl",
+    "sha256": "5e62e19208b91f2ea249fee1b55570b643f80d8848a5636bfc5eff0866404712"
+  },
+  "duration_seconds": 17042.907000000007,
+  "environment": {
+    "executable": "C:\\Class6\\edge-threat-response\\.venv-ml\\Scripts\\python.exe",
+    "logical_cpu_count": 32,
+    "packages": {
+      "numpy": "1.26.4",
+      "opencv-python": "4.11.0.86",
+      "torch": "2.6.0+cu124",
+      "torchvision": "0.21.0+cu124",
+      "ultralytics": "8.4.152"
+    },
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 183 Stepping 1, GenuineIntel",
+    "python": "3.12.4 | packaged by Anaconda, Inc. | (main, Jun 18 2024, 15:03:56) [MSC v.1929 64 bit (AMD64)]"
+  },
+  "evaluation_scope": "development_only",
+  "finished_at": "2026-11-08T11:21:04.311212+00:00",
+  "git_commit": "ebc7f20924aae8fedf66d227979e6dea5ad266d5",
+  "loader_budget": {
+    "accumulate": 1,
+    "batch_size": 16,
+    "batches_per_epoch": 754,
+    "train_dataset_length": 12064,
+    "validation_dataset_length": 1423
+  },
+  "metrics": {
+    "fitness": 0.3672583848737864,
+    "metrics/mAP50(B)": 0.6181671193086175,
+    "metrics/mAP50-95(B)": 0.3672583848737864,
+    "metrics/precision(B)": 0.6006315759629534,
+    "metrics/recall(B)": 0.6505200420425227
+  },
+  "model": "C:/Class6/edge-threat-response/yolo26n.pt",
+  "model_source": {
+    "path": "C:\\Class6\\edge-threat-response\\yolo26n.pt",
+    "sha256": "9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef",
+    "size_bytes": 5544453
+  },
+  "observed_optimizer_updates": 37700,
+  "profile_id": "RAW-S1-n",
+  "recipe_id": "RAW-S1-n",
+  "save_dir": "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n",
+  "schema_version": 1,
+  "started_at": "2026-11-08T06:37:01.289750+00:00",
+  "status": "passed"
+}

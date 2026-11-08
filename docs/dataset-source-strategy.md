@@ -1,9 +1,11 @@
 # Dataset Source Strategy
 
 <!-- s1-synthetic-20261108:begin -->
-## 2026-11-08 — S1 source 자동 검사·사용 범위
+## 2026-11-08 — S1 합성 source 사용·평가 완료
 
-사용자는 ATM과 새 CCTV60을 기술 검사 후 S1 train에 쓰도록 승인했다 `DECISION`. ATM은237장 중 sourceKnife116장/118boxes만, 새 Zenodo60은45칼양성/15제작자명시음성을 사용한다. 총176장/163knife가 전역 proxy graph를 통과했으며 실사 M2/holdout을 보존한다. 기존 Simuletic114/평가75장을 train으로 옮기지 않는다. CC BY-NC4.0 비상업 학술 RAW 개발 실험이며 사람검수/실제Holding/실사CCTV final 정답으로 승격하지 않는다. [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+사용자 승인에 따라 ATM237장 중 source knife116장/118boxes와 새 Zenodo60장(양성45/제작자 명시 음성15)을 S1 train에 추가했다. 총176장/163knife이며 CC BY-NC4.0 비상업 학술 RAW 개발 실험이다. 기존 Simuletic114/평가75장을 train으로 이동하지 않았고, 실사 M2·val/test·평가 보호를 유지했다.
+
+S1 학습·동일7셋 평가를 완료했다. 합성 Recall은12.7→20.6%로 증가했으나 실제 CCTV는0/31로 개선되지 않았다. 사람 검수 완료·실제 Holding GT·최종 실사 성능으로 승격하지 않는다. 이번 한 구성의 결과로 모든 합성 보강의 효과 부재를 주장하지 않으며 실제 촬영/T1은 계속 필요하다. [S1 대 M1·M2 결과](../reports/evaluation/s1-synthetic-2026-11-08/report.md).
 <!-- s1-synthetic-20261108:end -->
 
 <!-- docs-refresh-20261106:begin -->

@@ -1,0 +1,17 @@
+{
+  "active": null,
+  "datasets": 7,
+  "final_detector_selected": false,
+  "orin_verified": false,
+  "partitions": 56,
+  "queue_sha256": "4cd6d6e94c70e26122b45b256f85e172ff909ec2f34a75baded96423c90dc739",
+  "reference_partitions_reproduced": 42,
+  "reused_comparison_worker_sha256": "667b38bce5a901c219aca7ee5e2821ddcf82f6a5498d6223ab68405130b61275",
+  "review_database_modified": false,
+  "source_commit": "ebc7f20924aae8fedf66d227979e6dea5ad266d5",
+  "status": "passed",
+  "track": null,
+  "unique_images": 325,
+  "updated_at_utc": "2026-11-08T11:23:42.503432+00:00",
+  "worker_sha256": "5bdbfebe67e4825f5db31f82388f1a0a05d434c90105715e4b2cb3c5b3c7f297"
+}

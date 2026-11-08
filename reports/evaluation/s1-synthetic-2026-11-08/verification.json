@@ -1,0 +1,21 @@
+{
+  "actual_optimizer_updates": 37700,
+  "artifact_sha256": {
+    "best.pt": "2ac5c5bb112886c1e4e7c7e5a3d68579f9ad3ac029d71d86a5397ae4bad2e358",
+    "last.pt": "892428efa717ef07bbe6a23b7191abde5297d6d86bec751b12ef9123b9feab93",
+    "results.csv": "df50f500204354b21afa306c5a768bf2d88a9a507f09f535503be5619572e47c"
+  },
+  "checked_at_utc": "2026-11-08T11:44:00.557666+00:00",
+  "final_detector_selected": false,
+  "fixed_rows_each_track": 28,
+  "frozen_input_and_image_hashes_preserved": true,
+  "orin_verified": false,
+  "prediction_and_fixed_partitions_checked": 56,
+  "reference_partitions_reproduced": 42,
+  "results_csv_seconds": 16974.6,
+  "s1_ap_partitions_recomputed": 14,
+  "status": "passed",
+  "threshold_rows_each_track": 308,
+  "training_epochs": 50,
+  "unique_images": 325
+}

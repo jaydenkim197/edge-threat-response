@@ -1,5 +1,15 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+<!-- s1-results-20261108:begin -->
+## 2026-11-08 — S1 완료·M1/M2 공통 비교 검증
+
+- 사용자 요청으로 학습·후속 평가 완료를 확인했다. PC13/source ebc7f20, 50epoch·실제37,700update·passed, best.pt `2ac5c5bb…`. 20:21KST 학습/20:23평가 완료다. 새 학습이나 운영 모델 교체는 하지 않았다.
+- 같은7셋/고유325images/4checkpoint×AP·predict=56partition과confidence308행×2를 확인했다. 기존 평가기/COCO/집계를 재사용해 56fixed·S1 14AP를 재계산하고 기준42partition 재현·입력/이미지/weight/예측SHA를 검증했다. 원시 데이터는PC13, Git에는CSV·paired·검증·driver·그림을 기록했다.
+- S1의M2대비Recall: SOHAS75→85%, DaSCI56.7→68.0%, OI74.4→69.2%, 합성12.7→20.6%. 실제CCTV.25는모두0/31이며FP는M1/M2/S1 각각2/7/4다. .10의S1도2TP·19FP라threshold만으로실용성을확보하지못했다.
+- 해석/다음: S1을후보로보존하되D*는미확정이다. 단일seed·추가1.46%/update차이·작은개발표본 한계를유지하며실제촬영/T1·HoldingGT/HOI를우선권장한다(PROPOSAL). Orin/GPIO/독립B0~B4는별도다.
+- 문서/검증: [S1 대 M1·M2 결과](../reports/evaluation/s1-synthetic-2026-11-08/report.md)에 환경·원시 경로·전체지표·CI·한계를 기록했다. 현재 상태 문서와 준비 보고서에 완료 결과를 연결하고 타 채팅 미커밋을 보존해 선택 commit/push한다. Git commit은 본 이력으로 추적한다.
+<!-- s1-results-20261108:end -->
+
 <!-- s1-synthetic-20261108:begin -->
 ## 2026-11-08 — S1 합성 source 검사·학습/공통 비교 준비
 

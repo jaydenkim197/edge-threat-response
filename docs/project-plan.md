@@ -1,13 +1,13 @@
 # Master Project Plan
 
 <!-- s1-synthetic-20261108:begin -->
-## 현재 추가 실험 — 2026-11-08
+## S1 학습·공통 평가 완료 — 2026-11-08
 
-사용자 승인으로 **S1 합성 보강을 PC13에서 학습 중**이다. 자동 검사를 통과한 ATM 116장과 CCTV 60장을 M2 실사 11,884장에 추가했다. train 12,060장, 고정 val/test 각 1,423장이다. 같은 COCO YOLO26n 초기 weight·640 해상도·50 epoch·FP32·batch 16을 사용하며, 37,700 update를 계획한다.
+**S1의 50 epoch·37,700 update와 동일 7개 개발셋 비교를 완료했다 `VERIFIED`.** PC13에서 20:21 KST에 학습, 20:23에 평가가 종료됐다. M2 실사 11,884장에 합성 176장을 추가한 YOLO26n·640 실험이다. 기존 val/test와 평가 입력은 유지했다.
 
-source `ebc7f20`의 실제 로더·다수 batch·GPU 연산을 확인했다. 성공 후 M1·M2와 같은 7개 개발셋에서 AP/predict·confidence별 비교를 수행하는 worker가 대기 중이다. 전체 학습 완료·새 성능·최종 D*는 아직 미확정이다. [S1 실험 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+S1은 M2 대비 SOHAS test Recall 75→85%, DaSCI 56.7→68.0%, 합성 CCTV 12.7→20.6%지만 Open Images는 74.4→69.2%다. **실제 CCTV 확대83장에서는 세 모델 모두 0/31 검출**이다. S1의 CCTV FP4는 M2의7보다 적고 M1의2보다 많다. [S1 대 M1·M2 결과](../reports/evaluation/s1-synthetic-2026-11-08/report.md).
 
-다음 주 실제 촬영, T1/Holding 정답, HOI, Orin/GPIO, 독립 B0~B4 평가는 기존 11월 일정대로 필요하다.
+최종 D*는 미확정이다. 다음 주 실제 촬영, 세션별 train/tuning/final 분리, bbox·Holding·사건 GT, T1·HOI를 우선한다. Orin/GPIO와 독립 B0~B4 평가는 남아 있다.
 <!-- s1-synthetic-20261108:end -->
 
 <!-- docs-refresh-20261106:begin -->

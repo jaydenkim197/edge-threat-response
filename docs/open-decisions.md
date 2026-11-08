@@ -6,6 +6,8 @@
 아래 표는 완료된 실행과 남은 결정을 구분한다. M2 네조건 모두50epoch/37,150update를완료하고같은9조건·7개개발셋·AP/predict/confidence를비교했다([완료·결과](../reports/evaluation/m2-variants-2026-11-07/report.md)). 새3모델의CCTV.25 TP는0/31이고기본M2/960추론만1/31이다. M1·기본M2를T1초기비교기준으로유지하는권장안은PROPOSAL이며새T1학습은아직이다. D*·최종해상도/threshold·앙상블 배포 채택은 미확정이며 T1·실제HOI는 다음 주 촬영 자료 후 진행한다.
 
 실제 촬영 정답, 최종 정량 목표와 threshold, Orin 정식 환경, 제한 자료의 반입 조건이 남아 있다. [현재 마일스톤](project-plan.md), [영문 개요](research-overview-en.md).
+11/08 후속: S1도50epoch·공통7셋평가를완료했다. 일부공개/합성Recall은개선됐으나실제CCTV는0/31이다. 최종D*는미확정이며실제촬영/T1과Orin검증이필요하다. [S1 대 M1·M2 결과](../reports/evaluation/s1-synthetic-2026-11-08/report.md).
+
 <!-- docs-refresh-20261106:end -->
 
 권장안은 확정 전까지 `PROPOSAL`이다. 결정 후 행을 삭제하지 않고 상태와 근거를 갱신하며, `development-log.md`의 해당 기록을 연결한다.

@@ -1,0 +1,824 @@
+{
+  "dasci-unique": {
+    "custom-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": -0.4845360824742268,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": -0.3711340206185567,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    },
+    "raw-m1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": 0.0,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": 0.1134020618556701,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    },
+    "raw-m2-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": -0.1134020618556701,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": 0.0,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    },
+    "raw-s1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": 0.0,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": 0.1134020618556701,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    }
+  },
+  "open-images": {
+    "custom-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          -0.3143554006968641,
+          0.05263157894736842
+        ],
+        "delta_recall": -0.1282051282051282,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          -0.8108108108108109,
+          -0.5227025691699606
+        ],
+        "delta_recall": -0.6666666666666666,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-m1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          -0.7222222222222222,
+          -0.37209302325581395
+        ],
+        "delta_recall": -0.5384615384615384,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-m2-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.37209302325581395,
+          0.7222222222222222
+        ],
+        "delta_recall": 0.5384615384615384,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-s1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.30231461167178586,
+          0.7096986417657045
+        ],
+        "delta_recall": 0.48717948717948717,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          -0.1388888888888889,
+          0.05405405405405406
+        ],
+        "delta_recall": -0.05128205128205128,
+        "groups": 29,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 29,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    }
+  },
+  "simuletic": {
+    "custom-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": -0.1111111111111111,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": -0.1111111111111111,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    },
+    "raw-m1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": 0.0,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": 0.0,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    },
+    "raw-m2-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": 0.0,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": 0.0,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    },
+    "raw-s1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": null,
+        "delta_recall": 0.07936507936507936,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      },
+      "raw-m2-n-640": {
+        "ci95": null,
+        "delta_recall": 0.07936507936507936,
+        "groups": 1,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 1,
+        "reason": "fewer than two positive groups",
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 0
+      }
+    }
+  },
+  "sohas-test": {
+    "custom-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          -0.5555555555555556,
+          0.0
+        ],
+        "delta_recall": -0.45,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          -0.5517241379310345,
+          0.0
+        ],
+        "delta_recall": -0.4,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      }
+    },
+    "raw-m1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "delta_recall": 0.05,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      }
+    },
+    "raw-m2-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          -0.2857142857142857,
+          0.0
+        ],
+        "delta_recall": -0.05,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      }
+    },
+    "raw-s1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.06896551724137931
+        ],
+        "delta_recall": 0.05,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.2857142857142857
+        ],
+        "delta_recall": 0.1,
+        "groups": 7,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 4,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1997
+      }
+    }
+  },
+  "sohas-val": {
+    "custom-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          -0.5,
+          -0.05541666666666742
+        ],
+        "delta_recall": -0.2857142857142857,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          -0.5,
+          -0.05541666666666742
+        ],
+        "delta_recall": -0.2857142857142857,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-m1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-m2-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-s1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 8,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 6,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    }
+  },
+  "us-mock": {
+    "custom-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      }
+    },
+    "raw-m1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      }
+    },
+    "raw-m2-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      }
+    },
+    "raw-s1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 10,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 5,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 1999
+      }
+    }
+  },
+  "us-mock-reviewed": {
+    "custom-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.10349364791288541
+        ],
+        "delta_recall": 0.03225806451612903,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.10349364791288541
+        ],
+        "delta_recall": 0.03225806451612903,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-m1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-m2-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    },
+    "raw-s1-n-640": {
+      "raw-m1-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      },
+      "raw-m2-n-640": {
+        "ci95": [
+          0.0,
+          0.0
+        ],
+        "delta_recall": 0.0,
+        "groups": 16,
+        "limits": "descriptive; group proxies and small samples do not establish general superiority",
+        "method": "paired percentile group bootstrap",
+        "positive_groups": 9,
+        "repetitions": 2000,
+        "seed": 20261104,
+        "valid_replicates": 2000
+      }
+    }
+  }
+}
