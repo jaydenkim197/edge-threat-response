@@ -1,0 +1,6 @@
+file,sha256,bytes,width,height,fps,decoded_frames,duration_seconds,sample_count,visual_observation,target_fixed_high_angle_cctv_observed,getty_watermark_observed,model_inference_run,training_added
+gettyimages-1175674917-640_adpp.mp4,ff6d5686770ad72812563e0f7affe6b68550cd8201c8eab11c08ab0a74bbc665,7845274,768,432,29.97002997002997,785,26.192833333333333,8,"숲, 후드 인물/체인/손 물체, 이동하는 근거리 구도; knife 미확정",False,True,False,False
+gettyimages-1183284075-640_adpp.mp4,c70a84b543a8bbaad3b89be68050f80d3acccf1c60a13587c689caccb40ff247,5626817,768,432,29.97002997002997,459,15.3153,8,"숲, 두 사람의 근거리 대치/몸싸움",False,True,False,False
+gettyimages-1217312545-640_adpp.mp4,8c233071d943c0f528d15e3ecfc30445ff3125fcef5634b7dad2fcc9faea48c9,738573,768,432,50.0,1050,21.0,8,붉은 단색 배경의 사람/칼 실루엣,False,True,False,False
+gettyimages-586651685-640_adpp.mp4,0fd8ff304a5c4a9d7ca58b4c963378feddb3214b8fab837b23040f9f51d332c1,1606327,768,432,23.976,181,7.549215882549216,8,"실내, 누운 인물과 칼/손의 근접 장면",False,True,False,False
+gettyimages-916004330-640_adpp.mp4,252a1dd8d81dd8e51ead56c3024442006966e70e194d89fb23a706111bdcd24b,3412323,768,432,29.97,668,22.288955622288956,8,"골목, 허리/손의 칼을 크게 보여주는 구도",False,True,False,False

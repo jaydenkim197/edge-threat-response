@@ -1,0 +1,47 @@
+{
+  "task_date_kst": "2026-11-09",
+  "verified_at_kst": "2026-11-09T03:17:16.027493+09:00",
+  "source_commit": "cf0109a344949ee556ee72bdaaabdd87861b0dc1",
+  "inspection_script_sha256": "1e3521fc2c4c3053daa6d2853fcab3390cf45e9741a9df6ab6182b7a33f89349",
+  "inspection_json_sha256": "e8df2291972347a6349c9424ae5b21adea48a7d2c68f0a96a834a042a902d0f8",
+  "document_sha256": "52a882e9b9539cb304ac7179fe9896750721570e7f946c38da53cf3d5943f912",
+  "submitted_getty_note_sha256": "8bd2d3a6c42ec684faa719a7967a047f855df0e77ec031dee52500830fd6e0ea",
+  "youtube_videos": 19,
+  "submitter_cctv_count_not_independently_verified": 12,
+  "submitter_non_cctv_count_not_independently_verified": 7,
+  "playlist_count": 1,
+  "official_oembed_available": 19,
+  "browser_attempted": 5,
+  "browser_sample_scene_observed": 3,
+  "browser_age_confirmation_blocked": 2,
+  "local_videos": 5,
+  "local_video_bytes": 19229314,
+  "decoded_frames": 3143,
+  "duration_seconds": 92.3463048381715,
+  "all_declared_and_decoded_frame_counts_equal": true,
+  "local_visual_samples_per_video": 8,
+  "extra_detail_frame_first_video": 1,
+  "all_video_and_document_sha256_rechecked": true,
+  "csv_row_counts_verified": true,
+  "local_report_links_checked": true,
+  "unrelated_development_log_change_lines_preserved": true,
+  "labels_provided": false,
+  "training_started": false,
+  "model_inference_or_benchmark_run": false,
+  "production_review_modified": false,
+  "raw_content_in_report_directory": false,
+  "environment": {
+    "opencv": "5.0.0",
+    "pillow": "12.3.0",
+    "python": "3.11.18"
+  },
+  "official_terms_checked": [
+    "https://www.gettyimages.com/eula",
+    "https://support.google.com/youtube/answer/2797468?hl=en",
+    "https://www.youtube.com/static?template=terms"
+  ],
+  "artifacts": {
+    "local-video-inventory.csv": "9bcb08601173b02913569b2c776bfc2f990d1516481186c53a805bc67120e178",
+    "youtube-candidates.csv": "73a03022d67aa1121e6ae3a91ea79e0d5385da2fa2da47f105338c64dfbf7b13"
+  }
+}

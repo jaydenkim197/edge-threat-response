@@ -1,5 +1,14 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+<!-- team-video-candidates-20261109:begin -->
+## 2026-11-09 — 팀 제출 CCTV 영상 후보 검토
+
+- HWPX의 YouTube19개(CCTV 주장12/그 외7)+playlist1, 로컬 Getty5개를 조사했다. 공식 oEmbed19개 응답, 브라우저 표본3개 CCTV 장면 확인/2개 연령 확인으로 미확인, 로컬3,143frames 전 디코드·8표본씩 시각 확인·원본SHA 보존이다. 제목 확인과 전수 시청/knife 라벨 검증은 구분한다.
+- 로컬5개는 근거리/실루엣 등 목표 CCTV와 다른 구도이며, 30일 comp 메모에는 Getty EULA3.11의 별도 ML/AI 제한이 빠져 있다. 모델 학습/평가·공개 검수 사이트에 투입하지 않았다. YouTube의 사용 허가와 원본도 미확정이다.
+- 원본/라벨/학습/split/모델/검수 DB 변경 없이 source 목록·수량/hash·한계·다음 요청을 [후보 검토 보고서](../reports/datasets/team-video-candidates-2026-11-09/report.md)에 남겼다. 새 의존성/제품 코드 변경 없음. 기존 dirty 변경은 보존해 선택 commit/push하며 Git commit은 이 이력으로 추적한다.
+- 다음은 문서6·7·4번의 원본/사용 조건 확인(PROPOSAL)이며, 이번 주 P430 촬영·T1/Holding/event GT 우선을 유지한다. 후보 링크를 확보된 학습 세트나 최종 독립 평가로 승격하지 않는다.
+<!-- team-video-candidates-20261109:end -->
+
 <!-- cctv-inference-diagnosis-20261108:begin -->
 ## 2026-11-08 — CCTV0/31 추론 경로 진단·예측 중첩
 
