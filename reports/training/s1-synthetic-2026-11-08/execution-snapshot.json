@@ -1,6 +1,6 @@
 {
   "status": "training_running_not_complete",
-  "observed_at_utc": "2026-11-08T06:38:50.360104+00:00",
+  "observed_at_utc": "2026-11-08T06:43:47.948989+00:00",
   "source_commit": "ebc7f20924aae8fedf66d227979e6dea5ad266d5",
   "queue_sha256": "4cd6d6e94c70e26122b45b256f85e172ff909ec2f34a75baded96423c90dc739",
   "training_launch": {
@@ -23,17 +23,21 @@
   },
   "planned_updates": 37700,
   "observed_progress": {
-    "epoch": 1,
+    "epoch": 2,
     "total_epochs": 50,
-    "completed_batches_in_epoch": 217,
+    "completed_batches_in_epoch": 99,
     "batches_per_epoch": 754,
-    "iterations_per_second": 2.3
+    "iterations_per_second": 2.2
   },
-  "gpu_snapshot": "NVIDIA GeForce RTX 3060, 13 %, 5521 MiB, 60",
+  "gpu_snapshot": "NVIDIA GeForce RTX 3060, 18 %, 5491 MiB, 53",
   "comparison_status": "waiting_for_training",
   "comparison_datasets": 7,
   "comparison_unique_images": 325,
   "new_performance_verified": false,
   "orin_verified": false,
-  "review_database_modified": false
+  "review_database_modified": false,
+  "completed_epochs": 1,
+  "first_epoch_seconds": 348.274,
+  "validation_completed": true,
+  "observed_optimizer_updates": 754
 }

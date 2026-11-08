@@ -8,6 +8,8 @@
 
 실제 loader는12,064draws/754batches/batch16/accumulate1, val1,423이며 첫 epoch의 다수batch와 GPU 연산을 관측했다. [관측 snapshot](execution-snapshot.json)은 고정된 시점의 증거이며 live 상태를 대신하지 않는다. `observed_optimizer_updates`는 epoch 경계에 flush되므로 첫 epoch 중0이어도 미실행을 뜻하지 않는다. 전체 완료는 queue/invocation `passed`와37,700actual updates/best.pt SHA로 판단한다.
 
+**15:43 KST 후속 확인:** 첫 epoch의 754 optimizer update와 validation, `results.csv` 1행 저장을 확인했고 2/50 epoch로 진행했다. 첫 epoch 기록 시간은348.274초다. 학습·validation 연결을 확인한 것이며 전체50epoch의 모델 성능은 아니다.
+
 후속 평가의 기존 suite·기준 모델·queue preflight가 통과했고 별도 detached worker의 `waiting_for_training`을 확인했다. 성공한 training만 같은7셋 AP/predict·confidence·paired/기준42partition재현·CSV·비교표 생성으로 이어간다. 학습/평가 모두 SSH·노트북 종료와 분리되며 PC13 전원은 필요하다. 실패 때 로그·state를 보존하고 자동 재학습/기존 결과 덮어쓰기는 하지 않는다. 새로운 최종 모델 채택·Orin 배포는 자동으로 하지 않는다.
 
 ## 준비 완료 — VERIFIED
