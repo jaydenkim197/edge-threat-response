@@ -1,0 +1,39 @@
+{
+  "status": "training_running_not_complete",
+  "observed_at_utc": "2026-11-08T06:38:50.360104+00:00",
+  "source_commit": "ebc7f20924aae8fedf66d227979e6dea5ad266d5",
+  "queue_sha256": "4cd6d6e94c70e26122b45b256f85e172ff909ec2f34a75baded96423c90dc739",
+  "training_launch": {
+    "pid": 12820,
+    "queue": "C:\\Class6\\edge-threat-response\\data\\processed\\s1-synthetic-20261108-v2-profiles\\queue.json",
+    "git_commit": "ebc7f20924aae8fedf66d227979e6dea5ad266d5",
+    "created_utc": "2026-11-08T06:36:25.7696464Z"
+  },
+  "evaluation_launch": {
+    "pid": 8516,
+    "created_utc": "2026-11-08T06:36:46.6296109Z",
+    "script": "C:\\Class6\\etr-worktrees\\s1-20261108-run\\reports\\training\\s1-synthetic-2026-11-08\\followup-worker.py"
+  },
+  "loader_budget": {
+    "accumulate": 1,
+    "batch_size": 16,
+    "batches_per_epoch": 754,
+    "train_dataset_length": 12064,
+    "validation_dataset_length": 1423
+  },
+  "planned_updates": 37700,
+  "observed_progress": {
+    "epoch": 1,
+    "total_epochs": 50,
+    "completed_batches_in_epoch": 217,
+    "batches_per_epoch": 754,
+    "iterations_per_second": 2.3
+  },
+  "gpu_snapshot": "NVIDIA GeForce RTX 3060, 13 %, 5521 MiB, 60",
+  "comparison_status": "waiting_for_training",
+  "comparison_datasets": 7,
+  "comparison_unique_images": 325,
+  "new_performance_verified": false,
+  "orin_verified": false,
+  "review_database_modified": false
+}

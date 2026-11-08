@@ -1,6 +1,14 @@
 # S1: ATM·CCTV 합성 보강 실험 — 2026-11-08
 
-사용자는 ATM과 새 CCTV 60장을 자동 검사해 사용 가능한 자료로 S1을 학습하고, M1·M2의 동일 평가셋에서 비교하도록 승인했다. **현재 이 문서는 준비 기록이며, 전체 학습·성능 비교 완료를 뜻하지 않는다.** 실행 상태와 완료 결과는 아래 후속 증거로 갱신한다.
+사용자는 ATM과 새 CCTV 60장을 자동 검사해 사용 가능한 자료로 S1을 학습하고, M1·M2의 동일 평가셋에서 비교하도록 승인했다. **PC13에서 S1을 학습 중이며 완료 후 공통 평가 worker가 대기한다.** 전체 학습·새 성능 비교 완료를 뜻하지 않는다.
+
+## 실행 관측 — 2026-11-08 15:36 KST 시작
+
+학습 source는 `ebc7f20924aae8fedf66d227979e6dea5ad266d5`의 격리 worktree다. M2와 동일한 초기 COCO26n SHA `9b09cc8bf347f0fc8a5f7657480587f25db09b34bf33b0652110fb03a8ad4fef`, 전체 hyperparameter 일치와 CUDA preflight 통과를 확인했다. queue SHA는 `4cd6d6e94c70e26122b45b256f85e172ff909ec2f34a75baded96423c90dc739`다. [실행 설정 검사](profile-checks.json).
+
+실제 loader는12,064draws/754batches/batch16/accumulate1, val1,423이며 첫 epoch의 다수batch와 GPU 연산을 관측했다. [관측 snapshot](execution-snapshot.json)은 고정된 시점의 증거이며 live 상태를 대신하지 않는다. `observed_optimizer_updates`는 epoch 경계에 flush되므로 첫 epoch 중0이어도 미실행을 뜻하지 않는다. 전체 완료는 queue/invocation `passed`와37,700actual updates/best.pt SHA로 판단한다.
+
+후속 평가의 기존 suite·기준 모델·queue preflight가 통과했고 별도 detached worker의 `waiting_for_training`을 확인했다. 성공한 training만 같은7셋 AP/predict·confidence·paired/기준42partition재현·CSV·비교표 생성으로 이어간다. 학습/평가 모두 SSH·노트북 종료와 분리되며 PC13 전원은 필요하다. 실패 때 로그·state를 보존하고 자동 재학습/기존 결과 덮어쓰기는 하지 않는다. 새로운 최종 모델 채택·Orin 배포는 자동으로 하지 않는다.
 
 ## 준비 완료 — VERIFIED
 
@@ -60,4 +68,4 @@ PC13 `C:\Class6\edge-threat-response` 기준:
 - 학습: `runs/training/s1-synthetic-20261108-v2-raw-s1-n`
 - 비교: `runs/s1-comparison-20261108-v1`
 
-새 학습 시작·완료, 실제 추가량·draw/update 수, 후속 worker preflight·실행 상태는 관측 후 갱신한다. 새 성능·Orin/GPIO·실제 Holding·독립 final은 아직 미검증이다. Git commit은 본 이력과 invocation의 실행 source로 추적한다. 타 채팅의 미커밋 Catargiu/검수 운영 문서는 보존한다.
+실제 추가량·입력·draw/update 계획과 실행 시작·후속 worker preflight는 위 증거로 확인했다. 전체 학습 완료·새 성능·Orin/GPIO·실제 Holding·독립 final은 아직 미검증이다. Git commit은 본 이력과 invocation의 실행 source로 추적한다. 타 채팅의 미커밋 Catargiu/검수 운영 문서는 보존한다.

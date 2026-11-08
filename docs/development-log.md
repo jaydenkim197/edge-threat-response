@@ -8,6 +8,8 @@
 - 결과: 합성176(양성161/음성15·knife163)+M2실사11,884=train12,060, frozenval/test각1,423. M2실사/holdout identity·순서·hash 같고, 7셋 고유325eval과train exact교차0. 실제 세션/전수 사람검수/중복 완전성을 주장하지 않는다.
 - search-first/verification-loop: 기존followup/label/signature/RAW승인·queue·GPUlock·평가기를 재사용, source adapter/RAW-S1-n·일회성 dependent worker만 추가. 관련25tests, ML전체210(208pass/2skip), 별도평가12pass·compileall. 새설치/제품추론/사이트·DB 변경없음.
 - 계획: 같은COCOpretrained n640/50epoch/FP32/batch16·seed/optimizer/증강, 12,064draws·37,700update. M2의37,150과 다른 전체recipe 비교다. PC13 격리source로 학습 후 같은7셋 AP/predict·confidence·paired/기준42partition재현을 자동 처리한다. 전체학습/새성능/Orin/Holding/독립final은 아직 미검증이다. 원시·문서·결정영향·Git추적은 [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md). 다음주촬영/T1·실제HOI는 별도 핵심으로 유지한다.
+
+- 실행관측: 15:36KST PC13 detached학습PID12820/source ebc7f20/queue SHA4cd6d6e9…를시작했다. actualloader12,064draws/754batches/batch16/accumulate1/val1,423, 첫epoch다수batch·GPU연산을확인했다. 후속평가PID8516은preflight통과후waiting_for_training. 둘다SSH/노트북종료와분리하며실패시자동재학습하지않는다. 관측snapshot은live상태/전체완료/새정확도를뜻하지않는다.
 <!-- s1-synthetic-20261108:end -->
 
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.

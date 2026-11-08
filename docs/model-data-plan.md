@@ -3,7 +3,11 @@
 <!-- s1-synthetic-20261108:begin -->
 ## 2026-11-08 — 사용자 승인 S1 합성 보강
 
-ATM116 + 새 CCTV60 = 합성176장(양성161/음성15·knife163)의 자동 검사를 마쳤다. S1은 M2 실사11,884와 frozenval/test각1,423을 유지하고 train12,060으로 준비했다 `IMPLEMENTED`/준비 `VERIFIED`. source namespace로 일반knife_번호 오연결만 분리하며 전역 이미지/보호group 검사는 유지한다. 같은 pretrained n640/50epoch에 계획37,700updates이며 M2의37,150과 다르다. 실제학습·동일7셋 AP/predict/confidence 비교는 `PLANNED`이고 새성능·D*/Orin/독립final은 미검증이다. [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+ATM 116장 + 새 CCTV 60장 = **합성 176장**(양성 161/음성 15, knife 163개)의 자동 검사를 마쳤다. M2 실사 11,884장과 고정 val/test 각 1,423장을 유지하고 train 12,060장으로 준비했다. 준비는 `VERIFIED`다. 일반적인 knife_번호 파일명은 새 source 내부에서만 그룹화하고, 전역 이미지·보호 그룹 검사는 유지한다.
+
+PC13의 source `ebc7f20`에서 15:36 KST에 학습을 시작했다. 실제 로더 12,064 draws/754 batches/batch 16/accumulate 1과 GPU 연산을 확인했다. 같은 pretrained YOLO26n·640·50 epoch이며 계획 37,700 update는 M2의 37,150과 다르다. 전체 recipe 비교로 해석한다.
+
+같은 7개 개발셋의 AP/predict·confidence 분석과 기준 42개 partition 재현을 수행할 worker는 학습 성공을 기다린다. 전체 학습·새 성능·D*/Orin·독립 final은 아직 미검증이다. [S1 실험 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
 <!-- s1-synthetic-20261108:end -->
 
 <!-- m2-variants-comparison-20261107:begin -->

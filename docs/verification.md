@@ -1,9 +1,14 @@
 # Verification Matrix
 
 <!-- s1-synthetic-20261108:begin -->
-## 2026-11-08 — S1 source·실행 지원 검증
+## 2026-11-08 — S1 준비·실행 검증
 
-준비 `VERIFIED`: archivechecksum/CRC·60장COCO/YOLO좌표·sourceclass·image/labelhash·strictdecode·전역group/보호·M2실사/holdoutidentity와순서보존. 합성176(양성161/음성15·knife163), train12,060, val/test각1,423, 고유325eval과train exact교차0. namespace/negative/실패queue/승인 회귀25pass, 최종ML전체210tests(208pass/2optional skip), 별도평가12pass, 로컬compileall 통과. 신규 전체학습·정확도·Orin/실제HOI·독립final은 아직 미검증이다. [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+- **준비 `VERIFIED`:** ZIP checksum/CRC, 60장의 COCO/YOLO 좌표, source class, 이미지/라벨 hash, strict decode, 전역 그룹·보호 검사, M2 실사/holdout identity와 순서 보존. 합성 176장(양성 161/음성 15, knife 163개), train 12,060장, val/test 각 1,423장이다. 고유 평가 325장과 train의 exact 교차는 0이다.
+- **코드 검증:** 관련 회귀 25개 통과. 전체 210 tests 중 208개 통과·선택 의존성 2개 skip. 별도 평가 환경에서 비교 테스트 12개 통과. 로컬 compileall 통과.
+- **실행 `VERIFIED`:** source `ebc7f20`, M2와 같은 초기 weight·전체 hyperparameter, hash-bound RAW 승인과 CUDA preflight를 확인했다. 실제 로더 12,064 draws/754 batches/batch 16/accumulate 1, val 1,423장과 다수 batch·GPU 연산을 관측했다.
+- **아직 미검증:** 전체 학습·새 정확도·Orin·실제 HOI·독립 final. 7개 평가셋 후속 worker는 preflight 통과 후 `waiting_for_training`이다.
+
+[S1 실험 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
 <!-- s1-synthetic-20261108:end -->
 
 <!-- m2-variants-comparison-20261107:begin -->

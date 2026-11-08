@@ -1,0 +1,11 @@
+{
+  "source_commit": "ebc7f20924aae8fedf66d227979e6dea5ad266d5",
+  "queue_sha256": "4cd6d6e94c70e26122b45b256f85e172ff909ec2f34a75baded96423c90dc739",
+  "draws_per_epoch": 12064,
+  "planned_updates": 37700,
+  "unique_train": 12060,
+  "same_initial_pretrained_as_m2": true,
+  "same_hyperparameters_as_m2": true,
+  "approval_train_draws": 12064,
+  "cuda_preflight": "passed"
+}

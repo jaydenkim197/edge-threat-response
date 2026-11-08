@@ -1,5 +1,15 @@
 # Master Project Plan
 
+<!-- s1-synthetic-20261108:begin -->
+## 현재 추가 실험 — 2026-11-08
+
+사용자 승인으로 **S1 합성 보강을 PC13에서 학습 중**이다. 자동 검사를 통과한 ATM 116장과 CCTV 60장을 M2 실사 11,884장에 추가했다. train 12,060장, 고정 val/test 각 1,423장이다. 같은 COCO YOLO26n 초기 weight·640 해상도·50 epoch·FP32·batch 16을 사용하며, 37,700 update를 계획한다.
+
+source `ebc7f20`의 실제 로더·다수 batch·GPU 연산을 확인했다. 성공 후 M1·M2와 같은 7개 개발셋에서 AP/predict·confidence별 비교를 수행하는 worker가 대기 중이다. 전체 학습 완료·새 성능·최종 D*는 아직 미확정이다. [S1 실험 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+
+다음 주 실제 촬영, T1/Holding 정답, HOI, Orin/GPIO, 독립 B0~B4 평가는 기존 11월 일정대로 필요하다.
+<!-- s1-synthetic-20261108:end -->
+
 <!-- docs-refresh-20261106:begin -->
 ## 현재 기준 — 2026-11-07
 
