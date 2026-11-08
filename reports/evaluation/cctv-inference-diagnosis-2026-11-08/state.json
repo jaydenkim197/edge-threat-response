@@ -1,0 +1,14 @@
+{
+  "active": null,
+  "final_detector_selected": false,
+  "frozen_models_sha256": "1e1b3a83053af8dc201400d32f69095448151749dacc9224d08beecac3aefb51",
+  "phase": null,
+  "roi_uses_ground_truth": true,
+  "source_commit": "ebc7f20924aae8fedf66d227979e6dea5ad266d5",
+  "started_utc": "2026-11-08T13:05:58.927530+00:00",
+  "status": "passed",
+  "training_started": false,
+  "truth_sha256": "61c08bd33a00f3036eda5fb8df2824cc6a223d0a0d94dcf94953e332887f1676",
+  "updated_utc": "2026-11-08T13:06:43.017314+00:00",
+  "worker_sha256": "63f9d2177312e1e3b2b63d04294c6f7077a6faab3dc2c7d5e55e9fe1baf6531e"
+}

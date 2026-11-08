@@ -1,0 +1,146 @@
+[
+  {
+    "model": "raw-m1-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.1,
+    "tp": 4,
+    "fp": 13,
+    "fn": 27
+  },
+  {
+    "model": "raw-m1-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.25,
+    "tp": 3,
+    "fp": 14,
+    "fn": 28
+  },
+  {
+    "model": "raw-m1-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.5,
+    "tp": 3,
+    "fp": 14,
+    "fn": 28
+  },
+  {
+    "model": "raw-m1-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.1,
+    "tp": 1,
+    "fp": 1,
+    "fn": 30
+  },
+  {
+    "model": "raw-m1-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.25,
+    "tp": 0,
+    "fp": 2,
+    "fn": 31
+  },
+  {
+    "model": "raw-m1-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.5,
+    "tp": 0,
+    "fp": 2,
+    "fn": 31
+  },
+  {
+    "model": "raw-m2-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.1,
+    "tp": 4,
+    "fp": 20,
+    "fn": 27
+  },
+  {
+    "model": "raw-m2-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.25,
+    "tp": 1,
+    "fp": 23,
+    "fn": 30
+  },
+  {
+    "model": "raw-m2-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.5,
+    "tp": 0,
+    "fp": 24,
+    "fn": 31
+  },
+  {
+    "model": "raw-m2-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.1,
+    "tp": 1,
+    "fp": 6,
+    "fn": 30
+  },
+  {
+    "model": "raw-m2-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.25,
+    "tp": 0,
+    "fp": 7,
+    "fn": 31
+  },
+  {
+    "model": "raw-m2-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.5,
+    "tp": 0,
+    "fp": 7,
+    "fn": 31
+  },
+  {
+    "model": "raw-s1-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.1,
+    "tp": 4,
+    "fp": 17,
+    "fn": 27
+  },
+  {
+    "model": "raw-s1-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.25,
+    "tp": 4,
+    "fp": 17,
+    "fn": 27
+  },
+  {
+    "model": "raw-s1-n-640",
+    "confidence": 0.1,
+    "matching_iou": 0.5,
+    "tp": 2,
+    "fp": 19,
+    "fn": 29
+  },
+  {
+    "model": "raw-s1-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.1,
+    "tp": 0,
+    "fp": 4,
+    "fn": 31
+  },
+  {
+    "model": "raw-s1-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.25,
+    "tp": 0,
+    "fp": 4,
+    "fn": 31
+  },
+  {
+    "model": "raw-s1-n-640",
+    "confidence": 0.25,
+    "matching_iou": 0.5,
+    "tp": 0,
+    "fp": 4,
+    "fn": 31
+  }
+]

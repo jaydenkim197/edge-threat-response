@@ -1,0 +1,2003 @@
+{
+  "channel_controls": [
+    {
+      "bgr_count": 45,
+      "bgr_same_as_pil": true,
+      "image_no": 1,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m1-n-640",
+      "path_count": 45,
+      "path_same_as_pil": true,
+      "pil_count": 45
+    },
+    {
+      "bgr_count": 34,
+      "bgr_same_as_pil": true,
+      "image_no": 2,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m1-n-640",
+      "path_count": 34,
+      "path_same_as_pil": true,
+      "pil_count": 34
+    },
+    {
+      "bgr_count": 11,
+      "bgr_same_as_pil": true,
+      "image_no": 3,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m1-n-640",
+      "path_count": 11,
+      "path_same_as_pil": true,
+      "pil_count": 11
+    },
+    {
+      "bgr_count": 6,
+      "bgr_same_as_pil": true,
+      "image_no": 4,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m1-n-640",
+      "path_count": 6,
+      "path_same_as_pil": true,
+      "pil_count": 6
+    },
+    {
+      "bgr_count": 17,
+      "bgr_same_as_pil": true,
+      "image_no": 5,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m1-n-640",
+      "path_count": 17,
+      "path_same_as_pil": true,
+      "pil_count": 17
+    },
+    {
+      "bgr_count": 13,
+      "bgr_same_as_pil": true,
+      "image_no": 6,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m1-n-640",
+      "path_count": 13,
+      "path_same_as_pil": true,
+      "pil_count": 13
+    },
+    {
+      "bgr_count": 73,
+      "bgr_same_as_pil": true,
+      "image_no": 1,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m2-n-640",
+      "path_count": 73,
+      "path_same_as_pil": true,
+      "pil_count": 73
+    },
+    {
+      "bgr_count": 46,
+      "bgr_same_as_pil": true,
+      "image_no": 2,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m2-n-640",
+      "path_count": 46,
+      "path_same_as_pil": true,
+      "pil_count": 46
+    },
+    {
+      "bgr_count": 30,
+      "bgr_same_as_pil": true,
+      "image_no": 3,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m2-n-640",
+      "path_count": 30,
+      "path_same_as_pil": true,
+      "pil_count": 30
+    },
+    {
+      "bgr_count": 25,
+      "bgr_same_as_pil": true,
+      "image_no": 4,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m2-n-640",
+      "path_count": 25,
+      "path_same_as_pil": true,
+      "pil_count": 25
+    },
+    {
+      "bgr_count": 27,
+      "bgr_same_as_pil": true,
+      "image_no": 5,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m2-n-640",
+      "path_count": 27,
+      "path_same_as_pil": true,
+      "pil_count": 27
+    },
+    {
+      "bgr_count": 17,
+      "bgr_same_as_pil": true,
+      "image_no": 6,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-m2-n-640",
+      "path_count": 17,
+      "path_same_as_pil": true,
+      "pil_count": 17
+    },
+    {
+      "bgr_count": 121,
+      "bgr_same_as_pil": true,
+      "image_no": 1,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-s1-n-640",
+      "path_count": 121,
+      "path_same_as_pil": true,
+      "pil_count": 121
+    },
+    {
+      "bgr_count": 66,
+      "bgr_same_as_pil": true,
+      "image_no": 2,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-s1-n-640",
+      "path_count": 66,
+      "path_same_as_pil": true,
+      "pil_count": 66
+    },
+    {
+      "bgr_count": 5,
+      "bgr_same_as_pil": true,
+      "image_no": 3,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-s1-n-640",
+      "path_count": 5,
+      "path_same_as_pil": true,
+      "pil_count": 5
+    },
+    {
+      "bgr_count": 6,
+      "bgr_same_as_pil": true,
+      "image_no": 4,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-s1-n-640",
+      "path_count": 6,
+      "path_same_as_pil": true,
+      "pil_count": 6
+    },
+    {
+      "bgr_count": 46,
+      "bgr_same_as_pil": true,
+      "image_no": 5,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-s1-n-640",
+      "path_count": 46,
+      "path_same_as_pil": true,
+      "pil_count": 46
+    },
+    {
+      "bgr_count": 18,
+      "bgr_same_as_pil": true,
+      "image_no": 6,
+      "jpeg_rgb_pixel_max_delta": 0,
+      "model": "raw-s1-n-640",
+      "path_count": 18,
+      "path_same_as_pil": true,
+      "pil_count": 18
+    }
+  ],
+  "frozen_inputs_unchanged": true,
+  "input_sha256": {
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\001.jpg": "b599f314a76216b9a05eb25fb659a0aa71f3df74e37dcad24578a8a4df49beda",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\002.jpg": "932d49d369fe8ff7530afa14a4c09068c48e3e64991dc714c16e0a6ab18f1ddf",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\003.jpg": "4db9687acbff70747a80c5c8f3b1cfe356d0abec1489ba2590b5cea741249c75",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\005.jpg": "eef38eb2571d8e4e84b075bfadf761377b44e88b5bc4d9f9497edaf4130fd012",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\006.jpg": "6c7676e818e5bb44782898bdb41769d22805c5f3b25c5e293bd43c93c3693eb6",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\007.jpg": "d27fa4866f62416f006962524f0adc6103f348ba75ef146544abcc31a442ab72",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\008.jpg": "2945206ff542949e16fdbd9f9970f37030342bb18980d879044f48b8792734f0",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\009.jpg": "c1fa7138590d2a88a7dd0a2d4b8ee0434a900722c156bbff40d15d79564325af",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\010.jpg": "4cd9b2c4f4514dbe7035c3b352d44903187263ec73e946e13e86d1a2e48c8b58",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\011.jpg": "de20ab461fcb2c368266407c0e5d8458958d2a652c85e1ee8afc648ff785188e",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\013.jpg": "97f8b325048b12d2673a9a0678031df0ca1be974d4212e06d9392fb736bb4a5b",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\014.jpg": "0e486f62c353f4348a1b9e423c112309118643eaadbc195d421a7d4661c5dd0c",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\015.jpg": "8d954e04dd0cc6cc2d8670118c40914ee0e78a1e9feee1d4b9335e8d39f07538",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\016.jpg": "f2984306e93fbbe49cbf4aaf0c72e331c3e3eea19f93c1c41c403ee45ee199f8",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\017.jpg": "e69b2ae9f9cf6c85e9e2013c9b1db9328018dc2282c7ef5d8397bc3d95768efe",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\019.jpg": "afa183c405b80f43a53520f90c1a6fcdb2e4ee1493f4e544831eef70f9523631",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\020.jpg": "038d6e7694b4ad13ccd8ae9182b15683518cdcda8cff9f4a4bc5ca35340cf86a",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\021.jpg": "f37b66924872f4bcd69faec943ed34a6adcdaf1af7c4fa3c3ac46297dadd5cba",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\022.jpg": "e2d142e39f0f8b4f42ebe6305bda0446d8aab61c44f71f7562987e378756f078",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\023.jpg": "a1f36df324065def30edb9c5b00187015320b50f683ca6491cf121e02e6af870",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\025.jpg": "241770ea07ef8e1ae5db636d0a39dbbbfe009962241fd39b37b175656e7118ce",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\029.jpg": "495f4917c1c9e07d4593fde888dd4b97c543eb847ec369d2e5dec5c5b31d1d1a",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\030.jpg": "8e1f75153ba666055b0d28b86dac9d3a406a8df9b1973179ee4d066bd450a2b8",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\031.jpg": "e8b6748272992934aaeda2abc8247e4f7c2c06852ccb89c8f004baea7847693a",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\032.jpg": "d644f554158b417810b40521a678fad86098788b0880b1a85128f8f3514704f3",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\033.jpg": "a42b7ba80128aded57c9de5a4e2b8336f2a89ac3647aed76f15777ef88db605e",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\034.jpg": "c9e2d8ae9ef96ef83cf897680fd91f0f78b1393773f01049a6906d7d2c48cd0f",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\035.jpg": "2dd0e46f8ae9d8dd52f82a60c7d67f25ad6e81f2114956fa9f2a9180f6cf8e05",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\037.jpg": "0f7f7b34a87018b3c732dc5c50f5143e23aa9e2fc43f5fabc7b0de9aea22437f",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\039.jpg": "b6406b09e0d11a953448d3c75aa31b8872099db678b9192943213d089c0ce8e0",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\040.jpg": "b6bd3e6d5d55da486919f3543a201f97da4cb60dd571758c9b3776e17bc4c2ab",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\041.jpg": "81d16bfd050380ae0b8b2120aa17d259fb2111de0a6c4aeb9660a920c4f169cc",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\043.jpg": "eee3894ae5dddd9c095bd19ef6bcde900f1ab6398b3ae752a9eaa86108ad923d",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\045.jpg": "60d711be9673fc37a694816d3854e4dec4cb19aec34acdf0caad0b3d0b276dee",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\046.jpg": "37366bf5ca6a68eadfa71ef36526ca364a579e35a7fe299de61292b2ee8ca637",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\047.jpg": "513611036f5cd1154dcbf6714c0ce1cfedda276c3383fbd3e8c3b88b87716373",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\049.jpg": "e3d80121640165ce01d4ddf88f471fe62b1e3844218581b8220e62d7006280b7",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\051.jpg": "0991d929873412060a72e82f075ffd96397fee66c6b277f6fa1602374133859f",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\052.jpg": "1e2dcbeeb3c957794df7c7513fc09e9d0031942bae1aa7cd83eab4a78ef59dc1",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\053.jpg": "ff3aab15a70254c25a672dc65cb5c9f716350fdf18dd6cc5158e7a9da03bcf23",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\055.jpg": "70e37ee56df8da341f4af8bbffe685f9904a281329b779ccf4cc23339b66aff5",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\056.jpg": "bfb0bc3952608b2a96fd85d4c5d05e13efc7e6fa5792c752f6828d13fbf2fe15",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\057.jpg": "408804417b352ece77f5eecc002625468d6e69ecdb554541a325f2898c65a4c1",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\058.jpg": "8930a66f9437127b3271b9c20216abba592e69f31abafb1330632c51bbb80e69",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\059.jpg": "7600ada9ff8bbcf59310336eb1360012be25826b82427b9fe30426a4dafb140f",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\061.jpg": "33280282ef5dac7f2575fd722b1c596867f194ceaea51d0380f26fcd7d367f86",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\062.jpg": "cdd36ab4e3c1f65b30f3a31bd9ae50ce0fedb1ef48872a57d3e9836d8050c52e",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\063.jpg": "dbeb9dbde8ef2fe70471af3d3c39173e344248181a5d360a7cc7b8d4bede5a4e",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\064.jpg": "a7a53e00fc543327862db2a1b30593762ca918d3d9e8cbab54d376fc4a6d6f72",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\065.jpg": "47e8b243284f3887eaab37b4e905ab51b8d5c805c702443a98bff798a7355e2e",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\066.jpg": "f2c5a58b6163175c2d954ce0c6de0664c17236733829823b697b4da535e90551",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\067.jpg": "d32654eed63689e0e46b20c74a12f31d2d406d756fd346c62bdae3c29ff8719d",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\068.jpg": "0a31c25c63a2624df323de4184d02bf588f808fcca6749cf37ea0bc180715804",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\069.jpg": "bff520320f8be9006e32a534d835168aa646f68262cfbdc1301b5dcbf5e77684",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\071.jpg": "56dfec2332f1a1668af81458aee6108bbe0db7231dfc553354a44d02645858b4",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\072.jpg": "23ebc21f32d0b772dc0d37a40ad549105077c3bbc150758a0e2d8be8a90d86e2",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\073.jpg": "8ed9053f7d5818aa2f5b0038bbf81cd81c7223818f37a930dcfe0b14c8775c68",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\074.jpg": "2e7f5034844908ea8c19519219082c4ebeb8aa8d0d6f85baa745e63691beadbb",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\075.jpg": "a25acbb9cadcff68b53d0f3966c80a41169d145bce83db792c43132a54ec3ecb",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\076.jpg": "862df527366fac477493e3e813b3c040a058cffab4deff5714ad76925df83f44",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\077.jpg": "2bb4dba06972542221c22f3524bc49d66600d5494e3812d9ec5d99b67b5e1351",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\078.jpg": "14422d8027a8632f533818e941a760cd6b61a9adc80a4010cc568aa7cf129a32",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\079.jpg": "c985d35ff166c6feeec462219bfbe1b47d259ad8727d03e8ad5968b95c53d941",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\080.jpg": "9acb0618d92768ac9291d516bfd67da6875a7766feec9e0f63a33ba122fa25c0",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\081.jpg": "7945143739b26e42c47e3e65eff85c73187e788ae0d3031ee47b84f3e4ff28b9",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\082.jpg": "bfb7a3358fd852c4e6e6f21697417a980d2763d84de3d252254c3d187d15e121",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\083.jpg": "dc394d98af90867c1a553704598e0d1d7a33f3076519671ad83daf16bbfa48f3",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\084.jpg": "d56e06c3c605150394c200bde9dba9417f369548c6f622c6f3a41bd1d1b50d25",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\085.jpg": "bf89ca8fbac4956bebcd528ca2b5370810e989a60a5ea95a40ee026e344ddf2c",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\087.jpg": "11399044dab97d2f73f4f09205d393361ac25a3b6aa802297085bb429520a9a0",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\088.jpg": "86987ac5108232d76f8491b21d678424a269fb8b72bd906c6f68b371fbce1ad6",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\089.jpg": "2073ff39c099a291395ce7d9e429497917b29931578f019c0b26f89101f35584",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\090.jpg": "fccbe2ebaba2040df96ea29797d2f8e64d9c5adf1532f2ea64beb663e9cbbe0a",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\091.jpg": "cd99d03aae38dda9e17a63f37658667c995c04520933899c252170944d762850",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\092.jpg": "0b7d76792aa710c329fe4d42ae9c36a074099dfdc78efc9311fd3492c21e72f2",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\093.jpg": "cfd0ac40136ae1a6f6ac41482c4e7bb3af5de1e6ee41f276383b05272523ac3d",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\094.jpg": "28279a94524116222b3321d5f5469797ac5d4ba2af00ead48373fb404f074606",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\095.jpg": "ff93e8c96d45a71ccff247e4ddb072a543151a7f3c6494acfaad3272c738cdf4",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\096.jpg": "a8d3f9cc759597e9381ee1088c7946e18da41c37a4d7a11e5499e1d5a6353fbe",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\097.jpg": "a30c4afca4a3de4d0fbee249d19c3fdbb867a6034d3791674882e31e7899e9e1",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\098.jpg": "634d7a5c814e090601c780b1dd2a267b0e918bcad9df4a45eacf32a22efc508e",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\099.jpg": "34cf5361b33f4622ee2b5c0c54d99f14211591d1df5ab4d438032b4f75ebe509",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\images\\100.jpg": "5d2d6fa0dfb19e2d30fc75a72e090aefe022f19f5bd26eee483048740a014be8",
+    "C:\\Class6\\edge-threat-response\\runs\\reviewed-cctv-20261106-v2\\truth.json": "61c08bd33a00f3036eda5fb8df2824cc6a223d0a0d94dcf94953e332887f1676",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-comparison-20261108-v1\\predict\\models.json": "1e1b3a83053af8dc201400d32f69095448151749dacc9224d08beecac3aefb51",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-comparison-20261108-v1\\predict\\models\\raw-m1-n-640\\us-mock-reviewed\\predictions.jsonl": "0ee9c8d9c71043138e267f736be618c4e025d52994227f4cb0c5c5ca3e5355f2",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-comparison-20261108-v1\\predict\\models\\raw-m2-n-640\\us-mock-reviewed\\predictions.jsonl": "37e7fc2287e9ffaccfb513ffeb6ffa9b9171a1ea1a3feb7f373aad2b8acbaafc",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-comparison-20261108-v1\\predict\\models\\raw-s1-n-640\\us-mock-reviewed\\predictions.jsonl": "93d1adee7cc2be8ecf8ec8ba3447e9114e88394ba1b9f34cbf5d86804f778df2",
+    "C:\\Class6\\edge-threat-response\\runs\\training\\m2-real-20261107-v1-raw-m2-n\\weights\\best.pt": "68cc342139f2755ca5a86649a02882a2c4f3f37330222a0f135cf1eb0c8a5569",
+    "C:\\Class6\\edge-threat-response\\runs\\training\\raw-real-20261105-v2-raw-m1-n\\weights\\best.pt": "d95d63568d4939b5271784156ebeafbaf701887c444c0b06ef295d5b06e79320",
+    "C:\\Class6\\edge-threat-response\\runs\\training\\s1-synthetic-20261108-v2-raw-s1-n\\weights\\best.pt": "2ac5c5bb112886c1e4e7c7e5a3d68579f9ad3ac029d71d86a5397ae4bad2e358"
+  },
+  "models": [
+    {
+      "actual_head_end2end": false,
+      "cached_direct_differences": [],
+      "class_names": {
+        "0": "knife"
+      },
+      "gt_scale_roundtrip_error_px": 1.1368683772161603e-13,
+      "images": 83,
+      "max_box_delta_px": 0.0,
+      "max_network_tensor_delta": 5.960464477539063e-08,
+      "max_score_delta": 0.0,
+      "model": "raw-m1-n-640",
+      "pil_path_bgr_images_checked": 6
+    },
+    {
+      "actual_head_end2end": false,
+      "cached_direct_differences": [],
+      "class_names": {
+        "0": "knife"
+      },
+      "gt_scale_roundtrip_error_px": 1.1368683772161603e-13,
+      "images": 83,
+      "max_box_delta_px": 0.0,
+      "max_network_tensor_delta": 5.960464477539063e-08,
+      "max_score_delta": 0.0,
+      "model": "raw-m2-n-640",
+      "pil_path_bgr_images_checked": 6
+    },
+    {
+      "actual_head_end2end": false,
+      "cached_direct_differences": [],
+      "class_names": {
+        "0": "knife"
+      },
+      "gt_scale_roundtrip_error_px": 1.1368683772161603e-13,
+      "images": 83,
+      "max_box_delta_px": 0.0,
+      "max_network_tensor_delta": 5.960464477539063e-08,
+      "max_score_delta": 0.0,
+      "model": "raw-s1-n-640",
+      "pil_path_bgr_images_checked": 6
+    }
+  ],
+  "native_zero_area_boxes_excluded_like_existing_canonical_adapter": [
+    {
+      "bbox_xyxy": [
+        104.81396484375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0011495864018797874,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        104.81396484375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0011495864018797874,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        104.81396484375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0011495864018797874,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        98.4136962890625,
+        1080.0,
+        1919.10400390625,
+        1080.0
+      ],
+      "confidence": 0.0012601652415469289,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        92.8011474609375,
+        1080.0,
+        1918.7587890625,
+        1080.0
+      ],
+      "confidence": 0.0011461994145065546,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        102.10711669921875,
+        1080.0,
+        1919.6025390625,
+        1080.0
+      ],
+      "confidence": 0.0011117953108623624,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        92.1866455078125,
+        1080.0,
+        1919.818359375,
+        1080.0
+      ],
+      "confidence": 0.0010144931729882956,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        30.17303466796875,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0011481073452159762,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        103.5325927734375,
+        1080.0,
+        1918.8585205078125,
+        1080.0
+      ],
+      "confidence": 0.001074757194146514,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        103.716064453125,
+        1080.0,
+        1918.9493408203125,
+        1080.0
+      ],
+      "confidence": 0.0011897094082087278,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        97.0576171875,
+        1080.0,
+        1919.2935791015625,
+        1080.0
+      ],
+      "confidence": 0.0011077167000621557,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        103.040771484375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0011091865599155426,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        105.18255615234375,
+        1080.0,
+        1919.94384765625,
+        1080.0
+      ],
+      "confidence": 0.0011776149040088058,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        101.095458984375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0011398058850318193,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        91.2000732421875,
+        1080.0,
+        1919.4642333984375,
+        1080.0
+      ],
+      "confidence": 0.00103758426848799,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        84.18402099609375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0010264295851811767,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        92.480712890625,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0010332828387618065,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        27.99151611328125,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0010146197164431214,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        78.30194091796875,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.001330695697106421,
+      "model": "raw-m2-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        16.1112060546875,
+        1080.0,
+        1269.6746826171875,
+        1080.0
+      ],
+      "confidence": 0.0040872409008443356,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        636.73046875,
+        1080.0,
+        1906.229736328125,
+        1080.0
+      ],
+      "confidence": 0.0014209483051672578,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        620.1027221679688,
+        1080.0,
+        1911.084716796875,
+        1080.0
+      ],
+      "confidence": 0.0016608427977189422,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        616.0869140625,
+        1080.0,
+        1913.2841796875,
+        1080.0
+      ],
+      "confidence": 0.0038598617538809776,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.5184326171875,
+        1080.0,
+        1323.062255859375,
+        1080.0
+      ],
+      "confidence": 0.002104251878336072,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        610.982666015625,
+        1080.0,
+        1916.089599609375,
+        1080.0
+      ],
+      "confidence": 0.0035184198059141636,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1320.2314453125,
+        1080.0
+      ],
+      "confidence": 0.0012220046482980251,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        17.89501953125,
+        1080.0,
+        1263.33447265625,
+        1080.0
+      ],
+      "confidence": 0.002960918005555868,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        5.632568359375,
+        1080.0,
+        1277.620361328125,
+        1080.0
+      ],
+      "confidence": 0.0018880231073126197,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        627.3345947265625,
+        1080.0,
+        1910.4354248046875,
+        1080.0
+      ],
+      "confidence": 0.001563282567076385,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        617.8212890625,
+        1080.0,
+        1911.849609375,
+        1080.0
+      ],
+      "confidence": 0.004026602953672409,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.5621337890625,
+        1080.0,
+        1322.8861083984375,
+        1080.0
+      ],
+      "confidence": 0.0021964595653116703,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        15.5140380859375,
+        1080.0,
+        1269.0484619140625,
+        1080.0
+      ],
+      "confidence": 0.004244687967002392,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        15.4923095703125,
+        1080.0,
+        1264.7645263671875,
+        1080.0
+      ],
+      "confidence": 0.004213126841932535,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        626.6297607421875,
+        1080.0,
+        1909.6776123046875,
+        1080.0
+      ],
+      "confidence": 0.0016123419627547264,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        614.8692626953125,
+        1080.0,
+        1913.0831298828125,
+        1080.0
+      ],
+      "confidence": 0.0036104065366089344,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1325.0113525390625,
+        1080.0
+      ],
+      "confidence": 0.0014438920188695192,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        3.0250244140625,
+        1080.0,
+        1290.27392578125,
+        1080.0
+      ],
+      "confidence": 0.0014309781836345792,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        664.6480712890625,
+        1080.0,
+        1916.5572509765625,
+        1080.0
+      ],
+      "confidence": 0.0012431625509634614,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        12.398193359375,
+        1080.0,
+        1301.755126953125,
+        1080.0
+      ],
+      "confidence": 0.0036231274716556072,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        608.60009765625,
+        1080.0,
+        1910.860107421875,
+        1080.0
+      ],
+      "confidence": 0.0016266627935692668,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        621.52197265625,
+        1080.0,
+        1911.279541015625,
+        1080.0
+      ],
+      "confidence": 0.004017692059278488,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        2.2900390625,
+        1080.0,
+        1319.150146484375,
+        1080.0
+      ],
+      "confidence": 0.002009929856285453,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        14.5296630859375,
+        1080.0,
+        1261.962890625,
+        1080.0
+      ],
+      "confidence": 0.0036860068794339895,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        628.276611328125,
+        1080.0,
+        1909.615966796875,
+        1080.0
+      ],
+      "confidence": 0.001687070936895907,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        618.157958984375,
+        1080.0,
+        1912.85986328125,
+        1080.0
+      ],
+      "confidence": 0.0037750459741801023,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.46533203125,
+        1080.0,
+        1320.9527587890625,
+        1080.0
+      ],
+      "confidence": 0.0018715951591730118,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        613.3175659179688,
+        1080.0,
+        1916.055419921875,
+        1080.0
+      ],
+      "confidence": 0.0029246497433632612,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        8.07470703125,
+        1080.0,
+        1284.950927734375,
+        1080.0
+      ],
+      "confidence": 0.0014492120826616883,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        14.4798583984375,
+        1080.0,
+        1262.7283935546875,
+        1080.0
+      ],
+      "confidence": 0.0034098317846655846,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        626.7391967773438,
+        1080.0,
+        1911.125,
+        1080.0
+      ],
+      "confidence": 0.0016073165461421013,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        616.71630859375,
+        1080.0,
+        1912.2373046875,
+        1080.0
+      ],
+      "confidence": 0.003949756734073162,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1318.112548828125,
+        1080.0
+      ],
+      "confidence": 0.0015568488743156195,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        13.6531982421875,
+        1080.0,
+        1273.65478515625,
+        1080.0
+      ],
+      "confidence": 0.0036899384576827288,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        631.3344116210938,
+        1080.0,
+        1906.80224609375,
+        1080.0
+      ],
+      "confidence": 0.0014261663891375065,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        615.0994262695312,
+        1080.0,
+        1913.326904296875,
+        1080.0
+      ],
+      "confidence": 0.004154535010457039,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1323.020751953125,
+        1080.0
+      ],
+      "confidence": 0.0019337327685207129,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        15.0963134765625,
+        1080.0,
+        1269.6259765625,
+        1080.0
+      ],
+      "confidence": 0.0033646239899098873,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        629.451171875,
+        1080.0,
+        1906.826416015625,
+        1080.0
+      ],
+      "confidence": 0.001730091986246407,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        611.9249267578125,
+        1080.0,
+        1915.1536865234375,
+        1080.0
+      ],
+      "confidence": 0.003354457439854741,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        16.8612060546875,
+        1080.0,
+        1260.351318359375,
+        1080.0
+      ],
+      "confidence": 0.0037110059056431055,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        628.584228515625,
+        1080.0,
+        1908.670166015625,
+        1080.0
+      ],
+      "confidence": 0.0014619817957282066,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        619.6090087890625,
+        1080.0,
+        1912.6510009765625,
+        1080.0
+      ],
+      "confidence": 0.003907010890543461,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1319.69873046875,
+        1080.0
+      ],
+      "confidence": 0.0018691077129915357,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        17.257568359375,
+        1080.0,
+        1258.70849609375,
+        1080.0
+      ],
+      "confidence": 0.004185718484222889,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        635.5988159179688,
+        1080.0,
+        1907.649169921875,
+        1080.0
+      ],
+      "confidence": 0.0018580625765025616,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        16.8626708984375,
+        1080.0,
+        1283.8299560546875,
+        1080.0
+      ],
+      "confidence": 0.005711204372346401,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        618.353515625,
+        1080.0,
+        1908.930419921875,
+        1080.0
+      ],
+      "confidence": 0.0018393215723335743,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        617.33837890625,
+        1080.0,
+        1912.988037109375,
+        1080.0
+      ],
+      "confidence": 0.0039711096324026585,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1324.39453125,
+        1080.0
+      ],
+      "confidence": 0.0020943765994161367,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        13.0609130859375,
+        1080.0,
+        1293.243408203125,
+        1080.0
+      ],
+      "confidence": 0.001988637028262019,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        626.45654296875,
+        1080.0,
+        1907.76904296875,
+        1080.0
+      ],
+      "confidence": 0.0015648453263565898,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        9.626708984375,
+        1080.0,
+        1307.40087890625,
+        1080.0
+      ],
+      "confidence": 0.002607212169095874,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        623.898681640625,
+        1080.0,
+        1911.85498046875,
+        1080.0
+      ],
+      "confidence": 0.0017546303570270538,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        616.9249877929688,
+        1080.0,
+        1913.396240234375,
+        1080.0
+      ],
+      "confidence": 0.003941009286791086,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1322.89794921875,
+        1080.0
+      ],
+      "confidence": 0.0018928193021565676,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        655.47021484375,
+        1080.0,
+        1919.992431640625,
+        1080.0
+      ],
+      "confidence": 0.002663363702595234,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        615.2030029296875,
+        1080.0,
+        1910.6392822265625,
+        1080.0
+      ],
+      "confidence": 0.002718460513278842,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        8.831298828125,
+        1080.0,
+        1307.650634765625,
+        1080.0
+      ],
+      "confidence": 0.0021574669517576694,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        12.7713623046875,
+        1080.0,
+        1270.080322265625,
+        1080.0
+      ],
+      "confidence": 0.005298295058310032,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        617.8153686523438,
+        1080.0,
+        1911.3271484375,
+        1080.0
+      ],
+      "confidence": 0.0017580687999725342,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        615.5595092773438,
+        1080.0,
+        1912.7802734375,
+        1080.0
+      ],
+      "confidence": 0.0038826060481369495,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1325.036865234375,
+        1080.0
+      ],
+      "confidence": 0.0019009915413334966,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        606.3140869140625,
+        1080.0,
+        1915.0677490234375,
+        1080.0
+      ],
+      "confidence": 0.0032195723615586758,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        9.9901123046875,
+        1080.0,
+        1287.6002197265625,
+        1080.0
+      ],
+      "confidence": 0.0025562294758856297,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        618.43017578125,
+        1080.0,
+        1908.431396484375,
+        1080.0
+      ],
+      "confidence": 0.0018318709917366505,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        9.7603759765625,
+        1080.0,
+        1263.429931640625,
+        1080.0
+      ],
+      "confidence": 0.002273162128403783,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        627.59130859375,
+        1080.0,
+        1910.176513671875,
+        1080.0
+      ],
+      "confidence": 0.0017762969946488738,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        618.352294921875,
+        1080.0,
+        1912.588134765625,
+        1080.0
+      ],
+      "confidence": 0.004064427688717842,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.5380859375,
+        1080.0,
+        1325.154052734375,
+        1080.0
+      ],
+      "confidence": 0.0021861607674509287,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        656.0933227539062,
+        1080.0,
+        1919.58251953125,
+        1080.0
+      ],
+      "confidence": 0.0025114899035543203,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        17.518310546875,
+        1080.0,
+        1260.522216796875,
+        1080.0
+      ],
+      "confidence": 0.004391542170196772,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        630.651611328125,
+        1080.0,
+        1911.17919921875,
+        1080.0
+      ],
+      "confidence": 0.0015313094481825829,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        616.9791870117188,
+        1080.0,
+        1911.711669921875,
+        1080.0
+      ],
+      "confidence": 0.004011276178061962,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        1.031494140625,
+        1080.0,
+        1323.08984375,
+        1080.0
+      ],
+      "confidence": 0.0020082758273929358,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        644.6575927734375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0020253120455890894,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.080078125,
+        1080.0,
+        1319.042236328125,
+        1080.0
+      ],
+      "confidence": 0.0014508117455989122,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        16.4151611328125,
+        1080.0,
+        1268.767822265625,
+        1080.0
+      ],
+      "confidence": 0.0033001285046339035,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        627.3853759765625,
+        1080.0,
+        1908.8468017578125,
+        1080.0
+      ],
+      "confidence": 0.0014052626211196184,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        616.9826049804688,
+        1080.0,
+        1912.880615234375,
+        1080.0
+      ],
+      "confidence": 0.00411407882347703,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.7056884765625,
+        1080.0,
+        1324.04541015625,
+        1080.0
+      ],
+      "confidence": 0.002112416084855795,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        653.4091186523438,
+        1080.0,
+        1919.78369140625,
+        1080.0
+      ],
+      "confidence": 0.003004260128363967,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1323.8984375,
+        1080.0
+      ],
+      "confidence": 0.0012641340726986527,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        14.4151611328125,
+        1080.0,
+        1273.560546875,
+        1080.0
+      ],
+      "confidence": 0.004118500277400017,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        634.685302734375,
+        1080.0,
+        1904.2578125,
+        1080.0
+      ],
+      "confidence": 0.0013154993066564202,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        616.5738525390625,
+        1080.0,
+        1912.4525146484375,
+        1080.0
+      ],
+      "confidence": 0.00419287383556366,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        1.3883056640625,
+        1080.0,
+        1322.6376953125,
+        1080.0
+      ],
+      "confidence": 0.002204036805778742,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        655.402099609375,
+        1080.0,
+        1920.0,
+        1080.0
+      ],
+      "confidence": 0.0029235261026769876,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        15.7540283203125,
+        1080.0,
+        1265.160888671875,
+        1080.0
+      ],
+      "confidence": 0.0030582614708691835,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        639.2922973632812,
+        1080.0,
+        1908.572998046875,
+        1080.0
+      ],
+      "confidence": 0.0014231638051569462,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        615.2508544921875,
+        1080.0,
+        1913.7923583984375,
+        1080.0
+      ],
+      "confidence": 0.00398819986730814,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1323.4921875,
+        1080.0
+      ],
+      "confidence": 0.0014317067107185721,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        616.4863891601562,
+        1080.0,
+        1915.0107421875,
+        1080.0
+      ],
+      "confidence": 0.0034030345268547535,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        1080.0,
+        1314.923828125,
+        1080.0
+      ],
+      "confidence": 0.0016273375367745757,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        15.0999755859375,
+        1080.0,
+        1271.67236328125,
+        1080.0
+      ],
+      "confidence": 0.004130608402192593,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        635.2906494140625,
+        1080.0,
+        1905.2845458984375,
+        1080.0
+      ],
+      "confidence": 0.0012249990832060575,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_960"
+    },
+    {
+      "bbox_xyxy": [
+        7.16162109375,
+        0.0,
+        1014.2933349609375,
+        0.0
+      ],
+      "confidence": 0.0011259156744927168,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        0.0,
+        1096.951416015625,
+        0.0
+      ],
+      "confidence": 0.0013283860171213746,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.622772216796875,
+        0.0,
+        1015.2650146484375,
+        0.0
+      ],
+      "confidence": 0.001162010827101767,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.154022216796875,
+        0.0,
+        1014.6650390625,
+        0.0
+      ],
+      "confidence": 0.0011176313273608685,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        8.4345703125,
+        0.0,
+        1004.1018676757812,
+        0.0
+      ],
+      "confidence": 0.001219910685904324,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.25738525390625,
+        0.0,
+        1014.4165649414062,
+        0.0
+      ],
+      "confidence": 0.0010024403454735875,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.577545166015625,
+        0.0,
+        1014.5996704101562,
+        0.0
+      ],
+      "confidence": 0.0011954705696552992,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.979461669921875,
+        0.0,
+        1007.2022705078125,
+        0.0
+      ],
+      "confidence": 0.0011156380642205477,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        6.863800048828125,
+        0.0,
+        1011.7877197265625,
+        0.0
+      ],
+      "confidence": 0.0010071630822494626,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.8614501953125,
+        0.0,
+        1014.91650390625,
+        0.0
+      ],
+      "confidence": 0.0010376607533544302,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.643096923828125,
+        0.0,
+        1009.6939086914062,
+        0.0
+      ],
+      "confidence": 0.0011434158077463508,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        6.62127685546875,
+        0.0,
+        1015.746826171875,
+        0.0
+      ],
+      "confidence": 0.0011214044643566012,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        6.98529052734375,
+        0.0,
+        1015.0836181640625,
+        0.0
+      ],
+      "confidence": 0.0010629871394485235,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.3941650390625,
+        0.0,
+        1015.9879760742188,
+        0.0
+      ],
+      "confidence": 0.0010526402620598674,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.248138427734375,
+        0.0,
+        1015.7689819335938,
+        0.0
+      ],
+      "confidence": 0.0010245381854474545,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        6.849609375,
+        0.0,
+        1015.7810668945312,
+        0.0
+      ],
+      "confidence": 0.001058346126228571,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        6.751190185546875,
+        0.0,
+        1013.052490234375,
+        0.0
+      ],
+      "confidence": 0.0012493535177782178,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        3.11865234375,
+        0.0,
+        1051.1502685546875,
+        0.0
+      ],
+      "confidence": 0.001536443131044507,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.22003173828125,
+        0.0,
+        1014.6676025390625,
+        0.0
+      ],
+      "confidence": 0.001064048963598907,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        6.7130126953125,
+        0.0,
+        1015.1057739257812,
+        0.0
+      ],
+      "confidence": 0.0012231708969920874,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        7.445159912109375,
+        0.0,
+        1014.859375,
+        0.0
+      ],
+      "confidence": 0.001082895789295435,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        6.7518310546875,
+        0.0,
+        1014.9080200195312,
+        0.0
+      ],
+      "confidence": 0.0011018987279385328,
+      "model": "raw-m2-n-640",
+      "phase": "fullframe_1280"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        0.0,
+        1821.38525390625,
+        0.0
+      ],
+      "confidence": 0.0019466967787593603,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        0.0,
+        1821.38525390625,
+        0.0
+      ],
+      "confidence": 0.0019466967787593603,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        0.0,
+        1821.38525390625,
+        0.0
+      ],
+      "confidence": 0.0019466967787593603,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        144.101806640625,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0012488490901887417,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        144.101806640625,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0012488490901887417,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        144.101806640625,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0012488490901887417,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        134.62994384765625,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0027199529577046633,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        180.03607177734375,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0012876397231593728,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        0.0,
+        1826.7901611328125,
+        0.0
+      ],
+      "confidence": 0.0010049552656710148,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        183.13385009765625,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0013744052266702056,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        164.66455078125,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0029251237865537405,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        109.87078857421875,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0016982491360977292,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        117.70330810546875,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.0018605092773213983,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        133.4974365234375,
+        0.0,
+        1920.0,
+        0.0
+      ],
+      "confidence": 0.003035404020920396,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    },
+    {
+      "bbox_xyxy": [
+        0.0,
+        0.0,
+        1835.939208984375,
+        0.0
+      ],
+      "confidence": 0.0011544680455699563,
+      "model": "raw-s1-n-640",
+      "phase": "direct_640"
+    }
+  ],
+  "not_Orin_benchmark": true,
+  "oracle_control_counts": {
+    "fn": 0,
+    "fp": 0,
+    "tp": 31
+  },
+  "status": "completed_diagnosis"
+}

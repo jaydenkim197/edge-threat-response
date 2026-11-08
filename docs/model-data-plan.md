@@ -1,5 +1,15 @@
 # Model and Dataset Readiness Plan
 
+<!-- cctv-inference-diagnosis-20261108:begin -->
+## 2026-11-08 — CCTV 추론·평가 경로 진단 완료
+
+직접 Ultralytics83장×M1/M2/S1의 유효 box/score가 기존 저장 예측과 정확히 일치했다. 입력 RGB/BGR·normalization/letterbox·box 역변환·독립 IoU/matching과 GT주입 대조(31TP/0FP/0FN)에서 조사한 구현 오류를 찾지 못했다. 이는 모든 학습/라벨 의미와 실패 원인을 검증했다는 뜻은 아니다.
+
+640에서GT31개 중26개는짧은변<16px다. 올바른위치의후보(.001이상)는M1/M2/S1 각각3/3/6개뿐이고 모두최대confidence가.25미만이다. S1의960추론은3TP/7FP,1280은0TP/6FP이며GT기반crop도일관된회복이없다. 해상도나threshold만으로 해결됐다고 보지 않는다. [CCTV 추론·평가 경로 진단](../reports/evaluation/cctv-inference-diagnosis-2026-11-08/report.md).
+
+다음은 목표 P430의 실제 촬영/session 분리·bbox/Holding/event GT·T1 적응 준비다. 기존 평가83장을train으로옮기지 않고최종D*/운영threshold/Orin은자동변경하지않는다.
+<!-- cctv-inference-diagnosis-20261108:end -->
+
 <!-- s1-synthetic-20261108:begin -->
 ## 2026-11-08 — S1 합성 보강 완료·공통 비교
 

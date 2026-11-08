@@ -8,6 +8,8 @@
 S1은 M2 대비 SOHAS test Recall 75→85%, DaSCI 56.7→68.0%, 합성 CCTV 12.7→20.6%지만 Open Images는 74.4→69.2%다. **실제 CCTV 확대83장에서는 세 모델 모두 0/31 검출**이다. S1의 CCTV FP4는 M2의7보다 적고 M1의2보다 많다. [S1 대 M1·M2 결과](../reports/evaluation/s1-synthetic-2026-11-08/report.md).
 
 최종 D*는 미확정이다. 다음 주 실제 촬영, 세션별 train/tuning/final 분리, bbox·Holding·사건 GT, T1·HOI를 우선한다. Orin/GPIO와 독립 B0~B4 평가는 남아 있다.
+
+11/08 후속 진단에서 직접 추론249개·RGB/letterbox·좌표 복원·독립 IoU·GT주입 대조가 일치했다. 조사한 구현 오류는 찾지 못했고 해상도/정답기반crop의 회복도 일관되지 않았다. [CCTV 추론·평가 경로 진단](../reports/evaluation/cctv-inference-diagnosis-2026-11-08/report.md)을 근거로 실제 촬영/T1 준비를 이어간다. 운영 모델·threshold는 바꾸지 않았다.
 <!-- s1-synthetic-20261108:end -->
 
 <!-- docs-refresh-20261106:begin -->

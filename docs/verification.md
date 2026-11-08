@@ -1,5 +1,13 @@
 # Verification Matrix
 
+<!-- cctv-inference-diagnosis-20261108:begin -->
+## 2026-11-08 — CCTV 추론·전처리·매칭 진단 VERIFIED
+
+83장×3checkpoint의 직접PIL추론과cached예측이좌표·score까지일치했다. PIL/파일경로/BGR 18개대조는예측·원RGBpixel이같고, 249개입력의독립640tensor와최대차이는5.96e-8, GT좌표왕복최대오차는1.14e-13px다. 독립NumPy/Ultralytics IoU와fullframe 모든probe matching count가일치하고GT주입은31TP/0FP/0FN이다.
+
+소프트웨어·PC13·해당입력의정의된검사범위VERIFIED이며모든라벨/학습원인·실제P430/Orin 성능검증은아니다. 새학습/제품코드/고정GT·이전결과 변경없음. source별GT·예측중첩127개를개인바탕화면에보관하고Git에는raw이미지를올리지않는다. [CCTV 추론·평가 경로 진단](../reports/evaluation/cctv-inference-diagnosis-2026-11-08/report.md).
+<!-- cctv-inference-diagnosis-20261108:end -->
+
 <!-- s1-synthetic-20261108:begin -->
 ## 2026-11-08 — S1 학습·공통 평가 VERIFIED
 

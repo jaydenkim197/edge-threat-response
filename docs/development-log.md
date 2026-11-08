@@ -1,5 +1,14 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+<!-- cctv-inference-diagnosis-20261108:begin -->
+## 2026-11-08 — CCTV0/31 추론 경로 진단·예측 중첩
+
+- 사용자시각확인후다음작업으로기존모델/라벨/전처리/평가원인분석을이어갔다. source ebc7f20의기존평가기와Pillow·직접Ultralytics·NumPy/공식IoU를조합한일회성driver이며제품코드/학습/운영설정변경은없다.
+- 249개직접추론이기존cached유효예측과같고색상18개대조·640tensor/좌표복원·독립matching·GT주입31TP를확인했다. v1진단adapter가native면적0box를그대로넣어멈춘기록을보존하고기존canonical제외계약에맞춘v2로완료했다. 기존평가의오류가아니며해당box 최대confidence는.00572미만이다.
+- 조사한구현오류는발견하지못했다. 640 GT26/31은짧은변16px미만, 올바른위치후보는M1/M2/S1 각각3/3/6개이고confidence<.25다. S1 960은3TP/7FP,1280은0TP/6FP, GT기반ROI도0TP/4FP(.25)여서크기만의원인을입증하지않는다.
+- 31개GT의원본·3모델예측·입력640·정답기반ROI비교127개를바탕화면 `261108_CCTV추론진단`에전달했다. 이것은시각진단이며GTcrop을배포성능으로보고하지않는다. 고정입력hash전후보존·driver/숫자·한계는 [CCTV 추론·평가 경로 진단](../reports/evaluation/cctv-inference-diagnosis-2026-11-08/report.md). 다음은실제촬영/T1·관계/사건GT이며최종D*·Orin/독립final은미확정이다. Gitcommit은본이력으로추적한다.
+<!-- cctv-inference-diagnosis-20261108:end -->
+
 <!-- cctv-inspection-handoff-20261108:begin -->
 ## 2026-11-08 — CCTV 평가83장 사용자 확인용 전달
 +
