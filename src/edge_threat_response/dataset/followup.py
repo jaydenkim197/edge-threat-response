@@ -120,8 +120,10 @@ def prepare_followup(*, baseline: Path, signatures: Path, pairs: Path, quality_s
         signature = image_signature(Path(row["image_file"]), expected_sha256=row["image_sha256"])
         if signature["exif_orientation"] != 1 or (signature["width"], signature["height"]) != (row["width"], row["height"]):
             raise ValueError("Additional image/annotation geometry mismatch")
-        if not row.get("label_text", "").strip():
-            raise ValueError("This source addition path requires positive provider labels")
+        if not row.get("label_text", "").strip() and not (
+                row.get("provider_knife_absence") is True
+                and row.get("annotation_provenance", {}).get("provider_knife_absence") is True):
+            raise ValueError("Source addition needs positive labels or explicit provider Knife absence evidence")
         additions.append({**row, **signature})
     if not additions:
         raise ValueError("No additional provider-annotated candidates")
@@ -165,7 +167,8 @@ def prepare_followup(*, baseline: Path, signatures: Path, pairs: Path, quality_s
             "label_text": row["label_text"], "image_sha256": row["image_sha256"],
             "knife_count": sum(bool(line.strip()) for line in row["label_text"].splitlines()), "original_split": row["original_split"],
             "source_url": row["source_url"], "license": row["license"],
-            "annotation_provenance": row["annotation_provenance"], "coordinate_contract": row["coordinate_contract"]})
+            "annotation_provenance": row["annotation_provenance"], "coordinate_contract": row["coordinate_contract"],
+            **{key: row[key] for key in ("synthetic", "source_group_basis", "provider_knife_absence") if key in row}})
     if not accepted:
         raise ValueError("No unprotected new source groups; do not run M2 as a relabeled Q1")
     output.mkdir(parents=True)

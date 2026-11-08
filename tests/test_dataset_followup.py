@@ -65,6 +65,21 @@ class FollowupTests(unittest.TestCase):
             self.assertTrue(all(p.read_bytes() == raw for p, raw in old.items()))
             self.assertFalse(result["final_evaluation_allowed"])
 
+    def test_synthetic_provider_negative_requires_evidence_and_preserves_marker(self):
+        with tempfile.TemporaryDirectory() as d:
+            _, _, candidate, args = self.fixture(Path(d))
+            candidate.update(label_text="", synthetic=True)
+            with self.assertRaisesRegex(ValueError, "absence evidence"):
+                prepare_followup(**args)
+            candidate.update(provider_knife_absence=True, annotation_provenance={"provider_knife_absence": True})
+            result = prepare_followup(**args)
+            saved = next(r for r in read_rows(args["output"]/"inventory.jsonl") if r["image_id"] == candidate["record_id"])
+            self.assertTrue(saved["synthetic"])
+            self.assertTrue(saved["provider_knife_absence"])
+            self.assertEqual(0, saved["knife_count"])
+            self.assertFalse(saved["negative_absence_verified"])
+            self.assertEqual("", Path(saved["label"]).read_text())
+
     def test_new_eval_proxy_and_represented_train_are_excluded(self):
         with tempfile.TemporaryDirectory() as d:
             rows, signatures, candidate, args = self.fixture(Path(d))

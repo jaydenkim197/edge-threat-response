@@ -92,7 +92,7 @@ class RawTrainingTests(unittest.TestCase):
         checkpoints = {s: root/f"{s}.pt" for s in ("n", "s")}
         for s, p in checkpoints.items(): p.write_bytes(s.encode())
         output = root/"suite"
-        if recipes == ["RAW-M2-n"]:
+        if recipes in (["RAW-M2-n"], ["RAW-S1-n"]):
             checkpoints.pop("s")
         return prepare_suite(path, inventory, checkpoints, output, "user authorized raw source experiments 2026-11-05", recipes=recipes), output
 
@@ -106,6 +106,17 @@ class RawTrainingTests(unittest.TestCase):
             self.assertEqual(6, auth["train_draw_count"])
             self.assertFalse(auth["final_evaluation_allowed"])
             self.assertEqual(5, item["unique_train"])
+
+    def test_s1_is_explicit_raw_recipe_not_formal_review_approval(self):
+        with tempfile.TemporaryDirectory() as d:
+            suite, output = self.prepare(Path(d), recipes=["RAW-S1-n"])
+            self.assertEqual(["RAW-S1-n"], [r["recipe"] for r in suite["queue"]])
+            item = suite["queue"][0]
+            config = TrainingConfig.load(Path(item["config"]))
+            auth = validate_training_approval(Path(item["config"]), config, Path(item["data"]),
+                Path(item["manifest"]), output/"raw-authorization.json")
+            self.assertFalse(auth["final_evaluation_allowed"])
+            self.assertEqual(6, auth["train_draw_count"])
 
     def test_matched_budget_common_holdouts_and_honest_scope(self):
         with tempfile.TemporaryDirectory() as d:

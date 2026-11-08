@@ -1,0 +1,4 @@
+# Preserve emitted evidence and experiment driver hashes across Windows checkouts.
+*.py -text whitespace=cr-at-eol
+*.json -text whitespace=cr-at-eol
+*.csv -text whitespace=cr-at-eol

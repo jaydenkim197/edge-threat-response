@@ -1,5 +1,11 @@
 # Verification Matrix
 
+<!-- s1-synthetic-20261108:begin -->
+## 2026-11-08 — S1 source·실행 지원 검증
+
+준비 `VERIFIED`: archivechecksum/CRC·60장COCO/YOLO좌표·sourceclass·image/labelhash·strictdecode·전역group/보호·M2실사/holdoutidentity와순서보존. 합성176(양성161/음성15·knife163), train12,060, val/test각1,423, 고유325eval과train exact교차0. namespace/negative/실패queue/승인 회귀25pass, 최종ML전체210tests(208pass/2optional skip), 별도평가12pass, 로컬compileall 통과. 신규 전체학습·정확도·Orin/실제HOI·독립final은 아직 미검증이다. [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+<!-- s1-synthetic-20261108:end -->
+
 <!-- m2-variants-comparison-20261107:begin -->
 ## 2026-11-07 — 완료된 M2 변형의 공통 비교 VERIFIED
 

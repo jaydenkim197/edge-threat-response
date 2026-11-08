@@ -1,5 +1,11 @@
 # Model and Dataset Readiness Plan
 
+<!-- s1-synthetic-20261108:begin -->
+## 2026-11-08 — 사용자 승인 S1 합성 보강
+
+ATM116 + 새 CCTV60 = 합성176장(양성161/음성15·knife163)의 자동 검사를 마쳤다. S1은 M2 실사11,884와 frozenval/test각1,423을 유지하고 train12,060으로 준비했다 `IMPLEMENTED`/준비 `VERIFIED`. source namespace로 일반knife_번호 오연결만 분리하며 전역 이미지/보호group 검사는 유지한다. 같은 pretrained n640/50epoch에 계획37,700updates이며 M2의37,150과 다르다. 실제학습·동일7셋 AP/predict/confidence 비교는 `PLANNED`이고 새성능·D*/Orin/독립final은 미검증이다. [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+<!-- s1-synthetic-20261108:end -->
+
 <!-- m2-variants-comparison-20261107:begin -->
 ## 2026-11-07 — M2 네 실험 완료·동일 조건 공통 평가
 

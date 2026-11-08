@@ -1,5 +1,11 @@
 # Dataset Source Strategy
 
+<!-- s1-synthetic-20261108:begin -->
+## 2026-11-08 — S1 source 자동 검사·사용 범위
+
+사용자는 ATM과 새 CCTV60을 기술 검사 후 S1 train에 쓰도록 승인했다 `DECISION`. ATM은237장 중 sourceKnife116장/118boxes만, 새 Zenodo60은45칼양성/15제작자명시음성을 사용한다. 총176장/163knife가 전역 proxy graph를 통과했으며 실사 M2/holdout을 보존한다. 기존 Simuletic114/평가75장을 train으로 옮기지 않는다. CC BY-NC4.0 비상업 학술 RAW 개발 실험이며 사람검수/실제Holding/실사CCTV final 정답으로 승격하지 않는다. [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md).
+<!-- s1-synthetic-20261108:end -->
+
 <!-- docs-refresh-20261106:begin -->
 ## 현재 데이터셋 역할 — 2026-11-07
 

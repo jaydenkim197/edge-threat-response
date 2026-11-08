@@ -1,5 +1,15 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+<!-- s1-synthetic-20261108:begin -->
+## 2026-11-08 — S1 합성 source 검사·학습/공통 비교 준비
+
+- 사용자 승인: ATM과 새 CCTV60을 자동 검사해 S1 학습→M1·M2 동일 평가를 진행한다. 별도 전수 검수를 gate로 되살리지 않고 source별 제공 라벨·명시적 negative를 사용한다.
+- source/방법: ATM237 중116knife/118boxes, 새 Zenodo60의45positive/15provider-negative를 대조했다. archive 길이/MD5/SHA/CRC·원 라벨/COCO/Yolo·좌표/decoder·전역중복/보호group을 검사한다. 단순knife_번호 family의 서로 다른 source 충돌은 신규 record ID namespace로 분리하고 global image SHA/dHash/protected 연결은 유지한다. 첫v1 감사·사본을 보존했다.
+- 결과: 합성176(양성161/음성15·knife163)+M2실사11,884=train12,060, frozenval/test각1,423. M2실사/holdout identity·순서·hash 같고, 7셋 고유325eval과train exact교차0. 실제 세션/전수 사람검수/중복 완전성을 주장하지 않는다.
+- search-first/verification-loop: 기존followup/label/signature/RAW승인·queue·GPUlock·평가기를 재사용, source adapter/RAW-S1-n·일회성 dependent worker만 추가. 관련25tests, ML전체210(208pass/2skip), 별도평가12pass·compileall. 새설치/제품추론/사이트·DB 변경없음.
+- 계획: 같은COCOpretrained n640/50epoch/FP32/batch16·seed/optimizer/증강, 12,064draws·37,700update. M2의37,150과 다른 전체recipe 비교다. PC13 격리source로 학습 후 같은7셋 AP/predict·confidence·paired/기준42partition재현을 자동 처리한다. 전체학습/새성능/Orin/Holding/독립final은 아직 미검증이다. 원시·문서·결정영향·Git추적은 [S1 준비·실행 기록](../reports/training/s1-synthetic-2026-11-08/report.md). 다음주촬영/T1·실제HOI는 별도 핵심으로 유지한다.
+<!-- s1-synthetic-20261108:end -->
+
 이 문서는 제품, 기술 구조, 운영, 검증 및 연구 설계의 material change를 시간순으로 보존한다. 과거 항목은 삭제하지 않으며, 대체된 내용은 후속 항목에서 연결한다.
 
 <!-- m2-variants-comparison-20261107:begin -->

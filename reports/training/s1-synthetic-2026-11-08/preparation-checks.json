@@ -1,0 +1,33 @@
+{
+  "status": "passed",
+  "tests_run": 210,
+  "tests_passed": 208,
+  "optional_skips": 2,
+  "evaluation_environment_tests_passed": 12,
+  "synthetic_source_selected_tests": 4,
+  "m2_real_identity_and_order_preserved": true,
+  "all_frozen_7_suite_unique_images": 325,
+  "train_exact_overlap_with_frozen_evaluation": 0,
+  "synthetic_train_only": true,
+  "synthetic_sources": {
+    "simuletic-atm": 116,
+    "simuletic-cctv60": 60
+  },
+  "synthetic_positive_images": 161,
+  "synthetic_negative_images": 15,
+  "synthetic_knife_boxes": 163,
+  "logs_sha256": {
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\full-tests-v2.log": "5e05a6e0785ada93ad1c6ae450110a75eef9b9ce8fc4bb9fc9924a9b162985e9",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\test_synthetic_source.py.log": "81b8f51ae05362f459130f4f0204484058233082c6c9da9e3484f9b54328f288",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\test_dataset_followup.py.log": "6f0bf22debb9bbe09f42f3d088eee8e0b6c5c640463766e2d70a6989f577cd01",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\test_raw_training.py.log": "c47f084cd9eebb70c2aec091bdf38b61e3ac3d2c2e70aa24d1e808a3b1ccd29e",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\test_training_followup.py.log": "37db004b18b4616b5a1e1f8594d6c18ffff4485dfbed958e2b8e02ad9f927ab8",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\test_raw_followup.py.log": "22ae66295028b3ddb4713814decb4839b22df4e33e0b819df001dc73fdf1972c",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\test_detector_comparison.py-evaluation.log": "6fb257e303fab2867f8b6dace6b1d2b0ad7f11c6281c3e8858213c7b26cddb51",
+    "C:\\Class6\\edge-threat-response\\runs\\s1-20261108\\test_comparison_summary.py-evaluation.log": "cac06b13974599397f2c0f63116a4bc8e62865f94cd459fbcee58a4453f03127"
+  },
+  "review_database_modified": false,
+  "holding_labels_inferred": false,
+  "hardware_performance_verified": false,
+  "whole_training_completed": false
+}

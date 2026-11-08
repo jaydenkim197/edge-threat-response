@@ -1,0 +1,72 @@
+{
+  "accepted_additional_images": 770,
+  "additional_candidates": 770,
+  "additional_source_evidence_sha256": {
+    "C:\\Class6\\edge-threat-response\\data\\review\\additional-candidates-20261026\\simuletic-atm\\image-evidence.jsonl": "9d6cf7b3d755d090c7eb338a4ffbca10fe1f588c12eb949bbdd8f51d5100a8b6",
+    "C:\\Class6\\edge-threat-response\\data\\review\\team-candidates-20261003\\us-mock\\image-evidence.jsonl": "b43cd6b8b67b96698f0cbb753a2a38a940ff8467f9f449455f208898dd153f45",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\additional-sources-20261026\\atm-record.json": "466eedbb238396bab516f6c14610462c7b7c4bfe43b50adb53151914690e9558",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\open-images-train-20261105\\candidates.jsonl": "f480dbf5ca6eaeae1d1a17b98bff3c4ae35ba791ad4caba5a95c7025c6dc07b4",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\simuletic-cctv60-20261108\\extracted-complete\\Simuletic-cctv-knife-detection-dataset-c3644d7\\LICENSE": "c9505f089b66c1c9216c54ea72757efe2989da024c72459471ae937a700abb0f",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\simuletic-cctv60-20261108\\extracted-complete\\Simuletic-cctv-knife-detection-dataset-c3644d7\\README.md": "251a21aeceef23ee48e68e4e168dabcc40f83df430bc558cf593f0dfa90b3a93",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\simuletic-cctv60-20261108\\extracted-complete\\Simuletic-cctv-knife-detection-dataset-c3644d7\\annotations\\instances_train.json": "8735415a1ba20b85afec23fc6a645487835701e9f1e566789831535b9680d2c2",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\simuletic-cctv60-20261108\\extracted-complete\\Simuletic-cctv-knife-detection-dataset-c3644d7\\annotations\\instances_val.json": "1c2d07015786a62761034a01d07037e20eda44b53044f3c7d6eb2049a400c4cc",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\simuletic-cctv60-20261108\\extracted-complete\\Simuletic-cctv-knife-detection-dataset-c3644d7\\data.yaml": "155d46cae58d3e3e6e20f36f6a2c5ee4a2ce1c8d594974ab45e9a1ec0cdb4b37",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\simuletic-cctv60-20261108\\record.json": "eda931551c95bcc2ca3e707842c88aca984cf830fee4e528b1277e1028067078",
+    "C:\\Class6\\edge-threat-response\\data\\source-audit\\simuletic-cctv60-20261108\\sample.zip": "f1f9a3c41f4add7b5a01e00052e8c4494bcb648a7aa3efe3c2ea7983d5cafd40",
+    "C:\\Class6\\edge-threat-response\\data\\work\\s1-20261108\\sources.json": "33246bd4253832d1dc7c6b58eea464dd2f1120bef05e2a1f927dd4a5f091892e"
+  },
+  "baseline_holdouts_preserved": true,
+  "baseline_images": 14224,
+  "exclusions": {
+    "known_quality_hold": 88
+  },
+  "final_evaluation_allowed": false,
+  "frozen_holdout_identity_sha256": {
+    "test": "a72990f6a3063563384471bd51982af6ee8494576b3fefac6f3176e3a306948a",
+    "val": "717dd0da384aacb8ac9ab1cab2b72a431cc04723e52608139074f4296bb36e94"
+  },
+  "group_policy": "cached source components + new hash/dhash/stretch + filename proxies; not verified sessions",
+  "holding_labels_inferred": false,
+  "human_review_complete": false,
+  "input_sha256": {
+    "C:\\Class6\\edge-threat-response\\data\\processed\\raw-real-20261105-v2\\signatures.jsonl": "fdcf36959985dfff1291ea56bf71456168db399c63f5853e322fe0ee82c3da03",
+    "C:\\Class6\\edge-threat-response\\data\\processed\\raw-real-20261105-v2\\similarity-pairs.jsonl": "671c49d5cda721b432b4ce42681467d4032778f56b04f63fcbd53ac81694d8a6",
+    "C:\\Class6\\edge-threat-response\\data\\processed\\raw-real-20261105-v3\\inventory.jsonl": "95e3cd89c126dad48db9586b4584422cc2e1e1e552678e9c7e4267b29219176d",
+    "C:\\Class6\\edge-threat-response\\data\\work\\reviewed-next-training-20261106\\review-evidence-snapshot.jsonl": "228a9edc185dc3d41fae8be1c2be2f2d556f78206d47dadfd1f7cbd579d6cfd2"
+  },
+  "inventory_sha256": "7fe8ff2af6c2f50734564df97c408ec18b739541cb851f1b25973b999e610975",
+  "known_quality_exclusions": 88,
+  "m2_real_identity_preserved": true,
+  "production_review_modified": false,
+  "protected_extra_images": 100,
+  "schema_version": 1,
+  "source_candidates": {
+    "simuletic-atm": {
+      "provider_negative_images": 0,
+      "supplied_images": 237,
+      "valid_knife_positive_images": 116
+    },
+    "simuletic-cctv60": {
+      "provider_negative_images": 15,
+      "supplied_images": 60,
+      "valid_knife_positive_images": 45
+    }
+  },
+  "split_counts": {
+    "test": 1423,
+    "train": 12060,
+    "val": 1423
+  },
+  "status": "prepared_raw_followup_not_final",
+  "synthetic_negative_images_added": 15,
+  "synthetic_train_boxes": 163,
+  "synthetic_train_images": 176,
+  "train_sources": {
+    "catargiu": 5047,
+    "dangerous": 1294,
+    "open-images-train": 594,
+    "simuletic-atm": 116,
+    "simuletic-cctv60": 60,
+    "sohas": 4949
+  }
+}

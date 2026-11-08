@@ -26,7 +26,7 @@ def prepare_suite(plan_path: Path, inventory: Path, checkpoints: dict[str, Path]
     if output.exists() or not authorization_reference.strip():
         raise ValueError("New output and explicit user authorization reference required")
     selected_recipes = recipes if recipes is not None else ["RAW-R1-n", "RAW-H1-n", "RAW-M1-n", "RAW-M1-s"]
-    known = {"RAW-R1-n": "n", "RAW-H1-n": "n", "RAW-M1-n": "n", "RAW-M1-s": "s", "RAW-M2-n": "n"}
+    known = {"RAW-R1-n": "n", "RAW-H1-n": "n", "RAW-M1-n": "n", "RAW-M1-s": "s", "RAW-M2-n": "n", "RAW-S1-n": "n"}
     if not selected_recipes or len(set(selected_recipes)) != len(selected_recipes) or any(r not in known for r in selected_recipes):
         raise ValueError("Explicit nonempty unique supported raw recipes required")
     if any(known[r] not in checkpoints or not checkpoints[known[r]].is_file() for r in selected_recipes):
@@ -77,7 +77,8 @@ def prepare_suite(plan_path: Path, inventory: Path, checkpoints: dict[str, Path]
     }
     queue = []
     selections = {"RAW-R1-n": sohas, "RAW-H1-n": positive,
-                  "RAW-M1-n": splits["train"], "RAW-M1-s": splits["train"], "RAW-M2-n": splits["train"]}
+                  "RAW-M1-n": splits["train"], "RAW-M1-s": splits["train"], "RAW-M2-n": splits["train"],
+                  "RAW-S1-n": splits["train"]}
     for recipe in selected_recipes:
         selected, size = selections[recipe], known[recipe]
         repeated = selected * (draws // len(selected))
