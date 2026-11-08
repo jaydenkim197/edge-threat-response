@@ -1,0 +1,28 @@
+{
+  "images": 83,
+  "knife_label_positive_images": 31,
+  "knife_label_negative_images": 52,
+  "knife_boxes": 31,
+  "original_xml_files": 83,
+  "source_xml_knife_coordinates_equal_evaluation": true,
+  "original_image_hashes_preserved": true,
+  "original_truth_sha256": "61c08bd33a00f3036eda5fb8df2824cc6a223d0a0d94dcf94953e332887f1676",
+  "source_xml_objects": {
+    "Short_rifle": 15,
+    "Handgun": 91,
+    "Knife": 31
+  },
+  "license": "CC BY-NC 4.0; original academic use notice",
+  "source_revision": "07ced721cd90973f66806c0b3ee01e80c439ba90",
+  "model_predictions_included": false,
+  "labels_corrected": false,
+  "pixel_semantics_visually_verified": false,
+  "local_zip_bytes": 130851517,
+  "local_zip_sha256": "0a6b746164f6365eb9514e3ab0ef6490bbdc3dc1ee3dc15ad1b1eca30c896db1",
+  "local_original_image_hashes_verified": 83,
+  "local_original_xml_hashes_verified": 83,
+  "local_folder_name": "261108_CCTV평가자료_83장",
+  "local_zip_name": "261108_CCTV평가자료_83장.zip",
+  "original_archive_image_hashes_verified": 83,
+  "overlay_contact_sheet_visually_checked": true
+}

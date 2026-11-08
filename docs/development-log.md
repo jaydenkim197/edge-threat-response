@@ -1,5 +1,11 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+<!-- cctv-inspection-handoff-20261108:begin -->
+## 2026-11-08 — CCTV 평가83장 사용자 확인용 전달
++
++사용자 요청에 따라 0/31 원인 조사에 앞서 실제 평가 입력83장·원본 XML83개·현재Knife31개 좌표·전체overlay/확대/모아보기를 바탕화면에 전달했다. 원본 ZIP 이미지와 평가 입력의SHA83개, XML Knife31개의개수/좌표와평가truth, 로컬이미지/XML hash·전송ZIP CRC/hash를 확인했다. 사이트/DB·원본·학습·고정GT/이전결과는 보존했다. source에는총기객체도같이있으며, 이대응검사는라벨의시각적정확성/전처리/평가전체의정확성을증명하지않는다. 원인분석은다음단계다. [전달기록·수량·hash](../reports/datasets/cctv-inspection-handoff-2026-11-08/report.md). Git에는이미지/XML/ZIP을넣지않는다.
+<!-- cctv-inspection-handoff-20261108:end -->
+
 <!-- s1-results-20261108:begin -->
 ## 2026-11-08 — S1 완료·M1/M2 공통 비교 검증
 
