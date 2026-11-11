@@ -83,8 +83,8 @@ def yolo_boxes(text: str, width: int, height: int, knife_class: int):
     return boxes
 
 
-def write_pack(name, samples, provenance):
-    output = PACKS / name
+def write_pack(name, samples, provenance, *, root=PACKS):
+    output = root / name
     if output.exists():
         raise ValueError(f"Preserve existing pack: {output}")
     output.mkdir(parents=True)

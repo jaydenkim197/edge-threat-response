@@ -179,6 +179,83 @@ class TeamReviewTests(unittest.TestCase):
         self.assertEqual(200, results["save"].status_code)
         self.assertNotEqual(first, results["claim"].json["id"])
 
+    def test_code_only_video_pack_saves_new_and_corrected_boxes(self):
+        from edge_threat_response.dataset.team_review import create_app
+
+        video = self.root / "video"
+        video.mkdir()
+        (video / "review.csv").write_text("image_path,original_split\npositive.jpg,unknown\nmissed.jpg,unknown\n")
+        evidence = []
+        for index, name in enumerate(("positive.jpg", "missed.jpg"), 1):
+            image = name.encode()
+            (video / name).write_bytes(image)
+            evidence.append({"sample_no": index, "image_path": name, "image_file": name,
+                             "width": 100, "height": 60, "image_sha256": hashlib.sha256(image).hexdigest(),
+                             "knife_count": int(index == 1),
+                             "knife_boxes_xyxy_raw": [[1, 2, 10, 20]] if index == 1 else []})
+        original = "\n".join(json.dumps(row) for row in evidence)
+        (video / "image-evidence.jsonl").write_text(original)
+
+        config = json.loads(self.config.read_text())
+        config["datasets"].append({"id": "video", "name": "Video", "review_dir": str(video),
+                                   "review_schema": "video-box-v1"})
+        for mode in ("name", None):
+            if mode is None:
+                del config["reviewer_login"]
+            else:
+                config["reviewer_login"] = mode
+            self.config.write_text(json.dumps(config))
+            with self.assertRaisesRegex(ValueError, "explicit reviewer code"):
+                create_app(self.config)
+        self.assertFalse((video / "human-review.sqlite3").exists())
+        config["reviewer_login"] = "code"
+        self.config.write_text(json.dumps(config))
+        self.app = create_app(self.config)
+        self.app.testing = True
+        endpoint = "/api/items?dataset=video"
+        self.assertEqual(401, self.app.test_client().get(endpoint, base_url=self.url).status_code)
+        self.assertEqual(401, self.app.test_client().get("/api/packs/video/images/0", base_url=self.url).status_code)
+
+        client, headers = self.login(self.a)
+        self.assertEqual("simple-v2", client.get("/api/items?dataset=fixture", base_url=self.url).json["review_schema"])
+        self.assertEqual("video-box-v1", client.get(endpoint, base_url=self.url).json["review_schema"])
+        save_path = "/api/review?dataset=video"
+        fields = {"domain": "target_cctv", "knife_presence": "yes", "reviewed_boxes": [[1, 2.5, 15, 22]],
+                  "reviewer": "spoof", "review_schema": "simple-v2"}
+        claim = "/api/claim?dataset=video"
+        self.assertEqual(0, self.post(client, headers, claim, {}).json["id"])
+        for boxes in ([], [[1, 0, 101, 22]], [[True, 0, 15, 22]], [[5, 0, 5, 22]]):
+            with self.subTest(boxes=boxes):
+                response = self.post(client, headers, save_path,
+                                     {"id": 0, "version": 0, "fields": {**fields, "reviewed_boxes": boxes}})
+                self.assertEqual(400, response.status_code)
+        payload = {"id": 0, "version": 0, "fields": fields}
+        response = self.post(client, headers, save_path, payload)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(fields["reviewed_boxes"], response.json["review"]["reviewed_boxes"])
+        self.assertEqual(self.a["name"], response.json["review"]["reviewer"])
+        self.assertEqual(409, self.post(client, headers, save_path, payload).status_code)
+        negative = {**fields, "knife_presence": "no", "reviewed_boxes": []}
+        response = self.post(client, headers, save_path, {"id": 0, "version": 1, "fields": negative})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual("ok", response.json["review"]["annotation_verdict"])
+
+        self.assertEqual(1, self.post(client, headers, claim, {}).json["id"])
+        self.assertEqual(200, self.post(client, headers, save_path, {"id": 1, "version": 0, "fields": fields}).status_code)
+        again, _ = self.login(self.a)
+        first, second = again.get(endpoint, base_url=self.url).json["items"]
+        self.assertEqual([[1, 2, 10, 20]], first["boxes"])
+        self.assertEqual("no", first["review"]["knife_presence"])
+        self.assertEqual([], first["review"]["reviewed_boxes"])
+        self.assertEqual([], second["boxes"])
+        self.assertEqual(fields["reviewed_boxes"], second["review"]["reviewed_boxes"])
+        self.assertEqual(original, (video / "image-evidence.jsonl").read_text())
+        store = self.app.extensions["review_stores"]["video"]
+        with store.connect() as connection:
+            history = [json.loads(payload) for (payload,) in connection.execute(
+                "SELECT payload FROM history WHERE sample=0 ORDER BY sequence")]
+        self.assertEqual(["yes", "no"], [item["knife_presence"] for item in history])
+
     def enable_name_login(self):
         from edge_threat_response.dataset.team_review import create_app
         config = json.loads(self.config.read_text())

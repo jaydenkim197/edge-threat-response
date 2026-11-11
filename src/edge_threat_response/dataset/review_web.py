@@ -16,6 +16,8 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 
+VIDEO_REVIEW_SCHEMA = "video-box-v1"
+
 OPTIONS = {
     "domain": ["target_cctv", "non_target", "useful_real", "closeup_product", "kitchen", "web_misc", "unclear"],
     "annotation_verdict": ["ok", "problem", "unclear"],
@@ -29,6 +31,41 @@ OPTIONS = {
     "exclude": ["no", "yes", "uncertain"],
 }
 EDITABLE = {*OPTIONS, "reviewer", "notes"}
+VIDEO_FIELDS = {"domain", "knife_presence", "reviewed_boxes", "notes", "reviewer", "review_schema"}
+
+
+def _check_boxes(boxes: object, width: int, height: int) -> None:
+    if not isinstance(boxes, list):
+        raise ValueError("박스는 좌표 목록이어야 합니다.")
+    for box in boxes:
+        if (not isinstance(box, list) or len(box) != 4
+                or any(type(value) not in (int, float) for value in box)):
+            raise ValueError("박스에는 숫자 좌표 4개가 필요합니다.")
+        x1, y1, x2, y2 = box
+        if not (0 <= x1 < x2 <= width and 0 <= y1 < y2 <= height):
+            raise ValueError("박스는 이미지 안에 있어야 합니다.")
+
+
+def _video_review_fields(fields: dict, evidence: dict) -> dict:
+    if set(fields) - VIDEO_FIELDS or fields.get("review_schema", VIDEO_REVIEW_SCHEMA) != VIDEO_REVIEW_SCHEMA:
+        raise ValueError("지원하지 않는 영상 검수 필드입니다.")
+    domain = fields.get("domain")
+    presence = fields.get("knife_presence")
+    reviewer = fields.get("reviewer")
+    notes = fields.get("notes", "")
+    if domain not in OPTIONS["domain"] or presence not in ("yes", "no", "unclear"):
+        raise ValueError("장면과 칼 유무를 선택해주세요.")
+    if not isinstance(reviewer, str) or not reviewer.strip() or len(reviewer) > 120:
+        raise ValueError("검수자 이름이 필요합니다.")
+    if not isinstance(notes, str) or len(notes) > 2000:
+        raise ValueError("메모는 2000자까지 입력할 수 있습니다.")
+    boxes = fields.get("reviewed_boxes")
+    _check_boxes(boxes, evidence["width"], evidence["height"])
+    if bool(boxes) != (presence == "yes"):
+        raise ValueError("칼이 있으면 박스를 그려주세요. 칼 없음 또는 모르겠음은 박스 없이 저장해주세요.")
+    return {"review_schema": VIDEO_REVIEW_SCHEMA, "domain": domain, "knife_presence": presence,
+            "reviewed_boxes": boxes, "reviewer": reviewer, "notes": notes,
+            "annotation_verdict": "unclear" if presence == "unclear" else "ok"}
 
 
 def review_verdict(review: dict, knife_count: int) -> str:
@@ -49,7 +86,10 @@ class ConflictError(ValueError):
 
 
 class ReviewStore:
-    def __init__(self, review_dir: Path, *, database: Path | None = None):
+    def __init__(self, review_dir: Path, *, database: Path | None = None, review_schema: str = "simple-v2"):
+        if review_schema not in ("simple-v2", VIDEO_REVIEW_SCHEMA):
+            raise ValueError("Unsupported review schema.")
+        self.review_schema = review_schema
         self.root = review_dir.resolve()
         csv_bytes = (self.root / "review.csv").read_bytes()
         evidence_bytes = (self.root / "image-evidence.jsonl").read_bytes()
@@ -69,6 +109,13 @@ class ReviewStore:
                 raise ValueError("Image hash mismatch.")
             if item["width"] <= 0 or item["height"] <= 0:
                 raise ValueError("Invalid image dimensions.")
+            if self.review_schema == VIDEO_REVIEW_SCHEMA:
+                if type(item["width"]) is not int or type(item["height"]) is not int:
+                    raise ValueError("Video image dimensions must be integers.")
+                boxes, count = item["knife_boxes_xyxy_raw"], item["knife_count"]
+                _check_boxes(boxes, item["width"], item["height"])
+                if type(count) is not int or count != len(boxes):
+                    raise ValueError("Video proposal count mismatch.")
             self.images.append(image)
         self.database = database or self.root / "human-review.sqlite3"
         if self.database.resolve() in {self.root / "review.csv", self.root / "image-evidence.jsonl", *self.images}:
@@ -82,6 +129,13 @@ class ReviewStore:
             connection.execute("INSERT OR IGNORE INTO metadata VALUES ('pack_hash', ?)", (self.pack_hash,))
             connection.execute("CREATE TABLE IF NOT EXISTS reviews (sample INTEGER PRIMARY KEY, version INTEGER NOT NULL, payload TEXT NOT NULL)")
             connection.execute("CREATE TABLE IF NOT EXISTS history (sequence INTEGER PRIMARY KEY, sample INTEGER NOT NULL, payload TEXT NOT NULL)")
+            existing_schema = connection.execute("SELECT value FROM metadata WHERE key='review_schema'").fetchone()
+            if existing_schema and existing_schema[0] != self.review_schema:
+                raise ValueError("Database belongs to another review schema.")
+            if self.review_schema == VIDEO_REVIEW_SCHEMA and not existing_schema:
+                if connection.execute("SELECT 1 FROM reviews LIMIT 1").fetchone():
+                    raise ValueError("Video reviews require a separate database.")
+                connection.execute("INSERT INTO metadata VALUES ('review_schema', ?)", (self.review_schema,))
 
     @contextmanager
     def connect(self):
@@ -111,6 +165,23 @@ class ReviewStore:
             raise ValueError("Unknown sample.")
         if type(version) is not int or version < 0 or not isinstance(fields, dict):
             raise ValueError("Invalid review request.")
+        if self.review_schema == VIDEO_REVIEW_SCHEMA:
+            values = _video_review_fields(fields, self.evidence[sample])
+        else:
+            values = self._simple_review_fields(sample, fields)
+        values["reviewer"] = values["reviewer"].strip()
+        values["reviewed_at"] = datetime.now(timezone.utc).isoformat()
+        payload = json.dumps(values, ensure_ascii=False)
+        with self.connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            previous = connection.execute("SELECT version FROM reviews WHERE sample=?", (sample,)).fetchone()
+            if (previous[0] if previous else 0) != version:
+                raise ConflictError("다른 탭에서 수정됐습니다. 새로고침 후 다시 확인해주세요.")
+            connection.execute("INSERT OR REPLACE INTO reviews VALUES (?,?,?)", (sample, version + 1, payload))
+            connection.execute("INSERT INTO history(sample,payload) VALUES (?,?)", (sample, payload))
+        return {"version": version + 1, "review": values}
+
+    def _simple_review_fields(self, sample: int, fields: dict) -> dict:
         if set(fields) - EDITABLE:
             raise ValueError("Unsupported review field; source rights/coordinates are not image verdicts.")
         values = {key: fields.get(key, "") for key in EDITABLE}
@@ -145,28 +216,21 @@ class ReviewStore:
             raise ValueError("음성 후보는 실제 칼 부재 여부도 확인해주세요.")
         if not simple and values["exclude"] != "no" and not values["notes"].strip():
             raise ValueError("제외·보류 이유를 한 줄 남겨주세요.")
-        values["reviewer"] = values["reviewer"].strip()
-        values["reviewed_at"] = datetime.now(timezone.utc).isoformat()
-        payload = json.dumps(values, ensure_ascii=False)
-        with self.connect() as connection:
-            connection.execute("BEGIN IMMEDIATE")
-            previous = connection.execute("SELECT version FROM reviews WHERE sample=?", (sample,)).fetchone()
-            if (previous[0] if previous else 0) != version:
-                raise ConflictError("다른 탭에서 수정됐습니다. 새로고침 후 다시 확인해주세요.")
-            connection.execute("INSERT OR REPLACE INTO reviews VALUES (?,?,?)", (sample, version + 1, payload))
-            connection.execute("INSERT INTO history(sample,payload) VALUES (?,?)", (sample, payload))
-        return {"version": version + 1, "review": values}
+        return values
 
     def export_csv(self):
         stream = io.StringIO(newline="")
         columns = list(self.rows[0])
-        for key in sorted(EDITABLE) + ["reviewed_at", "review_version"]:
+        export_fields = EDITABLE | VIDEO_FIELDS if self.review_schema == VIDEO_REVIEW_SCHEMA else EDITABLE
+        for key in sorted(export_fields) + ["reviewed_at", "review_version"]:
             if key not in columns:
                 columns.append(key)
         writer = csv.DictWriter(stream, fieldnames=columns)
         writer.writeheader()
         for row, item in zip(self.rows, self.items()):
             record = {**row, **item["review"], "review_version": item["version"]}
+            if self.review_schema == VIDEO_REVIEW_SCHEMA and item["version"]:
+                record["reviewed_boxes"] = json.dumps(record["reviewed_boxes"], separators=(",", ":"))
             # Keep the DB exact, but neutralize spreadsheet formula execution on export.
             writer.writerow({key: "'" + value if isinstance(value, str) and value.startswith(("=", "+", "-", "@", "\t", "\r", "\n"))
                              else value for key, value in record.items()})
@@ -178,11 +242,14 @@ class BatchReviewStore:
 
     def __init__(self, base: ReviewStore, batches: list[tuple[str, ReviewStore]]):
         self.root, self.database, self.pack_hash = base.root, base.database, base.pack_hash
+        self.review_schema = base.review_schema
         self.parts = [("initial", 0, base)]
         self.rows, self.evidence, self.images = list(base.rows), list(base.evidence), list(base.images)
         seen = {item["image_sha256"] for item in base.evidence}
         identifiers = {"initial"}
         for batch_id, store in batches:
+            if store.review_schema != self.review_schema:
+                raise ValueError("Review batches must use the same schema.")
             if batch_id in identifiers:
                 raise ValueError("Duplicate batch identifier")
             identifiers.add(batch_id)
@@ -213,6 +280,8 @@ class BatchReviewStore:
 
 
 def make_handler(store: ReviewStore, token: str):
+    if store.review_schema == VIDEO_REVIEW_SCHEMA:
+        raise ValueError("Video reviews require the authenticated team server.")
     assets = Path(__file__).parent / "web_review"
 
     class Handler(BaseHTTPRequestHandler):

@@ -31,3 +31,13 @@ button,.button,.small-button{touch-action:manipulation}
   #verdict-guide{font-size:12px;margin:8px 0 12px}.team-review .save-area{position:fixed;z-index:10;bottom:0;left:0;right:0;margin:0;padding:8px 14px calc(10px + env(safe-area-inset-bottom));background:white;border-top:1px solid var(--line);box-shadow:0 -3px 12px #20332210;gap:5px}
   .save-area .button{min-height:46px;font-size:16px}#save-status{font-size:12px}.review-panel details{font-size:12px}
 }
+
+.box-toolbar{display:flex;align-items:center;flex-wrap:wrap;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.box-toolbar .small-button{min-height:42px;font-size:13px}
+.box-toolbar [aria-pressed="true"]{background:var(--mint);border-color:var(--green);color:var(--green)}
+#box-count{color:var(--muted);font-size:12px}
+#image-svg.box-drag-mode{touch-action:none;cursor:crosshair}
+.video-bbox{fill:#00ff7f17;stroke:#00ff7f;stroke-width:2;vector-effect:non-scaling-stroke;cursor:pointer}
+.video-bbox.selected{fill:#ffd16620;stroke:#ffd166}
+.box-handle{fill:#ffd166;stroke:#151c1a;stroke-width:1;vector-effect:non-scaling-stroke;cursor:crosshair}
+.box-preview{stroke-dasharray:4 3;pointer-events:none}

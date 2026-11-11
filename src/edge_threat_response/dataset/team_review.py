@@ -14,7 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from .review_web import BatchReviewStore, ConflictError, ReviewStore, review_verdict
+from .review_web import VIDEO_REVIEW_SCHEMA, BatchReviewStore, ConflictError, ReviewStore, review_verdict
 
 ASSIGNMENT_TIMEOUT_SECONDS = 15 * 60
 
@@ -112,7 +112,12 @@ def create_app(config_path: Path):
     from flask import Flask, abort, g, jsonify, redirect, render_template, request, send_file, session
     config_path = config_path.resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
-    name_login = config.get("reviewer_login", "code") == "name"
+    catalog = config["datasets"]
+    login_mode = config.get("reviewer_login", "code")
+    name_login = login_mode == "name"
+    if any(entry.get("review_schema") == VIDEO_REVIEW_SCHEMA for entry in catalog):
+        if config.get("reviewer_login") != "code":
+            raise ValueError("Video review packs require explicit reviewer code login.")
     origin = config["public_url"].rstrip("/")
     parsed = urlsplit(origin)
     local = parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1"}
@@ -130,7 +135,7 @@ def create_app(config_path: Path):
                       SESSION_COOKIE_NAME="etr_review_session", PERMANENT_SESSION_LIFETIME=timedelta(days=30) if name_login else timedelta(hours=8),
                       MAX_CONTENT_LENGTH=16384, TRUSTED_HOSTS=[parsed.hostname])
     team = TeamDatabase(Path(config["database"]))
-    catalog, stores, dataset_ids = config["datasets"], {}, set()
+    stores, dataset_ids = {}, set()
     for entry in catalog:
         if not re.fullmatch(r"[a-z0-9-]{1,60}", entry["id"]):
             raise ValueError("Invalid dataset identifier")
@@ -138,12 +143,13 @@ def create_app(config_path: Path):
             raise ValueError("Duplicate dataset identifier")
         dataset_ids.add(entry["id"])
         if entry.get("review_dir"):
-            base = ReviewStore(Path(entry["review_dir"]))
+            schema = entry.get("review_schema", "simple-v2")
+            base = ReviewStore(Path(entry["review_dir"]), review_schema=schema)
             batches = []
             for batch in entry.get("review_batches", []):
                 if not re.fullmatch(r"[a-z0-9-]{1,60}", batch["id"]):
                     raise ValueError("Invalid batch identifier")
-                batches.append((batch["id"], ReviewStore(Path(batch["review_dir"]))))
+                batches.append((batch["id"], ReviewStore(Path(batch["review_dir"]), review_schema=schema)))
             stores[entry["id"]] = BatchReviewStore(base, batches) if batches else base
     team.register_batches(stores)
     app.extensions["review_team"] = team
@@ -302,7 +308,7 @@ def create_app(config_path: Path):
             item["editable"] = bool(not g.user["admin"] and owners.get(item["id"]) == g.user["id"])
             item["assigned_elsewhere"] = item["id"] in owners and owners[item["id"]] != g.user["id"]
             item["coordinate_status"] = store.evidence[item["id"]].get("coordinate_status", "unconfirmed")
-        return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema="simple-v2", team=True,
+        return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema=store.review_schema, team=True,
                        reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False,
                        assignment_timeout_seconds=ASSIGNMENT_TIMEOUT_SECONDS)
 
@@ -365,7 +371,7 @@ def create_app(config_path: Path):
             raise ValueError("Unknown sample")
         if g.user["admin"]:
             abort(403)
-        fields = {**body["fields"], "reviewer": g.user["name"], "review_schema": "simple-v2"}
+        fields = {**body["fields"], "reviewer": g.user["name"], "review_schema": store.review_schema}
         # Hold the ownership lock until the review commits. Reclaim cannot race a save.
         with team.connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
