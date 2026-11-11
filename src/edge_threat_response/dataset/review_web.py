@@ -53,19 +53,26 @@ def _video_review_fields(fields: dict, evidence: dict) -> dict:
     presence = fields.get("knife_presence")
     reviewer = fields.get("reviewer")
     notes = fields.get("notes", "")
-    if domain not in OPTIONS["domain"] or presence not in ("yes", "no", "unclear"):
-        raise ValueError("장면과 칼 유무를 선택해주세요.")
+    if domain not in OPTIONS["domain"]:
+        raise ValueError("장면 유형을 선택해주세요.")
     if not isinstance(reviewer, str) or not reviewer.strip() or len(reviewer) > 120:
         raise ValueError("검수자 이름이 필요합니다.")
     if not isinstance(notes, str) or len(notes) > 2000:
         raise ValueError("메모는 2000자까지 입력할 수 있습니다.")
-    boxes = fields.get("reviewed_boxes")
-    _check_boxes(boxes, evidence["width"], evidence["height"])
-    if bool(boxes) != (presence == "yes"):
-        raise ValueError("칼이 있으면 박스를 그려주세요. 칼 없음 또는 모르겠음은 박스 없이 저장해주세요.")
+    if domain == "target_cctv":
+        if presence not in ("yes", "no", "unclear"):
+            raise ValueError("칼 유무를 선택해주세요.")
+        boxes = fields.get("reviewed_boxes")
+        _check_boxes(boxes, evidence["width"], evidence["height"])
+        if bool(boxes) != (presence == "yes"):
+            raise ValueError("칼이 있으면 박스를 그려주세요. 칼 없음 또는 모르겠음은 박스 없이 저장해주세요.")
+        verdict = "unclear" if presence == "unclear" else "ok"
+    else:
+        presence, boxes = None, []
+        verdict = "unclear" if domain == "unclear" else "problem"
     return {"review_schema": VIDEO_REVIEW_SCHEMA, "domain": domain, "knife_presence": presence,
             "reviewed_boxes": boxes, "reviewer": reviewer, "notes": notes,
-            "annotation_verdict": "unclear" if presence == "unclear" else "ok"}
+            "annotation_verdict": verdict}
 
 
 def review_verdict(review: dict, knife_count: int) -> str:

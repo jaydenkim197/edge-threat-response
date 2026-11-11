@@ -239,13 +239,24 @@ class TeamReviewTests(unittest.TestCase):
         response = self.post(client, headers, save_path, {"id": 0, "version": 1, "fields": negative})
         self.assertEqual(200, response.status_code)
         self.assertEqual("ok", response.json["review"]["annotation_verdict"])
+        for version, domain, submitted, verdict in (
+            (2, "non_target", negative, "problem"),
+            (3, "unclear", fields, "unclear"),
+        ):
+            response = self.post(client, headers, save_path,
+                                 {"id": 0, "version": version, "fields": {**submitted, "domain": domain}})
+            self.assertEqual(200, response.status_code)
+            review = response.json["review"]
+            self.assertEqual(verdict, review["annotation_verdict"])
+            self.assertIsNone(review["knife_presence"])
+            self.assertEqual([], review["reviewed_boxes"])
 
         self.assertEqual(1, self.post(client, headers, claim, {}).json["id"])
         self.assertEqual(200, self.post(client, headers, save_path, {"id": 1, "version": 0, "fields": fields}).status_code)
         again, _ = self.login(self.a)
         first, second = again.get(endpoint, base_url=self.url).json["items"]
         self.assertEqual([[1, 2, 10, 20]], first["boxes"])
-        self.assertEqual("no", first["review"]["knife_presence"])
+        self.assertIsNone(first["review"]["knife_presence"])
         self.assertEqual([], first["review"]["reviewed_boxes"])
         self.assertEqual([], second["boxes"])
         self.assertEqual(fields["reviewed_boxes"], second["review"]["reviewed_boxes"])
@@ -254,7 +265,7 @@ class TeamReviewTests(unittest.TestCase):
         with store.connect() as connection:
             history = [json.loads(payload) for (payload,) in connection.execute(
                 "SELECT payload FROM history WHERE sample=0 ORDER BY sequence")]
-        self.assertEqual(["yes", "no"], [item["knife_presence"] for item in history])
+        self.assertEqual(["yes", "no", None, None], [item["knife_presence"] for item in history])
 
     def enable_name_login(self):
         from edge_threat_response.dataset.team_review import create_app

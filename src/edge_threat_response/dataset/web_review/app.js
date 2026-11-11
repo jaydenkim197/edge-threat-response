@@ -4,6 +4,7 @@ const simpleSpecs = [
   ["domain", "① CCTV형 장면인가요?", "위에서 비스듬히 · 넓은 시야", [["target_cctv","CCTV형"],["non_target","그 외"],["unclear","모르겠음"]]],
   ["annotation_verdict", "② 칼 라벨은 정상인가요?", "박스 위치 + 칼 누락을 한 번에 확인", [["ok","정상"],["problem","문제 있음"],["unclear","모르겠음"]]],
 ];
+const videoDomainSpec = ["domain", "① CCTV 장면인가요?", "진행자·해설·자료 화면은 제외", [["target_cctv","CCTV 장면"],["non_target","제외"],["unclear","판단 보류"]]];
 const videoPresenceSpec = ["knife_presence", "② 칼이 보이나요?", "보이는 칼마다 박스를 확인하거나 추가하세요.", [["yes","칼 있음"],["no","칼 없음"],["unclear","모르겠음"]]];
 let items = [], current = 0, csrf = "", pack = "", values = {}, dirty = false, saving = false, timer;
 let reviewSchema = "simple-v2";
@@ -15,10 +16,11 @@ const svgNS = "http://www.w3.org/2000/svg";
 let boxMode = "browse", selectedBox = -1, boxDrag = null;
 
 function videoReview() { return reviewSchema === "video-box-v1"; }
-function canEditBoxes() { return videoReview() && (!team || Boolean(items[current]?.editable)); }
+function canEditBoxes() { return videoReview() && values.domain === "target_cctv" && (!team || Boolean(items[current]?.editable)); }
 
 function paintBoxControls() {
   const editable = canEditBoxes();
+  $("box-toolbar").hidden = values.domain !== "target_cctv";
   $("box-add").disabled = $("box-edit").disabled = !editable;
   $("box-remove").disabled = !editable || selectedBox < 0;
   $("box-add").setAttribute("aria-pressed", String(boxMode === "draw"));
@@ -190,7 +192,7 @@ let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
 function draftKey() { return `etr-draft:${pack}:${team ? `${signedReviewer}:` : ""}${current}`; }
 function buildFields() {
-  const specs = videoReview() ? [simpleSpecs[0], videoPresenceSpec] : simpleSpecs;
+  const specs = videoReview() ? [videoDomainSpec, videoPresenceSpec] : simpleSpecs;
   for (const [key,title,hint,choices] of specs) {
     const field = document.createElement("section"); field.className = "field"; field.id = `field-${key}`;
     const heading = document.createElement("div"); heading.className = "field-title";
@@ -205,6 +207,9 @@ function buildFields() {
         if(videoReview() && key==="knife_presence" && value!=="yes") {
           values.reviewed_boxes=[]; selectedBox=-1; setBoxMode("browse");
         }
+        if(videoReview() && key==="domain") {
+          selectedBox=-1; setBoxMode("browse");
+        }
         paintChoices(); changed();
       }); group.append(button);
     }
@@ -212,6 +217,12 @@ function buildFields() {
   }
 }
 function paintChoices() {
+  if(videoReview()) {
+    $("field-knife_presence").hidden = values.domain !== "target_cctv";
+    $("verdict-guide").textContent = values.domain === "target_cctv" ?
+      "칼이 보이면 모든 칼에 박스를 표시하세요. 칼 유무가 애매하면 모르겠음을 선택하세요." :
+      "제외와 판단 보류는 장면 판정만 저장합니다.";
+  }
   const showNotes=videoReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim());
   $("notes").hidden=!showNotes;document.querySelector(".notes-label").hidden=!showNotes;
   document.querySelectorAll(".choices button").forEach(button => {
@@ -223,7 +234,8 @@ function paintChoices() {
 function visibleItems() {
   const filter = $("filter").value;
   return items.filter(item => filter==="all" || (filter==="pending" && !item.version) ||
-    (filter==="uncertain" && item.version && verdictOf(item,item.review)!=="ok") || (filter==="negative" && !item.knife_count));
+    (filter==="uncertain" && item.version && (videoReview() ? verdictOf(item,item.review)==="unclear" : verdictOf(item,item.review)!=="ok")) ||
+    (filter==="negative" && !item.knife_count));
 }
 function verdictOf(item, review) {
   if(review.annotation_verdict) return review.annotation_verdict;
@@ -236,7 +248,9 @@ function refreshProgress() {
   const held = items.filter(item=>item.version && verdictOf(item,item.review)!=="ok").length;
   $("progress-text").textContent=`${reviewed} / ${items.length}장 검수 기록`;
   $("progress").max=items.length; $("progress").value=reviewed;
-  $("counts").textContent=`미검수 ${items.length-reviewed} · 재확인 ${held}`;
+  const excluded = videoReview() ? items.filter(item=>item.version && verdictOf(item,item.review)==="problem").length : 0;
+  $("counts").textContent=videoReview() ? `미검수 ${items.length-reviewed} · 제외 ${excluded} · 보류 ${held-excluded}` :
+    `미검수 ${items.length-reviewed} · 재확인 ${held}`;
   $("jump").replaceChildren();
   for (const item of visibleItems()) {
     const option = document.createElement("option"); option.value=item.id;
@@ -251,7 +265,8 @@ function show(index) {
   const draft=localStorage.getItem(draftKey()); let restoredDraft=false;
   if (draft) { try { const saved=JSON.parse(draft); if(saved.version===item.version) {values={...saved.fields}; restoredDraft=true;} } catch {} }
   if(videoReview()) {
-    values.reviewed_boxes=(values.reviewed_boxes || item.boxes).map(box=>[...box]);
+    const boxes = !restoredDraft && item.version && values.knife_presence == null ? item.boxes : values.reviewed_boxes || item.boxes;
+    values.reviewed_boxes=boxes.map(box=>[...box]);
     delete values.annotation_verdict;
     selectedBox=-1; boxDrag=null; boxMode="browse";
   }
@@ -269,8 +284,7 @@ function show(index) {
   $("kind").classList.toggle("negative",!item.knife_count);
   $("dimensions").textContent=`${item.width} × ${item.height}${item.batch_id ? ` · ${item.batch_id}` : ""}`;
   $("original").href=item.image_url;
-  $("verdict-guide").textContent=videoReview() ?
-    "칼이 보이면 모든 칼에 박스를 표시하세요. 애매한 장면은 모르겠음을 선택하세요." : item.knife_count ? "정상 = 보이는 칼이 모두 정확한 박스 안에 있음. 틀린 박스·칼 누락은 ‘문제 있음’." : "정상 = 실제 칼이 없음. 칼이 하나라도 보이면 ‘문제 있음’.";
+  if(!videoReview()) $("verdict-guide").textContent=item.knife_count ? "정상 = 보이는 칼이 모두 정확한 박스 안에 있음. 틀린 박스·칼 누락은 ‘문제 있음’." : "정상 = 실제 칼이 없음. 칼이 하나라도 보이면 ‘문제 있음’.";
   $("saved-badge").textContent=item.version ? "검수 기록 있음" : "미검수";
   $("image-svg").setAttribute("viewBox",`0 0 ${item.width} ${item.height}`);
   $("image-svg").replaceChildren();
@@ -302,7 +316,8 @@ function show(index) {
 }
 function complete() {
   if(videoReview()) return Boolean(values.domain && (values.reviewer||"").trim()) &&
-    (values.knife_presence==="yes" ? values.reviewed_boxes.length > 0 : ["no","unclear"].includes(values.knife_presence));
+    (values.domain !== "target_cctv" || (values.knife_presence==="yes" ?
+      values.reviewed_boxes.length > 0 : ["no","unclear"].includes(values.knife_presence)));
   return ["domain","annotation_verdict","reviewer"].every(key=>(values[key]||"").trim()) &&
     (values.annotation_verdict!=="problem" || (values.notes||"").trim());
 }
@@ -370,6 +385,7 @@ async function init() {
   const data=await response.json();
   if(!["simple-v2","video-box-v1"].includes(data.review_schema)) throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
   reviewSchema=data.review_schema;
+  if(videoReview()) $("filter").querySelector('option[value="negative"]').textContent = "미검출 후보만";
   buildFields();
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
