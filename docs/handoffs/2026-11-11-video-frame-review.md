@@ -46,3 +46,5 @@ PC13의 `D:/edge-threat-response-data/video-intake/scene-screening/scene-review-
 2026-11-12 사용자 확인 범위는 PC13의 영상 292개 모두와 팀 전체 최대 8,000회다. `tools/prepare_scene_review_pilot.py --all-videos`로 `D:/edge-threat-response-data/video-intake/scene-screening/scene-review-all-20261112-v1`에 16개 묶음을 준비했다. 각 묶음은 구간 대표 100장과 연결 프레임 300장이다. 처음 292개 구간은 영상당 1개씩이며, 후속 구간은 출처를 순환하며 골랐다. 기존 자동 분류의 CCTV·보류·제외 후보를 각각 1,000·520·80개 포함한다.
 
 운영 서버에서는 `reviewer_login: "name"`에 `private_video_login: true`를 더한다. 기존 이름 선택 후 `영상 검수 열기`를 눌러 해당 이름의 개인 코드를 입력한다. 코드 확인이 끝난 사용자에게 영상 목록·프레임·검수 API를 제공한다. 확인 세션은 최대 8시간이다. 자료 6,400장의 새 배정에 더해 추가 미리보기·재배정·재검수를 모두 같은 8,000회 예산에서 센다.
+
+운영 배포 `VERIFIED` (코드 `5d5951a`). 2026-11-12 PC13의 `data/review/team-server/backups/before-video-rollout-20261112`에 설정과 SQLite 일관 백업을 남겼다. 배포 후 HTTPS 이름 선택 세션의 영상 목록·직접 이미지 접근을 차단했고, 같은 계정의 개인 코드 확인 후 영상 32개 팩 목록과 첫 이미지의 파일 해시를 검증했다. 기존 3,625개 판정과 이력, 계정·배정 테이블 해시가 배포 전후 일치했다. 실제 검수 예산 사용은 확인 시점에 0회였다.
