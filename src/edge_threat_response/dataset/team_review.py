@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 import secrets
@@ -82,11 +83,18 @@ class TeamDatabase:
         if not isinstance(code, str) or not 20 <= len(code) <= 120:
             return None
         with self.connect() as connection:
-            rows = list(connection.execute("SELECT * FROM users WHERE active=1"))
+            rows = list(connection.execute("SELECT * FROM users WHERE active=1 AND code_hash<>''"))
         for row in rows:
             if check_password_hash(row["code_hash"], code):
                 return dict(row)
         return None
+
+    def create_video_reviewer(self):
+        user_id = secrets.token_hex(8)
+        with self.connect() as connection:
+            connection.execute("INSERT INTO users(id,name,code_hash,admin) VALUES (?,?,?,0)",
+                               (user_id, f"영상 검수자 {user_id}", ""))
+        return user_id
 
 
     def register_batches(self, stores):
@@ -115,11 +123,18 @@ def create_app(config_path: Path):
     catalog = config["datasets"]
     login_mode = config.get("reviewer_login", "code")
     name_login = login_mode == "name"
+    video_link_login = login_mode == "video_link"
     private_packs = {entry["id"] for entry in catalog
                      if entry.get("review_schema") in PRIVATE_REVIEW_SCHEMAS or "scene_pack" in entry}
     video_unlock = bool(private_packs and name_login and config.get("private_video_login") is True)
-    if private_packs and config.get("reviewer_login") != "code" and not video_unlock:
-        raise ValueError("Video review packs require explicit reviewer code login.")
+    if private_packs and config.get("reviewer_login") != "code" and not (video_unlock or video_link_login):
+        raise ValueError("Video review packs require explicit reviewer code or shared link access.")
+    video_link_hash = None
+    if video_link_login:
+        token = Path(config["video_link_file"]).read_text(encoding="ascii").strip()
+        if not private_packs or not re.fullmatch(r"[A-Za-z0-9_-]{43,80}", token):
+            raise ValueError("Video link mode requires video packs and a strong link secret.")
+        video_link_hash = hashlib.sha256(token.encode("ascii")).hexdigest()
     origin = config["public_url"].rstrip("/")
     parsed = urlsplit(origin)
     local = parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1"}
@@ -133,8 +148,9 @@ def create_app(config_path: Path):
     assets = Path(__file__).parent / "web_review"
     app = Flask(__name__, static_folder=None, template_folder=str(assets))
     app.config.update(SECRET_KEY=secret, SESSION_COOKIE_SECURE=not local,
-                      SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Strict",
-                      SESSION_COOKIE_NAME="etr_review_session", PERMANENT_SESSION_LIFETIME=timedelta(days=30) if name_login else timedelta(hours=8),
+                      SESSION_COOKIE_HTTPONLY=True, SESSION_COOKIE_SAMESITE="Lax" if video_link_login else "Strict",
+                      SESSION_COOKIE_NAME="etr_review_session",
+                      PERMANENT_SESSION_LIFETIME=timedelta(days=30) if name_login or video_link_login else timedelta(hours=8),
                       MAX_CONTENT_LENGTH=16384, TRUSTED_HOSTS=[parsed.hostname])
     team = TeamDatabase(Path(config["database"]))
     stores, dataset_ids = {}, set()
@@ -186,6 +202,8 @@ def create_app(config_path: Path):
     team.register_batches(stores)
     app.extensions["review_team"] = team
     app.extensions["review_stores"] = stores
+    app.extensions["active_review_stores"] = {pack: store for pack, store in stores.items()
+                                             if not video_link_login or pack in private_packs}
     attempts = deque()
     rate_lock = threading.Lock()
 
@@ -200,6 +218,13 @@ def create_app(config_path: Path):
         return (session.get("video_user") == g.user["id"]
                 and 0 <= time.time() - session.get("video_login_at", 0) < 8 * 3600)
 
+    def video_link_user():
+        if video_link_login and session.get("video_link_hash") == video_link_hash:
+            user = team.user(session.get("user", ""))
+            if user and not user["admin"]:
+                return user
+        return None
+
     @app.before_request
     def guard():
         if request.host != parsed.netloc:
@@ -211,15 +236,21 @@ def create_app(config_path: Path):
             if not supplied or not secrets.compare_digest(supplied, session.get("csrf", "")):
                 abort(403)
         if request.path in {"/login", "/admin/login", "/style.css", "/portal.js", "/install.js", "/manifest.webmanifest",
-                            "/icon-192.png", "/icon-512.png", "/apple-touch-icon.png", "/favicon.ico"}:
+                            "/icon-192.png", "/icon-512.png", "/apple-touch-icon.png", "/favicon.ico",
+                            "/video/open", "/api/video/open", "/video-open.js"}:
             return None
+        pack = (request.view_args or {}).get("pack") or request.args.get("dataset")
+        if video_link_login and pack and pack not in private_packs:
+            abort(404)
         g.user = team.user(session.get("user", ""))
         if g.user and g.user["admin"] and time.time() - session.get("admin_login_at", 0) > 8 * 3600:
             session.clear()
             g.user = None
+        if video_link_login and g.user and not g.user["admin"] and session.get("video_link_hash") != video_link_hash:
+            g.user = None
         if not g.user:
-            return (jsonify(error="로그인이 필요합니다."), 401) if request.path.startswith("/api/") else redirect("/login")
-        pack = (request.view_args or {}).get("pack") or request.args.get("dataset")
+            login_url = "/video/open" if video_link_login else "/login"
+            return (jsonify(error="로그인이 필요합니다."), 401) if request.path.startswith("/api/") else redirect(login_url)
         if pack in private_packs and not can_review_video():
             if request.path.startswith("/api/"):
                 return jsonify(error="영상 검수 코드가 필요합니다.", video_login_required=True), 403
@@ -258,6 +289,8 @@ def create_app(config_path: Path):
     @app.route("/admin/login", methods=["GET", "POST"])
     def login():
         admin_login = request.path == "/admin/login"
+        if video_link_login and not admin_login:
+            return redirect("/video/open")
         use_names = name_login and not admin_login
         with team.connect() as connection:
             reviewers = [dict(row) for row in connection.execute("SELECT id,name FROM users WHERE active=1 AND admin=0 ORDER BY rowid")]
@@ -286,6 +319,31 @@ def create_app(config_path: Path):
                 return redirect("/?resume=1" if use_names else "/")
             error = "본인 이름을 선택해주세요." if use_names else "관리자 코드가 올바르지 않거나 비활성 계정입니다."
         return page(error)
+
+    @app.get("/video/open")
+    def open_video():
+        if not video_link_login:
+            abort(404)
+        return render_template("video_open.html", csrf=csrf(), resume=bool(video_link_user()))
+
+    @app.post("/api/video/open")
+    def grant_video_link():
+        if not video_link_login:
+            abort(404)
+        body = request.get_json(silent=True)
+        token = body.get("token") if isinstance(body, dict) else None
+        if (not isinstance(token, str) or not re.fullmatch(r"[A-Za-z0-9_-]{43,80}", token)
+                or not secrets.compare_digest(hashlib.sha256(token.encode("ascii")).hexdigest(), video_link_hash)):
+            if not login_slot():
+                return jsonify(error="시도가 많습니다. 잠시 후 다시 시도해주세요."), 429
+            return jsonify(error="영상 검수 공유 링크를 다시 확인해주세요."), 403
+        user = video_link_user()
+        if user is None:
+            session.clear()
+            session["user"] = team.create_video_reviewer()
+            session["video_link_hash"] = video_link_hash
+            session.permanent = True
+        return jsonify(ok=True)
 
     @app.route("/video/login", methods=["GET", "POST"])
     def video_login():
@@ -327,6 +385,7 @@ def create_app(config_path: Path):
 
     @app.get("/style.css")
     @app.get("/portal.js")
+    @app.get("/video-open.js")
     @app.get("/app.js")
     @app.get("/install.js")
     @app.get("/manifest.webmanifest")
@@ -370,6 +429,8 @@ def create_app(config_path: Path):
     def get_catalog():
         entries = []
         for entry in catalog:
+            if video_link_login and entry["id"] not in private_packs:
+                continue
             if entry["id"] in private_packs and not can_review_video():
                 continue
             store = stores.get(entry["id"])
@@ -388,7 +449,7 @@ def create_app(config_path: Path):
                                         not (item["id"] in scene_for and item["remaining"]), -item["remaining"]))
         return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])},
                        csrf=csrf(), name_login=name_login, video_login_required=video_unlock and not can_review_video(),
-                       video_review_enabled=bool(private_packs))
+                       video_review_enabled=bool(private_packs), video_link_login=video_link_login)
 
     def current_store():
         pack = request.args.get("dataset", "")
@@ -546,6 +607,8 @@ def create_app(config_path: Path):
     def invite():
         if not g.user["admin"]:
             abort(403)
+        if video_link_login:
+            abort(404)
         body = request.get_json()
         return jsonify(team.create_user(body.get("name") if isinstance(body, dict) else None))
 
@@ -554,14 +617,18 @@ def create_app(config_path: Path):
         if not g.user["admin"]:
             abort(403)
         with team.connect() as connection:
-            return jsonify(users=[dict(row) for row in connection.execute("SELECT id,name,admin,active FROM users")])
+            return jsonify(users=[dict(row) for row in connection.execute(
+                "SELECT id,name,admin,active FROM users WHERE NOT ? OR admin=1 OR code_hash=''", (video_link_login,))])
 
     @app.post("/api/users/<user_id>/disable")
     def disable(user_id):
         if not g.user["admin"] or user_id == g.user["id"]:
             abort(403)
         with team.connect() as connection:
-            connection.execute("UPDATE users SET active=0 WHERE id=?", (user_id,))
+            changed = connection.execute("UPDATE users SET active=0 WHERE id=? AND (NOT ? OR code_hash='')",
+                                         (user_id, video_link_login)).rowcount
+            if video_link_login and not changed:
+                abort(404)
             connection.execute("DELETE FROM assignments WHERE user=?", (user_id,))
             connection.execute("DELETE FROM assignment_activity WHERE user=?", (user_id,))
         return jsonify(ok=True)
@@ -589,7 +656,7 @@ def reclaim_expired_assignments(app):
     released = 0
     with team.connect() as connection:
         connection.execute("BEGIN IMMEDIATE")
-        for pack, store in app.extensions["review_stores"].items():
+        for pack, store in app.extensions["active_review_stores"].items():
             released += team.expire_pending(connection, pack, store.items())
     return released
 

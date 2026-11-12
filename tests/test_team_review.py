@@ -2,6 +2,7 @@ import hashlib
 import importlib.util
 import json
 import re
+import shutil
 import sqlite3
 import struct
 import tempfile
@@ -290,6 +291,64 @@ class TeamReviewTests(unittest.TestCase):
         self.assertFalse(named.get("/api/catalog", base_url=self.url).json["video_login_required"])
         self.assertEqual(200, self.post(named, name_headers, "/api/logout", {}).status_code)
         self.assertEqual(401, named.get("/api/packs/video/images/0", base_url=self.url).status_code)
+
+    def test_shared_video_link_resumes_browser_and_archives_image_packs(self):
+        from edge_threat_response.dataset.team_review import create_app, reclaim_expired_assignments
+
+        client, headers = self.login(self.a)
+        self.assertEqual(0, self.post(client, headers, "/api/claim?dataset=fixture", {}).json["id"])
+        self.age_assignment(0)
+        video = self.root / "video"
+        video.mkdir()
+        for filename in ("image.jpg", "review.csv", "image-evidence.jsonl"):
+            shutil.copyfile(self.root / "pack" / filename, video / filename)
+        link_file = self.root / "video-link"
+        link_token = "v" * 43
+        link_file.write_text(link_token, encoding="ascii")
+        config = json.loads(self.config.read_text())
+        config["datasets"].append({"id": "video", "name": "Video", "review_dir": str(video),
+                                   "review_schema": "video-box-v1"})
+        config.update(reviewer_login="video_link", video_link_file=str(link_file))
+        self.config.write_text(json.dumps(config))
+        self.app = create_app(self.config)
+        self.assertEqual(0, reclaim_expired_assignments(self.app))
+        with self.team.connect() as connection:
+            self.assertEqual(self.a["id"], connection.execute(
+                "SELECT user FROM assignments WHERE pack='fixture' AND sample=0").fetchone()[0])
+
+        def open_link(browser):
+            page = browser.get("/video/open", base_url=self.url)
+            self.assertEqual(200, page.status_code)
+            self.assertNotIn(link_token, page.text)
+            return {"Origin": self.url, "X-Review-Token": re.search(r'data-csrf="([^"]+)"', page.text)[1]}
+
+        browser = self.app.test_client()
+        self.assertEqual("/video/open", browser.get("/login", base_url=self.url).location)
+        self.assertEqual(401, browser.get("/api/packs/video/images/0", base_url=self.url).status_code)
+        self.assertEqual(404, browser.get("/review/fixture", base_url=self.url).status_code)
+        headers = open_link(browser)
+        self.assertEqual(403, self.post(browser, headers, "/api/video/open", {"token": "x" * 43}).status_code)
+        self.assertEqual(403, self.post(browser, headers | {"Origin": "https://wrong.example"}, "/api/video/open",
+                                        {"token": link_token}).status_code)
+        response = self.post(browser, headers, "/api/video/open", {"token": link_token})
+        self.assertEqual(200, response.status_code)
+        self.assertIn("SameSite=Lax", response.headers["Set-Cookie"])
+        catalog = browser.get("/api/catalog", base_url=self.url).json
+        self.assertEqual(["video"], [item["id"] for item in catalog["datasets"]])
+        self.assertEqual(404, browser.get("/api/packs/fixture/images/0", base_url=self.url).status_code)
+        self.assertEqual(404, browser.get("/api/items?dataset=fixture", base_url=self.url).status_code)
+        self.assertEqual(404, browser.get("/video/login", base_url=self.url).status_code)
+        with closing(browser.get("/api/packs/video/images/0", base_url=self.url)) as image:
+            self.assertEqual(200, image.status_code)
+        user_id = catalog["user"]["id"]
+        self.assertEqual("", self.team.user(user_id)["code_hash"])
+        headers = open_link(browser)
+        self.assertIn('data-resume="1"', browser.get("/video/open", base_url=self.url).text)
+        self.assertEqual(200, self.post(browser, headers, "/api/video/open", {"token": link_token}).status_code)
+        self.assertEqual(user_id, browser.get("/api/catalog", base_url=self.url).json["user"]["id"])
+        other = self.app.test_client()
+        self.assertEqual(200, self.post(other, open_link(other), "/api/video/open", {"token": link_token}).status_code)
+        self.assertNotEqual(user_id, other.get("/api/catalog", base_url=self.url).json["user"]["id"])
 
     def test_scene_approval_releases_only_selected_frames_and_preserves_leases(self):
         from edge_threat_response.dataset.team_review import create_app

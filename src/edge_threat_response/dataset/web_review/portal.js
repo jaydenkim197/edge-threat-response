@@ -11,16 +11,16 @@ async function initPortal(){
     const link=node("a","영상 검수 열기 →");link.className="button dark";link.href="/video/login";
     el("datasets").append(link);
   }
-  if(!data.user.admin && new URLSearchParams(location.search).get("video")==="1"){
-    const first=data.datasets.find(item=>item.available && item.remaining && item.review_schema?.startsWith("video-"));
-    if(first){location.replace(`/review/${first.id}`);return;}
-  }
   const last=localStorage.getItem(`etr-last-pack:${data.user.id}`);
-  const resume=data.datasets.find(item=>item.id===last && item.available && item.reviewed<item.total);
+  const resume=data.datasets.find(item=>item.id===last && item.available && item.remaining);
   if(resume && !data.user.admin){
     el("resume-review").hidden=false;el("resume-review").href=`/review/${resume.id}`;
     el("resume-review").textContent=`${resume.name} 이어하기 →`;
     if(new URLSearchParams(location.search).get("resume")==="1"){location.replace(el("resume-review").href);return;}
+  }
+  if(!data.user.admin && new URLSearchParams(location.search).get("video")==="1"){
+    const first=data.datasets.find(item=>item.available && item.remaining && item.review_schema?.startsWith("video-"));
+    if(first){location.replace(`/review/${first.id}`);return;}
   }
   for(const item of data.datasets){
     const card=document.createElement("article");card.className="progress-card dataset-card";
@@ -31,10 +31,15 @@ async function initPortal(){
     if(item.source_url){const provenance=node("a","출처·이용 조건 ↗");provenance.href=item.source_url;provenance.target="_blank";provenance.rel="noopener";info.append(provenance);}card.append(info);
     el("datasets").append(card);
   }
-  el("logout").textContent=data.user.admin?"로그아웃":"이름 바꾸기";
+  el("logout").textContent=data.name_login && !data.user.admin?"이름 바꾸기":"로그아웃";
   el("logout").onclick=async()=>{try{await api("/api/logout",{});location.href="/login";}catch(error){el("portal-status").textContent=error.message;}};
   if(data.user.admin){
     el("admin-panel").hidden=false;await refreshUsers();
+    if(data.video_link_login){
+      el("invite-help").textContent="공유 링크를 열면 브라우저별 검수 세션이 생성됩니다.";
+      el("invite-form").hidden=true;
+      return;
+    }
     el("invite-help").textContent=data.name_login?"이름을 등록하면 팀원의 이름 선택 목록에 표시됩니다.":"이름을 등록하면 개인 코드를 발급합니다.";
     el("invite-form").onsubmit=async event=>{event.preventDefault();try{
       const result=await api("/api/users",{name:el("invite-name").value});

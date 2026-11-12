@@ -145,9 +145,11 @@ etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --out
 
 입력은 upstream commit `48860b990e4d4f57fe100248887fceb248475dc8`의 Git checkout이며 XML·YOLO label이 로컬에 있어야 한다. 이미지가 없어도 metadata/label dry-run은 가능하지만 decode·시각 검수는 검증되지 않는다. 출력은 `voc-candidates.jsonl`, `issues.jsonl`, `summary.json`, 전체 `review-queue.csv`와 층화 `review-sample.csv`다. 좌표 convention 기본값 `unknown`은 raw 좌표만 보존하고 YOLO 초안을 만들지 않는다. 명시적인 convention·근거가 있는 변환도 검수 대기 초안이며 학습 승인이 아니다. 준비·좌표 규칙·gate는 [모델·데이터 계획](docs/model-data-plan.md#sohas-voc-source-specific-audit)과 [검증 보고서](reports/datasets/sohas-dasci-metadata-2026-10-02/report.md#cloud-voc-dry-run--2026-10-02)에 있다.
 
-### 버튼으로 이미지 검수하기
+### 팀 영상 검수
 
-팀원 공동 검수는 [PC13 팀 검수 사이트](https://pc13.tail37c267.ts.net/)에서 **본인 이름을 선택**해 시작한다([운영 안내](docs/team-review-deployment.md)). 후보를 고르면 첫 이미지가 자동 배정된다. **모든 후보에서 같은 두 질문**—CCTV형 장면인지, 칼 라벨이 정상인지—만 답하면 자동 저장되며 `문제 있음`일 때만 메모 칸이 나타난다. 아이폰 Safari·안드로이드 Chrome의 **홈 화면에 추가**로 열고 최근 검수를 이어갈 수 있다. CSV·개발 환경은 필요 없다. 모바일 Chrome/WebKit의 합성 fixture 저장·재접속은 검증했으며 실제 휴대폰 설치는 별도 확인한다. 이미지와 판정은 PC13에 저장한다. ACF는 원본 미확보로 현재 활성 목록에서 제외돼 있습니다. Dangerous Items의 VOC semantic class 매핑은 확인해 RAW 예비 학습에 사용했으며, 웹 품질 판정과 정식 dataset 채택은 구분합니다. 현재 이름 선택 방식은 제한 자료의 접근 인증 수단이 아니므로, 새 제한 자료를 공개 검수 화면에 반입하지 않습니다.
+팀에서 전달한 공유 링크를 열면 이름이나 개인 코드 입력 없이 영상 검수가 시작된다. CCTV 구간을 먼저 판정하고, 승인된 구간의 프레임에서 칼 유무와 바운딩 박스를 확인한다. 기존 이미지 검수 기록은 PC13에 보관한다. 접속 방식과 검수 순서는 [팀 검수 운영](docs/team-review-deployment.md)을 참고한다.
+
+### 기존 SOHAS 이미지 로컬 검수
 
 아래 명령은 기존 **단일 PC 로컬 SOHAS 검수 도구**가 필요한 경우에만 사용한다. 중앙 서비스 사용을 시작한 뒤 같은 표본을 로컬 DB에서 병행 수정하면 판정이 갈라진다. 현재 로컬 100장 pack은 `data/review/sohas-click-review-20261003/`이며 Git에는 이미지가 포함되지 않는다.
 
