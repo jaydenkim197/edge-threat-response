@@ -15,7 +15,7 @@ let team=false, signedReviewer="", teamAdmin=false;
 let leaseEnabled=false, leaseActivity=false, heartbeatBusy=false;
 const svgNS = "http://www.w3.org/2000/svg";
 let boxMode = "browse", selectedBox = -1, boxDrag = null;
-let sceneStep = "main", sceneStart = null, sceneAdvancing = false, sceneSubmitted = false;
+let sceneStep = "main", sceneStart = null, reviewAdvancing = false, sceneSubmitted = false;
 
 function videoReview() { return reviewSchema === "video-box-v1"; }
 function sceneReview() { return reviewSchema === "video-scene-v1"; }
@@ -178,7 +178,7 @@ function assignmentLost(id) {
   document.querySelectorAll(".choices button").forEach(button=>button.disabled=true);
   $("notes").readOnly=true;$("save-next").disabled=false;$("save-next").textContent="다음 미검수 받기 →";$("next").disabled=false;
   if(videoReview()) {boxDrag=null; setBoxMode("browse");}
-  if(sceneReview()) paintSceneActions();
+  if(sceneReview() || (team && videoReview()))paintSceneActions();
   $("saved-badge").textContent="배정 만료 · 입력은 임시 보관";
   status("배정이 만료됐습니다. 작성 중인 내용은 임시 보관됩니다. ‘다음 미검수 받기’를 눌러주세요.","error");
 }
@@ -208,6 +208,12 @@ function buildFields() {
       const button = document.createElement("button"); button.type="button"; button.textContent=label;
       button.dataset.field=key; button.dataset.value=value;
       button.addEventListener("click", () => {
+        if(team && videoReview() && key==="domain") {
+          if(saving || reviewAdvancing)return;
+          if(value==="non_target"){selectSceneStep("reason");return;}
+          delete values.exclude_reason;
+          selectSceneStep("main");
+        }
         values[key]=value;
         if(videoReview() && key==="knife_presence" && value!=="yes") {
           values.reviewed_boxes=[]; selectedBox=-1; setBoxMode("browse");
@@ -228,7 +234,9 @@ function paintChoices() {
       "칼이 보이면 모든 칼에 박스를 표시하세요. 칼 유무가 애매하면 모르겠음을 선택하세요." :
       "제외와 판단 보류는 장면 판정만 저장합니다.";
   }
-  const showNotes=!sceneReview() && (videoReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim()));
+  const choosingReason=team && videoReview() && sceneStep==="reason";
+  const showNotes=!sceneReview() && !choosingReason &&
+    (videoReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim()));
   $("notes").hidden=!showNotes;document.querySelector(".notes-label").hidden=!showNotes;
   document.querySelectorAll(".choices button").forEach(button => {
     const selected = button.dataset.field==="domain" && ["useful_real","closeup_product","kitchen","web_misc"].includes(values.domain) ? "non_target" : values[button.dataset.field];
@@ -275,6 +283,8 @@ function show(index) {
     const boxes = !restoredDraft && item.version && values.knife_presence == null ? item.boxes : values.reviewed_boxes || item.boxes;
     values.reviewed_boxes=boxes.map(box=>[...box]);
     delete values.annotation_verdict;
+    delete values.scene_type;
+    sceneStep="main";
     selectedBox=-1; boxDrag=null; boxMode="browse";
   }
   if(sceneReview()) {
@@ -322,6 +332,7 @@ function show(index) {
     showScenePreview(item);
     paintSceneActions();
   }
+  if(team && videoReview())paintSceneActions();
   if(explicitReview()) showPreviousScene();
   $("previous").disabled=current===0; $("next").disabled=!team&&current===items.length-1;
   if(sceneReview()) {
@@ -438,10 +449,11 @@ function showScenePreview(item) {
 }
 function paintSceneActions() {
   const item=items[current];
-  const editable=Boolean(item?.editable && !sceneSubmitted);
-  const busy=saving || sceneAdvancing;
+  const isScene=sceneReview();
+  const editable=Boolean(item?.editable && (isScene ? !sceneSubmitted : sceneStep==="reason"));
+  const busy=saving || reviewAdvancing;
   $("scene-actions").hidden=!editable;
-  $("scene-main").hidden=sceneStep!=="main";
+  $("scene-main").hidden=!isScene || sceneStep!=="main";
   $("scene-reasons").hidden=sceneStep!=="reason";
   $("scene-trim").hidden=sceneStep!=="range";
   $("scene-cancel").hidden=sceneStep==="main";
@@ -454,6 +466,10 @@ function paintSceneActions() {
     button.setAttribute("aria-pressed",String(stamp===sceneStart));
   }
   $("scene-partial").hidden=(item?.scene_thumbnails?.length ?? 0)<2;
+  if(!isScene){
+    $("save-next").hidden=editable || teamAdmin;
+    return;
+  }
   $("save-next").hidden=teamAdmin || (editable && !dirty);
   $("save-next").disabled=busy;
   $("save-next").textContent=editable?"다시 저장":"다음 미검수 받기 →";
@@ -478,6 +494,7 @@ function selectSceneStep(step) {
     }
   }
   paintSceneActions();
+  if(videoReview())paintChoices();
 }
 function showPreviousScene() {
   const previous=sessionStorage.getItem("etr-previous-scene");
@@ -487,12 +504,12 @@ function showPreviousScene() {
 }
 async function submitScene(domain, fields={}) {
   const item=items[current];
-  if(!item?.editable || saving || sceneAdvancing || sceneSubmitted)return;
+  if(!item?.editable || saving || reviewAdvancing || sceneSubmitted)return;
   if(domain) {
     values={review_schema:reviewSchema,reviewer:signedReviewer,domain,...fields};
     changed();
   }
-  sceneAdvancing=true;
+  reviewAdvancing=true;
   paintSceneActions();
   try {
     if(await save(true)) {
@@ -501,9 +518,27 @@ async function submitScene(domain, fields={}) {
       await move(1);
     }
   } finally {
-    sceneAdvancing=false;
+    reviewAdvancing=false;
     paintSceneActions();
     showPreviousScene();
+  }
+}
+async function excludeFrame(reason) {
+  if(!items[current]?.editable || saving || reviewAdvancing)return;
+  Object.assign(values,{domain:"non_target",exclude_reason:reason,knife_presence:null,reviewed_boxes:[]});
+  setBoxMode("browse");
+  paintChoices();
+  changed();
+  reviewAdvancing=true;
+  paintSceneActions();
+  try {
+    if(await save(true)){
+      selectSceneStep("main");
+      await move(1);
+    }
+  } finally {
+    reviewAdvancing=false;
+    paintSceneActions();
   }
 }
 async function init() {
@@ -563,9 +598,12 @@ async function init() {
     $("scene-hold").onclick=()=>submitScene("unclear");
     $("scene-exclude").onclick=()=>selectSceneStep("reason");
     $("scene-partial").onclick=()=>selectSceneStep("range");
+  }
+  if(sceneReview() || (team && videoReview())){
     $("scene-cancel").onclick=()=>selectSceneStep("main");
     for(const button of $("scene-reasons").querySelectorAll("button")){
-      button.onclick=()=>submitScene("non_target",{exclude_reason:button.dataset.sceneReason});
+      const reason=button.dataset.sceneReason;
+      button.onclick=()=>sceneReview() ? submitScene("non_target",{exclude_reason:reason}) : excludeFrame(reason);
     }
   }
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});

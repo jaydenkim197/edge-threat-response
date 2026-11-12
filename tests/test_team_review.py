@@ -241,7 +241,7 @@ class TeamReviewTests(unittest.TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual("ok", response.json["review"]["annotation_verdict"])
         for version, domain, submitted, verdict in (
-            (2, "non_target", negative, "problem"),
+            (2, "non_target", {**negative, "exclude_reason": "low_quality"}, "problem"),
             (3, "unclear", fields, "unclear"),
         ):
             response = self.post(client, headers, save_path,
@@ -251,8 +251,13 @@ class TeamReviewTests(unittest.TestCase):
             self.assertEqual(verdict, review["annotation_verdict"])
             self.assertIsNone(review["knife_presence"])
             self.assertEqual([], review["reviewed_boxes"])
+            if domain == "non_target":
+                self.assertEqual("low_quality", review["exclude_reason"])
+                self.assertEqual("cctv", review["scene_type"])
 
         self.assertEqual(1, self.post(client, headers, claim, {}).json["id"])
+        bad_reason = {"id": 1, "version": 0, "fields": {**fields, "exclude_reason": "presenter"}}
+        self.assertEqual(400, self.post(client, headers, save_path, bad_reason).status_code)
         self.assertEqual(200, self.post(client, headers, save_path, {"id": 1, "version": 0, "fields": fields}).status_code)
         again, _ = self.login(self.a)
         first, second = again.get(endpoint, base_url=self.url).json["items"]
