@@ -390,8 +390,12 @@ class TeamReviewTests(unittest.TestCase):
                                     for i, (start, end) in enumerate(((10, 20), (25, 28), (30, 35)))])
         frame_root = pack("box", [{"source_id": f"source-{i}", "scene_sample": i, "timestamp_s": stamp}
                                   for i, stamp in ((0, 10), (0, 13), (0, 18), (1, 26), (2, 33))])
+        clip_root = self.root / "clips"
+        (clip_root / "scenes").mkdir(parents=True)
+        for i in range(3):
+            (clip_root / "scenes" / f"{i}.mp4").write_bytes(b"clip fixture")
         config = json.loads(self.config.read_text())
-        config.update(reviewer_login="code", video_review_limit=6)
+        config.update(reviewer_login="code", video_review_limit=6, scene_preview_dir=str(clip_root))
         config["datasets"] += [
             {"id": "scenes", "name": "Scenes", "review_dir": scene_root, "review_schema": "video-scene-v1"},
             {"id": "boxes", "name": "Boxes", "review_dir": frame_root, "review_schema": "video-box-v1",
@@ -413,6 +417,15 @@ class TeamReviewTests(unittest.TestCase):
 
         self.assertEqual("/review/scenes", claim(a, ah, boxes)["next_review_url"])
         self.assertEqual(0, claim(a, ah, scenes)["id"])
+        scene = a.get("/api/items" + scenes, base_url=self.url).json["items"][0]
+        self.assertTrue(scene["preview_is_summary"])
+        self.assertEqual([10, 13, 18], [thumb["timestamp_s"] for thumb in scene["scene_thumbnails"]])
+        self.assertEqual(403, b.get(scene["preview_url"], base_url=self.url).status_code)
+        with closing(a.get(scene["preview_url"], base_url=self.url, headers={"Range": "bytes=0-3"})) as clip:
+            self.assertEqual(206, clip.status_code)
+            self.assertEqual(b"clip", clip.data)
+        with self.team.connect() as connection:
+            self.assertEqual(1, connection.execute("SELECT used FROM video_review_budget").fetchone()[0])
         preview = {"scene": 0, "frame": 1}
         self.assertEqual(403, self.post(b, bh, "/api/scene-preview" + scenes, preview).status_code)
         self.assertEqual(13, self.post(a, ah, "/api/scene-preview" + scenes, preview).json["timestamp_s"])
@@ -431,7 +444,12 @@ class TeamReviewTests(unittest.TestCase):
         self.assertEqual(200, save(a, ah, boxes, 1, 0, **absence).status_code)
         self.assertEqual("/review/scenes", claim(a, ah, boxes)["next_review_url"])
         self.assertEqual(1, claim(a, ah, scenes)["id"])
-        self.assertEqual(200, save(a, ah, scenes, 1, 0, domain="non_target").status_code)
+        self.assertEqual(400, save(a, ah, scenes, 1, 0, domain="non_target", exclude_reason="free text").status_code)
+        excluded = save(a, ah, scenes, 1, 0, domain="non_target", exclude_reason="low_quality", scene_type="non_cctv")
+        self.assertEqual(200, excluded.status_code)
+        self.assertEqual("cctv", excluded.json["review"]["scene_type"])
+        self.assertEqual("low_quality", excluded.json["review"]["exclude_reason"])
+        self.assertIsNone(excluded.json["review"]["start_s"])
         self.assertTrue(claim(a, ah, scenes)["budget_exhausted"])
         items = a.get("/api/items" + boxes, base_url=self.url).json["items"]
         self.assertEqual([False, True, False, False, False], [item["eligible"] for item in items])

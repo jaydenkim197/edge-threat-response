@@ -23,26 +23,47 @@
           <button id="box-remove" class="small-button" type="button" disabled>선택 삭제</button>
           <span id="box-count" aria-live="polite"></span>
         </div>
-        <div id="scene-preview-row" class="scene-controls" hidden>
-          <label for="scene-preview">구간 화면</label>
-          <select id="scene-preview"><option value="">대표 프레임</option></select>
-        </div>
-        <div id="image-view" class="image-view"><svg id="image-svg" role="img" aria-label="검수 원본과 knife 라벨" xmlns="http://www.w3.org/2000/svg"></svg></div>
+        <div id="image-view" class="image-view"><video id="scene-video" aria-label="CCTV 구간 미리보기" autoplay muted loop playsinline controls preload="metadata" hidden></video><svg id="image-svg" role="img" aria-label="검수 원본과 knife 라벨" xmlns="http://www.w3.org/2000/svg"></svg></div>
         <div class="image-note"><span class="green-dot"></span> 초록 박스 = 원본의 칼 라벨 <span>위치와 누락을 확인해주세요</span></div>
+        <p id="scene-preview-caption" class="image-note" hidden></p>
         <nav class="navigation"><button id="previous" class="button" type="button">← 이전</button><div><select id="filter" aria-label="검수 목록 필터"><option value="all">모든 이미지</option><option value="pending">미검수만</option><option value="uncertain">재확인만</option><option value="negative">음성 후보만</option></select><select id="jump" aria-label="이미지 바로 이동"></select></div><button id="next" class="button dark" type="button">다음 →</button></nav>
       </article>
       <aside class="review-panel">
         <div class="review-title"><h2>이 이미지의 판정</h2><span id="saved-badge">미검수</span></div>
         <div id="reviewer-field" hidden><label class="reviewer-label" for="reviewer">검수자 이름 / 식별자 <span>필수</span></label><input id="reviewer" type="text" maxlength="120" placeholder="실제 확인하는 사람의 이름"></div>
         <div id="fields"></div>
-        <fieldset id="scene-range" class="scene-controls" hidden>
-          <legend>CCTV 승인 범위 · 초</legend>
-          <label for="scene-start">시작</label><input id="scene-start" type="number" step="any">
-          <label for="scene-end">끝</label><input id="scene-end" type="number" step="any">
-        </fieldset>
         <p id="verdict-guide">정상은 박스 위치와 칼 누락까지 확인한 판정입니다.</p>
         <label for="notes" class="notes-label">메모 <span>문제 있을 때만 필수</span></label><textarea id="notes" rows="2" maxlength="2000" placeholder="예: 칼 하나가 빠짐 / 박스가 손 전체를 포함함"></textarea>
-        <div class="save-area"><span id="save-status" role="status" aria-live="polite">선택하면 자동 저장됩니다.</span><button id="save-next" class="button dark" type="button">저장하고 다음 →</button></div>
+        <div class="save-area">
+          <span id="save-status" role="status" aria-live="polite">선택하면 자동 저장됩니다.</span>
+          <section id="scene-actions" aria-label="구간 판정" hidden>
+            <div id="scene-main">
+              <div class="scene-options">
+                <button id="scene-accept" type="button" class="button dark">CCTV 구간 사용</button>
+                <button id="scene-exclude" type="button" class="button">제외</button>
+                <button id="scene-hold" type="button" class="button">보류</button>
+              </div>
+              <button id="scene-partial" type="button" class="button subtle">일부만 사용</button>
+            </div>
+            <div id="scene-reasons" hidden>
+              <p class="scene-prompt">제외 사유</p>
+              <div class="scene-reason-options">
+                <button type="button" class="button" data-scene-reason="presenter">진행자·해설</button>
+                <button type="button" class="button" data-scene-reason="other_non_cctv">다른 비CCTV 화면</button>
+                <button type="button" class="button" data-scene-reason="overlay_occlusion">CCTV · 자막·워터마크 가림</button>
+                <button type="button" class="button" data-scene-reason="low_quality">CCTV · 화질 불량</button>
+                <button type="button" class="button" data-scene-reason="other">기타</button>
+              </div>
+            </div>
+            <div id="scene-trim" hidden>
+              <p id="scene-trim-prompt" class="scene-prompt" aria-live="polite"></p>
+              <div id="scene-thumbnails" role="group" aria-label="구간 썸네일"></div>
+            </div>
+            <button id="scene-cancel" class="button subtle" type="button" hidden>뒤로</button>
+          </section>
+          <button id="save-next" class="button dark" type="button">저장하고 다음 →</button>
+          <a id="previous-scene" class="small-button" hidden>직전 구간 판정 수정</a>
+        </div>
         <details><summary>검수할 때 기억할 점</summary><p>CCTV형인지와 라벨 품질만 판단합니다. 제품·근접 장면이라고 자동 제외하지 않습니다. 문제가 있으면 메모를 남기고, 애매하면 모르겠음을 선택하세요.</p><p>‘문제 있음’은 재확인 후보이며 자동 삭제가 아닙니다. 칼 라벨 0개 이미지도 실제 칼이 없는지 확인합니다. 전체 source·좌표·학습 승인은 별도입니다.</p><p>← → 이전·다음 / 1 정상 · 2 문제 있음 · 3 모르겠음 / 입력 중에는 단축키가 작동하지 않습니다.</p></details>
       </aside>
     </section>

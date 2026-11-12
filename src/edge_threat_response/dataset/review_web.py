@@ -34,7 +34,9 @@ OPTIONS = {
 }
 EDITABLE = {*OPTIONS, "reviewer", "notes"}
 VIDEO_FIELDS = {"domain", "knife_presence", "reviewed_boxes", "notes", "reviewer", "review_schema"}
-SCENE_FIELDS = {"domain", "start_s", "end_s", "notes", "reviewer", "review_schema"}
+SCENE_FIELDS = {"domain", "start_s", "end_s", "exclude_reason", "scene_type", "notes", "reviewer", "review_schema"}
+SCENE_EXCLUSION_TYPES = {"presenter": "non_cctv", "other_non_cctv": "non_cctv",
+                         "overlay_occlusion": "cctv", "low_quality": "cctv", "other": "unclear"}
 
 
 def _scene_review_fields(fields: dict, evidence: dict) -> dict:
@@ -47,6 +49,10 @@ def _scene_review_fields(fields: dict, evidence: dict) -> dict:
         raise ValueError("검수자 이름이 필요합니다.")
     if not isinstance(notes, str) or len(notes) > 2000:
         raise ValueError("메모는 2000자까지 입력할 수 있습니다.")
+    reason = fields.get("exclude_reason")
+    if reason is not None and (not isinstance(reason, str) or reason not in SCENE_EXCLUSION_TYPES
+                               or domain != "non_target"):
+        raise ValueError("제외 사유를 확인해주세요.")
     start, end = fields.get("start_s"), fields.get("end_s")
     if domain == "target_cctv":
         if (type(start) not in (int, float) or type(end) not in (int, float)
@@ -54,7 +60,9 @@ def _scene_review_fields(fields: dict, evidence: dict) -> dict:
             raise ValueError("시작·끝 시각은 표시된 구간 안에서 선택해주세요.")
     else:
         start, end = None, None
+    scene_type = "cctv" if domain == "target_cctv" else SCENE_EXCLUSION_TYPES.get(reason, "unclear")
     return {"review_schema": SCENE_REVIEW_SCHEMA, "domain": domain, "start_s": start, "end_s": end,
+            "exclude_reason": reason, "scene_type": scene_type,
             "reviewer": reviewer, "notes": notes,
             "annotation_verdict": {"target_cctv": "ok", "non_target": "problem", "unclear": "unclear"}[domain]}
 

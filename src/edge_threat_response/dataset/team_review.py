@@ -196,6 +196,10 @@ def create_app(config_path: Path):
                 raise ValueError("Frame does not belong to the referenced scene.")
             previews.setdefault((scene, index), []).append({"id": sample, "timestamp_s": stamp})
     managed = set(scene_for) | set(frames_for)
+    clip_root = Path(config["scene_preview_dir"]).resolve() if config.get("scene_preview_dir") else None
+    if clip_root and any(not (clip_root / pack / f"{sample}.mp4").is_file()
+                         for pack in frames_for for sample in range(len(stores[pack].rows))):
+        raise ValueError("Scene preview clips are missing from the configured directory.")
     limit = config.get("video_review_limit", 8000)
     if managed and (type(limit) is not int or not 1 <= limit < 10000):
         raise ValueError("Video review limit must be between 1 and 9999.")
@@ -487,8 +491,19 @@ def create_app(config_path: Path):
                 item["source_id"] = evidence["source_id"]
                 item["timestamp_s"] = evidence["timestamp_s"]
             if pack in frames_for:
-                item["previews"] = previews.get((pack, item["id"]), [])
-                item["source_id"] = store.evidence[item["id"]]["source_id"]
+                evidence = store.evidence[item["id"]]
+                frames = previews.get((pack, item["id"]), [])
+                item["previews"] = frames
+                item["source_id"] = evidence["source_id"]
+                thumbnails = {frame["timestamp_s"]: f"/api/packs/{frames_for[pack]}/images/{frame['id']}"
+                              for frame in frames}
+                if type(evidence.get("timestamp_s")) in (int, float):
+                    thumbnails.setdefault(evidence["timestamp_s"], item["image_url"])
+                item["scene_thumbnails"] = [{"timestamp_s": stamp, "image_url": url}
+                                            for stamp, url in sorted(thumbnails.items())]
+                if clip_root:
+                    item["preview_url"] = f"/api/packs/{pack}/scenes/{item['id']}/preview.mp4"
+                    item["preview_is_summary"] = item["end_s"] - item["start_s"] > 8
         return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema=store.review_schema, team=True,
                        reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False,
                        assignment_timeout_seconds=ASSIGNMENT_TIMEOUT_SECONDS, linked_review=pack in managed,
@@ -609,6 +624,18 @@ def create_app(config_path: Path):
         if pack not in stores or not 0 <= sample < len(stores[pack].images):
             abort(404)
         return send_file(stores[pack].images[sample], conditional=False)
+
+    @app.get("/api/packs/<pack>/scenes/<int:sample>/preview.mp4")
+    def scene_clip(pack, sample):
+        if not clip_root or pack not in frames_for or not 0 <= sample < len(stores[pack].rows):
+            abort(404)
+        if not g.user["admin"]:
+            with team.connect() as connection:
+                owner = connection.execute("SELECT user FROM assignments WHERE pack=? AND sample=?",
+                                           (pack, sample)).fetchone()
+            if not owner or owner["user"] != g.user["id"]:
+                abort(403)
+        return send_file(clip_root / pack / f"{sample}.mp4", mimetype="video/mp4", conditional=True)
 
     @app.post("/api/users")
     def invite():

@@ -15,6 +15,7 @@ let team=false, signedReviewer="", teamAdmin=false;
 let leaseEnabled=false, leaseActivity=false, heartbeatBusy=false;
 const svgNS = "http://www.w3.org/2000/svg";
 let boxMode = "browse", selectedBox = -1, boxDrag = null;
+let sceneStep = "main", sceneStart = null, sceneAdvancing = false, sceneSubmitted = false;
 
 function videoReview() { return reviewSchema === "video-box-v1"; }
 function sceneReview() { return reviewSchema === "video-scene-v1"; }
@@ -177,10 +178,7 @@ function assignmentLost(id) {
   document.querySelectorAll(".choices button").forEach(button=>button.disabled=true);
   $("notes").readOnly=true;$("save-next").disabled=false;$("save-next").textContent="다음 미검수 받기 →";$("next").disabled=false;
   if(videoReview()) {boxDrag=null; setBoxMode("browse");}
-  if(sceneReview()) {
-    $("scene-preview").disabled=true;
-    $("scene-start").readOnly=$("scene-end").readOnly=true;
-  }
+  if(sceneReview()) paintSceneActions();
   $("saved-badge").textContent="배정 만료 · 입력은 임시 보관";
   status("배정이 만료됐습니다. 작성 중인 내용은 임시 보관됩니다. ‘다음 미검수 받기’를 눌러주세요.","error");
 }
@@ -199,7 +197,7 @@ let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
 function draftKey() { return `etr-draft:${pack}:${team ? `${signedReviewer}:` : ""}${current}`; }
 function buildFields() {
-  const specs = sceneReview() ? [videoDomainSpec] : videoReview() ? [videoDomainSpec, videoPresenceSpec] : simpleSpecs;
+  const specs = sceneReview() ? [] : videoReview() ? [videoDomainSpec, videoPresenceSpec] : simpleSpecs;
   for (const [key,title,hint,choices] of specs) {
     const field = document.createElement("section"); field.className = "field"; field.id = `field-${key}`;
     const heading = document.createElement("div"); heading.className = "field-title";
@@ -224,17 +222,13 @@ function buildFields() {
   }
 }
 function paintChoices() {
-  if(sceneReview()) {
-    $("scene-range").hidden = values.domain !== "target_cctv";
-    $("verdict-guide").textContent = "대표 화면과 시간 범위를 확인하세요. 필요하면 CCTV가 이어지는 범위만 남겨 저장하세요.";
-  }
   if(videoReview()) {
     $("field-knife_presence").hidden = values.domain !== "target_cctv";
     $("verdict-guide").textContent = values.domain === "target_cctv" ?
       "칼이 보이면 모든 칼에 박스를 표시하세요. 칼 유무가 애매하면 모르겠음을 선택하세요." :
       "제외와 판단 보류는 장면 판정만 저장합니다.";
   }
-  const showNotes=explicitReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim());
+  const showNotes=!sceneReview() && (videoReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim()));
   $("notes").hidden=!showNotes;document.querySelector(".notes-label").hidden=!showNotes;
   document.querySelectorAll(".choices button").forEach(button => {
     const selected = button.dataset.field==="domain" && ["useful_real","closeup_product","kitchen","web_misc"].includes(values.domain) ? "non_target" : values[button.dataset.field];
@@ -284,18 +278,9 @@ function show(index) {
     selectedBox=-1; boxDrag=null; boxMode="browse";
   }
   if(sceneReview()) {
-    values.start_s = values.start_s ?? item.start_s;
-    values.end_s = values.end_s ?? item.end_s;
     delete values.annotation_verdict;
-    const preview = $("scene-preview");
-    preview.replaceChildren(new Option("대표 프레임",""));
-    for(const frame of item.previews || []) preview.add(new Option(`${frame.timestamp_s}초 화면`,frame.id));
-    preview.disabled = !item.editable;
-    $("scene-preview-row").hidden = preview.options.length === 1;
-    for(const [id,key] of [["scene-start","start_s"],["scene-end","end_s"]]) {
-      const input=$(id);
-      input.min=item.start_s; input.max=item.end_s; input.value=values[key]; input.readOnly=!item.editable;
-    }
+    delete values.scene_type;
+    sceneStep="main";sceneStart=null;sceneSubmitted=false;
   }
   if (!explicitReview() && !values.annotation_verdict && item.version && !restoredDraft) {
     values.annotation_verdict=verdictOf(item,values);
@@ -333,8 +318,16 @@ function show(index) {
   dirty=restoredDraft; paintChoices(); refreshProgress();
   if(videoReview()) paintVideoBoxes();
   if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=teamAdmin;$("save-next").textContent=item.editable?"저장하고 다음 →":"다음 미검수 받기 →";$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
+  if(sceneReview()) {
+    showScenePreview(item);
+    paintSceneActions();
+  }
+  if(explicitReview()) showPreviousScene();
   $("previous").disabled=current===0; $("next").disabled=!team&&current===items.length-1;
-  if(explicitReview()) {
+  if(sceneReview()) {
+    status(restoredDraft ? "저장하지 못한 판정이 있습니다. 다시 저장을 눌러주세요." :
+      item.version ? "직전 판정을 수정할 수 있습니다." : "");
+  } else if(videoReview()) {
     status(restoredDraft ? "임시 입력을 불러왔습니다." : item.version ? `저장됨 · 수정 ${item.version}회` : "판정 후 저장하고 다음을 누르세요.", item.version && !restoredDraft ? "saved" : "");
   } else {
     status(item.version ? `자동 저장됨 · 수정 ${item.version}회` : "선택하면 자동 저장됩니다.",item.version?"saved":"");
@@ -398,7 +391,13 @@ async function move(delta) {
 }
 async function claimNext(){
   if(teamAdmin){status("관리자 계정은 현황 확인용입니다. 개인 검수 계정으로 로그인해주세요.");return;}
-  const response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({known_total:items.length})});
+  let response;
+  try {
+    response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({known_total:items.length})});
+  } catch {
+    status("다음 항목을 불러오지 못했습니다. 다시 시도해주세요.","error");
+    return;
+  }
   if(!response.ok){status("담당 배정 실패 · 새로고침 후 다시 시도해주세요.","error");return;}
   const result=await response.json();
   if(result.next_review_url){location.assign(result.next_review_url);return;}
@@ -421,30 +420,90 @@ function quick(kind) {
   values.annotation_verdict={keep:"ok",reject:"problem",hold:"unclear"}[kind];
   paintChoices(); changed();
 }
-async function loadScenePreview() {
-  const index=current, selected=$("scene-preview").value;
-  const image=$("image-svg").querySelector("image");
-  if(selected==="") {
-    image.setAttribute("href",items[index].image_url);
-    $("original").href=items[index].image_url;
-    return;
+function showScenePreview(item) {
+  const video=$("scene-video");
+  const showClip=Boolean(item.preview_url && (item.editable || teamAdmin));
+  video.hidden=!showClip;
+  $("image-svg").hidden=showClip;
+  $("scene-preview-caption").textContent=showClip
+    ? (item.preview_is_summary?"요약 미리보기 · 구간의 주요 시점":"구간 미리보기")
+    : "대표 화면";
+  if(showClip) {
+    video.poster=item.image_url;
+    if(video.getAttribute("src")!==item.preview_url)video.src=item.preview_url;
+  } else if(video.hasAttribute("src")) {
+    video.removeAttribute("src");
+    video.load();
   }
+}
+function paintSceneActions() {
+  const item=items[current];
+  const editable=Boolean(item?.editable && !sceneSubmitted);
+  const busy=saving || sceneAdvancing;
+  $("scene-actions").hidden=!editable;
+  $("scene-main").hidden=sceneStep!=="main";
+  $("scene-reasons").hidden=sceneStep!=="reason";
+  $("scene-trim").hidden=sceneStep!=="range";
+  $("scene-cancel").hidden=sceneStep==="main";
+  $("scene-trim-prompt").textContent=sceneStart===null
+    ? "시작 장면을 선택하세요." : "끝 장면을 선택하면 저장됩니다.";
+  for(const button of $("scene-actions").querySelectorAll("button"))button.disabled=busy;
+  for(const button of $("scene-thumbnails").querySelectorAll("button")){
+    const stamp=Number(button.dataset.stamp);
+    button.disabled=busy || (sceneStart!==null && stamp<sceneStart);
+    button.setAttribute("aria-pressed",String(stamp===sceneStart));
+  }
+  $("scene-partial").hidden=(item?.scene_thumbnails?.length ?? 0)<2;
+  $("save-next").hidden=teamAdmin || (editable && !dirty);
+  $("save-next").disabled=busy;
+  $("save-next").textContent=editable?"다시 저장":"다음 미검수 받기 →";
+}
+function selectSceneStep(step) {
+  sceneStep=step;sceneStart=null;
+  if(step==="range") {
+    const thumbnails=$("scene-thumbnails");
+    thumbnails.replaceChildren();
+    for(const frame of items[current].scene_thumbnails || []) {
+      const button=document.createElement("button");
+      button.type="button";button.className="scene-thumbnail";button.dataset.stamp=frame.timestamp_s;
+      const image=document.createElement("img");
+      image.src=frame.image_url;image.alt="";
+      const stamp=document.createElement("span");
+      stamp.textContent=`${frame.timestamp_s}초`;
+      button.append(image,stamp);thumbnails.append(button);
+      button.onclick=()=>{
+        if(sceneStart===null){sceneStart=frame.timestamp_s;paintSceneActions();}
+        else void submitScene("target_cctv", {start_s:sceneStart,end_s:frame.timestamp_s});
+      };
+    }
+  }
+  paintSceneActions();
+}
+function showPreviousScene() {
+  const previous=sessionStorage.getItem("etr-previous-scene");
+  const button=$("previous-scene");
+  button.hidden=teamAdmin || !previous || previous===`/review/${teamDataset}?edit=${current}`;
+  if(!button.hidden)button.href=previous;
+}
+async function submitScene(domain, fields={}) {
+  const item=items[current];
+  if(!item?.editable || saving || sceneAdvancing || sceneSubmitted)return;
+  if(domain) {
+    values={review_schema:reviewSchema,reviewer:signedReviewer,domain,...fields};
+    changed();
+  }
+  sceneAdvancing=true;
+  paintSceneActions();
   try {
-    const response=await fetch(apiUrl("/api/scene-preview"),{method:"POST",
-      headers:{"Content-Type":"application/json","X-Review-Token":csrf},
-      body:JSON.stringify({scene:index,frame:Number(selected)})});
-    if(index!==current || $("scene-preview").value!==selected)return;
-    const result=await response.json();
-    if(!response.ok) throw new Error(result.error || "구간 화면을 불러오지 못했습니다.");
-    image.setAttribute("href",result.image_url);
-    $("original").href=result.image_url;
-    status(`${result.timestamp_s}초 화면을 표시했습니다.`);
-  } catch(error) {
-    if(index!==current || $("scene-preview").value!==selected)return;
-    $("scene-preview").value="";
-    image.setAttribute("href",items[index].image_url);
-    $("original").href=items[index].image_url;
-    status(error.message,"error");
+    if(await save(true)) {
+      sceneSubmitted=true;
+      sessionStorage.setItem("etr-previous-scene",`/review/${encodeURIComponent(teamDataset)}?edit=${item.id}`);
+      await move(1);
+    }
+  } finally {
+    sceneAdvancing=false;
+    paintSceneActions();
+    showPreviousScene();
   }
 }
 async function init() {
@@ -490,19 +549,33 @@ async function init() {
     for (const tip of document.querySelectorAll(".review-panel details p:not(:first-of-type)")) tip.hidden=true;
   }
   if(sceneReview()) {
+    document.body.classList.add("scene-review");
     $("filter").querySelector('option[value="negative"]').hidden=true;
-    $("show-boxes").closest("label").hidden=true;
-    document.querySelector(".image-note").textContent="대표 프레임에서 장면을 판정하고 필요한 경우 구간 화면을 확인하세요.";
-    document.querySelector(".notes-label").textContent="메모 · 선택";
-    for(const [id,key] of [["scene-start","start_s"],["scene-end","end_s"]]) {
-      $(id).addEventListener("input",()=>{values[key]=$(id).valueAsNumber;changed();});
+    $("scene-preview-caption").hidden=false;
+    $("verdict-guide").hidden=true;
+    document.querySelector(".intro h1").textContent="CCTV 구간 검수";
+    document.querySelector(".review-title h2").textContent="구간 판정";
+    $("scene-video").addEventListener("error",()=>{
+      $("scene-video").hidden=true;$("image-svg").hidden=false;
+      $("scene-preview-caption").textContent="재생할 수 없습니다. 썸네일로 확인하거나 보류하세요.";
+    });
+    $("scene-accept").onclick=()=>submitScene("target_cctv",{start_s:items[current].start_s,end_s:items[current].end_s});
+    $("scene-hold").onclick=()=>submitScene("unclear");
+    $("scene-exclude").onclick=()=>selectSceneStep("reason");
+    $("scene-partial").onclick=()=>selectSceneStep("range");
+    $("scene-cancel").onclick=()=>selectSceneStep("main");
+    for(const button of $("scene-reasons").querySelectorAll("button")){
+      button.onclick=()=>submitScene("non_target",{exclude_reason:button.dataset.sceneReason});
     }
-    $("scene-preview").addEventListener("change",loadScenePreview);
   }
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));
-  $("save-next").addEventListener("click",async()=>{if(team&&!items[current].editable){await claimNext();return;}if(await save(true))await move(1);});
+  $("save-next").addEventListener("click",async()=>{
+    if(team && (!items[current].editable || (sceneReview() && sceneSubmitted))){await claimNext();return;}
+    if(sceneReview()){await submitScene();return;}
+    if(await save(true))await move(1);
+  });
   $("jump").addEventListener("change",()=>jump(Number($("jump").value)));
   $("filter").addEventListener("change",async()=>{if(!explicitReview()&&dirty&&complete())await save();refreshProgress();const visible=visibleItems();if(visible.length)await jump(visible[0].id);else status("이 조건에 해당하는 이미지가 없습니다.");});
   $("show-boxes").addEventListener("change",()=>$("image-view").classList.toggle("hide-boxes",!$("show-boxes").checked));
@@ -510,6 +583,13 @@ async function init() {
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(!videoReview() && ["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});
   const first=items.find(item=>!item.version && (item.eligible!==false || item.editable)) || items.find(item=>item.version);
+  if(sceneReview()) {
+    const correction=new URLSearchParams(location.search).get("edit");
+    if(correction!==null) {
+      const item=items[Number(correction)];
+      if(item?.editable && item.version){show(item.id);return;}
+    }
+  }
   if(first || !linkedReview) show(first?first.id:0);
   if(team&&!teamAdmin)await claimNext();
 }
