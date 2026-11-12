@@ -267,6 +267,76 @@ class TeamReviewTests(unittest.TestCase):
                 "SELECT payload FROM history WHERE sample=0 ORDER BY sequence")]
         self.assertEqual(["yes", "no", None, None], [item["knife_presence"] for item in history])
 
+    def test_scene_approval_releases_only_selected_frames_and_preserves_leases(self):
+        from edge_threat_response.dataset.team_review import create_app
+
+        def pack(name, entries):
+            root = self.root / name
+            root.mkdir()
+            rows, evidence = [], []
+            for index, extra in enumerate(entries, 1):
+                filename = f"{name}-{index}.jpg"
+                content = filename.encode()
+                (root / filename).write_bytes(content)
+                rows.append(f"{filename},unknown")
+                evidence.append({"sample_no": index, "image_path": filename, "image_file": filename,
+                                 "width": 100, "height": 60, "image_sha256": hashlib.sha256(content).hexdigest(),
+                                 "knife_count": 0, "knife_boxes_xyxy_raw": [], **extra})
+            (root / "review.csv").write_text("image_path,original_split\n" + "\n".join(rows))
+            (root / "image-evidence.jsonl").write_text("\n".join(json.dumps(row) for row in evidence))
+            return str(root)
+
+        scene_root = pack("scene", [{"source_id": f"source-{i}", "scene_start_s": start, "scene_end_s": end}
+                                    for i, (start, end) in enumerate(((10, 20), (25, 28), (30, 35)))])
+        frame_root = pack("box", [{"source_id": f"source-{i}", "scene_sample": i, "timestamp_s": stamp}
+                                  for i, stamp in ((0, 10), (0, 13), (0, 18), (1, 26), (2, 33))])
+        config = json.loads(self.config.read_text())
+        config.update(reviewer_login="code", video_review_limit=6)
+        config["datasets"] += [
+            {"id": "scenes", "name": "Scenes", "review_dir": scene_root, "review_schema": "video-scene-v1"},
+            {"id": "boxes", "name": "Boxes", "review_dir": frame_root, "review_schema": "video-box-v1",
+             "scene_pack": "scenes"},
+        ]
+        self.config.write_text(json.dumps(config))
+        self.app = create_app(self.config)
+        self.app.testing = True
+        a, ah = self.login(self.a)
+        b, bh = self.login(self.b)
+        scenes, boxes = "?dataset=scenes", "?dataset=boxes"
+
+        def claim(client, headers, query):
+            return self.post(client, headers, "/api/claim" + query, {}).json
+
+        def save(client, headers, query, sample, version, **fields):
+            return self.post(client, headers, "/api/review" + query,
+                             {"id": sample, "version": version, "fields": fields})
+
+        self.assertEqual("/review/scenes", claim(a, ah, boxes)["next_review_url"])
+        self.assertEqual(0, claim(a, ah, scenes)["id"])
+        preview = {"scene": 0, "frame": 1}
+        self.assertEqual(403, self.post(b, bh, "/api/scene-preview" + scenes, preview).status_code)
+        self.assertEqual(13, self.post(a, ah, "/api/scene-preview" + scenes, preview).json["timestamp_s"])
+        self.assertEqual(400, save(a, ah, scenes, 0, 0, domain="target_cctv", start_s=9, end_s=15).status_code)
+        self.assertEqual(200, save(a, ah, scenes, 0, 0, domain="target_cctv", start_s=10, end_s=15).status_code)
+        self.assertEqual("/review/boxes", claim(a, ah, scenes)["next_review_url"])
+        self.assertEqual(0, claim(b, bh, boxes)["id"])
+        self.assertEqual(200, save(a, ah, scenes, 0, 1, domain="target_cctv", start_s=12, end_s=15).status_code)
+        locked = b.get("/api/items" + boxes, base_url=self.url).json["items"][0]
+        self.assertFalse(locked["eligible"])
+        self.assertTrue(locked["editable"])
+        self.assertEqual(0, claim(b, bh, boxes)["id"])
+        absence = {"domain": "target_cctv", "knife_presence": "no", "reviewed_boxes": []}
+        self.assertEqual(200, save(b, bh, boxes, 0, 0, **absence).status_code)
+        self.assertEqual(1, claim(a, ah, boxes)["id"])
+        self.assertEqual(200, save(a, ah, boxes, 1, 0, **absence).status_code)
+        self.assertEqual("/review/scenes", claim(a, ah, boxes)["next_review_url"])
+        self.assertEqual(1, claim(a, ah, scenes)["id"])
+        self.assertEqual(200, save(a, ah, scenes, 1, 0, domain="non_target").status_code)
+        self.assertTrue(claim(a, ah, scenes)["budget_exhausted"])
+        items = a.get("/api/items" + boxes, base_url=self.url).json["items"]
+        self.assertEqual([False, True, False, False, False], [item["eligible"] for item in items])
+        self.assertEqual([1, 1, 0, 0, 0], [item["version"] for item in items])
+
     def enable_name_login(self):
         from edge_threat_response.dataset.team_review import create_app
         config = json.loads(self.config.read_text())

@@ -8,6 +8,7 @@ const videoDomainSpec = ["domain", "① CCTV 장면인가요?", "진행자·해�
 const videoPresenceSpec = ["knife_presence", "② 칼이 보이나요?", "보이는 칼마다 박스를 확인하거나 추가하세요.", [["yes","칼 있음"],["no","칼 없음"],["unclear","모르겠음"]]];
 let items = [], current = 0, csrf = "", pack = "", values = {}, dirty = false, saving = false, timer;
 let reviewSchema = "simple-v2";
+let linkedReview = false;
 const teamDataset=location.pathname.startsWith("/review/")?location.pathname.split("/")[2]:"";
 const apiUrl=path=>path+(teamDataset?`?dataset=${encodeURIComponent(teamDataset)}`:"");
 let team=false, signedReviewer="", teamAdmin=false;
@@ -16,6 +17,8 @@ const svgNS = "http://www.w3.org/2000/svg";
 let boxMode = "browse", selectedBox = -1, boxDrag = null;
 
 function videoReview() { return reviewSchema === "video-box-v1"; }
+function sceneReview() { return reviewSchema === "video-scene-v1"; }
+function explicitReview() { return videoReview() || sceneReview(); }
 function canEditBoxes() { return videoReview() && values.domain === "target_cctv" && (!team || Boolean(items[current]?.editable)); }
 
 function paintBoxControls() {
@@ -174,6 +177,10 @@ function assignmentLost(id) {
   document.querySelectorAll(".choices button").forEach(button=>button.disabled=true);
   $("notes").readOnly=true;$("save-next").disabled=false;$("save-next").textContent="다음 미검수 받기 →";$("next").disabled=false;
   if(videoReview()) {boxDrag=null; setBoxMode("browse");}
+  if(sceneReview()) {
+    $("scene-preview").disabled=true;
+    $("scene-start").readOnly=$("scene-end").readOnly=true;
+  }
   $("saved-badge").textContent="배정 만료 · 입력은 임시 보관";
   status("배정이 만료됐습니다. 작성 중인 내용은 임시 보관됩니다. ‘다음 미검수 받기’를 눌러주세요.","error");
 }
@@ -192,7 +199,7 @@ let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
 function draftKey() { return `etr-draft:${pack}:${team ? `${signedReviewer}:` : ""}${current}`; }
 function buildFields() {
-  const specs = videoReview() ? [videoDomainSpec, videoPresenceSpec] : simpleSpecs;
+  const specs = sceneReview() ? [videoDomainSpec] : videoReview() ? [videoDomainSpec, videoPresenceSpec] : simpleSpecs;
   for (const [key,title,hint,choices] of specs) {
     const field = document.createElement("section"); field.className = "field"; field.id = `field-${key}`;
     const heading = document.createElement("div"); heading.className = "field-title";
@@ -217,13 +224,17 @@ function buildFields() {
   }
 }
 function paintChoices() {
+  if(sceneReview()) {
+    $("scene-range").hidden = values.domain !== "target_cctv";
+    $("verdict-guide").textContent = "대표 화면과 시간 범위를 확인하세요. 필요하면 CCTV가 이어지는 범위만 남겨 저장하세요.";
+  }
   if(videoReview()) {
     $("field-knife_presence").hidden = values.domain !== "target_cctv";
     $("verdict-guide").textContent = values.domain === "target_cctv" ?
       "칼이 보이면 모든 칼에 박스를 표시하세요. 칼 유무가 애매하면 모르겠음을 선택하세요." :
       "제외와 판단 보류는 장면 판정만 저장합니다.";
   }
-  const showNotes=videoReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim());
+  const showNotes=explicitReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim());
   $("notes").hidden=!showNotes;document.querySelector(".notes-label").hidden=!showNotes;
   document.querySelectorAll(".choices button").forEach(button => {
     const selected = button.dataset.field==="domain" && ["useful_real","closeup_product","kitchen","web_misc"].includes(values.domain) ? "non_target" : values[button.dataset.field];
@@ -233,9 +244,10 @@ function paintChoices() {
 }
 function visibleItems() {
   const filter = $("filter").value;
-  return items.filter(item => filter==="all" || (filter==="pending" && !item.version) ||
+  return items.filter(item => (item.eligible !== false || item.editable || item.version) &&
+    (filter==="all" || (filter==="pending" && !item.version) ||
     (filter==="uncertain" && item.version && (videoReview() ? verdictOf(item,item.review)==="unclear" : verdictOf(item,item.review)!=="ok")) ||
-    (filter==="negative" && !item.knife_count));
+    (filter==="negative" && !item.knife_count)));
 }
 function verdictOf(item, review) {
   if(review.annotation_verdict) return review.annotation_verdict;
@@ -265,12 +277,27 @@ function show(index) {
   const draft=localStorage.getItem(draftKey()); let restoredDraft=false;
   if (draft) { try { const saved=JSON.parse(draft); if(saved.version===item.version) {values={...saved.fields}; restoredDraft=true;} } catch {} }
   if(videoReview()) {
+    if(linkedReview && item.eligible && !values.domain) values.domain="target_cctv";
     const boxes = !restoredDraft && item.version && values.knife_presence == null ? item.boxes : values.reviewed_boxes || item.boxes;
     values.reviewed_boxes=boxes.map(box=>[...box]);
     delete values.annotation_verdict;
     selectedBox=-1; boxDrag=null; boxMode="browse";
   }
-  if (!videoReview() && !values.annotation_verdict && item.version && !restoredDraft) {
+  if(sceneReview()) {
+    values.start_s = values.start_s ?? item.start_s;
+    values.end_s = values.end_s ?? item.end_s;
+    delete values.annotation_verdict;
+    const preview = $("scene-preview");
+    preview.replaceChildren(new Option("대표 프레임",""));
+    for(const frame of item.previews || []) preview.add(new Option(`${frame.timestamp_s}초 화면`,frame.id));
+    preview.disabled = !item.editable;
+    $("scene-preview-row").hidden = preview.options.length === 1;
+    for(const [id,key] of [["scene-start","start_s"],["scene-end","end_s"]]) {
+      const input=$(id);
+      input.min=item.start_s; input.max=item.end_s; input.value=values[key]; input.readOnly=!item.editable;
+    }
+  }
+  if (!explicitReview() && !values.annotation_verdict && item.version && !restoredDraft) {
     values.annotation_verdict=verdictOf(item,values);
   }
   values.review_schema=reviewSchema;
@@ -279,12 +306,12 @@ function show(index) {
   $("reviewer").value=values.reviewer || ""; $("notes").value=values.notes || "";
   $("sample-number").textContent=`${String(current+1).padStart(2,"0")} / ${items.length}`;
   $("filename").textContent=item.name;
-  $("kind").textContent=videoReview() ? (item.knife_count ? `모델 제안 ${item.knife_count}개` : "미검출 후보") :
+  $("kind").textContent=sceneReview() ? `${item.start_s}–${item.end_s}초` : videoReview() ? (item.knife_count ? `모델 제안 ${item.knife_count}개` : "미검출 후보") :
     (item.knife_count ? `칼 라벨 ${item.knife_count}개` : "칼 라벨 0개 · 실제 부재 확인");
   $("kind").classList.toggle("negative",!item.knife_count);
-  $("dimensions").textContent=`${item.width} × ${item.height}${item.batch_id ? ` · ${item.batch_id}` : ""}`;
+  $("dimensions").textContent=`${item.width} × ${item.height}${item.batch_id ? ` · ${item.batch_id}` : ""}${item.source_id ? ` · ${item.source_id}` : ""}${item.timestamp_s!=null ? ` · ${item.timestamp_s}초` : ""}`;
   $("original").href=item.image_url;
-  if(!videoReview()) $("verdict-guide").textContent=item.knife_count ? "정상 = 보이는 칼이 모두 정확한 박스 안에 있음. 틀린 박스·칼 누락은 ‘문제 있음’." : "정상 = 실제 칼이 없음. 칼이 하나라도 보이면 ‘문제 있음’.";
+  if(!explicitReview()) $("verdict-guide").textContent=item.knife_count ? "정상 = 보이는 칼이 모두 정확한 박스 안에 있음. 틀린 박스·칼 누락은 ‘문제 있음’." : "정상 = 실제 칼이 없음. 칼이 하나라도 보이면 ‘문제 있음’.";
   $("saved-badge").textContent=item.version ? "검수 기록 있음" : "미검수";
   $("image-svg").setAttribute("viewBox",`0 0 ${item.width} ${item.height}`);
   $("image-svg").replaceChildren();
@@ -307,7 +334,7 @@ function show(index) {
   if(videoReview()) paintVideoBoxes();
   if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=teamAdmin;$("save-next").textContent=item.editable?"저장하고 다음 →":"다음 미검수 받기 →";$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
   $("previous").disabled=current===0; $("next").disabled=!team&&current===items.length-1;
-  if(videoReview()) {
+  if(explicitReview()) {
     status(restoredDraft ? "임시 입력을 불러왔습니다." : item.version ? `저장됨 · 수정 ${item.version}회` : "판정 후 저장하고 다음을 누르세요.", item.version && !restoredDraft ? "saved" : "");
   } else {
     status(item.version ? `자동 저장됨 · 수정 ${item.version}회` : "선택하면 자동 저장됩니다.",item.version?"saved":"");
@@ -315,6 +342,12 @@ function show(index) {
   if(window.matchMedia("(max-width: 750px)").matches)window.scrollTo(0,0);
 }
 function complete() {
+  if(sceneReview()) {
+    const item=items[current];
+    return Boolean(values.domain && (values.reviewer||"").trim()) &&
+      (values.domain!=="target_cctv" || (Number.isFinite(values.start_s) && Number.isFinite(values.end_s)
+        && item.start_s<=values.start_s && values.start_s<=values.end_s && values.end_s<=item.end_s));
+  }
   if(videoReview()) return Boolean(values.domain && (values.reviewer||"").trim()) &&
     (values.domain !== "target_cctv" || (values.knife_presence==="yes" ?
       values.reviewed_boxes.length > 0 : ["no","unclear"].includes(values.knife_presence)));
@@ -325,11 +358,15 @@ function changed() {
   dirty=true;
   localStorage.setItem(draftKey(),JSON.stringify({version:items[current].version,fields:values}));
   clearTimeout(timer);
-  status(complete() ? (videoReview() ? "임시 저장됨 · 저장하고 다음을 누르세요." : "저장 대기…") : "임시 입력 보관 중 · 필수 항목을 선택해주세요.");
-  if(!videoReview() && complete()) timer=setTimeout(()=>save(),500);
+  status(complete() ? (explicitReview() ? "임시 저장됨 · 저장하고 다음을 누르세요." : "저장 대기…") : "임시 입력 보관 중 · 필수 항목을 선택해주세요.");
+  if(!explicitReview() && complete()) timer=setTimeout(()=>save(),500);
 }
 async function save(force=false) {
   clearTimeout(timer);
+  if(sceneReview() && force && !complete()) {
+    status("장면 유형과 승인 시각 범위를 확인해주세요.", "error");
+    return false;
+  }
   if(videoReview() && force && !complete()) {
     status("장면 유형과 칼 유무를 선택하세요. 칼이 있으면 박스를 한 개 이상 표시해야 합니다.", "error");
     return false;
@@ -347,14 +384,14 @@ async function save(force=false) {
     succeeded=true;
     if(id===current && captured===JSON.stringify(values)) {dirty=false; localStorage.removeItem(draftKey());}
     else if(id===current) {localStorage.setItem(draftKey(),JSON.stringify({version:result.version,fields:values}));}
-    $("saved-badge").textContent="검수 기록 있음"; refreshProgress(); status(videoReview() ? "박스와 판정을 저장했습니다." : team?"자동 저장됨 · PC13에 기록했습니다.":"자동 저장됨 · 이 PC에 안전하게 기록했습니다.","saved");
+    $("saved-badge").textContent="검수 기록 있음"; refreshProgress(); status(sceneReview() ? "구간 판정을 저장했습니다." : videoReview() ? "박스와 판정을 저장했습니다." : team?"자동 저장됨 · PC13에 기록했습니다.":"자동 저장됨 · 이 PC에 안전하게 기록했습니다.","saved");
     return !dirty;
   } catch(error) {status(error.message,"error"); return false;}
-  finally {saving=false; $("save-next").disabled=team&&teamAdmin; if(!videoReview() && succeeded && dirty && complete()) timer=setTimeout(()=>save(),500);}
+  finally {saving=false; $("save-next").disabled=team&&teamAdmin; if(!explicitReview() && succeeded && dirty && complete()) timer=setTimeout(()=>save(),500);}
 }
 async function move(delta) {
   if(saving) return;
-  if(!videoReview() && dirty && complete() && (!team||items[current].editable) && !await save()) return;
+  if(!explicitReview() && dirty && complete() && (!team||items[current].editable) && !await save()) return;
   if(team&&delta>0){await claimNext();return;}
   const visible=visibleItems(); const next=delta>0 ? visible.find(item=>item.id>current) : [...visible].reverse().find(item=>item.id<current);
   if(next) show(next.id); else status("이 필터의 마지막 이미지입니다.");
@@ -364,6 +401,8 @@ async function claimNext(){
   const response=await fetch(apiUrl("/api/claim"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({known_total:items.length})});
   if(!response.ok){status("담당 배정 실패 · 새로고침 후 다시 시도해주세요.","error");return;}
   const result=await response.json();
+  if(result.next_review_url){location.assign(result.next_review_url);return;}
+  if(result.budget_exhausted){status("영상 검수 한도에 도달했습니다.","saved");return;}
   if(result.refresh_required){
     const refreshed=await fetch(apiUrl("/api/items"));
     if(!refreshed.ok){status("새 표본을 불러오지 못했습니다. 새로고침해주세요.","error");return;}
@@ -372,19 +411,48 @@ async function claimNext(){
     items=data.items;csrf=data.csrf;await claimNext();return;
   }
   if(result.id===null){status(result.pending_assigned?"남은 사진은 다른 검수자에게 배정돼 있습니다. 15분간 활동이 없으면 자동 회수됩니다.":"이 데이터셋의 검수가 완료됐습니다. 다른 데이터셋을 선택하세요.","saved");return;}
-  items[result.id].editable=true;show(result.id);
+  items[result.id].editable=true;
+  if(typeof result.eligible==="boolean")items[result.id].eligible=result.eligible;
+  show(result.id);
 }
-async function jump(index) {if(saving)return; if(!videoReview() && dirty && complete() && (!team||items[current].editable) && !await save())return; show(index);}
+async function jump(index) {if(saving)return; if(!explicitReview() && dirty && complete() && (!team||items[current].editable) && !await save())return; show(index);}
 function quick(kind) {
-  if(videoReview() || (team&&!items[current].editable))return;
+  if(explicitReview() || (team&&!items[current].editable))return;
   values.annotation_verdict={keep:"ok",reject:"problem",hold:"unclear"}[kind];
   paintChoices(); changed();
+}
+async function loadScenePreview() {
+  const index=current, selected=$("scene-preview").value;
+  const image=$("image-svg").querySelector("image");
+  if(selected==="") {
+    image.setAttribute("href",items[index].image_url);
+    $("original").href=items[index].image_url;
+    return;
+  }
+  try {
+    const response=await fetch(apiUrl("/api/scene-preview"),{method:"POST",
+      headers:{"Content-Type":"application/json","X-Review-Token":csrf},
+      body:JSON.stringify({scene:index,frame:Number(selected)})});
+    if(index!==current || $("scene-preview").value!==selected)return;
+    const result=await response.json();
+    if(!response.ok) throw new Error(result.error || "구간 화면을 불러오지 못했습니다.");
+    image.setAttribute("href",result.image_url);
+    $("original").href=result.image_url;
+    status(`${result.timestamp_s}초 화면을 표시했습니다.`);
+  } catch(error) {
+    if(index!==current || $("scene-preview").value!==selected)return;
+    $("scene-preview").value="";
+    image.setAttribute("href",items[index].image_url);
+    $("original").href=items[index].image_url;
+    status(error.message,"error");
+  }
 }
 async function init() {
   const response=await fetch(apiUrl("/api/items")); if(!response.ok){if(teamDataset&&response.status===401)location.href="/login";throw new Error("검수 자료를 읽지 못했습니다.");}
   const data=await response.json();
-  if(!["simple-v2","video-box-v1"].includes(data.review_schema)) throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
+  if(!["simple-v2","video-box-v1","video-scene-v1"].includes(data.review_schema)) throw new Error("이 서버는 이전 버전입니다. 간단 검수 주소 http://127.0.0.1:8768 을 열어주세요. 기존 저장 기록은 그대로 유지됩니다.");
   reviewSchema=data.review_schema;
+  linkedReview=Boolean(data.linked_review);
   if(videoReview()) $("filter").querySelector('option[value="negative"]').textContent = "미검출 후보만";
   buildFields();
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
@@ -409,17 +477,28 @@ async function init() {
     document.querySelector(".review-panel details p").textContent="칼이 보이면 박스 추가를 누른 뒤 이미지 위를 드래그하세요. 박스 조절을 켜면 박스 안을 드래그해 옮기거나 모서리를 드래그해 크기를 바꿀 수 있습니다.";
     for (const tip of document.querySelectorAll(".review-panel details p:not(:first-of-type)")) tip.hidden=true;
   }
+  if(sceneReview()) {
+    $("filter").querySelector('option[value="negative"]').hidden=true;
+    $("show-boxes").closest("label").hidden=true;
+    document.querySelector(".image-note").textContent="대표 프레임에서 장면을 판정하고 필요한 경우 구간 화면을 확인하세요.";
+    document.querySelector(".notes-label").textContent="메모 · 선택";
+    for(const [id,key] of [["scene-start","start_s"],["scene-end","end_s"]]) {
+      $(id).addEventListener("input",()=>{values[key]=$(id).valueAsNumber;changed();});
+    }
+    $("scene-preview").addEventListener("change",loadScenePreview);
+  }
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));
   $("save-next").addEventListener("click",async()=>{if(team&&!items[current].editable){await claimNext();return;}if(await save(true))await move(1);});
   $("jump").addEventListener("change",()=>jump(Number($("jump").value)));
-  $("filter").addEventListener("change",async()=>{if(!videoReview()&&dirty&&complete())await save();refreshProgress();const visible=visibleItems();if(visible.length)await jump(visible[0].id);else status("이 조건에 해당하는 이미지가 없습니다.");});
+  $("filter").addEventListener("change",async()=>{if(!explicitReview()&&dirty&&complete())await save();refreshProgress();const visible=visibleItems();if(visible.length)await jump(visible[0].id);else status("이 조건에 해당하는 이미지가 없습니다.");});
   $("show-boxes").addEventListener("change",()=>$("image-view").classList.toggle("hide-boxes",!$("show-boxes").checked));
   $("zoom").addEventListener("click",()=>{const view=$("image-view");const zoom=view.classList.contains("zoom2")?3:view.classList.contains("zoom3")?1:2;view.classList.remove("zoom2","zoom3");if(zoom>1)view.classList.add(`zoom${zoom}`);$("zoom").textContent=`확대 ${zoom}×`;if(videoReview())paintVideoBoxes();});
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(!videoReview() && ["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});
-  const first=items.find(item=>!item.version); show(first?first.id:0);
+  const first=items.find(item=>!item.version && (item.eligible!==false || item.editable)) || items.find(item=>item.version);
+  if(first || !linkedReview) show(first?first.id:0);
   if(team&&!teamAdmin)await claimNext();
 }
 init().catch(error=>status(error.message,"error"));

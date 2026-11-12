@@ -14,7 +14,7 @@ from datetime import timedelta
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from .review_web import VIDEO_REVIEW_SCHEMA, BatchReviewStore, ConflictError, ReviewStore, review_verdict
+from .review_web import PRIVATE_REVIEW_SCHEMAS, SCENE_REVIEW_SCHEMA, VIDEO_REVIEW_SCHEMA, BatchReviewStore, ConflictError, ReviewStore, review_verdict
 
 ASSIGNMENT_TIMEOUT_SECONDS = 15 * 60
 
@@ -115,7 +115,7 @@ def create_app(config_path: Path):
     catalog = config["datasets"]
     login_mode = config.get("reviewer_login", "code")
     name_login = login_mode == "name"
-    if any(entry.get("review_schema") == VIDEO_REVIEW_SCHEMA for entry in catalog):
+    if any(entry.get("review_schema") in PRIVATE_REVIEW_SCHEMAS or "scene_pack" in entry for entry in catalog):
         if config.get("reviewer_login") != "code":
             raise ValueError("Video review packs require explicit reviewer code login.")
     origin = config["public_url"].rstrip("/")
@@ -151,6 +151,36 @@ def create_app(config_path: Path):
                     raise ValueError("Invalid batch identifier")
                 batches.append((batch["id"], ReviewStore(Path(batch["review_dir"]), review_schema=schema)))
             stores[entry["id"]] = BatchReviewStore(base, batches) if batches else base
+    scene_for = {}
+    frames_for = {}
+    previews = {}
+    for entry in catalog:
+        if "scene_pack" not in entry:
+            continue
+        pack, scene = entry["id"], entry["scene_pack"]
+        if (not isinstance(scene, str) or scene not in stores or pack not in stores
+                or stores[scene].review_schema != SCENE_REVIEW_SCHEMA
+                or stores[pack].review_schema != VIDEO_REVIEW_SCHEMA or scene in frames_for):
+            raise ValueError("A video box pack must reference one unique video scene pack.")
+        scene_for[pack] = scene
+        frames_for[scene] = pack
+        for sample, frame in enumerate(stores[pack].evidence):
+            index, stamp = frame.get("scene_sample"), frame.get("timestamp_s")
+            if type(index) is not int or not 0 <= index < len(stores[scene].evidence):
+                raise ValueError("Invalid video frame scene reference.")
+            bounds = stores[scene].evidence[index]
+            if (frame.get("source_id") != bounds["source_id"] or type(stamp) not in (int, float)
+                    or not bounds["scene_start_s"] <= stamp <= bounds["scene_end_s"]):
+                raise ValueError("Frame does not belong to the referenced scene.")
+            previews.setdefault((scene, index), []).append({"id": sample, "timestamp_s": stamp})
+    managed = set(scene_for) | set(frames_for)
+    limit = config.get("video_review_limit", 8000)
+    if managed and (type(limit) is not int or not 1 <= limit < 10000):
+        raise ValueError("Video review limit must be between 1 and 9999.")
+    if managed:
+        with team.connect() as connection:
+            connection.execute("CREATE TABLE IF NOT EXISTS video_review_budget (id INTEGER PRIMARY KEY CHECK(id=1), used INTEGER NOT NULL)")
+            connection.execute("INSERT OR IGNORE INTO video_review_budget VALUES (1,0)")
     team.register_batches(stores)
     app.extensions["review_team"] = team
     app.extensions["review_stores"] = stores
@@ -268,21 +298,52 @@ def create_app(config_path: Path):
         filename = "icon-192.png" if request.path == "/favicon.ico" else request.path[1:]
         return send_file(assets / filename, mimetype="application/manifest+json" if request.path == "/manifest.webmanifest" else None)
 
+    def eligible_frames(pack):
+        if pack not in scene_for:
+            return None
+        scenes = stores[scene_for[pack]].items()
+        ready = set()
+        for sample, frame in enumerate(stores[pack].evidence):
+            verdict = scenes[frame["scene_sample"]]["review"]
+            if (verdict.get("domain") == "target_cctv"
+                    and verdict["start_s"] <= frame["timestamp_s"] <= verdict["end_s"]):
+                ready.add(sample)
+        return ready
+
+    def reserve_review(connection):
+        return connection.execute("UPDATE video_review_budget SET used=used+1 WHERE id=1 AND used<?",
+                                  (limit,)).rowcount == 1
+
+    def claim_snapshot(connection, pack, store):
+        result = store.items()
+        team.expire_pending(connection, pack, result)
+        owners = {row["sample"]: row["user"] for row in connection.execute(
+            "SELECT sample,user FROM assignments WHERE pack=?", (pack,))}
+        eligible = eligible_frames(pack)
+        owned = next((item for item in result if not item["version"] and owners.get(item["id"]) == g.user["id"]), None)
+        ready = next((item for item in result if not item["version"] and item["id"] not in owners
+                      and (eligible is None or item["id"] in eligible)), None)
+        waiting = sum(not item["version"] and item["id"] in owners for item in result)
+        return owned, ready, waiting
+
     @app.get("/api/catalog")
     def get_catalog():
         entries = []
         for entry in catalog:
             store = stores.get(entry["id"])
-            items, _ = assigned_items(entry["id"], store) if store else ([], {})
+            items, owners = assigned_items(entry["id"], store) if store else ([], {})
+            eligible = eligible_frames(entry["id"])
             reviewed = [item for item in items if item["version"]]
             entries.append({key: value for key, value in entry.items() if key not in {"review_dir", "review_batches"}} | {
                 "available": bool(store), "total": len(items), "reviewed": len(reviewed),
-                "remaining": len(items) - len(reviewed),
+                "remaining": sum(not item["version"] and (eligible is None or item["id"] in eligible or item["id"] in owners)
+                                 for item in items),
                 "held": sum(review_verdict(item["review"], item["knife_count"]) != "ok" for item in reviewed),
                 "mine": sum(item["review"].get("reviewer") == g.user["name"] for item in reviewed),
                 "batch_count": len(store.parts) if isinstance(store, BatchReviewStore) else int(bool(store))})
         # Python's stable sort preserves catalog order when remaining counts tie.
-        entries.sort(key=lambda item: (not item["available"], -item["remaining"]))
+        entries.sort(key=lambda item: (not item["available"],
+                                        not (item["id"] in scene_for and item["remaining"]), -item["remaining"]))
         return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])}, csrf=csrf(), name_login=name_login)
 
     def current_store():
@@ -303,14 +364,23 @@ def create_app(config_path: Path):
     def items():
         pack, store = current_store()
         result, owners = assigned_items(pack, store)
+        eligible = eligible_frames(pack)
         for item in result:
             item["image_url"] = f"/api/packs/{pack}/images/{item['id']}"
             item["editable"] = bool(not g.user["admin"] and owners.get(item["id"]) == g.user["id"])
             item["assigned_elsewhere"] = item["id"] in owners and owners[item["id"]] != g.user["id"]
             item["coordinate_status"] = store.evidence[item["id"]].get("coordinate_status", "unconfirmed")
+            if eligible is not None:
+                item["eligible"] = item["id"] in eligible
+                evidence = store.evidence[item["id"]]
+                item["source_id"] = evidence["source_id"]
+                item["timestamp_s"] = evidence["timestamp_s"]
+            if pack in frames_for:
+                item["previews"] = previews.get((pack, item["id"]), [])
+                item["source_id"] = store.evidence[item["id"]]["source_id"]
         return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema=store.review_schema, team=True,
                        reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False,
-                       assignment_timeout_seconds=ASSIGNMENT_TIMEOUT_SECONDS)
+                       assignment_timeout_seconds=ASSIGNMENT_TIMEOUT_SECONDS, linked_review=pack in managed)
 
     @app.post("/api/claim")
     def claim():
@@ -325,22 +395,52 @@ def create_app(config_path: Path):
             raise ValueError("Invalid client sample count")
         with team.connect() as connection:
             connection.execute("BEGIN IMMEDIATE")
-            result = store.items()
-            team.expire_pending(connection, pack, result)
-            owners = {row["sample"]: row["user"] for row in connection.execute("SELECT sample,user FROM assignments WHERE pack=?", (pack,))}
-            candidate = next((item for item in result if not item["version"] and owners.get(item["id"]) == g.user["id"]), None)
+            owned, ready, waiting = claim_snapshot(connection, pack, store)
+            candidate = owned or ready
+            other = frames_for.get(pack) if owned is None else None
             if candidate is None:
-                candidate = next((item for item in result if not item["version"] and item["id"] not in owners), None)
+                other = other or scene_for.get(pack)
+            if other:
+                other_owned, other_ready, _ = claim_snapshot(connection, other, stores[other])
+                if other_owned or other_ready:
+                    return jsonify(id=None, next_review_url=f"/review/{other}")
             if candidate is None:
-                return jsonify(id=None, pending_assigned=sum(not item["version"] for item in result))
+                return jsonify(id=None, pending_assigned=waiting)
             # Old open tabs know only the original IDs. Do not assign an ID
             # their cached item array cannot display; old saves remain valid.
             client_count = known_total if known_total is not None else len(store.parts[0][2].rows) if isinstance(store, BatchReviewStore) else len(store.rows)
             if candidate["id"] >= client_count:
                 return jsonify(id=None, refresh_required=True)
+            if not owned and pack in managed and not reserve_review(connection):
+                return jsonify(id=None, budget_exhausted=True)
             connection.execute("INSERT OR IGNORE INTO assignments VALUES (?,?,?)", (pack, candidate["id"], g.user["id"]))
             team.touch_assignment(connection, pack, candidate["id"], g.user["id"])
+            if pack in scene_for:
+                return jsonify(id=candidate["id"], eligible=candidate["id"] in eligible_frames(pack))
         return jsonify(id=candidate["id"])
+
+    @app.post("/api/scene-preview")
+    def scene_preview():
+        pack, store = current_store()
+        body = request.get_json()
+        if g.user["admin"] or pack not in frames_for:
+            abort(403)
+        if not isinstance(body, dict) or type(body.get("scene")) is not int or type(body.get("frame")) is not int:
+            raise ValueError("Unknown preview.")
+        sample, frame = body["scene"], body["frame"]
+        preview = next((row for row in previews.get((pack, sample), []) if row["id"] == frame), None)
+        if preview is None:
+            abort(404)
+        with team.connect() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            team.expire_pending(connection, pack, store.items())
+            owner = connection.execute("SELECT user FROM assignments WHERE pack=? AND sample=?", (pack, sample)).fetchone()
+            if not owner or owner["user"] != g.user["id"]:
+                abort(403)
+            if not reserve_review(connection):
+                return jsonify(error="영상 검수 한도에 도달했습니다."), 409
+            team.touch_assignment(connection, pack, sample, g.user["id"])
+        return jsonify(**preview, image_url=f"/api/packs/{frames_for[pack]}/images/{frame}")
 
     @app.post("/api/heartbeat")
     def heartbeat():
@@ -379,6 +479,8 @@ def create_app(config_path: Path):
             owner = connection.execute("SELECT user FROM assignments WHERE pack=? AND sample=?", (pack, sample)).fetchone()
             if not owner or owner["user"] != g.user["id"]:
                 return jsonify(assignment_lost=True, error="배정이 만료되거나 회수됐습니다. 입력은 임시 보관되며 다음 미검수를 받을 수 있습니다."), 403 if owner else 409
+            if pack in managed and type(body.get("version")) is int and body["version"] > 0 and not reserve_review(connection):
+                return jsonify(error="영상 재검수 한도에 도달했습니다."), 409
             result = store.save(sample, body.get("version"), fields)
             team.touch_assignment(connection, pack, sample, g.user["id"])
         return jsonify(result)

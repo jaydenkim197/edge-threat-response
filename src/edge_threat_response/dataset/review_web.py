@@ -17,6 +17,8 @@ from urllib.parse import urlsplit
 
 
 VIDEO_REVIEW_SCHEMA = "video-box-v1"
+SCENE_REVIEW_SCHEMA = "video-scene-v1"
+PRIVATE_REVIEW_SCHEMAS = (VIDEO_REVIEW_SCHEMA, SCENE_REVIEW_SCHEMA)
 
 OPTIONS = {
     "domain": ["target_cctv", "non_target", "useful_real", "closeup_product", "kitchen", "web_misc", "unclear"],
@@ -32,6 +34,29 @@ OPTIONS = {
 }
 EDITABLE = {*OPTIONS, "reviewer", "notes"}
 VIDEO_FIELDS = {"domain", "knife_presence", "reviewed_boxes", "notes", "reviewer", "review_schema"}
+SCENE_FIELDS = {"domain", "start_s", "end_s", "notes", "reviewer", "review_schema"}
+
+
+def _scene_review_fields(fields: dict, evidence: dict) -> dict:
+    if set(fields) - SCENE_FIELDS or fields.get("review_schema", SCENE_REVIEW_SCHEMA) != SCENE_REVIEW_SCHEMA:
+        raise ValueError("지원하지 않는 구간 검수 필드입니다.")
+    domain, reviewer, notes = fields.get("domain"), fields.get("reviewer"), fields.get("notes", "")
+    if domain not in ("target_cctv", "non_target", "unclear"):
+        raise ValueError("장면 유형을 선택해주세요.")
+    if not isinstance(reviewer, str) or not reviewer.strip() or len(reviewer) > 120:
+        raise ValueError("검수자 이름이 필요합니다.")
+    if not isinstance(notes, str) or len(notes) > 2000:
+        raise ValueError("메모는 2000자까지 입력할 수 있습니다.")
+    start, end = fields.get("start_s"), fields.get("end_s")
+    if domain == "target_cctv":
+        if (type(start) not in (int, float) or type(end) not in (int, float)
+                or not evidence["scene_start_s"] <= start <= end <= evidence["scene_end_s"]):
+            raise ValueError("시작·끝 시각은 표시된 구간 안에서 선택해주세요.")
+    else:
+        start, end = None, None
+    return {"review_schema": SCENE_REVIEW_SCHEMA, "domain": domain, "start_s": start, "end_s": end,
+            "reviewer": reviewer, "notes": notes,
+            "annotation_verdict": {"target_cctv": "ok", "non_target": "problem", "unclear": "unclear"}[domain]}
 
 
 def _check_boxes(boxes: object, width: int, height: int) -> None:
@@ -94,7 +119,7 @@ class ConflictError(ValueError):
 
 class ReviewStore:
     def __init__(self, review_dir: Path, *, database: Path | None = None, review_schema: str = "simple-v2"):
-        if review_schema not in ("simple-v2", VIDEO_REVIEW_SCHEMA):
+        if review_schema not in ("simple-v2", *PRIVATE_REVIEW_SCHEMAS):
             raise ValueError("Unsupported review schema.")
         self.review_schema = review_schema
         self.root = review_dir.resolve()
@@ -123,6 +148,13 @@ class ReviewStore:
                 _check_boxes(boxes, item["width"], item["height"])
                 if type(count) is not int or count != len(boxes):
                     raise ValueError("Video proposal count mismatch.")
+            if self.review_schema == SCENE_REVIEW_SCHEMA:
+                start, end = item.get("scene_start_s"), item.get("scene_end_s")
+                if (not isinstance(item.get("source_id"), str) or not item["source_id"]
+                        or type(start) not in (float, int) or type(end) not in (float, int)
+                        or not 0 <= start <= end < float("inf")
+                        or item["knife_count"] or item["knife_boxes_xyxy_raw"]):
+                    raise ValueError("Invalid scene review evidence.")
             self.images.append(image)
         self.database = database or self.root / "human-review.sqlite3"
         if self.database.resolve() in {self.root / "review.csv", self.root / "image-evidence.jsonl", *self.images}:
@@ -139,7 +171,7 @@ class ReviewStore:
             existing_schema = connection.execute("SELECT value FROM metadata WHERE key='review_schema'").fetchone()
             if existing_schema and existing_schema[0] != self.review_schema:
                 raise ValueError("Database belongs to another review schema.")
-            if self.review_schema == VIDEO_REVIEW_SCHEMA and not existing_schema:
+            if self.review_schema in PRIVATE_REVIEW_SCHEMAS and not existing_schema:
                 if connection.execute("SELECT 1 FROM reviews LIMIT 1").fetchone():
                     raise ValueError("Video reviews require a separate database.")
                 connection.execute("INSERT INTO metadata VALUES ('review_schema', ?)", (self.review_schema,))
@@ -165,6 +197,8 @@ class ReviewStore:
                           "boxes": evidence["knife_boxes_xyxy_raw"], "version": version,
                           "review": review, "image_url": f"/api/images/{index}",
                           "coordinate_status": "unconfirmed"})
+            if self.review_schema == SCENE_REVIEW_SCHEMA:
+                items[-1].update(start_s=evidence["scene_start_s"], end_s=evidence["scene_end_s"])
         return items
 
     def save(self, sample: int, version: int, fields: dict):
@@ -174,6 +208,8 @@ class ReviewStore:
             raise ValueError("Invalid review request.")
         if self.review_schema == VIDEO_REVIEW_SCHEMA:
             values = _video_review_fields(fields, self.evidence[sample])
+        elif self.review_schema == SCENE_REVIEW_SCHEMA:
+            values = _scene_review_fields(fields, self.evidence[sample])
         else:
             values = self._simple_review_fields(sample, fields)
         values["reviewer"] = values["reviewer"].strip()
@@ -228,7 +264,8 @@ class ReviewStore:
     def export_csv(self):
         stream = io.StringIO(newline="")
         columns = list(self.rows[0])
-        export_fields = EDITABLE | VIDEO_FIELDS if self.review_schema == VIDEO_REVIEW_SCHEMA else EDITABLE
+        schema_fields = {VIDEO_REVIEW_SCHEMA: VIDEO_FIELDS, SCENE_REVIEW_SCHEMA: SCENE_FIELDS}
+        export_fields = EDITABLE | schema_fields.get(self.review_schema, set())
         for key in sorted(export_fields) + ["reviewed_at", "review_version"]:
             if key not in columns:
                 columns.append(key)
@@ -287,7 +324,7 @@ class BatchReviewStore:
 
 
 def make_handler(store: ReviewStore, token: str):
-    if store.review_schema == VIDEO_REVIEW_SCHEMA:
+    if store.review_schema in PRIVATE_REVIEW_SCHEMAS:
         raise ValueError("Video reviews require the authenticated team server.")
     assets = Path(__file__).parent / "web_review"
 
