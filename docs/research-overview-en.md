@@ -78,7 +78,7 @@ For newly provided restricted data, our commitments are:
 5. **Evaluation separation:** protect held-out sources and recording groups. A set used for model selection will not subsequently be presented as an unseen final test.
 6. **Retention and consent:** record retention/deletion and access requirements before import. Follow those terms for storage and backups. Planned local recordings use staged scenarios and props; participant consent and recording/retention conditions are checked before collection.
 
-These commitments do not imply that a restricted-data service is already deployed. The **existing review service is publicly reachable and uses self-selected names**; it is not access control for restricted material. A provider-approved private access arrangement is required before such material can enter a review service.
+The existing review service is publicly reachable and opens video review without a sign-in prompt. A provider-approved private access arrangement is required before any newly provided restricted material enters a review service.
 
 A separate **legacy submodule contains historical images and checkpoints**, with source-level permission checks separate from this request. Public availability is not treated as permission to reuse or redistribute data. See the [legacy asset record](legacy-asset-selection.md); this overview does not certify its dataset licensing.
 

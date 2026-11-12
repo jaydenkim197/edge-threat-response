@@ -350,6 +350,23 @@ class TeamReviewTests(unittest.TestCase):
         self.assertEqual(200, self.post(other, open_link(other), "/api/video/open", {"token": link_token}).status_code)
         self.assertNotEqual(user_id, other.get("/api/catalog", base_url=self.url).json["user"]["id"])
 
+        config["reviewer_login"] = "video_public"
+        del config["video_link_file"]
+        self.config.write_text(json.dumps(config))
+        self.app = create_app(self.config)
+        browser.application = self.app
+        self.assertEqual("/?resume=1&video=1", browser.get("/", base_url=self.url).location)
+        self.assertEqual(user_id, browser.get("/api/catalog", base_url=self.url).json["user"]["id"])
+        self.assertEqual(200, browser.get("/?catalog=1", base_url=self.url).status_code)
+        fresh = self.app.test_client()
+        self.assertEqual("/video/open", fresh.get("/", base_url=self.url).location)
+        self.assertIn('data-public="1"', fresh.get("/video/open", base_url=self.url).text)
+        headers = open_link(fresh)
+        self.assertEqual(403, self.post(fresh, headers | {"Origin": "https://wrong.example"}, "/api/video/open", {}).status_code)
+        self.assertEqual(200, self.post(fresh, headers, "/api/video/open", {}).status_code)
+        self.assertTrue(fresh.get("/api/items?dataset=video", base_url=self.url).json["video_only"])
+        self.assertEqual(404, fresh.get("/api/items?dataset=fixture", base_url=self.url).status_code)
+
     def test_scene_approval_releases_only_selected_frames_and_preserves_leases(self):
         from edge_threat_response.dataset.team_review import create_app
 

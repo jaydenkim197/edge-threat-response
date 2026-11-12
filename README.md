@@ -147,7 +147,7 @@ etr-dataset sohas-voc-audit --source-root data/source-audit/sohas-upstream --out
 
 ### 팀 영상 검수
 
-팀에서 전달한 공유 링크를 열면 이름이나 개인 코드 입력 없이 영상 검수가 시작된다. CCTV 구간을 먼저 판정하고, 승인된 구간의 프레임에서 칼 유무와 바운딩 박스를 확인한다. 기존 이미지 검수 기록은 PC13에 보관한다. 접속 방식과 검수 순서는 [팀 검수 운영](docs/team-review-deployment.md)을 참고한다.
+[PC13 영상 검수 사이트](https://pc13.tail37c267.ts.net/)를 열면 이름이나 개인 코드 입력 없이 영상 검수가 시작된다. CCTV 구간을 먼저 판정하고, 승인된 구간의 프레임에서 칼 유무와 바운딩 박스를 확인한다. 기존 이미지 검수 기록은 PC13에 보관한다. 접속 방식과 검수 순서는 [팀 검수 운영](docs/team-review-deployment.md)을 참고한다.
 
 ### 기존 SOHAS 이미지 로컬 검수
 

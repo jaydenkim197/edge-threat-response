@@ -5,7 +5,8 @@ function node(tag,text){const element=document.createElement(tag);element.textCo
 async function api(path,body){const response=await fetch(path,body===undefined?{}:{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":portalCsrf},body:JSON.stringify(body)});if(response.status===401){location.href="/login";throw new Error("로그인이 필요합니다.");}const result=await response.json();if(!response.ok)throw new Error(result.error||"요청 실패");return result;}
 async function refreshUsers(){const data=await api("/api/users");el("users").replaceChildren();for(const user of data.users){const row=node("p",`${user.name} · ${user.active?"활성":"비활성"}`);if(!user.admin&&user.active){const button=node("button","접속 해제");button.className="small-button";button.onclick=async()=>{await api(`/api/users/${user.id}/disable`,{});await refreshUsers();};row.append(" ",button);}el("users").append(row);}}
 async function initPortal(){
-  const data=await api("/api/catalog");portalCsrf=data.csrf;el("identity").textContent=data.user.name;
+  const data=await api("/api/catalog");portalCsrf=data.csrf;
+  el("identity").textContent=data.video_only && !data.user.admin?"":data.user.name;
   el("datasets").replaceChildren();el("resume-review").hidden=true;
   if(data.video_login_required){
     const link=node("a","영상 검수 열기 →");link.className="button dark";link.href="/video/login";
@@ -31,12 +32,16 @@ async function initPortal(){
     if(item.source_url){const provenance=node("a","출처·이용 조건 ↗");provenance.href=item.source_url;provenance.target="_blank";provenance.rel="noopener";info.append(provenance);}card.append(info);
     el("datasets").append(card);
   }
-  el("logout").textContent=data.name_login && !data.user.admin?"이름 바꾸기":"로그아웃";
-  el("logout").onclick=async()=>{try{await api("/api/logout",{});location.href="/login";}catch(error){el("portal-status").textContent=error.message;}};
+  const logout=el("logout");
+  if(data.video_public && !data.user.admin)logout?.remove();
+  else if(logout){
+    logout.textContent=data.name_login && !data.user.admin?"이름 바꾸기":"로그아웃";
+    logout.onclick=async()=>{try{await api("/api/logout",{});location.href="/login";}catch(error){el("portal-status").textContent=error.message;}};
+  }
   if(data.user.admin){
     el("admin-panel").hidden=false;await refreshUsers();
-    if(data.video_link_login){
-      el("invite-help").textContent="공유 링크를 열면 브라우저별 검수 세션이 생성됩니다.";
+    if(data.video_only){
+      el("invite-help").textContent="영상 검수에 들어가면 브라우저별 검수 세션이 생성됩니다.";
       el("invite-form").hidden=true;
       return;
     }

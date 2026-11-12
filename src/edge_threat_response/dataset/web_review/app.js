@@ -457,6 +457,7 @@ async function init() {
   buildFields();
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
+  $("reviewer-field").hidden=Boolean(data.video_only);
   leaseEnabled=Boolean(data.assignment_timeout_seconds);
   if(leaseEnabled){
     for(const event of ["pointerdown","keydown","input","scroll"])document.addEventListener(event,()=>{leaseActivity=true;},{passive:true,capture:true});
@@ -466,7 +467,18 @@ async function init() {
   if(team){
     document.body.classList.add("team-review");
     if(!teamAdmin && data.reviewer_id)localStorage.setItem(`etr-last-pack:${data.reviewer_id}`,teamDataset);
-    document.title=`${teamDataset} · 팀 이미지 검수`;$("reviewer").readOnly=true;document.querySelector(".reviewer-label").textContent="검수자 · 선택한 이름";document.querySelector(".brand strong").textContent=`${signedReviewer} · 검수`;document.querySelector(".local-badge").textContent="PC13 중앙 저장";const back=document.querySelector(".top-actions a");back.href="/";back.textContent="후보 목록 ↗";document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";document.querySelector(".image-note").textContent="초록 박스 = 원본의 칼 라벨 · 위치와 누락을 확인해주세요";$("next").textContent="다음 미검수 받기 →";
+    document.title=`${teamDataset} · 팀 이미지 검수`;
+    $("reviewer").readOnly=true;
+    document.querySelector(".reviewer-label").textContent="검수자 · 선택한 이름";
+    document.querySelector(".brand strong").textContent=data.video_only?"영상 검수":`${signedReviewer} · 검수`;
+    document.querySelector(".local-badge").textContent="PC13 중앙 저장";
+    const back=document.querySelector(".top-actions a");
+    back.href=data.video_only?"/?catalog=1":"/";
+    back.textContent="후보 목록 ↗";
+    document.querySelector(".brand div span").textContent=`EDGE THREAT RESPONSE / ${teamDataset}`;
+    document.querySelector("footer").textContent="원본은 수정하지 않습니다. 판정·수정 이력은 PC13에 저장됩니다. 학습·권리 승인은 별도입니다.";
+    document.querySelector(".image-note").textContent="초록 박스 = 원본의 칼 라벨 · 위치와 누락을 확인해주세요";
+    $("next").textContent="다음 미검수 받기 →";
   }
   if(videoReview()) {
     setupBoxEditor();
