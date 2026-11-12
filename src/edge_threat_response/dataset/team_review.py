@@ -115,9 +115,11 @@ def create_app(config_path: Path):
     catalog = config["datasets"]
     login_mode = config.get("reviewer_login", "code")
     name_login = login_mode == "name"
-    if any(entry.get("review_schema") in PRIVATE_REVIEW_SCHEMAS or "scene_pack" in entry for entry in catalog):
-        if config.get("reviewer_login") != "code":
-            raise ValueError("Video review packs require explicit reviewer code login.")
+    private_packs = {entry["id"] for entry in catalog
+                     if entry.get("review_schema") in PRIVATE_REVIEW_SCHEMAS or "scene_pack" in entry}
+    video_unlock = bool(private_packs and name_login and config.get("private_video_login") is True)
+    if private_packs and config.get("reviewer_login") != "code" and not video_unlock:
+        raise ValueError("Video review packs require explicit reviewer code login.")
     origin = config["public_url"].rstrip("/")
     parsed = urlsplit(origin)
     local = parsed.scheme == "http" and parsed.hostname in {"localhost", "127.0.0.1"}
@@ -192,6 +194,12 @@ def create_app(config_path: Path):
             session["csrf"] = secrets.token_urlsafe(32)
         return session["csrf"]
 
+    def can_review_video():
+        if not video_unlock or g.user["admin"]:
+            return True
+        return (session.get("video_user") == g.user["id"]
+                and 0 <= time.time() - session.get("video_login_at", 0) < 8 * 3600)
+
     @app.before_request
     def guard():
         if request.host != parsed.netloc:
@@ -211,6 +219,11 @@ def create_app(config_path: Path):
             g.user = None
         if not g.user:
             return (jsonify(error="로그인이 필요합니다."), 401) if request.path.startswith("/api/") else redirect("/login")
+        pack = (request.view_args or {}).get("pack") or request.args.get("dataset")
+        if pack in private_packs and not can_review_video():
+            if request.path.startswith("/api/"):
+                return jsonify(error="영상 검수 코드가 필요합니다.", video_login_required=True), 403
+            return redirect("/video/login")
 
     @app.after_request
     def security(response):
@@ -231,6 +244,16 @@ def create_app(config_path: Path):
     def invalid(error):
         return jsonify(error=str(error)), 400
 
+    def login_slot():
+        with rate_lock:
+            now = time.monotonic()
+            while attempts and attempts[0] < now - 60:
+                attempts.popleft()
+            if len(attempts) >= 12:
+                return False
+            attempts.append(now)
+            return True
+
     @app.route("/login", methods=["GET", "POST"])
     @app.route("/admin/login", methods=["GET", "POST"])
     def login():
@@ -243,13 +266,8 @@ def create_app(config_path: Path):
                                    admin_login=admin_login, reviewers=reviewers), status
         error = ""
         if request.method == "POST":
-            with rate_lock:
-                now = time.monotonic()
-                while attempts and attempts[0] < now - 60:
-                    attempts.popleft()
-                if len(attempts) >= 12:
-                    return page("시도가 많습니다. 잠시 후 다시 시도해주세요.", 429)
-                attempts.append(now)
+            if not login_slot():
+                return page("시도가 많습니다. 잠시 후 다시 시도해주세요.", 429)
             if use_names:
                 user = team.user(request.form.get("reviewer", ""))
                 if user and user["admin"]:
@@ -268,6 +286,28 @@ def create_app(config_path: Path):
                 return redirect("/?resume=1" if use_names else "/")
             error = "본인 이름을 선택해주세요." if use_names else "관리자 코드가 올바르지 않거나 비활성 계정입니다."
         return page(error)
+
+    @app.route("/video/login", methods=["GET", "POST"])
+    def video_login():
+        from werkzeug.security import check_password_hash
+
+        if not video_unlock:
+            abort(404)
+        if can_review_video():
+            return redirect("/?video=1")
+        error, status = "", 200
+        if request.method == "POST":
+            code = request.form.get("code", "")
+            if not login_slot():
+                error, status = "시도가 많습니다. 잠시 후 다시 시도해주세요.", 429
+            elif 20 <= len(code) <= 120 and check_password_hash(g.user["code_hash"], code):
+                session["video_user"] = g.user["id"]
+                session["video_login_at"] = time.time()
+                return redirect("/?video=1")
+            else:
+                error = "선택한 이름의 영상 검수 코드를 확인해주세요."
+        return render_template("login.html", csrf=csrf(), error=error, use_names=False,
+                               admin_login=False, video_login=True, reviewer_name=g.user["name"]), status
 
     @app.post("/api/logout")
     def logout():
@@ -330,6 +370,8 @@ def create_app(config_path: Path):
     def get_catalog():
         entries = []
         for entry in catalog:
+            if entry["id"] in private_packs and not can_review_video():
+                continue
             store = stores.get(entry["id"])
             items, owners = assigned_items(entry["id"], store) if store else ([], {})
             eligible = eligible_frames(entry["id"])
@@ -344,7 +386,9 @@ def create_app(config_path: Path):
         # Python's stable sort preserves catalog order when remaining counts tie.
         entries.sort(key=lambda item: (not item["available"],
                                         not (item["id"] in scene_for and item["remaining"]), -item["remaining"]))
-        return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])}, csrf=csrf(), name_login=name_login)
+        return jsonify(datasets=entries, user={"id": g.user["id"], "name": g.user["name"], "admin": bool(g.user["admin"])},
+                       csrf=csrf(), name_login=name_login, video_login_required=video_unlock and not can_review_video(),
+                       video_review_enabled=bool(private_packs))
 
     def current_store():
         pack = request.args.get("dataset", "")
@@ -405,6 +449,13 @@ def create_app(config_path: Path):
                 if other_owned or other_ready:
                     return jsonify(id=None, next_review_url=f"/review/{other}")
             if candidate is None:
+                if pack in managed:
+                    for next_pack in [*scene_for, *frames_for]:
+                        if next_pack in {pack, other}:
+                            continue
+                        next_owned, next_ready, _ = claim_snapshot(connection, next_pack, stores[next_pack])
+                        if next_owned or next_ready:
+                            return jsonify(id=None, next_review_url=f"/review/{next_pack}")
                 return jsonify(id=None, pending_assigned=waiting)
             # Old open tabs know only the original IDs. Do not assign an ID
             # their cached item array cannot display; old saves remain valid.

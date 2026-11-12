@@ -267,6 +267,30 @@ class TeamReviewTests(unittest.TestCase):
                 "SELECT payload FROM history WHERE sample=0 ORDER BY sequence")]
         self.assertEqual(["yes", "no", None, None], [item["knife_presence"] for item in history])
 
+        config.update(reviewer_login="name", private_video_login=True)
+        self.config.write_text(json.dumps(config))
+        self.app = create_app(self.config)
+        self.app.testing = True
+        named, name_headers = self.select_name(self.a)
+        catalog = named.get("/api/catalog", base_url=self.url).json
+        self.assertTrue(catalog["video_login_required"])
+        self.assertNotIn("video", {item["id"] for item in catalog["datasets"]})
+        self.assertEqual(200, named.get("/api/items?dataset=fixture", base_url=self.url).status_code)
+        self.assertEqual("/video/login", named.get("/review/video", base_url=self.url).location)
+        self.assertEqual(403, named.get(endpoint, base_url=self.url).status_code)
+        self.assertEqual(403, named.get("/api/packs/video/images/0", base_url=self.url).status_code)
+        self.assertEqual(403, self.post(named, name_headers, claim, {}).status_code)
+        self.assertEqual(403, self.post(named, name_headers, save_path, payload).status_code)
+        for user, status in ((self.b, 200), (self.a, 302)):
+            result = named.post("/video/login", base_url=self.url, headers={"Origin": self.url},
+                                data={"csrf": catalog["csrf"], "code": user["code"]})
+            self.assertEqual(status, result.status_code)
+        self.assertEqual(200, named.get(endpoint, base_url=self.url).status_code)
+        self.assertEqual(200, named.get("/api/packs/video/images/0", base_url=self.url).status_code)
+        self.assertFalse(named.get("/api/catalog", base_url=self.url).json["video_login_required"])
+        self.assertEqual(200, self.post(named, name_headers, "/api/logout", {}).status_code)
+        self.assertEqual(401, named.get("/api/packs/video/images/0", base_url=self.url).status_code)
+
     def test_scene_approval_releases_only_selected_frames_and_preserves_leases(self):
         from edge_threat_response.dataset.team_review import create_app
 
