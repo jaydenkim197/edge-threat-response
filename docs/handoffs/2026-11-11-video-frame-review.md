@@ -60,3 +60,5 @@ PC13의 `D:/edge-threat-response-data/video-intake/scene-screening/scene-review-
 ### 2026-11-12 기존 공개 주소로 영상 검수
 
 별도 공유 링크 방식은 `SUPERSEDED`다. 담당자의 요청에 따라 `reviewer_login: "video_public"`에서 기존 주소를 열면 새 브라우저도 첫 영상 검수로 이동한다. 화면에서 검수자 표시 칸을 제거했다. 서버가 부여하는 브라우저별 세션은 배정과 이어하기, 판정 이력에 사용한다. 기존 공유 링크로 검수했던 브라우저의 세션도 유지된다.
+
+운영 배포 `VERIFIED` (코드 `bff319c`). PC13의 `data/review/team-server/backups/before-video-public-20261112`에 설정과 DB를 백업했다. 운영 HTTPS에서 기존 URL의 최초 접속, 32개 영상 팩, 첫 이미지 해시, 검수자 칸 숨김과 기존 이미지 경로 차단을 확인했다. DB 테이블 해시는 배포 전후 일치했다. 검수 테스트 46개와 390px Chromium에서 최초 배정·저장·이어하기·목록 이동을 검증했다.
