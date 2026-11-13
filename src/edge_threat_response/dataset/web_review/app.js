@@ -16,15 +16,20 @@ let leaseEnabled=false, leaseActivity=false, heartbeatBusy=false;
 const svgNS = "http://www.w3.org/2000/svg";
 let boxMode = "browse", selectedBox = -1, boxDrag = null;
 let sceneStep = "main", sceneStart = null, reviewAdvancing = false, sceneSubmitted = false;
+let sceneMediaAvailable = false, frameEdit = false, frameBeforeEdit = null;
 
 function videoReview() { return reviewSchema === "video-box-v1"; }
 function sceneReview() { return reviewSchema === "video-scene-v1"; }
 function explicitReview() { return videoReview() || sceneReview(); }
-function canEditBoxes() { return videoReview() && values.domain === "target_cctv" && (!team || Boolean(items[current]?.editable)); }
+function quickFrame() { return videoReview() && team && linkedReview; }
+function canEditBoxes() {
+  return videoReview() && (!quickFrame() || frameEdit) && values.domain === "target_cctv"
+    && (!team || Boolean(items[current]?.editable));
+}
 
 function paintBoxControls() {
   const editable = canEditBoxes();
-  $("box-toolbar").hidden = values.domain !== "target_cctv";
+  $("box-toolbar").hidden = values.domain !== "target_cctv" || (quickFrame() && !frameEdit);
   $("box-add").disabled = $("box-edit").disabled = !editable;
   $("box-remove").disabled = !editable || selectedBox < 0;
   $("box-add").setAttribute("aria-pressed", String(boxMode === "draw"));
@@ -197,7 +202,7 @@ let rememberReviewer = localStorage.getItem("etr-reviewer") || "";
 function status(text, kind="") { $("save-status").textContent = text; $("save-status").className = kind; }
 function draftKey() { return `etr-draft:${pack}:${team ? `${signedReviewer}:` : ""}${current}`; }
 function buildFields() {
-  const specs = sceneReview() ? [] : videoReview() ? [videoDomainSpec, videoPresenceSpec] : simpleSpecs;
+  const specs = sceneReview() || quickFrame() ? [] : videoReview() ? [videoDomainSpec, videoPresenceSpec] : simpleSpecs;
   for (const [key,title,hint,choices] of specs) {
     const field = document.createElement("section"); field.className = "field"; field.id = `field-${key}`;
     const heading = document.createElement("div"); heading.className = "field-title";
@@ -228,14 +233,14 @@ function buildFields() {
   }
 }
 function paintChoices() {
-  if(videoReview()) {
+  if(videoReview() && !quickFrame()) {
     $("field-knife_presence").hidden = values.domain !== "target_cctv";
     $("verdict-guide").textContent = values.domain === "target_cctv" ?
       "칼이 보이면 모든 칼에 박스를 표시하세요. 칼 유무가 애매하면 모르겠음을 선택하세요." :
       "제외와 판단 보류는 장면 판정만 저장합니다.";
   }
   const choosingReason=team && videoReview() && sceneStep==="reason";
-  const showNotes=!sceneReview() && !choosingReason &&
+  const showNotes=!sceneReview() && !quickFrame() && !choosingReason &&
     (videoReview() || values.annotation_verdict==="problem" || Boolean((values.notes||"").trim()));
   $("notes").hidden=!showNotes;document.querySelector(".notes-label").hidden=!showNotes;
   document.querySelectorAll(".choices button").forEach(button => {
@@ -285,6 +290,9 @@ function show(index) {
     delete values.annotation_verdict;
     delete values.scene_type;
     sceneStep="main";
+    sceneSubmitted=false;
+    frameEdit=quickFrame() && restoredDraft && values.knife_presence==="yes";
+    frameBeforeEdit=null;
     selectedBox=-1; boxDrag=null; boxMode="browse";
   }
   if(sceneReview()) {
@@ -338,6 +346,8 @@ function show(index) {
   if(sceneReview()) {
     status(restoredDraft ? "저장하지 못한 판정이 있습니다. 다시 저장을 눌러주세요." :
       item.version ? "직전 판정을 수정할 수 있습니다." : "");
+  } else if(quickFrame()) {
+    status(restoredDraft ? "임시 입력을 불러왔습니다." : item.version ? "직전 판정을 수정할 수 있습니다." : "");
   } else if(videoReview()) {
     status(restoredDraft ? "임시 입력을 불러왔습니다." : item.version ? `저장됨 · 수정 ${item.version}회` : "판정 후 저장하고 다음을 누르세요.", item.version && !restoredDraft ? "saved" : "");
   } else {
@@ -434,17 +444,34 @@ function quick(kind) {
 function showScenePreview(item) {
   const video=$("scene-video");
   const showClip=Boolean(item.preview_url && (item.editable || teamAdmin));
-  video.hidden=!showClip;
-  $("image-svg").hidden=showClip;
-  $("scene-preview-caption").textContent=showClip
-    ? (item.preview_is_summary?"요약 미리보기 · 구간의 주요 시점":"구간 미리보기")
-    : "대표 화면";
+  sceneMediaAvailable=showClip;
+  $("scene-media-switch").hidden=!showClip;
   if(showClip) {
     video.poster=item.image_url;
     if(video.getAttribute("src")!==item.preview_url)video.src=item.preview_url;
   } else if(video.hasAttribute("src")) {
     video.removeAttribute("src");
     video.load();
+  }
+  selectSceneMedia(showClip);
+}
+function selectSceneMedia(clip) {
+  const video=$("scene-video");
+  const showClip=clip && sceneMediaAvailable;
+  const changed=video.hidden===showClip;
+  video.hidden=!showClip;
+  $("image-svg").hidden=showClip;
+  $("show-scene-video").setAttribute("aria-pressed",String(showClip));
+  $("show-scene-photo").setAttribute("aria-pressed",String(!showClip));
+  $("scene-preview-caption").textContent=showClip
+    ? (items[current].preview_is_summary?"요약 영상":"구간 영상")
+    : "대표 사진";
+  if(showClip)video.play().catch(()=>{});
+  else video.pause();
+  if(changed && !matchMedia("(prefers-reduced-motion: reduce)").matches){
+    const panel=showClip?video:$("image-svg");
+    panel.animate([{transform:`translateX(${showClip?-24:24}px)`,opacity:0.65},
+                   {transform:"translateX(0)",opacity:1}],{duration:160,easing:"ease-out"});
   }
 }
 function paintSceneActions() {
@@ -466,6 +493,20 @@ function paintSceneActions() {
     button.setAttribute("aria-pressed",String(stamp===sceneStart));
   }
   $("scene-partial").hidden=(item?.scene_thumbnails?.length ?? 0)<2;
+  if(quickFrame()){
+    const active=Boolean(item?.editable && !sceneSubmitted);
+    const choosingReason=active && sceneStep==="reason";
+    $("scene-actions").hidden=!choosingReason;
+    $("frame-actions").hidden=!active || frameEdit || choosingReason;
+    $("frame-edit-actions").hidden=!active || !frameEdit || choosingReason;
+    $("frame-confirm-box").hidden=!values.reviewed_boxes?.length;
+    $("frame-edit-box").textContent=values.reviewed_boxes?.length?"박스 수정":"박스 그리기";
+    for(const button of document.querySelectorAll("#frame-actions button, #frame-edit-actions button"))button.disabled=busy;
+    $("save-next").hidden=active || teamAdmin;
+    $("save-next").disabled=busy;
+    $("save-next").textContent="다음 항목 →";
+    return;
+  }
   if(!isScene){
     $("save-next").hidden=editable || teamAdmin;
     return;
@@ -502,6 +543,9 @@ function showPreviousScene() {
   button.hidden=teamAdmin || !previous || previous===`/review/${teamDataset}?edit=${current}`;
   if(!button.hidden)button.href=previous;
 }
+function rememberPreviousReview(item) {
+  sessionStorage.setItem("etr-previous-scene",`/review/${encodeURIComponent(teamDataset)}?edit=${item.id}`);
+}
 async function submitScene(domain, fields={}) {
   const item=items[current];
   if(!item?.editable || saving || reviewAdvancing || sceneSubmitted)return;
@@ -514,7 +558,7 @@ async function submitScene(domain, fields={}) {
   try {
     if(await save(true)) {
       sceneSubmitted=true;
-      sessionStorage.setItem("etr-previous-scene",`/review/${encodeURIComponent(teamDataset)}?edit=${item.id}`);
+      rememberPreviousReview(item);
       await move(1);
     }
   } finally {
@@ -523,9 +567,15 @@ async function submitScene(domain, fields={}) {
     showPreviousScene();
   }
 }
-async function excludeFrame(reason) {
-  if(!items[current]?.editable || saving || reviewAdvancing)return;
-  Object.assign(values,{domain:"non_target",exclude_reason:reason,knife_presence:null,reviewed_boxes:[]});
+async function submitFrame(domain, presence, reason=null) {
+  const item=items[current];
+  if(!item?.editable || saving || reviewAdvancing || sceneSubmitted)return;
+  if(presence==="yes" && !values.reviewed_boxes.length){
+    status("사진에 칼 박스를 그려주세요.","error");
+    return;
+  }
+  Object.assign(values,{domain,exclude_reason:reason,knife_presence:presence});
+  if(presence!=="yes")values.reviewed_boxes=[];
   setBoxMode("browse");
   paintChoices();
   changed();
@@ -533,13 +583,41 @@ async function excludeFrame(reason) {
   paintSceneActions();
   try {
     if(await save(true)){
+      if(quickFrame()){
+        sceneSubmitted=true;
+        rememberPreviousReview(item);
+      }
       selectSceneStep("main");
       await move(1);
     }
   } finally {
     reviewAdvancing=false;
     paintSceneActions();
+    if(quickFrame())showPreviousScene();
   }
+}
+function startFrameEdit() {
+  if(!items[current]?.editable || saving || reviewAdvancing)return;
+  frameBeforeEdit={values:structuredClone(values), dirty};
+  frameEdit=true;
+  values.domain="target_cctv";
+  delete values.exclude_reason;
+  setBoxMode(values.reviewed_boxes.length?"edit":"draw");
+  paintSceneActions();
+  status("사진에서 박스를 그리거나 조절하세요.");
+}
+function cancelFrameEdit() {
+  frameEdit=false;
+  if(frameBeforeEdit){
+    ({values,dirty}=frameBeforeEdit);
+    if(dirty)localStorage.setItem(draftKey(),JSON.stringify({version:items[current].version,fields:values}));
+    else localStorage.removeItem(draftKey());
+  }
+  frameBeforeEdit=null;
+  selectedBox=-1;
+  setBoxMode("browse");
+  paintSceneActions();
+  status("");
 }
 async function init() {
   const response=await fetch(apiUrl("/api/items")); if(!response.ok){if(teamDataset&&response.status===401)location.href="/login";throw new Error("검수 자료를 읽지 못했습니다.");}
@@ -548,9 +626,10 @@ async function init() {
   reviewSchema=data.review_schema;
   linkedReview=Boolean(data.linked_review);
   if(videoReview()) $("filter").querySelector('option[value="negative"]').textContent = "미검출 후보만";
-  buildFields();
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
+  buildFields();
+  if(sceneReview() || quickFrame())document.body.classList.add("video-review-focus");
   $("reviewer-field").hidden=Boolean(data.video_only);
   leaseEnabled=Boolean(data.assignment_timeout_seconds);
   if(leaseEnabled){
@@ -583,17 +662,47 @@ async function init() {
     document.querySelector(".review-panel details p").textContent="칼이 보이면 박스 추가를 누른 뒤 이미지 위를 드래그하세요. 박스 조절을 켜면 박스 안을 드래그해 옮기거나 모서리를 드래그해 크기를 바꿀 수 있습니다.";
     for (const tip of document.querySelectorAll(".review-panel details p:not(:first-of-type)")) tip.hidden=true;
   }
+  if(quickFrame()){
+    document.body.classList.add("quick-frame-review");
+    document.querySelector(".intro h1").textContent="칼이 보이나요?";
+    document.querySelector(".review-title h2").textContent="칼이 보이나요?";
+    $("verdict-guide").hidden=true;
+    $("frame-no-knife").onclick=()=>submitFrame("target_cctv","no");
+    $("frame-confirm-box").onclick=()=>submitFrame("target_cctv","yes");
+    $("frame-edit-box").onclick=startFrameEdit;
+    $("frame-edit-cancel").onclick=cancelFrameEdit;
+    $("frame-edit-save").onclick=()=>submitFrame("target_cctv","yes");
+    $("frame-exclude").onclick=()=>selectSceneStep("reason");
+    $("frame-hold").onclick=()=>submitFrame("target_cctv","unclear");
+  }
   if(sceneReview()) {
     document.body.classList.add("scene-review");
     $("filter").querySelector('option[value="negative"]').hidden=true;
-    $("scene-preview-caption").hidden=false;
+    $("scene-media-bar").hidden=false;
     $("verdict-guide").hidden=true;
     document.querySelector(".intro h1").textContent="CCTV 구간 검수";
     document.querySelector(".review-title h2").textContent="구간 판정";
     $("scene-video").addEventListener("error",()=>{
-      $("scene-video").hidden=true;$("image-svg").hidden=false;
-      $("scene-preview-caption").textContent="재생할 수 없습니다. 썸네일로 확인하거나 보류하세요.";
+      sceneMediaAvailable=false;
+      $("scene-media-switch").hidden=true;
+      selectSceneMedia(false);
+      $("scene-preview-caption").textContent="영상 재생 불가 · 대표 사진";
     });
+    $("show-scene-video").onclick=()=>selectSceneMedia(true);
+    $("show-scene-photo").onclick=()=>selectSceneMedia(false);
+    let touchStart;
+    $("image-view").addEventListener("touchstart",event=>{
+      touchStart=event.touches.length===1?event.touches[0]:null;
+    },{passive:true});
+    $("image-view").addEventListener("touchend",event=>{
+      const start=touchStart;
+      touchStart=null;
+      if(!start || !sceneMediaAvailable || event.touches.length)return;
+      const end=event.changedTouches[0];
+      const dx=end.clientX-start.clientX;
+      if(Math.abs(dx)>=40 && Math.abs(dx)>Math.abs(end.clientY-start.clientY)*1.5)selectSceneMedia(dx>0);
+    },{passive:true});
+    $("image-view").addEventListener("touchcancel",()=>{touchStart=null;});
     $("scene-accept").onclick=()=>submitScene("target_cctv",{start_s:items[current].start_s,end_s:items[current].end_s});
     $("scene-hold").onclick=()=>submitScene("unclear");
     $("scene-exclude").onclick=()=>selectSceneStep("reason");
@@ -603,14 +712,14 @@ async function init() {
     $("scene-cancel").onclick=()=>selectSceneStep("main");
     for(const button of $("scene-reasons").querySelectorAll("button")){
       const reason=button.dataset.sceneReason;
-      button.onclick=()=>sceneReview() ? submitScene("non_target",{exclude_reason:reason}) : excludeFrame(reason);
+      button.onclick=()=>sceneReview() ? submitScene("non_target",{exclude_reason:reason}) : submitFrame("non_target",null,reason);
     }
   }
   $("reviewer").addEventListener("input",()=>{values.reviewer=$("reviewer").value;rememberReviewer=values.reviewer;localStorage.setItem("etr-reviewer",rememberReviewer);changed();});
   $("notes").addEventListener("input",()=>{values.notes=$("notes").value;changed();});
   $("previous").addEventListener("click",()=>move(-1));$("next").addEventListener("click",()=>move(1));
   $("save-next").addEventListener("click",async()=>{
-    if(team && (!items[current].editable || (sceneReview() && sceneSubmitted))){await claimNext();return;}
+    if(team && (!items[current].editable || (explicitReview() && sceneSubmitted))){await claimNext();return;}
     if(sceneReview()){await submitScene();return;}
     if(await save(true))await move(1);
   });
@@ -621,7 +730,7 @@ async function init() {
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(!videoReview() && ["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});
   const first=items.find(item=>!item.version && (item.eligible!==false || item.editable)) || items.find(item=>item.version);
-  if(sceneReview()) {
+  if(sceneReview() || quickFrame()) {
     const correction=new URLSearchParams(location.search).get("edit");
     if(correction!==null) {
       const item=items[Number(correction)];
