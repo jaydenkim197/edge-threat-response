@@ -460,7 +460,7 @@ function selectSceneMedia(clip) {
   const showClip=clip && sceneMediaAvailable;
   const changed=video.hidden===showClip;
   video.hidden=!showClip;
-  $("image-svg").hidden=showClip;
+  $("image-svg").toggleAttribute("hidden",showClip);
   $("show-scene-video").setAttribute("aria-pressed",String(showClip));
   $("show-scene-photo").setAttribute("aria-pressed",String(!showClip));
   $("scene-preview-caption").textContent=showClip
