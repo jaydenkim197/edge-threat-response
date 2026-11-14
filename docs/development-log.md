@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-14 — CCTV 전용 학습 3개 시작 및 후속 3개 대기
+
+PC11 960 S1 증강, PC12 640 CCTV 증강, PC14 640 S1 증강에서 CCTV 1,406장만으로 첫 배치를 실행했다. PC11의 960 CCTV 증강과 PC12·14의 동일 양성 161장·음성 483장 비교는 각 노드 후속 큐에 등록했다. val/test의 기존 이미지와 라벨 해시를 보존했다. [노드·Run ID·설정·확인 결과](../reports/training/cctv-only-parallel-2026-11-14/report.md)
+
 ## 2026-11-14 — 검수 CCTV 프레임으로 S1 후속 학습 시작
 
 PC13에서 승인 구간과 최신 판정을 대조한 1,406장(양성 161·명시적 음성 1,245)을 기존 S1 학습 데이터에 추가했다. 원본 영상 189개 계보와 파일 해시, 이미지 해시 및 보호셋 교차 점검을 통과했다. val/test 각 1,423장 유지. `s1-video-reviewed-20261114-v1`의 첫 GPU 배치 실행을 확인했고 기존 개발 평가 7개셋의 자동 비교를 연결했다. [설정·반영 수·검증 기록](../reports/training/s1-video-reviewed-2026-11-14/report.md)
