@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-14 — 검수 CCTV 프레임으로 S1 후속 학습 시작
+
+PC13에서 승인 구간과 최신 판정을 대조한 1,406장(양성 161·명시적 음성 1,245)을 기존 S1 학습 데이터에 추가했다. 원본 영상 189개 계보와 파일 해시, 이미지 해시 및 보호셋 교차 점검을 통과했다. val/test 각 1,423장 유지. `s1-video-reviewed-20261114-v1`의 첫 GPU 배치 실행을 확인했고 기존 개발 평가 7개셋의 자동 비교를 연결했다. [설정·반영 수·검증 기록](../reports/training/s1-video-reviewed-2026-11-14/report.md)
+
 <!-- team-video-candidates-20261109:begin -->
 ## 2026-11-09 — 팀 제출 CCTV 영상 후보 검토
 
