@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-14 — 학습 진행 Windows 알림
+
+PC13의 학습 상태와 PC11·12·14에서 현재 Windows PC가 기존 SSH로 읽은 상태를 PC13에서 집계한다. Windows 작업 스케줄러의 ETR-Training-Progress가 로그인 세션에서 10분마다 실행하며 Windows 알림과 로컬 latest.txt를 갱신한다. PC13은 runs/training-progress-notify/latest.json에 마지막 집계를 저장한다. 네 큐가 모두 완료 또는 실패로 끝나면 마지막 알림 후 후속 조회를 멈춘다. Python 표준 라이브러리와 Windows 구성 요소를 사용한다. 16:47 KST 네 PC 수집, 작업 결과 0, PT10M 및 다음 실행 시간을 확인했다. 알림 표시 여부에는 Windows 알림 설정이 적용된다. 중지는 작업 스케줄러에서 ETR-Training-Progress를 사용 안 함으로 바꾼다.
+
 ## 2026-11-14 — CCTV 전용 학습 3개 시작 및 후속 3개 대기
 
 PC11 960 S1 증강, PC12 640 CCTV 증강, PC14 640 S1 증강에서 CCTV 1,406장만으로 첫 배치를 실행했다. PC11의 960 CCTV 증강과 PC12·14의 동일 양성 161장·음성 483장 비교는 각 노드 후속 큐에 등록했다. val/test의 기존 이미지와 라벨 해시를 보존했다. [노드·Run ID·설정·확인 결과](../reports/training/cctv-only-parallel-2026-11-14/report.md)
