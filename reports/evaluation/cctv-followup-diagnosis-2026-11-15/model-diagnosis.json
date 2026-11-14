@@ -1,0 +1,200 @@
+{
+  "loader": {
+    "640": {
+      "images": 13,
+      "max_box_error_px": 4.231770822116232e-05
+    },
+    "960": {
+      "images": 13,
+      "max_box_error_px": 9.765624997726263e-05
+    }
+  },
+  "models": [
+    {
+      "model": "pc11-960-s1aug-full",
+      "imgsz_train_probe": 960,
+      "train_positive_images": 161,
+      "train_replay": {
+        "0.001": {
+          "tp": 51,
+          "fp": 816,
+          "fn": 114
+        },
+        "0.01": {
+          "tp": 31,
+          "fp": 151,
+          "fn": 134
+        },
+        "0.1": {
+          "tp": 21,
+          "fp": 31,
+          "fn": 144
+        },
+        "0.25": {
+          "tp": 16,
+          "fp": 13,
+          "fn": 149
+        }
+      },
+      "actual_640_candidates": 239,
+      "actual_640_candidate_peak": 0.05370389297604561,
+      "actual_640_tp_001": 3,
+      "actual_640_tp_001_iou025": 5
+    },
+    {
+      "model": "pc11-960-cameraaug-full",
+      "imgsz_train_probe": 960,
+      "train_positive_images": 161,
+      "train_replay": {
+        "0.001": {
+          "tp": 127,
+          "fp": 2484,
+          "fn": 38
+        },
+        "0.01": {
+          "tp": 112,
+          "fp": 677,
+          "fn": 53
+        },
+        "0.1": {
+          "tp": 69,
+          "fp": 130,
+          "fn": 96
+        },
+        "0.25": {
+          "tp": 52,
+          "fp": 64,
+          "fn": 113
+        }
+      },
+      "actual_640_candidates": 206,
+      "actual_640_candidate_peak": 0.07501352578401566,
+      "actual_640_tp_001": 0,
+      "actual_640_tp_001_iou025": 3
+    },
+    {
+      "model": "pc12-640-cameraaug-full",
+      "imgsz_train_probe": 640,
+      "train_positive_images": 161,
+      "train_replay": {
+        "0.001": {
+          "tp": 134,
+          "fp": 2469,
+          "fn": 31
+        },
+        "0.01": {
+          "tp": 103,
+          "fp": 564,
+          "fn": 62
+        },
+        "0.1": {
+          "tp": 67,
+          "fp": 141,
+          "fn": 98
+        },
+        "0.25": {
+          "tp": 43,
+          "fp": 61,
+          "fn": 122
+        }
+      },
+      "actual_640_candidates": 1227,
+      "actual_640_candidate_peak": 0.3255544602870941,
+      "actual_640_tp_001": 3,
+      "actual_640_tp_001_iou025": 11
+    },
+    {
+      "model": "pc12-640-cameraaug-3to1",
+      "imgsz_train_probe": 640,
+      "train_positive_images": 161,
+      "train_replay": {
+        "0.001": {
+          "tp": 149,
+          "fp": 3086,
+          "fn": 16
+        },
+        "0.01": {
+          "tp": 129,
+          "fp": 694,
+          "fn": 36
+        },
+        "0.1": {
+          "tp": 99,
+          "fp": 95,
+          "fn": 66
+        },
+        "0.25": {
+          "tp": 76,
+          "fp": 35,
+          "fn": 89
+        }
+      },
+      "actual_640_candidates": 1379,
+      "actual_640_candidate_peak": 0.4869011640548706,
+      "actual_640_tp_001": 4,
+      "actual_640_tp_001_iou025": 13
+    },
+    {
+      "model": "pc14-640-s1aug-full",
+      "imgsz_train_probe": 640,
+      "train_positive_images": 161,
+      "train_replay": {
+        "0.001": {
+          "tp": 41,
+          "fp": 1015,
+          "fn": 124
+        },
+        "0.01": {
+          "tp": 21,
+          "fp": 117,
+          "fn": 144
+        },
+        "0.1": {
+          "tp": 11,
+          "fp": 23,
+          "fn": 154
+        },
+        "0.25": {
+          "tp": 9,
+          "fp": 15,
+          "fn": 156
+        }
+      },
+      "actual_640_candidates": 792,
+      "actual_640_candidate_peak": 0.046005263924598694,
+      "actual_640_tp_001": 6,
+      "actual_640_tp_001_iou025": 10
+    },
+    {
+      "model": "pc14-640-s1aug-3to1",
+      "imgsz_train_probe": 640,
+      "train_positive_images": 161,
+      "train_replay": {
+        "0.001": {
+          "tp": 129,
+          "fp": 8341,
+          "fn": 36
+        },
+        "0.01": {
+          "tp": 109,
+          "fp": 1542,
+          "fn": 56
+        },
+        "0.1": {
+          "tp": 68,
+          "fp": 196,
+          "fn": 97
+        },
+        "0.25": {
+          "tp": 42,
+          "fp": 55,
+          "fn": 123
+        }
+      },
+      "actual_640_candidates": 6209,
+      "actual_640_candidate_peak": 0.5065346360206604,
+      "actual_640_tp_001": 11,
+      "actual_640_tp_001_iou025": 23
+    }
+  ]
+}

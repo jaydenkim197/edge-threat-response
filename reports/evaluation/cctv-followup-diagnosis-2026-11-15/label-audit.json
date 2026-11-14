@@ -1,0 +1,26 @@
+{
+  "frames": 1406,
+  "labels": {
+    "negative": 1245,
+    "negative_proposal_present": 419,
+    "positive": 161,
+    "positive_changed_boxes": 60,
+    "positive_no_proposals": 82,
+    "positive_same_as_proposal": 19
+  },
+  "positive_video_hash_groups": 67,
+  "largest_positive_video_group_frames": 9,
+  "yolo_pixel_round_trip_max_error": 9.600034900358878e-08,
+  "train_size_640": {
+    "n": 165,
+    "lt8": 2,
+    "lt16": 33,
+    "median": 24.0
+  },
+  "actual_cctv_eval_size_640": {
+    "n": 31,
+    "lt8": 2,
+    "lt16": 26,
+    "median": 9.696969696969697
+  }
+}

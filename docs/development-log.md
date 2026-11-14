@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-15 — PC13 혼합 모델 960 비교와 CCTV 전용 실패 진단
+
+동일 960 입력의 실제 CCTV 83장에서 S1·PC13 혼합은 동일한 칼 3/31개를 맞췄고 혼합의 오탐은 7→3, AP50은 4.79→8.74%였다. 1,406장 DB 판정과 라벨 좌표, 640·960 데이터로더, 학습 로그와 체크포인트를 대조했다. 지표 0/31인 전용 모델은 학습 프레임에서도 9~76/165 검출이었고 평가의 작은 칼 비중이 더 높았다. 기존 체크포인트의 혼합 파인튜닝·작은 칼 재검수·타일 비교를 제안한다. [비교·진단 및 실험 방향](../reports/evaluation/cctv-followup-diagnosis-2026-11-15/report.md)
+
 ## 2026-11-15 — CCTV 전용 6개와 S1 공통 개발 평가
 
 PC11·12·13·14의 7개 학습 모두 50 epoch와 best.pt를 확인했다. PC13에서 기존 S1의 7개 개발셋으로 비교했다. 실제 CCTV 83장의 confidence 0.25에서 CCTV 전용 모델 6개는 모두 0/31 검출이었다. S1 혼합 후속 모델은 기존 S1의 0/31에서 1/31로 높였고 오탐은 4개로 같았다. predict/AP 154행과 예측 파일·정답·가중치 해시를 확인했다. [비교표 및 검증 기록](../reports/training/cctv-only-comparison-2026-11-15/report.md)
