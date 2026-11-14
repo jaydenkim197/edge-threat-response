@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-15 — CCTV 전용 6개와 S1 공통 개발 평가
+
+PC11·12·13·14의 7개 학습 모두 50 epoch와 best.pt를 확인했다. PC13에서 기존 S1의 7개 개발셋으로 비교했다. 실제 CCTV 83장의 confidence 0.25에서 CCTV 전용 모델 6개는 모두 0/31 검출이었다. S1 혼합 후속 모델은 기존 S1의 0/31에서 1/31로 높였고 오탐은 4개로 같았다. predict/AP 154행과 예측 파일·정답·가중치 해시를 확인했다. [비교표 및 검증 기록](../reports/training/cctv-only-comparison-2026-11-15/report.md)
+
 ## 2026-11-14 — 학습 진행 Windows 알림
 
 PC13의 학습 상태와 PC11·12·14에서 현재 Windows PC가 기존 SSH로 읽은 상태를 PC13에서 집계한다. Windows 작업 스케줄러의 ETR-Training-Progress가 로그인 세션에서 10분마다 실행하며 Windows 알림과 로컬 latest.txt를 갱신한다. PC13은 runs/training-progress-notify/latest.json에 마지막 집계를 저장한다. 네 큐가 모두 완료 또는 실패로 끝나면 마지막 알림 후 후속 조회를 멈춘다. Python 표준 라이브러리와 Windows 구성 요소를 사용한다. 16:47 KST 네 PC 수집, 작업 결과 0, PT10M 및 다음 실행 시간을 확인했다. 알림 표시 여부에는 Windows 알림 설정이 적용된다. 중지는 작업 스케줄러에서 ETR-Training-Progress를 사용 안 함으로 바꾼다.

@@ -1,0 +1,57 @@
+{
+  "S1": {
+    "tp": 2,
+    "fp": 19,
+    "fn": 29
+  },
+  "s1-video-reviewed-20261114-v1": {
+    "tp": 3,
+    "fp": 9,
+    "fn": 28
+  },
+  "pc11-960-cameraaug-full-infer640": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 31
+  },
+  "pc11-960-s1aug-full-infer640": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 31
+  },
+  "pc11-960-s1aug-full-infer960": {
+    "tp": 0,
+    "fp": 2,
+    "fn": 31
+  },
+  "pc12-640-cameraaug-3to1-infer640": {
+    "tp": 0,
+    "fp": 19,
+    "fn": 31
+  },
+  "pc12-640-cameraaug-full-infer640": {
+    "tp": 0,
+    "fp": 13,
+    "fn": 31
+  },
+  "pc14-640-s1aug-3to1-infer640": {
+    "tp": 3,
+    "fp": 71,
+    "fn": 28
+  },
+  "pc14-640-s1aug-full-infer640": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 31
+  },
+  "pc14-640-s1aug-full-infer960": {
+    "tp": 0,
+    "fp": 0,
+    "fn": 31
+  },
+  "s1-original-infer960": {
+    "tp": 4,
+    "fp": 48,
+    "fn": 27
+  }
+}
