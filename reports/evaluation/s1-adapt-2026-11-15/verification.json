@@ -1,0 +1,22 @@
+{
+  "suite_sha256": "258caf410b16887fe4aedc55366871eff65faed183a143642e308b59eef33bae",
+  "suite_device": "PC13 RTX 3060",
+  "evaluation_commit": "7639c7a",
+  "completed_runs": 6,
+  "epochs_each": 50,
+  "new_checkpoints": 12,
+  "reused_baselines": 2,
+  "common_datasets": 7,
+  "checked_suite_rows": 98,
+  "suite_weight_prediction_truth_hashes": "passed",
+  "suite_fixed_scores_recalculated": "passed",
+  "tuning_truth_sha256": "30034400b52aed4c71db80a2e6ef5a794b2ef0cf417fdcb9fa07f7d478378e6f",
+  "verified_tuning_threshold_rows": 130,
+  "verified_tuning_threshold_rows_by_pc": {
+    "pc11": 40,
+    "pc12": 40,
+    "pc13": 30,
+    "pc14": 20
+  },
+  "final_p430_or_jetson_verified": false
+}

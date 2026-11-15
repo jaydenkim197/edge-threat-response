@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-15 — S1 파인튜닝 6건 완료 및 공통 평가
+
+6건 모두 50 epoch 완료. 신규 best/last 12개와 기존 960 기준 2개를 공통 7개 개발셋에서 비교했다. 실제 CCTV 83장에서 기존 PC13 혼합의 AP50 8.74%가 가장 높았고 오탐 3개 이내에서 3/31을 검출했다. 새 후보의 동일 오탐 상한 최대는 2/31이다. PC12 작은 칼 seed 3407은 오탐 5개에서 4/31이지만 seed 3408에서 재현되지 않았다. PC13 혼합을 개발 기준으로 유지한다. [비교 결과와 50 epoch 기록](../reports/evaluation/s1-adapt-2026-11-15/report.md)
+
 ## 2026-11-15 — S1 기반 CCTV 파인튜닝 4대 실행
 
 동일 S1, 50 epoch, 960, 2,144장 추출 조건으로 PC11 일반 혼합, PC12 작은 칼 재표집, PC13 기존 실사 대조, PC14 오탐 우선 음성 선별을 시작했다. 4대의 첫 학습·검증 결과 행을 확인했다. PC11 640 해상도 비교와 PC12 seed 반복을 각 큐에 추가했다. CCTV 튜닝 271장은 37개 그룹으로 분리했고 기존 val/test를 유지했다. [실행 ID·입력·평가 기준](../reports/training/s1-adapt-2026-11-15/report.md)
