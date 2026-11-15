@@ -1,0 +1,12 @@
+{
+  "stage1": "complete",
+  "stage2": "complete",
+  "stage3": "complete",
+  "cctv_truth_sha256": "61c08bd33a00f3036eda5fb8df2824cc6a223d0a0d94dcf94953e332887f1676",
+  "cctv_finalist_ap_fixed_froc_recompute": "passed",
+  "cross_domain_rows": 56,
+  "development_sets": 8,
+  "raw_inputs_predictions_location": "C:\\Class6\\edge-threat-response\\runs\\cctv-gain-20261115-v1",
+  "evaluator_revision": "7639c7a",
+  "production_state": "separate offline experiment"
+}

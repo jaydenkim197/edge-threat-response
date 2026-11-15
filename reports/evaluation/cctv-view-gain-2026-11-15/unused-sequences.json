@@ -1,0 +1,71 @@
+{
+  "source": {
+    "archive_sha256": "558f5baa109abe8fba57b61fa177c75358001f5499f5e78178f4bf7dc9f55e8c",
+    "manifest_sha256": "1e9ad29f90309629a3be5e2fe6a14afb1657f639b39884b45188c8270baaa55a",
+    "opened_sequences_excluded": 16,
+    "images": 188,
+    "groups": 4,
+    "per_group_frame_counts": [
+      20,
+      28,
+      34,
+      106
+    ],
+    "per_camera_counts": {
+      "Cam1": 34,
+      "Cam7": 154
+    },
+    "training_and_prior_review_exact_matches": 0,
+    "scope": "frames with no published Knife annotation; presence or absence has not been newly reviewed"
+  },
+  "results": {
+    "baseline": {
+      "variant": "previous-mixed-cached",
+      "threshold_frozen_on_83": 0.38356325030326843,
+      "flagged_frames": 4,
+      "flagged_boxes": 4,
+      "groups_with_any_flags": 2,
+      "images": 188
+    },
+    "edge_tiling": {
+      "variant": "previous-mixed-tiles-wide",
+      "threshold_frozen_on_83": 0.4454725384712219,
+      "flagged_frames": 6,
+      "flagged_boxes": 6,
+      "groups_with_any_flags": 4,
+      "images": 188
+    },
+    "two_model_recall": {
+      "variant": "mixed-tiles+rf-people-max",
+      "threshold_frozen_on_83": 0.36141642928123474,
+      "flagged_frames": 9,
+      "flagged_boxes": 9,
+      "groups_with_any_flags": 4,
+      "images": 188
+    },
+    "two_model_ap": {
+      "variant": "mixed-tiles+rf-people-agree",
+      "threshold_frozen_on_83": 0.34968531131744385,
+      "flagged_frames": 5,
+      "flagged_boxes": 5,
+      "groups_with_any_flags": 3,
+      "images": 188
+    },
+    "recall_priority": {
+      "variant": "mixed-tiles+rf-people+grounding-people-agree",
+      "threshold_frozen_on_83": 0.36425888538360596,
+      "flagged_frames": 12,
+      "flagged_boxes": 12,
+      "groups_with_any_flags": 4,
+      "images": 188
+    },
+    "ap_priority": {
+      "variant": "mixed-tiles+rf-people+grounding-people-agree",
+      "threshold_frozen_on_83": 0.36425888538360596,
+      "flagged_frames": 12,
+      "flagged_boxes": 12,
+      "groups_with_any_flags": 4,
+      "images": 188
+    }
+  }
+}

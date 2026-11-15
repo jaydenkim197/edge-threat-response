@@ -1,0 +1,73 @@
+{
+  "selected_on": "opened us-mock-reviewed 83-image development set",
+  "threshold_policy": "exact confidence breakpoints, max TP with no more than 3 FP; tie fewer FP",
+  "source_metrics_sha256": "a8ba8a7e6dac2d808477be4abdc6a5fe227c91931fcff90525fada46bce94993",
+  "selected": {
+    "baseline": {
+      "variant": "previous-mixed-cached",
+      "cctv_ap50": 0.08741854825707517,
+      "cctv_operating_point": {
+        "confidence": 0.38356325030326843,
+        "tp": 3,
+        "fp": 1,
+        "small_tp": 2
+      },
+      "cctv_predictions_sha256": "69ca894ab59ad2d82c280c12ad3cdd1c9429cd9b5e6109593da866fdf5e8bf46"
+    },
+    "edge_tiling": {
+      "variant": "previous-mixed-tiles-wide",
+      "cctv_ap50": 0.11101843042672548,
+      "cctv_operating_point": {
+        "confidence": 0.4454725384712219,
+        "tp": 4,
+        "fp": 2,
+        "small_tp": 3
+      },
+      "cctv_predictions_sha256": "a845d3a3e520e951d102c9459ce6b92a2a2bf8f96e3562e9b0d5f20e651e9cea"
+    },
+    "two_model_recall": {
+      "variant": "mixed-tiles+rf-people-max",
+      "cctv_ap50": 0.2242638399303308,
+      "cctv_operating_point": {
+        "confidence": 0.36141642928123474,
+        "tp": 6,
+        "fp": 2,
+        "small_tp": 4
+      },
+      "cctv_predictions_sha256": "1f7017f25ff0ae5220ea8017f5953a47910e915ea32a58fcde56336caf63a1ff"
+    },
+    "two_model_ap": {
+      "variant": "mixed-tiles+rf-people-agree",
+      "cctv_ap50": 0.2678592790434712,
+      "cctv_operating_point": {
+        "confidence": 0.34968531131744385,
+        "tp": 5,
+        "fp": 1,
+        "small_tp": 3
+      },
+      "cctv_predictions_sha256": "3cad83639fc99fd5ce488747df63da4e3a8e1ba959e50fae4365b1d36e405fb5"
+    },
+    "recall_priority": {
+      "variant": "mixed-tiles+rf-people+grounding-people-agree",
+      "cctv_ap50": 0.2930923047984954,
+      "cctv_operating_point": {
+        "confidence": 0.36425888538360596,
+        "tp": 8,
+        "fp": 3,
+        "small_tp": 4
+      },
+      "cctv_predictions_sha256": "db4b452f17c433502c7d9474a678a7b45d70fabcac537c63dd2fc23359ff43f6"
+    },
+    "ap_priority": {
+      "variant": "mixed-tiles+rf-people+grounding-people-agree",
+      "cctv_ap50": 0.2930923047984954,
+      "cctv_operating_point": {
+        "confidence": 0.36425888538360596,
+        "tp": 8,
+        "fp": 3,
+        "small_tp": 4
+      },
+      "cctv_predictions_sha256": "db4b452f17c433502c7d9474a678a7b45d70fabcac537c63dd2fc23359ff43f6"
+    }
+  }
+}

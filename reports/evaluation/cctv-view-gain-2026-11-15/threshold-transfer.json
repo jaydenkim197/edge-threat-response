@@ -1,0 +1,37 @@
+{
+  "previous-mixed-cached": {
+    "tuning_confidence": 0.5761118531227112,
+    "tuning_tp": 8,
+    "tuning_fp": 1,
+    "cctv_tp": 0,
+    "cctv_fp": 1
+  },
+  "previous-mixed-tiles-wide": {
+    "tuning_confidence": 0.19054420292377472,
+    "tuning_tp": 8,
+    "tuning_fp": 8,
+    "cctv_tp": 4,
+    "cctv_fp": 9
+  },
+  "mixed-tiles+rf-people-max": {
+    "tuning_confidence": 0.19054420292377472,
+    "tuning_tp": 8,
+    "tuning_fp": 8,
+    "cctv_tp": 8,
+    "cctv_fp": 13
+  },
+  "mixed-tiles+rf-people-agree": {
+    "tuning_confidence": 0.17880739271640778,
+    "tuning_tp": 9,
+    "tuning_fp": 1,
+    "cctv_tp": 7,
+    "cctv_fp": 7
+  },
+  "mixed-tiles+rf-people+grounding-people-agree": {
+    "tuning_confidence": 0.25057631731033325,
+    "tuning_tp": 10,
+    "tuning_fp": 10,
+    "cctv_tp": 8,
+    "cctv_fp": 13
+  }
+}

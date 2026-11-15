@@ -1,0 +1,21 @@
+{
+  "profiles": {
+    "baseline": {
+      "matched_frames": 5,
+      "median_ms_PC13_excludes_decode": 21.48189998115413
+    },
+    "edge_tiling": {
+      "matched_frames": 5,
+      "median_ms_PC13_excludes_decode": 35.87010002229363
+    },
+    "two_model_ap": {
+      "matched_frames": 5,
+      "median_ms_PC13_excludes_decode": 171.69290001038462
+    },
+    "recall_priority": {
+      "matched_frames": 5,
+      "median_ms_PC13_excludes_decode": 1259.5933999982662
+    }
+  },
+  "scope": "five locked source images, CUDA FP32, exact threshold score within .0002, coordinate within .1 px"
+}

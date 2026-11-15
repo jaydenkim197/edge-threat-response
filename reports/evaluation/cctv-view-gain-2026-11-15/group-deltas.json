@@ -1,0 +1,56 @@
+{
+  "baseline": {
+    "tp": 3,
+    "fp": 1,
+    "groups_with_tp": 3,
+    "recovered_boxes": 0,
+    "groups_with_new_tp": 0,
+    "missed_old_tp": 0,
+    "negative_frame_flag_count": 0
+  },
+  "edge_tiling": {
+    "tp": 4,
+    "fp": 2,
+    "groups_with_tp": 3,
+    "recovered_boxes": 1,
+    "groups_with_new_tp": 1,
+    "missed_old_tp": 0,
+    "negative_frame_flag_count": 1
+  },
+  "two_model_recall": {
+    "tp": 6,
+    "fp": 2,
+    "groups_with_tp": 3,
+    "recovered_boxes": 3,
+    "groups_with_new_tp": 2,
+    "missed_old_tp": 0,
+    "negative_frame_flag_count": 1
+  },
+  "two_model_ap": {
+    "tp": 5,
+    "fp": 1,
+    "groups_with_tp": 3,
+    "recovered_boxes": 2,
+    "groups_with_new_tp": 1,
+    "missed_old_tp": 0,
+    "negative_frame_flag_count": 0
+  },
+  "recall_priority": {
+    "tp": 8,
+    "fp": 3,
+    "groups_with_tp": 3,
+    "recovered_boxes": 5,
+    "groups_with_new_tp": 2,
+    "missed_old_tp": 0,
+    "negative_frame_flag_count": 1
+  },
+  "ap_priority": {
+    "tp": 8,
+    "fp": 3,
+    "groups_with_tp": 3,
+    "recovered_boxes": 5,
+    "groups_with_new_tp": 2,
+    "missed_old_tp": 0,
+    "negative_frame_flag_count": 1
+  }
+}
