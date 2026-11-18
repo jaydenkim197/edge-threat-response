@@ -394,6 +394,7 @@ class TeamReviewTests(unittest.TestCase):
         self.assertEqual(0, self.post(fresh, headers, claim, {}).json["id"])
         item = fresh.get("/api/items?dataset=video", base_url=self.url).json
         self.assertTrue(item["linked_review"])
+        self.assertTrue(item["direct_review"])
         self.assertTrue(all(row["eligible"] for row in item["items"]))
         absence = {"domain": "target_cctv", "knife_presence": "no", "reviewed_boxes": []}
         self.assertEqual(200, self.post(fresh, headers, save_path,

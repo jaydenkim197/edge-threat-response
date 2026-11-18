@@ -527,7 +527,7 @@ def create_app(config_path: Path):
         return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema=store.review_schema, team=True,
                        reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False,
                        assignment_timeout_seconds=ASSIGNMENT_TIMEOUT_SECONDS, linked_review=pack in managed,
-                       video_only=video_only)
+                       video_only=video_only, direct_review=pack in direct_packs)
 
     @app.post("/api/claim")
     def claim():

@@ -17,6 +17,7 @@ const svgNS = "http://www.w3.org/2000/svg";
 let boxMode = "browse", selectedBox = -1, boxDrag = null;
 let sceneStep = "main", sceneStart = null, reviewAdvancing = false, sceneSubmitted = false;
 let sceneMediaAvailable = false, frameEdit = false, frameBeforeEdit = null;
+let centerFocusAvailable = false, centerFocus = false;
 
 function videoReview() { return reviewSchema === "video-box-v1"; }
 function sceneReview() { return reviewSchema === "video-scene-v1"; }
@@ -87,8 +88,30 @@ function imagePoint(event, inside = false) {
   if (!matrix) return null;
   const {x, y} = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
   const {width, height} = items[current];
-  if (inside && (x < 0 || y < 0 || x > width || y > height)) return null;
-  return [Math.min(Math.max(x, 0), width), Math.min(Math.max(y, 0), height)];
+  const view=$("image-svg").viewBox.baseVal;
+  const left=Math.max(0,view.x), top=Math.max(0,view.y);
+  const right=Math.min(width,view.x+view.width), bottom=Math.min(height,view.y+view.height);
+  if (inside && (x < left || y < top || x > right || y > bottom)) return null;
+  return [Math.min(Math.max(x, left), right), Math.min(Math.max(y, top), bottom)];
+}
+function setFrameFocus(focused) {
+  const item=items[current];
+  centerFocus=centerFocusAvailable && focused;
+  boxDrag=null;
+  const region=centerFocus
+    ? [item.width/4,item.height/4,item.width/2,item.height/2]
+    : [0,0,item.width,item.height];
+  $("image-svg").setAttribute("viewBox",region.join(" "));
+  $("frame-focus").hidden=!centerFocusAvailable;
+  $("frame-focus").textContent=centerFocus?"전체 보기":"중앙 확대";
+  $("frame-focus").setAttribute("aria-pressed",String(centerFocus));
+  $("image-view").classList.remove("zoom2","zoom3");
+  $("image-view").scrollLeft=0;$("image-view").scrollTop=0;
+  $("zoom").textContent="확대 1×";
+  if(centerFocusAvailable)document.querySelector(".image-note").textContent=centerFocus
+    ? "중앙 50% 확대 · 주변은 전체 보기로 확인하세요."
+    : "전체 화면 · 칼 없음은 화면 전체를 확인해주세요.";
+  if(videoReview())paintVideoBoxes();
 }
 
 function beginBoxDrag(event) {
@@ -352,6 +375,7 @@ function show(index) {
     $("image-svg").append(rect);
   }
   $("image-view").classList.remove("zoom2","zoom3"); $("image-view").scrollTop=0; $("image-view").scrollLeft=0; $("zoom").textContent="확대 1×";
+  if(centerFocusAvailable)setFrameFocus(true);
   dirty=restoredDraft; paintChoices(); refreshProgress();
   if(videoReview()) paintVideoBoxes();
   if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=teamAdmin;$("save-next").textContent=item.editable?"저장하고 다음 →":"다음 미검수 받기 →";$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
@@ -657,6 +681,7 @@ async function init() {
   if(videoReview()) $("filter").querySelector('option[value="negative"]').textContent = "미검출 후보만";
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
+  centerFocusAvailable=videoReview() && Boolean(data.direct_review);
   buildFields();
   if(sceneReview() || quickFrame())document.body.classList.add("video-review-focus");
   $("reviewer-field").hidden=Boolean(data.video_only);
@@ -764,6 +789,7 @@ async function init() {
   $("filter").addEventListener("change",async()=>{if(!explicitReview()&&dirty&&complete())await save();refreshProgress();const visible=visibleItems();if(visible.length)await jump(visible[0].id);else status("이 조건에 해당하는 이미지가 없습니다.");});
   $("show-boxes").addEventListener("change",()=>$("image-view").classList.toggle("hide-boxes",!$("show-boxes").checked));
   $("image-quality").onclick=useOriginalImage;
+  $("frame-focus").onclick=()=>setFrameFocus(!centerFocus);
   $("zoom").addEventListener("click",()=>{useOriginalImage();const view=$("image-view");const zoom=view.classList.contains("zoom2")?3:view.classList.contains("zoom3")?1:2;view.classList.remove("zoom2","zoom3");if(zoom>1)view.classList.add(`zoom${zoom}`);$("zoom").textContent=`확대 ${zoom}×`;if(videoReview())paintVideoBoxes();});
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(!videoReview() && ["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});

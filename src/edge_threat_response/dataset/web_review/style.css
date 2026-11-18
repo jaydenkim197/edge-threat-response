@@ -121,6 +121,7 @@ button,.button,.small-button{touch-action:manipulation}
 .box-toolbar [aria-pressed="true"]{background:var(--mint);border-color:var(--green);color:var(--green)}
 #box-count{color:var(--muted);font-size:12px}
 #image-svg.box-drag-mode{touch-action:none;cursor:crosshair}
+#image-svg{overflow:hidden}
 .video-bbox{fill:#00ff7f17;stroke:#00ff7f;stroke-width:2;vector-effect:non-scaling-stroke;cursor:pointer}
 .video-bbox.selected{fill:#ffd16620;stroke:#ffd166}
 .box-handle{fill:#ffd166;stroke:#151c1a;stroke-width:1;vector-effect:non-scaling-stroke;cursor:crosshair}
