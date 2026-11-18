@@ -195,7 +195,11 @@ def create_app(config_path: Path):
                     or not bounds["scene_start_s"] <= stamp <= bounds["scene_end_s"]):
                 raise ValueError("Frame does not belong to the referenced scene.")
             previews.setdefault((scene, index), []).append({"id": sample, "timestamp_s": stamp})
-    managed = set(scene_for) | set(frames_for)
+    direct_packs = {entry["id"] for entry in catalog if entry.get("direct_review") is True}
+    if any(pack not in stores or stores[pack].review_schema != VIDEO_REVIEW_SCHEMA or pack in scene_for
+           for pack in direct_packs):
+        raise ValueError("Direct review requires standalone video box packs.")
+    managed = set(scene_for) | set(frames_for) | direct_packs
     clip_root = Path(config["scene_preview_dir"]).resolve() if config.get("scene_preview_dir") else None
     if clip_root and any(not (clip_root / pack / f"{sample}.mp4").is_file()
                          for pack in frames_for for sample in range(len(stores[pack].rows))):
@@ -408,6 +412,8 @@ def create_app(config_path: Path):
         return send_file(assets / filename, mimetype="application/manifest+json" if request.path == "/manifest.webmanifest" else None)
 
     def eligible_frames(pack):
+        if pack in direct_packs:
+            return set(range(len(stores[pack].rows)))
         if pack not in scene_for:
             return None
         scenes = stores[scene_for[pack]].items()
@@ -488,8 +494,8 @@ def create_app(config_path: Path):
             if eligible is not None:
                 item["eligible"] = item["id"] in eligible
                 evidence = store.evidence[item["id"]]
-                item["source_id"] = evidence["source_id"]
-                item["timestamp_s"] = evidence["timestamp_s"]
+                item["source_id"] = evidence.get("source_id", pack)
+                item["timestamp_s"] = evidence.get("timestamp_s")
             if pack in frames_for:
                 evidence = store.evidence[item["id"]]
                 frames = previews.get((pack, item["id"]), [])
@@ -533,7 +539,7 @@ def create_app(config_path: Path):
                     return jsonify(id=None, next_review_url=f"/review/{other}")
             if candidate is None:
                 if pack in managed:
-                    for next_pack in [*scene_for, *frames_for]:
+                    for next_pack in [*scene_for, *frames_for, *sorted(direct_packs)]:
                         if next_pack in {pack, other}:
                             continue
                         next_owned, next_ready, _ = claim_snapshot(connection, next_pack, stores[next_pack])

@@ -357,6 +357,8 @@ class TeamReviewTests(unittest.TestCase):
 
         config["reviewer_login"] = "video_public"
         del config["video_link_file"]
+        config["datasets"][-1]["direct_review"] = True
+        config["video_review_limit"] = 2
         self.config.write_text(json.dumps(config))
         self.app = create_app(self.config)
         browser.application = self.app
@@ -371,6 +373,21 @@ class TeamReviewTests(unittest.TestCase):
         self.assertEqual(200, self.post(fresh, headers, "/api/video/open", {}).status_code)
         self.assertTrue(fresh.get("/api/items?dataset=video", base_url=self.url).json["video_only"])
         self.assertEqual(404, fresh.get("/api/items?dataset=fixture", base_url=self.url).status_code)
+        catalog = fresh.get("/api/catalog", base_url=self.url).json
+        headers = {"Origin": self.url, "X-Review-Token": catalog["csrf"]}
+        claim = "/api/claim?dataset=video"
+        save_path = "/api/review?dataset=video"
+        self.assertEqual(0, self.post(fresh, headers, claim, {}).json["id"])
+        item = fresh.get("/api/items?dataset=video", base_url=self.url).json
+        self.assertTrue(item["linked_review"])
+        self.assertTrue(all(row["eligible"] for row in item["items"]))
+        absence = {"domain": "target_cctv", "knife_presence": "no", "reviewed_boxes": []}
+        self.assertEqual(200, self.post(fresh, headers, save_path,
+                                      {"id": 0, "version": 0, "fields": absence}).status_code)
+        self.assertEqual(1, self.post(fresh, headers, claim, {}).json["id"])
+        # A completed-frame correction shares the same quota as a fresh claim.
+        self.assertEqual(409, self.post(fresh, headers, save_path,
+                                      {"id": 0, "version": 1, "fields": absence}).status_code)
 
     def test_scene_approval_releases_only_selected_frames_and_preserves_leases(self):
         from edge_threat_response.dataset.team_review import create_app

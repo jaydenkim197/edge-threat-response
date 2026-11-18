@@ -17,6 +17,59 @@ from edge_threat_response.domain import BBox
 from edge_threat_response.training import _sha256_file
 
 
+def existing_frames(folder, source_hash):
+    from PIL import Image
+
+    summary = json.loads((folder / "summary.json").read_text(encoding="utf-8"))
+    if summary["source_sha256"] != source_hash:
+        raise ValueError("Extracted frames reference a different recording.")
+    rows = [json.loads(line) for line in (folder / "frames.jsonl").read_text(encoding="utf-8").splitlines() if line]
+    if not rows or len(rows) != summary["frames"]:
+        raise ValueError("Frame manifest count mismatch.")
+    samples = []
+    previous = -1
+    for row in rows:
+        path = (folder / row["file"]).resolve()
+        stamp = row["timestamp_s"]
+        if not path.is_relative_to(folder) or _sha256_file(path) != row["sha256"]:
+            raise ValueError("Frame identity mismatch.")
+        if type(stamp) not in (int, float) or not stamp > previous:
+            raise ValueError("Frame timestamps must increase.")
+        with Image.open(path) as image:
+            if image.size != (row["width"], row["height"]) or image.size != (summary["width"], summary["height"]):
+                raise ValueError("Frame dimensions changed.")
+        if row["human_review"] != "pending" or row["training_approved"] is not False:
+            raise ValueError("Expected unreviewed source frames.")
+        samples.append((path, stamp))
+        previous = stamp
+    return samples
+
+
+def near_duplicate(left, right):
+    """Conservative full-resolution check, sensitive to small local changes."""
+    import numpy as np
+    from PIL import Image
+
+    with Image.open(left) as image:
+        first = np.asarray(image.convert("L"), dtype=np.int16)
+    with Image.open(right) as image:
+        second = np.asarray(image.convert("L"), dtype=np.int16)
+    if first.shape != second.shape:
+        return False, {}
+    difference = np.abs(first - second)
+    mean = float(difference.mean())
+    changed = difference > 12
+    changed_fraction = float(changed.mean())
+    height, width = changed.shape
+    # Pad so edge pixels receive the same check as the rest of the image.
+    padded = np.pad(changed, ((0, -height % 16), (0, -width % 16)))
+    max_block_change = float(padded.reshape(padded.shape[0] // 16, 16, padded.shape[1] // 16, 16)
+                             .mean(axis=(1, 3)).max())
+    metrics = {"mean_pixel_delta": round(mean, 6), "changed_fraction": round(changed_fraction, 8),
+               "max_16px_block_change": round(max_block_change, 6)}
+    return mean <= .5 and changed_fraction <= .0001 and max_block_change <= .02, metrics
+
+
 def extract(video, ffmpeg, folder):
     # Select the first decoded frame in each second, then retain its actual PTS.
     select = "select='isnan(prev_selected_t)+gt(floor(t),floor(prev_selected_t))',showinfo"
@@ -64,7 +117,7 @@ def infer(model, image):
     return boxes[:8]
 
 
-def prepare(video, ffmpeg, weights, output, session_id, pack_id):
+def prepare(video, ffmpeg, weights, output, session_id, pack_id, frames_dir=None):
     import torch
     from ultralytics import YOLO, __version__ as ultralytics_version
 
@@ -79,11 +132,13 @@ def prepare(video, ffmpeg, weights, output, session_id, pack_id):
     output.parent.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(prefix=".capture-review-", dir=output.parent) as staging:
         scratch = Path(staging)
-        sampled = extract(video, ffmpeg, scratch)
+        sampled = existing_frames(frames_dir, source_hash) if frames_dir else extract(video, ffmpeg, scratch)
         counts = Counter(sampled=len(sampled))
         seen = set()
+        similarity = []
 
         def samples():
+            previous_kept = None
             for index, (frame, stamp) in enumerate(sampled, 1):
                 data = frame.read_bytes()
                 digest = hashlib.sha256(data).hexdigest()
@@ -93,6 +148,16 @@ def prepare(video, ffmpeg, weights, output, session_id, pack_id):
                 seen.add(digest)
                 proposals = infer(model, frame)
                 counts["with_proposal" if proposals else "without_proposal"] += 1
+                similar, metrics = near_duplicate(previous_kept[0], frame) if previous_kept else (False, {})
+                excluded = bool(similar and not proposals and not previous_kept[2]
+                                and stamp - previous_kept[1] < 2)
+                similarity.append({"image_file": frame.name, "timestamp_s": stamp,
+                                   "reference": previous_kept[0].name if previous_kept else None,
+                                   **metrics, "excluded_as_near_duplicate": excluded})
+                if excluded:
+                    counts["near_duplicates"] += 1
+                    continue
+                previous_kept = (frame, stamp, proposals)
                 if index % 100 == 0:
                     print(f"Processed {index}/{len(sampled)} frames", flush=True)
                 yield {"bytes": data, "image_path": f"{session_id}/{frame.name}", "timestamp_s": stamp,
@@ -109,13 +174,16 @@ def prepare(video, ffmpeg, weights, output, session_id, pack_id):
             "sample_rule": "first decoded frame per second, byte-identical JPEGs removed",
             "knife_candidate_confidence": .10, "view_sizes": [960, 640], "merge_iou": .55,
         }, root=scratch)
-        if summary["images"] + counts["exact_duplicates"] != len(sampled):
+        if summary["images"] + counts["exact_duplicates"] + counts["near_duplicates"] != len(sampled):
             raise ValueError("Staged frame counts do not balance.")
         summary.update(counts)
         (scratch / pack_id / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
+        (scratch / pack_id / "similarity.jsonl").write_text(
+            "".join(json.dumps(row) + "\n" for row in similarity), encoding="utf-8"
+        )
         entry = {"id": pack_id, "name": "P430 직접 촬영 · 칼 검수", "role": "직접 촬영 CCTV",
                  "note": "칼 유무를 확인하고 제안 박스를 수정하거나 추가합니다.",
-                 "review_schema": "video-box-v1", "review_dir": str(output)}
+                 "review_schema": "video-box-v1", "direct_review": True, "review_dir": str(output)}
         (scratch / pack_id / "catalog-entry.json").write_text(
             json.dumps(entry, ensure_ascii=False, indent=2), encoding="utf-8"
         )
@@ -126,11 +194,16 @@ def prepare(video, ffmpeg, weights, output, session_id, pack_id):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    for name in ("video", "ffmpeg", "weights", "output"):
+    for name in ("video", "weights", "output"):
         parser.add_argument(f"--{name}", required=True, type=Path)
+    parser.add_argument("--ffmpeg", type=Path)
+    parser.add_argument("--frames-dir", type=Path)
     parser.add_argument("--session-id", required=True)
     args = parser.parse_args()
     if not re.fullmatch(r"[a-z0-9-]{1,60}", args.session_id):
         parser.error("--session-id must be a lowercase review dataset identifier")
-    prepare(args.video.resolve(), args.ffmpeg.resolve(), args.weights.resolve(), args.output.resolve(),
-            args.session_id, args.session_id)
+    if not args.frames_dir and not args.ffmpeg:
+        parser.error("Provide --frames-dir to reuse extracted frames, or --ffmpeg to extract them.")
+    prepare(args.video.resolve(), args.ffmpeg.resolve() if args.ffmpeg else None,
+            args.weights.resolve(), args.output.resolve(), args.session_id, args.session_id,
+            args.frames_dir.resolve() if args.frames_dir else None)

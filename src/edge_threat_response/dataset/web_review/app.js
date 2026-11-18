@@ -672,6 +672,14 @@ async function init() {
     $("frame-edit-box").onclick=startFrameEdit;
     $("frame-edit-cancel").onclick=cancelFrameEdit;
     $("frame-edit-save").onclick=()=>submitFrame("target_cctv","yes");
+    for(const id of ["frame-edit-save","frame-edit-cancel"]){
+      $(id).addEventListener("touchend",event=>{
+        event.preventDefault();
+        const touch=event.changedTouches[0], bounds=event.currentTarget.getBoundingClientRect();
+        if(!event.currentTarget.disabled && touch && touch.clientX>=bounds.left && touch.clientX<=bounds.right
+          && touch.clientY>=bounds.top && touch.clientY<=bounds.bottom)event.currentTarget.click();
+      },{passive:false});
+    }
     $("frame-exclude").onclick=()=>selectSceneStep("reason");
     $("frame-hold").onclick=()=>submitFrame("target_cctv","unclear");
   }
