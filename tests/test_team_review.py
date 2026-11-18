@@ -358,6 +358,14 @@ class TeamReviewTests(unittest.TestCase):
         config["reviewer_login"] = "video_public"
         del config["video_link_file"]
         config["datasets"][-1]["direct_review"] = True
+        preview_dir = self.root / "previews"
+        preview_dir.mkdir()
+        for index in range(2):
+            (preview_dir / f"{index}.jpg").write_bytes(b"smaller preview")
+        manifest = {"count": 2, "pack_hash": hashlib.sha256(
+            (video / "review.csv").read_bytes() + (video / "image-evidence.jsonl").read_bytes()).hexdigest()}
+        (preview_dir / "manifest.json").write_text(json.dumps(manifest))
+        config["datasets"][-1]["preview_dir"] = str(preview_dir)
         config["video_review_limit"] = 2
         self.config.write_text(json.dumps(config))
         self.app = create_app(self.config)
@@ -373,6 +381,12 @@ class TeamReviewTests(unittest.TestCase):
         self.assertEqual(200, self.post(fresh, headers, "/api/video/open", {}).status_code)
         self.assertTrue(fresh.get("/api/items?dataset=video", base_url=self.url).json["video_only"])
         self.assertEqual(404, fresh.get("/api/items?dataset=fixture", base_url=self.url).status_code)
+        item = fresh.get("/api/items?dataset=video", base_url=self.url).json["items"][0]
+        self.assertEqual("/api/packs/video/images/0", item["image_url"])
+        self.assertEqual(401, self.app.test_client().get(item["preview_url"], base_url=self.url).status_code)
+        with closing(fresh.get(item["preview_url"], base_url=self.url)) as preview:
+            self.assertEqual(b"smaller preview", preview.data)
+        self.assertNotIn("preview_dir", fresh.get("/api/catalog", base_url=self.url).json["datasets"][0])
         catalog = fresh.get("/api/catalog", base_url=self.url).json
         headers = {"Origin": self.url, "X-Review-Token": catalog["csrf"]}
         claim = "/api/claim?dataset=video"
@@ -388,6 +402,10 @@ class TeamReviewTests(unittest.TestCase):
         # A completed-frame correction shares the same quota as a fresh claim.
         self.assertEqual(409, self.post(fresh, headers, save_path,
                                       {"id": 0, "version": 1, "fields": absence}).status_code)
+        manifest["pack_hash"] = "wrong"
+        (preview_dir / "manifest.json").write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, "previews do not match"):
+            create_app(self.config)
 
     def test_scene_approval_releases_only_selected_frames_and_preserves_leases(self):
         from edge_threat_response.dataset.team_review import create_app

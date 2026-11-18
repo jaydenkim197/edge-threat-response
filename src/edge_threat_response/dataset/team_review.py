@@ -174,6 +174,18 @@ def create_app(config_path: Path):
                 batches.append((batch["id"], ReviewStore(Path(batch["review_dir"]), review_schema=schema)))
             stores[entry["id"]] = BatchReviewStore(base, batches) if batches else base
     scene_for = {}
+    image_previews = {}
+    for entry in catalog:
+        if not entry.get("preview_dir"):
+            continue
+        pack = entry["id"]
+        root = Path(entry["preview_dir"]).resolve()
+        manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+        if (pack not in stores or manifest["pack_hash"] != stores[pack].pack_hash
+                or manifest["count"] != len(stores[pack].rows)
+                or any(not (root / f"{sample}.jpg").is_file() for sample in range(manifest["count"]))):
+            raise ValueError("Review previews do not match the source pack.")
+        image_previews[pack] = root
     frames_for = {}
     previews = {}
     for entry in catalog:
@@ -453,7 +465,7 @@ def create_app(config_path: Path):
             items, owners = assigned_items(entry["id"], store) if store else ([], {})
             eligible = eligible_frames(entry["id"])
             reviewed = [item for item in items if item["version"]]
-            entries.append({key: value for key, value in entry.items() if key not in {"review_dir", "review_batches"}} | {
+            entries.append({key: value for key, value in entry.items() if key not in {"review_dir", "review_batches", "preview_dir"}} | {
                 "available": bool(store), "total": len(items), "reviewed": len(reviewed),
                 "remaining": sum(not item["version"] and (eligible is None or item["id"] in eligible or item["id"] in owners)
                                  for item in items),
@@ -488,6 +500,8 @@ def create_app(config_path: Path):
         eligible = eligible_frames(pack)
         for item in result:
             item["image_url"] = f"/api/packs/{pack}/images/{item['id']}"
+            if pack in image_previews:
+                item["preview_url"] = f"/api/packs/{pack}/previews/{item['id']}"
             item["editable"] = bool(not g.user["admin"] and owners.get(item["id"]) == g.user["id"])
             item["assigned_elsewhere"] = item["id"] in owners and owners[item["id"]] != g.user["id"]
             item["coordinate_status"] = store.evidence[item["id"]].get("coordinate_status", "unconfirmed")
@@ -630,6 +644,12 @@ def create_app(config_path: Path):
         if pack not in stores or not 0 <= sample < len(stores[pack].images):
             abort(404)
         return send_file(stores[pack].images[sample], conditional=False)
+
+    @app.get("/api/packs/<pack>/previews/<int:sample>")
+    def preview_image(pack, sample):
+        if pack not in image_previews or not 0 <= sample < len(stores[pack].rows):
+            abort(404)
+        return send_file(image_previews[pack] / f"{sample}.jpg", mimetype="image/jpeg", conditional=False)
 
     @app.get("/api/packs/<pack>/scenes/<int:sample>/preview.mp4")
     def scene_clip(pack, sample):

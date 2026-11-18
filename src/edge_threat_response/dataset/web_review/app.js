@@ -270,6 +270,7 @@ function refreshProgress() {
   const excluded = videoReview() ? items.filter(item=>item.version && verdictOf(item,item.review)==="problem").length : 0;
   $("counts").textContent=videoReview() ? `미검수 ${items.length-reviewed} · 제외 ${excluded} · 보류 ${held-excluded}` :
     `미검수 ${items.length-reviewed} · 재확인 ${held}`;
+  if(team && getComputedStyle(document.querySelector(".navigation")).display==="none")return;
   $("jump").replaceChildren();
   for (const item of visibleItems()) {
     const option = document.createElement("option"); option.value=item.id;
@@ -320,7 +321,25 @@ function show(index) {
   $("image-svg").replaceChildren();
   const ns="http://www.w3.org/2000/svg";
   const image=document.createElementNS(ns,"image");
-  image.setAttribute("href",item.image_url); image.setAttribute("width",item.width); image.setAttribute("height",item.height);
+  const hasPreview=videoReview() && Boolean(item.preview_url);
+  $("image-quality").hidden=!hasPreview;
+  $("image-quality").disabled=false;
+  $("image-quality").textContent="4K 보기";
+  image.setAttribute("href",hasPreview?item.preview_url:item.image_url);
+  image.setAttribute("width",item.width); image.setAttribute("height",item.height);
+  image.addEventListener("load",()=>{
+    if(current===index && hasPreview && image.getAttribute("href")===item.image_url){
+      $("image-quality").textContent="4K 원본";
+      $("image-quality").disabled=true;
+    }
+  });
+  image.addEventListener("error",()=>{
+    if(current!==index || !hasPreview)return;
+    if(image.getAttribute("href")!==item.image_url){useOriginalImage();return;}
+    $("image-quality").disabled=false;
+    $("image-quality").textContent="4K 재시도";
+    status("원본을 불러오지 못했습니다. 다시 시도해주세요.","error");
+  });
   $("image-svg").append(image);
   if(videoReview()) {
     const layer = document.createElementNS(svgNS, "g");
@@ -598,6 +617,7 @@ async function submitFrame(domain, presence, reason=null) {
 }
 function startFrameEdit() {
   if(!items[current]?.editable || saving || reviewAdvancing)return;
+  useOriginalImage();
   frameBeforeEdit={values:structuredClone(values), dirty};
   frameEdit=true;
   values.domain="target_cctv";
@@ -605,6 +625,15 @@ function startFrameEdit() {
   setBoxMode(values.reviewed_boxes.length?"edit":"draw");
   paintSceneActions();
   status("사진에서 박스를 그리거나 조절하세요.");
+}
+function useOriginalImage() {
+  const item=items[current];
+  const image=$("image-svg").querySelector("image");
+  if(!image || !item?.preview_url || !videoReview())return;
+  if($("image-quality").disabled && image.getAttribute("href")===item.image_url)return;
+  $("image-quality").textContent="4K 로딩…";
+  $("image-quality").disabled=true;
+  image.setAttribute("href",item.image_url);
 }
 function cancelFrameEdit() {
   frameEdit=false;
@@ -734,7 +763,8 @@ async function init() {
   $("jump").addEventListener("change",()=>jump(Number($("jump").value)));
   $("filter").addEventListener("change",async()=>{if(!explicitReview()&&dirty&&complete())await save();refreshProgress();const visible=visibleItems();if(visible.length)await jump(visible[0].id);else status("이 조건에 해당하는 이미지가 없습니다.");});
   $("show-boxes").addEventListener("change",()=>$("image-view").classList.toggle("hide-boxes",!$("show-boxes").checked));
-  $("zoom").addEventListener("click",()=>{const view=$("image-view");const zoom=view.classList.contains("zoom2")?3:view.classList.contains("zoom3")?1:2;view.classList.remove("zoom2","zoom3");if(zoom>1)view.classList.add(`zoom${zoom}`);$("zoom").textContent=`확대 ${zoom}×`;if(videoReview())paintVideoBoxes();});
+  $("image-quality").onclick=useOriginalImage;
+  $("zoom").addEventListener("click",()=>{useOriginalImage();const view=$("image-view");const zoom=view.classList.contains("zoom2")?3:view.classList.contains("zoom3")?1:2;view.classList.remove("zoom2","zoom3");if(zoom>1)view.classList.add(`zoom${zoom}`);$("zoom").textContent=`확대 ${zoom}×`;if(videoReview())paintVideoBoxes();});
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(!videoReview() && ["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});
   const first=items.find(item=>!item.version && (item.eligible!==false || item.editable)) || items.find(item=>item.version);
