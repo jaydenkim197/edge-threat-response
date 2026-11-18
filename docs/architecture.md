@@ -1,5 +1,7 @@
 # System Architecture
 
+자체 촬영의 `video-box-v1` 팩은 `direct_review: true`로 전체 프레임을 바로 검수할 수 있다. 기존 구간 연결 팩과 같은 배정·검수 예산·모바일 편집·수정 이력 경로를 사용한다. 입력 팩의 `capture_session_id`, 상대시각, 원본 영상 해시는 후속 데이터 구성까지 보존한다.
+
 <!-- docs-refresh-20261106:begin -->
 ## 현재 구조·검증 경계 — 2026-11-06
 
