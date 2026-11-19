@@ -102,7 +102,13 @@ def stage(pack, frozen_db, selection_path, predictions_path, output, *, revision
                 after = list(target.execute(f'SELECT * FROM {table} ORDER BY 1'))
                 if before != after:
                     raise ValueError('Judgment/history preservation failure')
-    report = {'revision':revision, 'images':len(rows), 'previous_pack_hash':old_hash, 'pack_hash':new_hash,
+    old_summary=json.loads((pack/'summary.json').read_text(encoding='utf-8'))
+    identity={key:old_summary[key] for key in ('capture_session_id','source_video_sha256','review_schema') if key in old_summary}
+    report = {**identity, 'revision':revision, 'images':len(rows), 'previous_pack_hash':old_hash, 'pack_hash':new_hash,
+              'previous_summary_sha256':digest(pack/'summary.json'),
+              'knife_objects':sum(row['knife_count'] for row in rows),
+              'image_bytes':sum(row['image_bytes'] for row in rows),
+              'proposal_scope':'mixed raw proposals: completed evidence preserved; pending rows refreshed',
               'inference_selection':len(selected), 'preserved_reviewed':len(reviewed), 'updated_pending':len(updated),
               'reviewed_during_inference_skipped':len(skipped), 'pending_with_proposals':with_boxes,
               'pending_without_proposals':len(updated)-with_boxes, 'new_proposal_boxes':proposal_boxes,

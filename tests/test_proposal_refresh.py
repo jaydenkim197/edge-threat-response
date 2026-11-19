@@ -26,7 +26,8 @@ class ProposalRefreshTests(unittest.TestCase):
             Image.new('RGB',(20,20),color).save(b,format='PNG')
             samples.append({'bytes':b.getvalue(),'image_path':f'{i}.png','original_split':'pending',
                 'timestamp_s':float(i),'source_video_sha256':'source','boxes':[[1,1,4,5]]})
-        write_pack('old',samples,{},root=self.root)
+        write_pack('old',samples,{'capture_session_id':'qa-session','source_video_sha256':'source',
+            'review_schema':'video-box-v1'},root=self.root)
         self.old=self.root/'old'
         self.store=ReviewStore(self.old,review_schema='video-box-v1')
         self.fields={'domain':'target_cctv','knife_presence':'yes','reviewed_boxes':[[1,1,4,5]],'reviewer':'QA'}
@@ -53,6 +54,8 @@ class ProposalRefreshTests(unittest.TestCase):
         old_bytes=(self.old/'image-evidence.jsonl').read_bytes()
         result=stage(self.old,self.frozen,self.selection,self.predictions,self.root/'new',revision='qa-r1')
         self.assertEqual((2,2,1),(result['preserved_reviewed'],result['updated_pending'],result['reviewed_during_inference_skipped']))
+        self.assertEqual(('qa-session','source','video-box-v1'),
+            (result['capture_session_id'],result['source_video_sha256'],result['review_schema']))
         new=self.root/'new'
         rows=[json.loads(line) for line in (new/'image-evidence.jsonl').read_text().splitlines()]
         self.assertEqual(self.evidence[:2],rows[:2])
