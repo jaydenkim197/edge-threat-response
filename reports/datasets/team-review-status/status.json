@@ -941,22 +941,40 @@
           "batch": "initial",
           "offset": 0,
           "prepared": 985,
-          "reviewed": 459
+          "reviewed": 497
         }
       ],
-      "reviewed": 459,
-      "held": 18,
-      "history": 479,
+      "reviewed": 497,
+      "held": 21,
+      "history": 517,
       "review_schema": "video-box-v1",
       "direct_review": true,
       "visible_in_video_public": true,
       "judgments": {
-        "knife_absent": 210,
-        "knife_present": 231,
-        "confirmed_boxes": 233,
+        "knife_absent": 224,
+        "knife_present": 252,
+        "confirmed_boxes": 254,
         "excluded": 7,
-        "uncertain": 11
+        "uncertain": 14
       }
+    },
+    "p430-20261119-session-02": {
+      "prepared": 1088,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 1088,
+          "reviewed": 0
+        }
+      ],
+      "reviewed": 0,
+      "held": 0,
+      "history": 0,
+      "review_schema": "video-box-v1",
+      "direct_review": true,
+      "visible_in_video_public": true,
+      "judgments": {}
     }
   },
   "databases": {
@@ -964,16 +982,16 @@
       "integrity": "ok",
       "tables": {
         "assignment_activity": {
-          "count": 7306,
-          "sha256": "10aba0109f85683f0e569337c57c68dc6bfd0c7932110df0423f97aa1ae2b12d"
+          "count": 7343,
+          "sha256": "b9edd206ed281b2a68205f2fbc5e38860080ff92e68e293c571d826f6b16f8c7"
         },
         "assignments": {
-          "count": 7306,
-          "sha256": "040af8409f1bf15275d68b4de39f8f088c4ae78f02eb1ef9871e533f3f8846e0"
+          "count": 7343,
+          "sha256": "e78411c1f553dc71ab95b172269ecc7fdb127a1737dcbb79af432a1a08bcb537"
         },
         "review_batches": {
-          "count": 51,
-          "sha256": "74dae9d6126131be0b2df135424a5146bf50cc38579c061d0fe985025faf4ad8"
+          "count": 52,
+          "sha256": "13e7a8adbf13f89cbae8b9c32b33215ec296e9c8e345e8dae0db50cd0ce6f6cc"
         },
         "users": {
           "count": 23,
@@ -981,7 +999,7 @@
         },
         "video_review_budget": {
           "count": 1,
-          "sha256": "c3793079834f7bc29a23af24ab7449e4320c17c789f58b4cdf26e60654495bc5"
+          "sha256": "8d492b3098a26ad2fae148f9e9fe47e967b38cddd2ff3f785b5752f0ddbe7a1a"
         }
       }
     },
@@ -2072,30 +2090,48 @@
       "integrity": "ok",
       "tables": {
         "history": {
-          "count": 479,
-          "sha256": "5e485ce1daded7cd36e08a886187a122938a56841286812bfaa69140b040f573"
+          "count": 517,
+          "sha256": "8dc656760f89d04cd3ffd4dc3fe25bdde54c4452dbef1df0c88aec65b24bcfad"
         },
         "metadata": {
           "count": 2,
           "sha256": "b59d0916a1a77a053c7cb1d0d60abdcf3cac98698fdd33ee93d2aaebee6723c6"
         },
         "reviews": {
-          "count": 459,
-          "sha256": "390c4e6aba54f75577482225a6c6365433591d5a1c95a53941423f0369a7a73a"
+          "count": 497,
+          "sha256": "b9683490170b8d1b5d1ebbcca240d6d017cf6437979e1392180f254c3cfeab37"
         }
       },
       "verdicts": {
-        "ok": 441,
+        "ok": 476,
         "problem": 7,
-        "unclear": 11
+        "unclear": 14
       }
+    },
+    "p430-20261119-session-02": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "78e97a2229a455894b0898c4882d743435c18889a474dde772181137ae18423f"
+        },
+        "reviews": {
+          "count": 0,
+          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+        }
+      },
+      "verdicts": {}
     }
   },
   "metadata": {
     "schema_version": 1,
-    "observed_from_kst": "2026-11-19T16:45:25+09:00",
-    "observed_until_kst": "2026-11-19T16:45:25+09:00",
-    "site_commit": "567f44228fd0e37e75c914297edf51fdb88278a7",
+    "observed_from_kst": "2026-11-19T19:39:06+09:00",
+    "observed_until_kst": "2026-11-19T19:39:07+09:00",
+    "site_commit": "b9b5f26e1546b365351d44718c4987dda88272b4",
     "reviewer_login": "video_public",
     "scope": "Aggregate review status and table count/hash evidence only; not training approval. Per-database read transactions while service remains running; not one global atomic snapshot."
   }

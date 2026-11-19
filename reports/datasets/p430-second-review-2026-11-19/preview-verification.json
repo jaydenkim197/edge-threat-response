@@ -1,0 +1,13 @@
+{
+  "public_preview_routes_200": true,
+  "preview_dimensions": [
+    1920,
+    1080
+  ],
+  "original_coordinate_dimensions": [
+    3840,
+    2160
+  ],
+  "samples_checked": 3,
+  "production_test_judgments": 0
+}
