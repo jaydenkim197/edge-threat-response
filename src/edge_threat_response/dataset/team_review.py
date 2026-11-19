@@ -625,6 +625,8 @@ def create_app(config_path: Path):
             raise ValueError("Unknown sample")
         if g.user["admin"]:
             abort(403)
+        if store.evidence[sample].get("proposal_revision") and body.get("pack_hash") != store.pack_hash:
+            return jsonify(pack_changed=True, error="초안 박스가 갱신됐습니다. 새로고침 후 다시 확인해주세요."), 409
         fields = {**body["fields"], "reviewer": g.user["name"], "review_schema": store.review_schema}
         # Hold the ownership lock until the review commits. Reclaim cannot race a save.
         with team.connect() as connection:

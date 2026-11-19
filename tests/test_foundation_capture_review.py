@@ -7,10 +7,21 @@ import tempfile
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]/'tools'))
-from prepare_foundation_capture_review import merge, pack, restore, views
+from prepare_foundation_capture_review import merge, pack, restore, selected_indices, views
 
 
 class FoundationCaptureTests(unittest.TestCase):
+    def test_explicit_selection_is_ordered_unique_and_recording_bound(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'selection.json'
+            for indices in ([0,2],[2,0],[0,0],[3],[True]):
+                path.write_text(json.dumps({'source_sha256':'source','frame_indices':indices}))
+                if indices == [0,2]:
+                    self.assertEqual([0,2],selected_indices([{}, {}, {}],'source',path))
+                else:
+                    with self.assertRaises(ValueError):selected_indices([{}, {}, {}],'source',path)
+            with self.assertRaises(ValueError):selected_indices([{}, {}, {}],'wrong',path)
+
     def test_overlapping_views_cover_all_edges_and_use_smaller_crops(self):
         cuts = views(3840, 2160)
         self.assertEqual(cuts[0], (0, 0, 3840, 2160))

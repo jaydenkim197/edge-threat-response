@@ -435,7 +435,7 @@ async function save(force=false) {
   saving=true; const id=current; const captured=JSON.stringify(values); let succeeded=false;
   $("save-next").disabled=true; status("저장 중…");
   try {
-    const response=await fetch(apiUrl("/api/review"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id,version:items[id].version,fields:values})});
+    const response=await fetch(apiUrl("/api/review"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id,version:items[id].version,fields:values,pack_hash:pack})});
     const result=await response.json(); if(result.assignment_lost){assignmentLost(id);return false;} if(!response.ok) throw new Error(result.error || "저장 실패");
     items[id].version=result.version; items[id].review=result.review;
     succeeded=true;

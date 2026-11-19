@@ -1,5 +1,7 @@
 # System Architecture
 
+미검수 초안 갱신은 동결 DB를 기준으로 판정이 없는 행만 바꾸는 별도 팩 리비전으로 준비한다. 이미지/샘플 ID와 저장 판정·수정 이력을 유지하고, 명시적 활성화 단계에서 팩 DB·registry·미리보기의 지문을 함께 맞춘다. `proposal_revision` 행의 저장은 현재 `pack_hash`를 요구해 이전 탭의 초안 저장을 거부한다. 기존 행·다른 팩의 클라이언트 호환성은 유지한다. 코드·격리 검증과 실제 운영 적용은 [1차 초안 갱신 기록](../reports/datasets/p430-first-proposal-refresh-2026-11-19/report.md)에서 구분한다.
+
 자체 촬영의 `video-box-v1` 팩은 `direct_review: true`로 전체 프레임을 바로 검수할 수 있다. 기존 구간 연결 팩과 같은 배정·검수 예산·모바일 편집·수정 이력 경로를 사용한다. 입력 팩의 `capture_session_id`, 상대시각, 원본 영상 해시는 후속 데이터 구성까지 보존한다.
 
 <!-- docs-refresh-20261106:begin -->

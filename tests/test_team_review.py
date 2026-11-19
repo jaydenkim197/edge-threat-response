@@ -66,6 +66,22 @@ class TeamReviewTests(unittest.TestCase):
         with self.team.connect() as connection:
             connection.execute("UPDATE assignment_activity SET last_seen=? WHERE pack='fixture' AND sample=?", (time.time()-seconds, sample))
 
+    def test_refreshed_proposals_reject_stale_tabs_without_writing_judgments(self):
+        client,headers=self.login(self.a)
+        sample=self.post(client,headers,'/api/claim?dataset=fixture',{}).json['id']
+        store=self.app.extensions['review_stores']['fixture']
+        store.evidence[sample]['proposal_revision']='qa-refresh'
+        body={'id':sample,'version':0,'fields':{'domain':'target_cctv','annotation_verdict':'ok'}}
+        for digest in (None,'stale-pack'):
+            if digest is not None:body['pack_hash']=digest
+            result=self.post(client,headers,'/api/review?dataset=fixture',body)
+            self.assertEqual(409,result.status_code)
+            self.assertTrue(result.json['pack_changed'])
+            self.assertEqual(0,store.items()[sample]['version'])
+        body['pack_hash']=store.pack_hash
+        self.assertEqual(200,self.post(client,headers,'/api/review?dataset=fixture',body).status_code)
+        self.assertEqual(1,store.items()[sample]['version'])
+
     def test_expired_pending_reassigned_and_previous_owner_cannot_write(self):
         ca, ha = self.login(self.a)
         cb, hb = self.login(self.b)

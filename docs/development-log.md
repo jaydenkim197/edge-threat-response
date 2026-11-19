@@ -1,5 +1,11 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-19 — 1차 촬영 미검수 초안 재생성 준비
+
+사용자 요청으로 1차 985장 중 판정 없는 488장만 선택하고 2차와 같은 외부 OWLv2 Large 추론을 시작했다. 기존 497판정과 진행 중 배정은 그대로 유지한다. 추론 도중 완료되는 사진은 적용 직전 동결 DB로 다시 제외한다. 기존 프레임/팩 생성·검수 경로를 재사용하고, 명시적 부분 선택과 보존형 팩 리비전 staging/활성화 및 갱신된 초안의 저장 지문 검사를 추가했다.
+
+검수 관련 54개+갱신 전용 5개 테스트, 390px 격리 브라우저의 오래된 지문 거부·현재 지문 저장·4K 좌표/이어가기, compileall·JS 문법·diff 검사를 통과했다. 운영 데이터 교체는 아직이며 GPU 완료 뒤 최신 판정의 consistent backup으로 적용한다. [범위·보존 계약·검증·실행 위치](../reports/datasets/p430-first-proposal-refresh-2026-11-19/report.md).
+
 ## 2026-11-19 — 2차 촬영의 외부 사전학습 모델 박스 준비
 
 사용자 확인 영상 768,143,230 bytes의 전송 SHA-256을 대조하고 PC13 CUDA/NVDEC로 27,190개 원본 프레임을 디코드해 4K 1 FPS 1,088장을 추출했다. Grounding DINO Base·OWLv2 Large·RF-DETR Large·COCO YOLO26x를 동일 24장에 비교했다. 프로젝트 custom weight를 쓰지 않고 OWLv2 Large의 칼/모형 칼 대 혼동 물체 쿼리를 라벨링용으로 선택했다. 전체+겹침 타일 추론을 3544.2초에 완료했고 392장·419개 박스를 제안했다. 미검출 696장을 포함한 모든 프레임은 검수 대기이며 실제 정답·학습 승인이 아니다.

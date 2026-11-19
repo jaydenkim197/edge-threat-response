@@ -49,6 +49,16 @@ def restore(box, crop, image_size, *, boundary=3):
     return [round(v, 2) for v in result] if result[0] < result[2] and result[1] < result[3] else None
 
 
+def selected_indices(rows, source_hash, path):
+    selection = json.loads(path.read_text(encoding='utf-8'))
+    indices = selection.get('frame_indices')
+    if (selection.get('source_sha256') != source_hash or not isinstance(indices, list) or not indices
+            or any(type(index) is not int or not 0 <= index < len(rows) for index in indices)
+            or indices != sorted(set(indices))):
+        raise ValueError('Selected frames must be unique, ordered and bound to this recording')
+    return indices
+
+
 def predictor(kind, path, contrastive=False):
     if contrastive and kind != 'owlv2-large':
         raise ValueError('Contrastive class selection is supported for OWLv2 only')
@@ -110,6 +120,8 @@ def infer(args):
     rows = [json.loads(line) for line in (args.frames/'frames.jsonl').read_text(encoding='utf-8').splitlines()]
     indices = list(range(len(rows))) if args.samples == 0 else sorted(set(
         min(len(rows)-1, round((i+.5)*len(rows)/args.samples)) for i in range(args.samples)))
+    if getattr(args, 'indices_file', None):
+        indices = selected_indices(rows, frame_summary['source_sha256'], args.indices_file)
     assert not args.output.exists(), 'Keep previous predictions unchanged'
     args.output.parent.mkdir(parents=True, exist_ok=True)
     weights = args.model_path/'model.safetensors' if args.model_path.is_dir() else args.model_path
@@ -149,6 +161,8 @@ def infer(args):
             'precision': 'float16/sdpa' if args.model == 'owlv2-large' else
                          ('autocast-float16' if args.model == 'grounding-base' else 'float32'),
             'status': 'model proposals only; not human labels'}
+    if getattr(args, 'indices_file', None):
+        meta['selection_sha256'] = hashlib.sha256(args.indices_file.read_bytes()).hexdigest()
     args.output.with_suffix('.meta.json').write_text(json.dumps(meta, indent=2), encoding='utf-8')
 
 
@@ -204,6 +218,7 @@ if __name__ == '__main__':
     p.add_argument('--model-path', type=Path, required=True)
     p.add_argument('--output', type=Path, required=True)
     p.add_argument('--samples', type=int, default=24)
+    p.add_argument('--indices-file', type=Path, help='Recording-bound explicit subset; preserves original frame indices')
     p.add_argument('--layout', choices=['full', 'tiles'], default='tiles')
     p.add_argument('--contrastive', action='store_true', help='Separate knives from common hard negatives')
     p.set_defaults(run=infer)
