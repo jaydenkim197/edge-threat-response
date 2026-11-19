@@ -1,5 +1,11 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-19 — 2차 촬영의 외부 사전학습 모델 박스 준비
+
+사용자 확인 영상 768,143,230 bytes의 전송 SHA-256을 대조하고 PC13 CUDA/NVDEC로 27,190개 원본 프레임을 디코드해 4K 1 FPS 1,088장을 추출했다. Grounding DINO Base·OWLv2 Large·RF-DETR Large·COCO YOLO26x를 동일 24장에 비교했다. 프로젝트 custom weight를 쓰지 않고 OWLv2 Large의 칼/모형 칼 대 혼동 물체 쿼리를 라벨링용으로 선택했다. 전체+겹침 타일 추론은 진행 중이며 검수용 제안일 뿐 실제 정답·학습 승인이 아니다.
+
+기존 추출 무결성·팩 생성·미리보기·배정/저장 경로를 재사용하고 외부 모델 adapter·좌표 복원·중복 병합을 추가했다. 새 테스트 4개와 기존 capture 테스트 2개, compileall·diff 검사를 통과했다. 실제 4K 표본 3장의 격리된 390px 브라우저에서 터치 박스 추가·원본 좌표 저장·박스 확인·새로고침 후 이어가기·칼 없음 저장을 확인했다. 기존 촬영분·운영 판정은 변경하지 않았다. [범위·모델·실행·미완료 사항](../reports/datasets/p430-second-review-2026-11-19/report.md).
+
 ## 2026-11-19 — 검수 변경·완료 기록의 GitHub 동기화
 
 사용자 요청으로 검수 사이트의 검증된 수정·배포 결과와 데이터 검수 진행·완료·수정 이력을 `main`에 반영하는 규칙을 AGENTS·문서 운영·사이트 안내에 추가했다. 기존 `tools/team_review_status.py`의 읽기 전용 DB 무결성·집계·테이블 해시 검사를 재사용했고, 원시 판정이나 검수자 정보 없이 현재 보고서와 JSON을 작성했다. PC13에서 서비스와 DB를 변경하지 않고 조회했다.
