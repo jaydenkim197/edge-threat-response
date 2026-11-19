@@ -31,6 +31,7 @@
 작업 완료 전 다음을 수행한다.
 
 1. material change는 `development-log`에 기록하고, 결정·구조·검증·사용법이 실제로 바뀐 관련 문서만 갱신한다. 전체 문서를 매번 기계적으로 수정하지 않는다.
+   - 2026-11-19 사용자 결정: 검수 사이트의 수정·배포 검증이 끝나면 변경 이유·검증·배포 결과를 기록하고 원격 `main`까지 push한다. 데이터 검수의 진행·완료·판정 수정은 개인정보 없는 집계와 DB 테이블 건수/해시를 `reports/datasets/team-review-status/`에 갱신한다. 조회 시각(KST), 데이터/배치 식별자, 저장·미저장·제외·보류 수량과 남은 작업을 구분한다. 원본 영상/이미지, 검수자 식별자·메모, DB/config·접속 정보는 PC13에 보존하며 Git에 넣지 않는다. 판정 저장 완료를 학습 승인이나 Holding 정답 확보로 승격하지 않는다. 세부 절차는 `docs/documentation-governance.md`의 검수 기록 동기화 규칙을 따른다.
 2. `IMPLEMENTED`, `VERIFIED`, `PLANNED`, `BLOCKED` 상태를 정확히 구분한다.
 3. 가능한 비파괴적 검증을 실행하고 환경·명령·결과·한계를 기록한다.
 4. `git diff --check`, `git status`로 변경 범위를 확인한다.

@@ -1,0 +1,2102 @@
+{
+  "datasets": {
+    "sohas": {
+      "prepared": 1150,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        },
+        {
+          "batch": "20261004-b01",
+          "offset": 100,
+          "prepared": 100,
+          "reviewed": 100
+        },
+        {
+          "batch": "20261026-small-positive-v1",
+          "offset": 200,
+          "prepared": 100,
+          "reviewed": 100
+        },
+        {
+          "batch": "20261026-negative-mined-v1",
+          "offset": 300,
+          "prepared": 50,
+          "reviewed": 50
+        },
+        {
+          "batch": "20261105-quality-v1",
+          "offset": 350,
+          "prepared": 800,
+          "reviewed": 800
+        }
+      ],
+      "reviewed": 1150,
+      "held": 35,
+      "history": 1247,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "dasci-unique": {
+      "prepared": 93,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 93,
+          "reviewed": 93
+        }
+      ],
+      "reviewed": 93,
+      "held": 0,
+      "history": 95,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "simuletic": {
+      "prepared": 114,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 114,
+          "reviewed": 114
+        }
+      ],
+      "reviewed": 114,
+      "held": 7,
+      "history": 122,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "us-mock": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 17,
+      "history": 169,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "dangerous-items": {
+      "prepared": 400,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        },
+        {
+          "batch": "20261026-voc-small-v1",
+          "offset": 100,
+          "prepared": 50,
+          "reviewed": 50
+        },
+        {
+          "batch": "20261105-quality-v1",
+          "offset": 150,
+          "prepared": 250,
+          "reviewed": 250
+        }
+      ],
+      "reviewed": 400,
+      "held": 57,
+      "history": 472,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "open-images": {
+      "prepared": 610,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 30,
+          "reviewed": 30
+        },
+        {
+          "batch": "20261105-quality-v1",
+          "offset": 30,
+          "prepared": 580,
+          "reviewed": 580
+        }
+      ],
+      "reviewed": 610,
+      "held": 46,
+      "history": 739,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "legacy": {
+      "prepared": 128,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 128,
+          "reviewed": 128
+        }
+      ],
+      "reviewed": 128,
+      "held": 5,
+      "history": 138,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "catargiu": {
+      "prepared": 793,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 17,
+          "reviewed": 17
+        },
+        {
+          "batch": "20261026-full-scan-v2",
+          "offset": 17,
+          "prepared": 762,
+          "reviewed": 762
+        },
+        {
+          "batch": "20261026-cctv-v1",
+          "offset": 779,
+          "prepared": 14,
+          "reviewed": 14
+        }
+      ],
+      "reviewed": 793,
+      "held": 57,
+      "history": 945,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "simuletic-atm": {
+      "prepared": 237,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 237,
+          "reviewed": 237
+        }
+      ],
+      "reviewed": 237,
+      "held": 5,
+      "history": 249,
+      "review_schema": "simple-v2",
+      "direct_review": false,
+      "visible_in_video_public": false
+    },
+    "video-scenes-01": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 60,
+      "history": 100,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "cctv_accepted": 40,
+        "excluded": 57,
+        "uncertain": 3
+      }
+    },
+    "video-boxes-01": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 116
+        }
+      ],
+      "reviewed": 116,
+      "held": 22,
+      "history": 117,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 77,
+        "uncertain": 2,
+        "knife_present": 17,
+        "confirmed_boxes": 17,
+        "excluded": 20
+      }
+    },
+    "video-scenes-02": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 50,
+      "history": 108,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "cctv_accepted": 50,
+        "excluded": 50
+      }
+    },
+    "video-boxes-02": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 146
+        }
+      ],
+      "reviewed": 146,
+      "held": 20,
+      "history": 148,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "uncertain": 16,
+        "knife_absent": 119,
+        "knife_present": 7,
+        "confirmed_boxes": 7,
+        "excluded": 4
+      }
+    },
+    "video-scenes-03": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 58,
+      "history": 102,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "cctv_accepted": 42,
+        "excluded": 55,
+        "uncertain": 3
+      }
+    },
+    "video-boxes-03": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 121
+        }
+      ],
+      "reviewed": 121,
+      "held": 22,
+      "history": 127,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 93,
+        "excluded": 12,
+        "knife_present": 6,
+        "confirmed_boxes": 6,
+        "uncertain": 10
+      }
+    },
+    "video-scenes-04": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 76,
+      "history": 102,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "cctv_accepted": 24,
+        "excluded": 75,
+        "uncertain": 1
+      }
+    },
+    "video-boxes-04": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 68
+        }
+      ],
+      "reviewed": 68,
+      "held": 9,
+      "history": 70,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 43,
+        "excluded": 1,
+        "knife_present": 16,
+        "confirmed_boxes": 16,
+        "uncertain": 8
+      }
+    },
+    "video-scenes-05": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 70,
+      "history": 100,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "uncertain": 6,
+        "cctv_accepted": 30,
+        "excluded": 64
+      }
+    },
+    "video-boxes-05": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 88
+        }
+      ],
+      "reviewed": 88,
+      "held": 28,
+      "history": 88,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_present": 8,
+        "confirmed_boxes": 8,
+        "knife_absent": 52,
+        "uncertain": 14,
+        "excluded": 14
+      }
+    },
+    "video-scenes-06": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 68,
+      "history": 101,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "uncertain": 1,
+        "cctv_accepted": 32,
+        "excluded": 67
+      }
+    },
+    "video-boxes-06": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 96
+        }
+      ],
+      "reviewed": 96,
+      "held": 22,
+      "history": 97,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 10,
+        "knife_absent": 67,
+        "knife_present": 7,
+        "confirmed_boxes": 7,
+        "uncertain": 12
+      }
+    },
+    "video-scenes-07": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 62,
+      "history": 104,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 62,
+        "cctv_accepted": 38
+      }
+    },
+    "video-boxes-07": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 113
+        }
+      ],
+      "reviewed": 113,
+      "held": 6,
+      "history": 120,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 104,
+        "uncertain": 4,
+        "excluded": 2,
+        "knife_present": 3,
+        "confirmed_boxes": 3
+      }
+    },
+    "video-scenes-08": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 66,
+      "history": 102,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 66,
+        "cctv_accepted": 34
+      }
+    },
+    "video-boxes-08": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 11,
+      "history": 100,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 84,
+        "knife_present": 5,
+        "confirmed_boxes": 5,
+        "uncertain": 8,
+        "excluded": 3
+      }
+    },
+    "video-scenes-09": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 69,
+      "history": 101,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "cctv_accepted": 31,
+        "excluded": 69
+      }
+    },
+    "video-boxes-09": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 92
+        }
+      ],
+      "reviewed": 92,
+      "held": 9,
+      "history": 92,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 79,
+        "knife_present": 4,
+        "confirmed_boxes": 4,
+        "uncertain": 9
+      }
+    },
+    "video-scenes-10": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 68,
+      "history": 101,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 67,
+        "cctv_accepted": 32,
+        "uncertain": 1
+      }
+    },
+    "video-boxes-10": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 95
+        }
+      ],
+      "reviewed": 95,
+      "held": 4,
+      "history": 95,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 90,
+        "uncertain": 1,
+        "excluded": 3,
+        "knife_present": 1,
+        "confirmed_boxes": 1
+      }
+    },
+    "video-scenes-11": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 86,
+      "history": 100,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "cctv_accepted": 14,
+        "excluded": 86
+      }
+    },
+    "video-boxes-11": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 42
+        }
+      ],
+      "reviewed": 42,
+      "held": 2,
+      "history": 42,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 29,
+        "knife_present": 11,
+        "confirmed_boxes": 12,
+        "excluded": 2
+      }
+    },
+    "video-scenes-12": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 77,
+      "history": 100,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 77,
+        "cctv_accepted": 23
+      }
+    },
+    "video-boxes-12": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 69
+        }
+      ],
+      "reviewed": 69,
+      "held": 17,
+      "history": 69,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 16,
+        "knife_absent": 41,
+        "knife_present": 11,
+        "confirmed_boxes": 11,
+        "uncertain": 1
+      }
+    },
+    "video-scenes-13": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 72,
+      "history": 103,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 72,
+        "cctv_accepted": 28
+      }
+    },
+    "video-boxes-13": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 83
+        }
+      ],
+      "reviewed": 83,
+      "held": 16,
+      "history": 84,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 15,
+        "knife_absent": 63,
+        "knife_present": 4,
+        "confirmed_boxes": 4,
+        "uncertain": 1
+      }
+    },
+    "video-scenes-14": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 53,
+      "history": 120,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 51,
+        "cctv_accepted": 47,
+        "uncertain": 2
+      }
+    },
+    "video-boxes-14": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 140
+        }
+      ],
+      "reviewed": 140,
+      "held": 3,
+      "history": 142,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 106,
+        "knife_present": 31,
+        "confirmed_boxes": 34,
+        "uncertain": 2,
+        "excluded": 1
+      }
+    },
+    "video-scenes-15": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 55,
+      "history": 100,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "cctv_accepted": 45,
+        "excluded": 53,
+        "uncertain": 2
+      }
+    },
+    "video-boxes-15": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 134
+        }
+      ],
+      "reviewed": 134,
+      "held": 5,
+      "history": 136,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 121,
+        "knife_present": 8,
+        "confirmed_boxes": 8,
+        "excluded": 4,
+        "uncertain": 1
+      }
+    },
+    "video-scenes-16": {
+      "prepared": 100,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 100,
+          "reviewed": 100
+        }
+      ],
+      "reviewed": 100,
+      "held": 58,
+      "history": 102,
+      "review_schema": "video-scene-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 56,
+        "cctv_accepted": 42,
+        "uncertain": 2
+      }
+    },
+    "video-boxes-16": {
+      "prepared": 300,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 300,
+          "reviewed": 124
+        }
+      ],
+      "reviewed": 124,
+      "held": 23,
+      "history": 131,
+      "review_schema": "video-box-v1",
+      "direct_review": false,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 14,
+        "knife_present": 22,
+        "confirmed_boxes": 22,
+        "knife_absent": 79,
+        "uncertain": 9
+      }
+    },
+    "p430-20261117-session-01": {
+      "prepared": 985,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 985,
+          "reviewed": 459
+        }
+      ],
+      "reviewed": 459,
+      "held": 18,
+      "history": 479,
+      "review_schema": "video-box-v1",
+      "direct_review": true,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_absent": 210,
+        "knife_present": 231,
+        "confirmed_boxes": 233,
+        "excluded": 7,
+        "uncertain": 11
+      }
+    }
+  },
+  "databases": {
+    "team": {
+      "integrity": "ok",
+      "tables": {
+        "assignment_activity": {
+          "count": 7306,
+          "sha256": "10aba0109f85683f0e569337c57c68dc6bfd0c7932110df0423f97aa1ae2b12d"
+        },
+        "assignments": {
+          "count": 7306,
+          "sha256": "040af8409f1bf15275d68b4de39f8f088c4ae78f02eb1ef9871e533f3f8846e0"
+        },
+        "review_batches": {
+          "count": 51,
+          "sha256": "74dae9d6126131be0b2df135424a5146bf50cc38579c061d0fe985025faf4ad8"
+        },
+        "users": {
+          "count": 23,
+          "sha256": "035331eb72ed5e26253283ea68b45fe3e787d8ac1eca4d57aa3ff106da025d04"
+        },
+        "video_review_budget": {
+          "count": 1,
+          "sha256": "c3793079834f7bc29a23af24ab7449e4320c17c789f58b4cdf26e60654495bc5"
+        }
+      }
+    },
+    "sohas": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 159,
+          "sha256": "2acc4f288dd83e507341a41c84527fb9b820c94f1ce71d32688a1647dd301fd2"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "a7decf15898b72d1a4d130f4d362c8251949bbabf6b236fb0d72d821feea2132"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "49a892120072b5905478407318011c9a991acd7a61e41c120f83d1cc3499debe"
+        }
+      },
+      "verdicts": {
+        "ok": 86,
+        "problem": 12,
+        "unclear": 2
+      }
+    },
+    "sohas--20261004-b01": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 110,
+          "sha256": "8d10418a443eafbbfee6947b3d8792aec7dd5ecee235604a4ab1a021cf3f496a"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "ba1ea28f2c15104f74acbbe51133aa4dc097cd520ef593fc4513b40f9838b8f6"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "a42862ef90ebdbb9ae1c0fc6646c42ba5182295ddcb5e419082cb5da4443d9a2"
+        }
+      },
+      "verdicts": {
+        "ok": 98,
+        "problem": 2
+      }
+    },
+    "sohas--20261026-small-positive-v1": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 112,
+          "sha256": "e9d1f79793249736ffb89879a161e302404a4c4d415b44652960db03e3d11e95"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "b54ceafc422fe3abfc180a5d6a15b4edfe271ff5d9caf3a730e33c19032d7902"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "38e14abe424a172411710ea9aeb486c0784cc46841f14602c987fdc146a7b11b"
+        }
+      },
+      "verdicts": {
+        "ok": 87,
+        "unclear": 7,
+        "problem": 6
+      }
+    },
+    "sohas--20261026-negative-mined-v1": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 59,
+          "sha256": "1dac2d93e9e7575bde6cf00d88277e9398a14162379cbf1afa974455c1aeea3d"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "cb6047e4e0e43fd929fb3f6ee150de78690ece05bc3c2e30b67f11aa5a1da3d5"
+        },
+        "reviews": {
+          "count": 50,
+          "sha256": "4fb2df3dc2e795c70e14622bc15ec3228328139f063a2c03e6c18246dad7dc6c"
+        }
+      },
+      "verdicts": {
+        "ok": 48,
+        "unclear": 1,
+        "problem": 1
+      }
+    },
+    "sohas--20261105-quality-v1": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 807,
+          "sha256": "b5520b34f49b52931fae3fe8f83351e78a745fddf3962c65d8fa5f5845c3a853"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "98de014a6fb41d3165c10b0ef3afef1b98cb61edcbe1f77c7c60a17dc4b47327"
+        },
+        "reviews": {
+          "count": 800,
+          "sha256": "9bc163728e46a67351cedf77b57e089fabf771195f637d87dbdf7a89db77fa35"
+        }
+      },
+      "verdicts": {
+        "ok": 796,
+        "problem": 2,
+        "unclear": 2
+      }
+    },
+    "dasci-unique": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 95,
+          "sha256": "378f9d65a68a29c99ef4e70b5073dd118d2f980f4b509f2dcce4d47d14316616"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "bbb6d68fcb9a39a1a44048711f6a372a8e9f129c4f97966c3f6a2420ec4455ec"
+        },
+        "reviews": {
+          "count": 93,
+          "sha256": "8ba5bad6cd931d08b97d90aeb6d3e1d64403df181c8ee39d271d8d96a28601dd"
+        }
+      },
+      "verdicts": {
+        "ok": 93
+      }
+    },
+    "simuletic": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 122,
+          "sha256": "9da0a010b44cc5738b0a18f77140e693ce2fb86586b2eda9d1c54bcc381ce635"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "41723750699277aee28c73fe0b2a867c9e87fed88f3647494087f7e6eaffe915"
+        },
+        "reviews": {
+          "count": 114,
+          "sha256": "d71dde9a0cb68a4bd6c631ae8fbd41334ad91a9c621fa7efeb46e7024be6be83"
+        }
+      },
+      "verdicts": {
+        "ok": 107,
+        "unclear": 7
+      }
+    },
+    "us-mock": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 169,
+          "sha256": "1bcd788545a33ec212ec61e2f484e0ff8f89b70b89d05ef5aa2b1e6ea0924fa5"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "6a2717dd7c864da4d56c8ce3d6aa471616fcf5b338b8d6bf948533f7d8ff0ff4"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "d5f67a367ea857a7bf9e68042e8b16cf14ff8b857e7d680f6843df006dcadeb9"
+        }
+      },
+      "verdicts": {
+        "ok": 83,
+        "unclear": 9,
+        "problem": 8
+      }
+    },
+    "dangerous-items": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 127,
+          "sha256": "19e61f3f19ea9595400ab6ba440d7265bced6a8f9955145040b11ce5c2dc4b2a"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "f03bd555e670ffbfe05209fde3a5ab09c679ed844f03da2423f4601abc14dd5f"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "9eb7dedb2ae54fe1b181be612e8272f682732c76fec3f547598270e9681ef956"
+        }
+      },
+      "verdicts": {
+        "unclear": 7,
+        "ok": 81,
+        "problem": 12
+      }
+    },
+    "dangerous-items--20261026-voc-small-v1": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 71,
+          "sha256": "57d12b71f72ef323a9b1dd4dc6b45ef024bff65e0d36eea185fbafc48f2da127"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "155423e40b69424d688f261c4e2291a10cfdbf4575eecb0313279dd9f9e4203d"
+        },
+        "reviews": {
+          "count": 50,
+          "sha256": "ab3e2dda75840b079a5b036e18e2923089a8db5a779bbaeaaa11ba1b7c3cef9e"
+        }
+      },
+      "verdicts": {
+        "ok": 43,
+        "problem": 7
+      }
+    },
+    "dangerous-items--20261105-quality-v1": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 274,
+          "sha256": "5898317d086c209fe951cb8f9456d86bb90c7a72999facd299146d65ccc9c136"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "83ab352db599a53e8e012f928976ec4f347c7676d37c0f7fc9200225dec28f73"
+        },
+        "reviews": {
+          "count": 250,
+          "sha256": "507d41b889cd77627dafc290bfdfce8dd96b479a3fe26b8f9870431b71bb88b1"
+        }
+      },
+      "verdicts": {
+        "ok": 219,
+        "unclear": 3,
+        "problem": 28
+      }
+    },
+    "open-images": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 30,
+          "sha256": "3dff64a7e185d113a7ba9797d46f981669085b9bc82132f1f6d5b0b17378e6c8"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "133ab251919de53af204c9da2b34b0c9783a2b5fc4094e1fa9f716d7f7793c61"
+        },
+        "reviews": {
+          "count": 30,
+          "sha256": "8a5877ab0f15d72c889abc230c262fe6c2558eb9e280362616bf187e3cad05b9"
+        }
+      },
+      "verdicts": {
+        "ok": 29,
+        "unclear": 1
+      }
+    },
+    "open-images--20261105-quality-v1": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 709,
+          "sha256": "fab0b35d973f1e9d0ee28d4679b1dfaa22f646af836a8656b9e660a7766f6dfd"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "8a07f606885c5547c5a69ad0e6235c8bb47b2ae6b17c5d380f419f906e4b4583"
+        },
+        "reviews": {
+          "count": 580,
+          "sha256": "976ad47a94def3ba36243be467f2ce69cf0d742d5d8edbc502537e9e147ee9d0"
+        }
+      },
+      "verdicts": {
+        "ok": 535,
+        "unclear": 20,
+        "problem": 25
+      }
+    },
+    "legacy": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 138,
+          "sha256": "75c300d34ca591cfe0e26491c1d663d8e9e2376dbb5113373f3e2b5af5afdaaa"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "245c2bfefd808f1e06c66670a6ba0e67c39cc7ec587c364c50ce03c52ea90d16"
+        },
+        "reviews": {
+          "count": 128,
+          "sha256": "a696a2861ede0c7d6bf05881c4ebda6fa73394fd025790577453245f0d73f8f8"
+        }
+      },
+      "verdicts": {
+        "ok": 123,
+        "unclear": 4,
+        "problem": 1
+      }
+    },
+    "catargiu": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 27,
+          "sha256": "82c50ac2b73ef465fb4e75dda61ae721a5524abc8be146434cf559a061bfb30e"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "40e1bde45bef88e31efb7f99260f186a0ddc01246247312341e296ca3df155ac"
+        },
+        "reviews": {
+          "count": 17,
+          "sha256": "51a7809728a189b27a9f219d3556f2c9be887a6f7cb9e9dcc5e1bf1a0f1057b5"
+        }
+      },
+      "verdicts": {
+        "problem": 2,
+        "ok": 15
+      }
+    },
+    "catargiu--20261026-full-scan-v2": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 899,
+          "sha256": "3a048fce7a2db209347e9f562eb2d7e2d0606de294846201c66c3f1859489d4e"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "0a729a442dbbeacffe5448f23ed9dab13024a9b7ab33242808b73b7f411519c6"
+        },
+        "reviews": {
+          "count": 762,
+          "sha256": "efa4805a33ee09d6feb923ed0dac076dc7018cfdce57c455b5e981e041c1838b"
+        }
+      },
+      "verdicts": {
+        "ok": 710,
+        "unclear": 28,
+        "problem": 24
+      }
+    },
+    "catargiu--20261026-cctv-v1": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 19,
+          "sha256": "a3b9fa624af2aaed3355e69f985cd00218989cb82de88274683cda00db946e76"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "0b7e6bcbdc8b4ce57afb9c04dd553f529a24f46274f5fdde033b093c66dcd669"
+        },
+        "reviews": {
+          "count": 14,
+          "sha256": "d09c0e8d4b1ee736b2cf583dfaabdde4085affc22a21a1e6a4b9b6118285bb06"
+        }
+      },
+      "verdicts": {
+        "ok": 11,
+        "problem": 3
+      }
+    },
+    "simuletic-atm": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 249,
+          "sha256": "36184c9b2e30989305ceb49240083996851967c0609371d55355382f73a5fbf7"
+        },
+        "metadata": {
+          "count": 1,
+          "sha256": "14cae29f20d73f8bfd42a00ff935cffc6fb35e5cdd702a84902759cee4839df4"
+        },
+        "reviews": {
+          "count": 237,
+          "sha256": "888e021ccc44590fb880983ede257de780613bb8a601c9707c7f4e0cd4c72785"
+        }
+      },
+      "verdicts": {
+        "ok": 232,
+        "problem": 4,
+        "unclear": 1
+      }
+    },
+    "video-scenes-01": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 100,
+          "sha256": "e06f0852b514d0ca8efaf73aedbd78588518fccb68941493c638a160a5b0b2f5"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "853dbcd49acfd90767c6abbbd582dee443638e20ac3e92ecb03e58b6fedc2282"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "5d78f0408f9de7b8f3dd9c2245279327a3a93028fe14c84d590196c8c908b83a"
+        }
+      },
+      "verdicts": {
+        "ok": 40,
+        "problem": 57,
+        "unclear": 3
+      }
+    },
+    "video-boxes-01": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 117,
+          "sha256": "41c2ff3773ad9495409fb6c6a3870981d2d266c9c276a9be0bd0e9bc75f57c2c"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "9283045f0a3626883a5818c57cb9d6bdc3ecb48a75cff2248f1ef1d5d597aec9"
+        },
+        "reviews": {
+          "count": 116,
+          "sha256": "2aa2449b9ce8a144b73ec39af1dced3ecf63e811161b88ca8fd519d78d4004e6"
+        }
+      },
+      "verdicts": {
+        "ok": 94,
+        "unclear": 2,
+        "problem": 20
+      }
+    },
+    "video-scenes-02": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 108,
+          "sha256": "240e5be06dd26982883e77bcff5cebc0bdb940a279197009286952b0985ac26d"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "ec31ae6d961e8d44fb61f8f69c61c5d0269888d62847c73586869b238704c956"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "efaf38451baf5d9f8d76b3159c6028e751159f240f52e5ad510c96031a284588"
+        }
+      },
+      "verdicts": {
+        "ok": 50,
+        "problem": 50
+      }
+    },
+    "video-boxes-02": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 148,
+          "sha256": "96e6f621bd4eb1baa3dbe6772d2948bb62e3c08e856373f408c4b67eec42f7e2"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "a2cdf0e007f67b22888addb23095595a563b6e14d692979bd285ee5658016529"
+        },
+        "reviews": {
+          "count": 146,
+          "sha256": "066725ce024d9fb69b276020fe3cbc270bf0b7a42899cd9a8ef752ae1f8d918a"
+        }
+      },
+      "verdicts": {
+        "unclear": 16,
+        "ok": 126,
+        "problem": 4
+      }
+    },
+    "video-scenes-03": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 102,
+          "sha256": "f4814766f2328a08d0070ed4b3d3180d86ecdc239c6766892c75e53f1afa65cf"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "0913d6dd028bef877e019585a98cc4685b069c2d6e4ee7723fb9fc2b28baac0c"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "0efc64656d8d981de8345ea6ea5021577e3f31533965bd4b907d6db7ff71cee5"
+        }
+      },
+      "verdicts": {
+        "ok": 42,
+        "problem": 55,
+        "unclear": 3
+      }
+    },
+    "video-boxes-03": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 127,
+          "sha256": "af38bc9c556931ecea13707d2579405cf43db74669e66c30bbeb7237259638c2"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "44be5174ec50be46f90e054373a7f10123b2f73c8b7dee029e8e14a7b0a66463"
+        },
+        "reviews": {
+          "count": 121,
+          "sha256": "df9bd8c4be93ebb251ef16b086d5da4212ed74f767d85b8558d9e073d020e474"
+        }
+      },
+      "verdicts": {
+        "ok": 99,
+        "problem": 12,
+        "unclear": 10
+      }
+    },
+    "video-scenes-04": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 102,
+          "sha256": "bc25e1bc7026f2307a3cc3125195586fc042a9194d35e97aeca4a2ee41c0c9a4"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "88038466daad2bc771b9de48c93dba9d9c42ae72a64b6bbfe5f414010d31b599"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "ce889060c710290ce1d1b8d3386a45602c4816cbe890e941aa736482b7b4b117"
+        }
+      },
+      "verdicts": {
+        "ok": 24,
+        "problem": 75,
+        "unclear": 1
+      }
+    },
+    "video-boxes-04": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 70,
+          "sha256": "e5b0c3e4dca5f7c6328ee80ded11fdd4649f3c173a7092f79833e6f2171d685f"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "1a9ad1ca4b66a338ffdf766331641327369d1a27ccb7c3eaf9be323836721aa0"
+        },
+        "reviews": {
+          "count": 68,
+          "sha256": "9be8c5276d5213cebe3f516f30615b8c427ce18ccee6c3be26a4eaa5155130ef"
+        }
+      },
+      "verdicts": {
+        "ok": 59,
+        "problem": 1,
+        "unclear": 8
+      }
+    },
+    "video-scenes-05": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 100,
+          "sha256": "00500b167bb42c26a6e9ad636a63d1db47387dd5edb9ae2e1e917b366be16cad"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "3e221536fde2af26b64ee5dcdb4bb3daf8b425e77da4b61efaea6dcda71ff52c"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "808b183b595f080fd65aec5426e33b2ad72808c6ec68ef925414d5682352f1c0"
+        }
+      },
+      "verdicts": {
+        "unclear": 6,
+        "ok": 30,
+        "problem": 64
+      }
+    },
+    "video-boxes-05": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 88,
+          "sha256": "33e0627c5424b22f05ec02c16a0bbf005632e9314af438b6f380f19501c93537"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "bd35eaf1cf3ae51c8f3fcf76dcad6bcdeb7cc36196f2b340bc0b28ead715907b"
+        },
+        "reviews": {
+          "count": 88,
+          "sha256": "991248f690181732acec63250c7a4f4bbf3da9679a60c3e677e3a617222d8db6"
+        }
+      },
+      "verdicts": {
+        "ok": 60,
+        "unclear": 14,
+        "problem": 14
+      }
+    },
+    "video-scenes-06": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 101,
+          "sha256": "511f2dba1bc9574d0a4486fb0e7077df9be9f04f398ef5f4eb8505cf06c2fb4f"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "07f8fce953d65946f0904cc67320e4a6246400c137da4a04d9fe41f29d61f4a4"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "04c8a181d1f4a35ed6aa763e62aa6b79975f206b5a3cbc5dd181bf3bef1172b2"
+        }
+      },
+      "verdicts": {
+        "unclear": 1,
+        "ok": 32,
+        "problem": 67
+      }
+    },
+    "video-boxes-06": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 97,
+          "sha256": "71e0d03daefc8ac91b8da75ef3a58fe02f4f4c9ff11b498f9cb3343432ed33e3"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "d6fac91ab5314a840d4dd8ff4d9504137db150496a67f864fc7916e18ea4ef72"
+        },
+        "reviews": {
+          "count": 96,
+          "sha256": "960bb85617abaccb92c7e21550a28e34091d91c68d1b357b35a5677d52694282"
+        }
+      },
+      "verdicts": {
+        "problem": 10,
+        "ok": 74,
+        "unclear": 12
+      }
+    },
+    "video-scenes-07": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 104,
+          "sha256": "269dc6af6b2e97fc32a3a81e7740ecd270f765c718af8b1186632d4706baff0d"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "b21d6db9ade8af835224da86e966a4a94bb0e6d4b23eeec80720bfe0c6be4d85"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "1b1ff1863dd483f6268b26bd1520de213fb02e515cf0e0c20d82adb897bf41ce"
+        }
+      },
+      "verdicts": {
+        "problem": 62,
+        "ok": 38
+      }
+    },
+    "video-boxes-07": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 120,
+          "sha256": "b8c08984370c746a21c6f7b26e355c9d3f46de04686f68c6870d45986a838cd3"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "d946eb7677e43f7982fa780117a6146ce356735b240ae24e9ea8ed108aeb04b9"
+        },
+        "reviews": {
+          "count": 113,
+          "sha256": "93ea1122e82be129ddea0a56c809851ecc87fa4a6fa7b1446f0d93d2ece51011"
+        }
+      },
+      "verdicts": {
+        "ok": 107,
+        "unclear": 4,
+        "problem": 2
+      }
+    },
+    "video-scenes-08": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 102,
+          "sha256": "5f8b9c5080833906addc6daf0d906aac519ed86bf09f02aaab1d4512644cd83e"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "bed2f019f07e726dbc35680ae4307d77e355030849d320ac8e1b9750def7e993"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "360bdcb5d7267b37fc1d33430c1e59eac88567a7ffc974701a675f23913b4b87"
+        }
+      },
+      "verdicts": {
+        "problem": 66,
+        "ok": 34
+      }
+    },
+    "video-boxes-08": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 100,
+          "sha256": "03a6c5fa89a60607a65716495477efbc8260ac7a95e1a40b9426a32ce5161be8"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "42196c1ddf14cff5d75af5c4a2285004fb6c2bd4c705378ab5bf3341957787af"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "9476be1607abdcde4778c6b65048c50030a481a45f8d29c80ec81f9f1293d7d1"
+        }
+      },
+      "verdicts": {
+        "ok": 89,
+        "unclear": 8,
+        "problem": 3
+      }
+    },
+    "video-scenes-09": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 101,
+          "sha256": "9da331c161ceb25d8cb2a8d6a13e4f6ed599988702276a5bb91598dffa8748ee"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "1d25efe321834927cbc1304ae0b9e8954566cc12bab7e470d1feb4394a94b97d"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "a5b4eba71f83649699f50637e49998d3e009c4aae06c76eb23e4cd398c7af560"
+        }
+      },
+      "verdicts": {
+        "ok": 31,
+        "problem": 69
+      }
+    },
+    "video-boxes-09": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 92,
+          "sha256": "27b3250d1adc6c508d871e8eca66c79109f9dc1c8fef6aac061938b7ce2fcbbf"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "238f0ecd3747a0b5e042df0697d262488c6602d3ac0be8e05688420b2a040f52"
+        },
+        "reviews": {
+          "count": 92,
+          "sha256": "e87706afdfc6330bce35a5a282a5e58f1ce1bd02e6bc3a64d8bbe73b3949d850"
+        }
+      },
+      "verdicts": {
+        "ok": 83,
+        "unclear": 9
+      }
+    },
+    "video-scenes-10": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 101,
+          "sha256": "dc1763f826f00b2da09a3483790c3e60804bcbee04770741baddaccb16db9763"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "ed3d5cae7785a76bd0ab3a86fede10b0b0711384279cd1cac14a0b07dcaa804d"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "66752b4c8088a14af78b6e9cb0b59e45e0ce29c2dd42e86785f493414a054403"
+        }
+      },
+      "verdicts": {
+        "problem": 67,
+        "ok": 32,
+        "unclear": 1
+      }
+    },
+    "video-boxes-10": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 95,
+          "sha256": "a00753b6e3b21897f1b897dba7d5d5ccc629f85bc948ce746e78f96626f16efd"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "0f0c646635ac88c7dccd86d254891ec3343ebbd18ef3fc7f7c4c5e01b93f6179"
+        },
+        "reviews": {
+          "count": 95,
+          "sha256": "abb10eb09cc60ed442c552e17a39b1d149f9a62869aa684f120a1bc047282120"
+        }
+      },
+      "verdicts": {
+        "ok": 91,
+        "unclear": 1,
+        "problem": 3
+      }
+    },
+    "video-scenes-11": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 100,
+          "sha256": "f3318c03033cac1f50090513942d92c8e8e1d0acd4e4ad211069743271d5df4c"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "161ccf832d5b96f20b43532ff1f90ed209f3005e6f5ce16e382206a1a0b13d90"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "e0936592d6d594cf59c089b6b4bd40ca21f3a7707c8952d5e25e38b82f71877c"
+        }
+      },
+      "verdicts": {
+        "ok": 14,
+        "problem": 86
+      }
+    },
+    "video-boxes-11": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 42,
+          "sha256": "7e32023da355a66f46a67714187970d0d139bca6d34d0acfb0da621bb9bdda5d"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "2cc39d7522ef6141479aa4a83691f6afab97a6b5c218753670d1bbdf7b0b6277"
+        },
+        "reviews": {
+          "count": 42,
+          "sha256": "badd45e7b4d653d93132318599a6d1254f13c9f2563e6c9b8dcfae4c7ee3ca95"
+        }
+      },
+      "verdicts": {
+        "ok": 40,
+        "problem": 2
+      }
+    },
+    "video-scenes-12": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 100,
+          "sha256": "b61173aae533b3ba516a325765b6cc55fd411b6939e2f28d98e981c79a7517ac"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "6a9489f4b0d203b7b719eafaf5465341955cdb58d8cb33398f18d83f20f30af7"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "c990ace30624004c67d33d779bc5929b14e99860b28fc8b1dcecc8de46134d50"
+        }
+      },
+      "verdicts": {
+        "problem": 77,
+        "ok": 23
+      }
+    },
+    "video-boxes-12": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 69,
+          "sha256": "37235073bc39e1ecd68a25cbe9f5f239a4ded003ad9595a915d24d5232c6a5e5"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "8d3eeccec908ee692664e825201efd4de4f24fed1e1f3d2f48c965d9b6da7f82"
+        },
+        "reviews": {
+          "count": 69,
+          "sha256": "0e2138064da1a3a9baa21bbe87857ff294d13bedbdc54d1273542ddb05671e63"
+        }
+      },
+      "verdicts": {
+        "problem": 16,
+        "ok": 52,
+        "unclear": 1
+      }
+    },
+    "video-scenes-13": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 103,
+          "sha256": "d0b71e85425a66b0d7f3cb028753c337f829cf082c2889a387dbc80356c830c8"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "49e7439f6c4cb55288f58c55dfbaaa737e7176c9c2004a0a8024e2f34a9e26f3"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "cf7b505e004515605da15b11a158c804f83205240bc19b45b868c5b1c4d15cb6"
+        }
+      },
+      "verdicts": {
+        "problem": 72,
+        "ok": 28
+      }
+    },
+    "video-boxes-13": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 84,
+          "sha256": "1392f38f9d14a6fd95940336c361d3c394695d3130b567d2e770a554f5184ac1"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "9575128d18ff93278641f3b9cc603b24bb7edefa08a6e9642862644318d02a40"
+        },
+        "reviews": {
+          "count": 83,
+          "sha256": "e300b05de46924c13a5551b2cde1b1b36942ac4ba2323538fed84f8c97004a15"
+        }
+      },
+      "verdicts": {
+        "problem": 15,
+        "ok": 67,
+        "unclear": 1
+      }
+    },
+    "video-scenes-14": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 120,
+          "sha256": "7004d4eda31f54da6d7306c6099facf0a1abe378cda79b8890fded767b33df5b"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "58ee25b983a79e97b7b0cb6538d11645b5ceb07d511921ae379a2326c22ee28c"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "50336881c4f68216b18774035002dda755e17a4a97606380a91cc74353788b23"
+        }
+      },
+      "verdicts": {
+        "problem": 51,
+        "ok": 47,
+        "unclear": 2
+      }
+    },
+    "video-boxes-14": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 142,
+          "sha256": "0bf6e43e2671cb0c57dfe83f6e7855d72f50c398e1a13a7d208a812ade06e0c6"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "c8730850f42d6974e44824aa6aa349ebca621ec30150385718733973f7260424"
+        },
+        "reviews": {
+          "count": 140,
+          "sha256": "d5b652cb034b11ee0b54135a2866c587f8aefa70179593b01e1ee3703a417334"
+        }
+      },
+      "verdicts": {
+        "ok": 137,
+        "unclear": 2,
+        "problem": 1
+      }
+    },
+    "video-scenes-15": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 100,
+          "sha256": "947d7433060e6fc2a3a39937a1cb8e35fd256a8c3893a96ff41d7b3e5b6d0798"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "1281eac40d941e7722178fada2cf22f224c877133074e667ed1300de678667bd"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "64dfcf0401e0c4f2e3e03a1716a2806c4e55ee4cd37637556dfb1940fd7605e0"
+        }
+      },
+      "verdicts": {
+        "ok": 45,
+        "problem": 53,
+        "unclear": 2
+      }
+    },
+    "video-boxes-15": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 136,
+          "sha256": "0b1032fda6c8861aa76e65aecb399633f6649908bf685cd069e99bcd8a35fe1f"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "50eb45bc61da5c07d2937245587cfc5b3828c540323bff7c0c16dcae58a763fb"
+        },
+        "reviews": {
+          "count": 134,
+          "sha256": "34ef070f007d9e1dbaeb2264d5f75420924e2ac6a5fdf356d549e0bf9f28921c"
+        }
+      },
+      "verdicts": {
+        "ok": 129,
+        "problem": 4,
+        "unclear": 1
+      }
+    },
+    "video-scenes-16": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 102,
+          "sha256": "6819aac030d2e969f789f33766d3f651e0fc6fd2ebddf7b1be1125f7338bf5d4"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "6c968b836e94fec87efe0e4834a6b2cb7eb25884be528cb1835b307a5287e76c"
+        },
+        "reviews": {
+          "count": 100,
+          "sha256": "847520156191ce6a8f22150feb710e7724a7bf84b285cb3369ba89b58c6e1c7b"
+        }
+      },
+      "verdicts": {
+        "problem": 56,
+        "ok": 42,
+        "unclear": 2
+      }
+    },
+    "video-boxes-16": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 131,
+          "sha256": "f32a83b567f755e7efd98b5fc4c4349a65e369ef773ddb6c2700ca22cb8b795c"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "6654a2e4e8d992557afacafe5e7387ea4d818ab8fa0cfa1415a57dad1aa89e01"
+        },
+        "reviews": {
+          "count": 124,
+          "sha256": "5d0f588001934484b778ec295b6a1bd61c09ba1da7dedd131f6145b3b105a99e"
+        }
+      },
+      "verdicts": {
+        "problem": 14,
+        "ok": 101,
+        "unclear": 9
+      }
+    },
+    "p430-20261117-session-01": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 479,
+          "sha256": "5e485ce1daded7cd36e08a886187a122938a56841286812bfaa69140b040f573"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "b59d0916a1a77a053c7cb1d0d60abdcf3cac98698fdd33ee93d2aaebee6723c6"
+        },
+        "reviews": {
+          "count": 459,
+          "sha256": "390c4e6aba54f75577482225a6c6365433591d5a1c95a53941423f0369a7a73a"
+        }
+      },
+      "verdicts": {
+        "ok": 441,
+        "problem": 7,
+        "unclear": 11
+      }
+    }
+  },
+  "metadata": {
+    "schema_version": 1,
+    "observed_from_kst": "2026-11-19T16:45:25+09:00",
+    "observed_until_kst": "2026-11-19T16:45:25+09:00",
+    "site_commit": "567f44228fd0e37e75c914297edf51fdb88278a7",
+    "reviewer_login": "video_public",
+    "scope": "Aggregate review status and table count/hash evidence only; not training approval. Per-database read transactions while service remains running; not one global atomic snapshot."
+  }
+}
