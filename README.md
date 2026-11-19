@@ -1,5 +1,12 @@
 # 상황 인지형 Edge AI 흉기 위협 대응 시스템
 
+## 한국어 개요
+
+> Context-Aware Edge AI Threat Response System · 2026-2 종합설계과제(1)
+
+Jetson Orin Nano에서 사람과 칼을 탐지하고 **공간·시간 문맥과 학습 기반 소지 관계**로 경보를 판단하는 엣지 AI 시스템을 개발합니다. 같은 영상에서 판단 방법을 비교해 불필요한 경보가 줄어드는지 검증합니다.
+
+
 ## English summary
 
 **Context-Aware Edge AI Threat Response System** is a non-commercial undergraduate capstone at **Yeungnam University, South Korea (Fall 2026)**, investigating whether spatial/temporal context and learned person–knife holding assessment can reduce unnecessary surveillance alerts.
@@ -19,12 +26,6 @@
 [Research overview and data-handling commitments (English)](docs/research-overview-en.md) · [Training and development comparisons](reports/evaluation/raw-detector-selection-2026-11-06/report.md) · [Orin camera verification](reports/runtime/p430-yolo26n-2026-11-05/report.md)
 
 Most detailed engineering records are in Korean. Contact: [22211897@yu.ac.kr](mailto:22211897@yu.ac.kr).
-
-## 한국어 개요
-
-> Context-Aware Edge AI Threat Response System · 2026-2 종합설계과제(1)
-
-Jetson Orin Nano에서 사람과 칼을 탐지하고 **공간·시간 문맥과 학습 기반 소지 관계**로 경보를 판단하는 엣지 AI 시스템을 개발합니다. 같은 영상에서 판단 방법을 비교해 불필요한 경보가 줄어드는지 검증합니다.
 
 ## 프로젝트 한눈에 보기
 
