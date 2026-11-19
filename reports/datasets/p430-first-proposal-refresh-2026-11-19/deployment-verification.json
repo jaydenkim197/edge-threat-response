@@ -1,0 +1,12 @@
+{
+  "public_https": true,
+  "config_unchanged": true,
+  "dataset_ids_and_image_ids_preserved": true,
+  "all_existing_reviews_history_users_assignments_preserved": true,
+  "registered_batch_count_unchanged": true,
+  "completed_evidence_unchanged": 497,
+  "pending_proposals_refreshed": 488,
+  "original_and_preview_samples_checked": 3,
+  "production_test_judgments": 0,
+  "training_approved": false
+}

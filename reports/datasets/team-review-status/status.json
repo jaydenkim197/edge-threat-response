@@ -965,16 +965,18 @@
           "batch": "initial",
           "offset": 0,
           "prepared": 1088,
-          "reviewed": 0
+          "reviewed": 1
         }
       ],
-      "reviewed": 0,
-      "held": 0,
-      "history": 0,
+      "reviewed": 1,
+      "held": 1,
+      "history": 1,
       "review_schema": "video-box-v1",
       "direct_review": true,
       "visible_in_video_public": true,
-      "judgments": {}
+      "judgments": {
+        "excluded": 1
+      }
     }
   },
   "databases": {
@@ -982,16 +984,16 @@
       "integrity": "ok",
       "tables": {
         "assignment_activity": {
-          "count": 7343,
-          "sha256": "b9edd206ed281b2a68205f2fbc5e38860080ff92e68e293c571d826f6b16f8c7"
+          "count": 7344,
+          "sha256": "cd542c3c89cda66f1d952f1319c3cb13c4b1d61cdea4d16d4576aedfcfdc04c0"
         },
         "assignments": {
-          "count": 7343,
-          "sha256": "e78411c1f553dc71ab95b172269ecc7fdb127a1737dcbb79af432a1a08bcb537"
+          "count": 7344,
+          "sha256": "f254fc44b49c2790fe0cfd42cc59c4b85ae5edc84b373706e881d99765239a11"
         },
         "review_batches": {
           "count": 52,
-          "sha256": "13e7a8adbf13f89cbae8b9c32b33215ec296e9c8e345e8dae0db50cd0ce6f6cc"
+          "sha256": "bf2d34440b2bb61f77710b4556937e76251f95fdb8cb1a118b95a2a94a99387a"
         },
         "users": {
           "count": 23,
@@ -999,7 +1001,7 @@
         },
         "video_review_budget": {
           "count": 1,
-          "sha256": "8d492b3098a26ad2fae148f9e9fe47e967b38cddd2ff3f785b5752f0ddbe7a1a"
+          "sha256": "6cb4a7b66fb19967725dde7a73907c5edb41b513e39a6ffec2d55cce4376ba8b"
         }
       }
     },
@@ -2095,7 +2097,7 @@
         },
         "metadata": {
           "count": 2,
-          "sha256": "b59d0916a1a77a053c7cb1d0d60abdcf3cac98698fdd33ee93d2aaebee6723c6"
+          "sha256": "cc1594d285a13856e794f8012898101cdaa8aaa1efe3fa22ab8237d8412aaa94"
         },
         "reviews": {
           "count": 497,
@@ -2112,26 +2114,28 @@
       "integrity": "ok",
       "tables": {
         "history": {
-          "count": 0,
-          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          "count": 1,
+          "sha256": "7ccf611753e14677c90fdaf34f0a66d375dadc318aeb2d0ef2de80fb32529edd"
         },
         "metadata": {
           "count": 2,
           "sha256": "78e97a2229a455894b0898c4882d743435c18889a474dde772181137ae18423f"
         },
         "reviews": {
-          "count": 0,
-          "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+          "count": 1,
+          "sha256": "7ccf611753e14677c90fdaf34f0a66d375dadc318aeb2d0ef2de80fb32529edd"
         }
       },
-      "verdicts": {}
+      "verdicts": {
+        "problem": 1
+      }
     }
   },
   "metadata": {
     "schema_version": 1,
-    "observed_from_kst": "2026-11-19T19:39:06+09:00",
-    "observed_until_kst": "2026-11-19T19:39:07+09:00",
-    "site_commit": "b9b5f26e1546b365351d44718c4987dda88272b4",
+    "observed_from_kst": "2026-11-19T20:46:40+09:00",
+    "observed_until_kst": "2026-11-19T20:46:41+09:00",
+    "site_commit": "0a6af812dca5affdcf15d370976d4b8539064001",
     "reviewer_login": "video_public",
     "scope": "Aggregate review status and table count/hash evidence only; not training approval. Per-database read transactions while service remains running; not one global atomic snapshot."
   }
