@@ -86,13 +86,17 @@ function setBoxMode(mode) {
 function imagePoint(event, inside = false) {
   const matrix = $("image-svg").getScreenCTM();
   if (!matrix) return null;
-  const {x, y} = new DOMPoint(event.clientX, event.clientY).matrixTransform(matrix.inverse());
+  const viewport = $("image-view");
+  const rect = viewport.getBoundingClientRect();
+  const left = rect.left + viewport.clientLeft, top = rect.top + viewport.clientTop;
+  // The SVG can show source pixels outside its viewBox in a tall or wide viewport.
+  // Limit captured drags to the visible scrollport before mapping to source coordinates.
+  const clientX = Math.max(left, Math.min(event.clientX, left + viewport.clientWidth));
+  const clientY = Math.max(top, Math.min(event.clientY, top + viewport.clientHeight));
+  const {x, y} = new DOMPoint(clientX, clientY).matrixTransform(matrix.inverse());
   const {width, height} = items[current];
-  const view=$("image-svg").viewBox.baseVal;
-  const left=Math.max(0,view.x), top=Math.max(0,view.y);
-  const right=Math.min(width,view.x+view.width), bottom=Math.min(height,view.y+view.height);
-  if (inside && (x < left || y < top || x > right || y > bottom)) return null;
-  return [Math.min(Math.max(x, left), right), Math.min(Math.max(y, top), bottom)];
+  if (inside && (x < 0 || y < 0 || x > width || y > height)) return null;
+  return [Math.max(0, Math.min(x, width)), Math.max(0, Math.min(y, height))];
 }
 function setFrameFocus(focused) {
   const item=items[current];
