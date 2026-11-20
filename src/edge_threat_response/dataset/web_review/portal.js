@@ -24,6 +24,8 @@ async function initPortal(){
     if(first){location.replace(`/review/${first.id}`);return;}
   }
   for(const item of data.datasets){
+    if(data.video_public && !data.user.admin && item.available && item.remaining===0
+        && item.id!=="p430-20261117-session-01")continue;
     const card=document.createElement("article");card.className="progress-card dataset-card";
     card.append(node("h2",item.name),node("p",item.available?`미검수 ${item.remaining}장 · ${item.reviewed} / ${item.total}장 완료 · 내 검수 ${item.mine}장`:`준비 중: ${item.reason||"확인 필요"}`));
     if(item.available){const link=node("a",data.user.admin?"검수 현황 보기 →":item.reviewed===item.total?"검수 완료 · 기록 보기 →":"검수 시작 →");link.className="button dark";link.href=`/review/${item.id}`;card.append(link);}
