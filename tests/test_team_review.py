@@ -412,10 +412,24 @@ class TeamReviewTests(unittest.TestCase):
         self.assertTrue(item["linked_review"])
         self.assertTrue(item["direct_review"])
         self.assertTrue(all(row["eligible"] for row in item["items"]))
+        self.assertEqual([25, 25, 75, 75], item["items"][0]["review_crop"])
+        self.assertEqual("center-50-v1", item["review_scope"])
         absence = {"domain": "target_cctv", "knife_presence": "no", "reviewed_boxes": []}
-        self.assertEqual(200, self.post(fresh, headers, save_path,
-                                      {"id": 0, "version": 0, "fields": absence}).status_code)
+        legacy = self.post(fresh, headers, save_path, {"id": 0, "version": 0, "fields": absence})
+        self.assertEqual(409, legacy.status_code)
+        absence["review_scope"] = item["review_scope"]
+        outside = {**absence, "knife_presence": "yes", "reviewed_boxes": [[24, 25, 40, 50]]}
+        self.assertEqual(400, self.post(fresh, headers, save_path,
+                                       {"id": 0, "version": 0, "fields": outside}).status_code)
+        saved = self.post(fresh, headers, save_path, {"id": 0, "version": 0, "fields": absence})
+        self.assertEqual(200, saved.status_code)
+        self.assertEqual(item["review_scope"], saved.json["review"]["review_scope"])
+        self.assertEqual(1, saved.json["version"])
         self.assertEqual(1, self.post(fresh, headers, claim, {}).json["id"])
+        inside = {**absence, "knife_presence": "yes", "reviewed_boxes": [[25, 25, 75, 75]]}
+        saved = self.post(fresh, headers, save_path, {"id": 1, "version": 0, "fields": inside})
+        self.assertEqual(200, saved.status_code)
+        self.assertEqual(inside["reviewed_boxes"], saved.json["review"]["reviewed_boxes"])
         # A completed-frame correction shares the same quota as a fresh claim.
         self.assertEqual(409, self.post(fresh, headers, save_path,
                                       {"id": 0, "version": 1, "fields": absence}).status_code)

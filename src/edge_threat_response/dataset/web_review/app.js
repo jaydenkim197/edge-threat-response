@@ -17,7 +17,7 @@ const svgNS = "http://www.w3.org/2000/svg";
 let boxMode = "browse", selectedBox = -1, boxDrag = null;
 let sceneStep = "main", sceneStart = null, reviewAdvancing = false, sceneSubmitted = false;
 let sceneMediaAvailable = false, frameEdit = false, frameBeforeEdit = null;
-let centerFocusAvailable = false, centerFocus = false;
+let reviewScope = null;
 
 function videoReview() { return reviewSchema === "video-box-v1"; }
 function sceneReview() { return reviewSchema === "video-scene-v1"; }
@@ -83,39 +83,36 @@ function setBoxMode(mode) {
   paintVideoBoxes();
 }
 
+function imageBounds(item = items[current]) {
+  return item.review_crop ?? [0, 0, item.width, item.height];
+}
+
+function cropBoxes(boxes, [left, top, right, bottom]) {
+  return boxes.map(([x1, y1, x2, y2]) => [
+    Math.max(x1, left), Math.max(y1, top), Math.min(x2, right), Math.min(y2, bottom)
+  ]).filter(([x1, y1, x2, y2]) => x1 < x2 && y1 < y2);
+}
+
 function imagePoint(event, inside = false) {
   const matrix = $("image-svg").getScreenCTM();
   if (!matrix) return null;
   const viewport = $("image-view");
   const rect = viewport.getBoundingClientRect();
-  const left = rect.left + viewport.clientLeft, top = rect.top + viewport.clientTop;
-  // The SVG can show source pixels outside its viewBox in a tall or wide viewport.
-  // Limit captured drags to the visible scrollport before mapping to source coordinates.
-  const clientX = Math.max(left, Math.min(event.clientX, left + viewport.clientWidth));
-  const clientY = Math.max(top, Math.min(event.clientY, top + viewport.clientHeight));
+  const screenLeft = rect.left + viewport.clientLeft, screenTop = rect.top + viewport.clientTop;
+  const clientX = Math.max(screenLeft, Math.min(event.clientX, screenLeft + viewport.clientWidth));
+  const clientY = Math.max(screenTop, Math.min(event.clientY, screenTop + viewport.clientHeight));
   const {x, y} = new DOMPoint(clientX, clientY).matrixTransform(matrix.inverse());
-  const {width, height} = items[current];
-  if (inside && (x < 0 || y < 0 || x > width || y > height)) return null;
-  return [Math.max(0, Math.min(x, width)), Math.max(0, Math.min(y, height))];
+  const [left, top, right, bottom] = imageBounds();
+  if (inside && (x < left || y < top || x > right || y > bottom)) return null;
+  return [Math.max(left, Math.min(x, right)), Math.max(top, Math.min(y, bottom))];
 }
-function setFrameFocus(focused) {
-  const item=items[current];
-  centerFocus=centerFocusAvailable && focused;
-  boxDrag=null;
-  const region=centerFocus
-    ? [item.width/4,item.height/4,item.width/2,item.height/2]
-    : [0,0,item.width,item.height];
-  $("image-svg").setAttribute("viewBox",region.join(" "));
-  $("frame-focus").hidden=!centerFocusAvailable;
-  $("frame-focus").textContent=centerFocus?"전체 보기":"중앙 확대";
-  $("frame-focus").setAttribute("aria-pressed",String(centerFocus));
-  $("image-view").classList.remove("zoom2","zoom3");
-  $("image-view").scrollLeft=0;$("image-view").scrollTop=0;
-  $("zoom").textContent="확대 1×";
-  if(centerFocusAvailable)document.querySelector(".image-note").textContent=centerFocus
-    ? "중앙 50% 확대 · 주변은 전체 보기로 확인하세요."
-    : "전체 화면 · 칼 없음은 화면 전체를 확인해주세요.";
-  if(videoReview())paintVideoBoxes();
+
+function setZoom(zoom) {
+  const view = $("image-view");
+  view.classList.toggle("zoom2", zoom === 2);
+  view.classList.toggle("zoom3", zoom === 3);
+  if (zoom === 1) view.scrollTo(0, 0);
+  $("zoom").textContent = `확대 ${zoom}×`;
 }
 
 function beginBoxDrag(event) {
@@ -150,16 +147,17 @@ function updateBoxDrag(event) {
   } else if (corner !== undefined) {
     const rightEdge = Number(corner) % 2;
     const bottomEdge = Number(corner) >= 2;
+    const minWidth = Math.min(1, right - left), minHeight = Math.min(1, bottom - top);
     boxDrag.preview = [
-      rightEdge ? left : Math.min(x, right - 1),
-      bottomEdge ? top : Math.min(y, bottom - 1),
-      rightEdge ? Math.max(x, left + 1) : right,
-      bottomEdge ? Math.max(y, top + 1) : bottom,
+      rightEdge ? left : Math.min(x, right - minWidth),
+      bottomEdge ? top : Math.min(y, bottom - minHeight),
+      rightEdge ? Math.max(x, left + minWidth) : right,
+      bottomEdge ? Math.max(y, top + minHeight) : bottom,
     ];
   } else {
-    const {width, height} = items[current];
-    const dx = Math.min(Math.max(x - startX, -left), width - right);
-    const dy = Math.min(Math.max(y - startY, -top), height - bottom);
+    const [minX, minY, maxX, maxY] = imageBounds();
+    const dx = Math.min(Math.max(x - startX, minX - left), maxX - right);
+    const dy = Math.min(Math.max(y - startY, minY - top), maxY - bottom);
     boxDrag.preview = [left + dx, top + dy, right + dx, bottom + dy];
   }
   paintVideoBoxes();
@@ -314,7 +312,7 @@ function show(index) {
   if(videoReview()) {
     if(linkedReview && item.eligible && !values.domain) values.domain="target_cctv";
     const boxes = !restoredDraft && item.version && values.knife_presence == null ? item.boxes : values.reviewed_boxes || item.boxes;
-    values.reviewed_boxes=boxes.map(box=>[...box]);
+    values.reviewed_boxes=item.review_crop ? cropBoxes(boxes, item.review_crop) : boxes.map(box=>[...box]);
     delete values.annotation_verdict;
     delete values.scene_type;
     sceneStep="main";
@@ -337,15 +335,28 @@ function show(index) {
   $("reviewer").value=values.reviewer || ""; $("notes").value=values.notes || "";
   $("sample-number").textContent=`${String(current+1).padStart(2,"0")} / ${items.length}`;
   $("filename").textContent=item.name;
-  $("kind").textContent=sceneReview() ? `${item.start_s}–${item.end_s}초` : videoReview() ? (item.knife_count ? `모델 제안 ${item.knife_count}개` : "미검출 후보") :
+  const proposalCount = item.review_crop ? cropBoxes(item.boxes, item.review_crop).length : item.knife_count;
+  $("kind").textContent=sceneReview() ? `${item.start_s}–${item.end_s}초` : videoReview() ? (proposalCount ? `모델 제안 ${proposalCount}개` : "미검출 후보") :
     (item.knife_count ? `칼 라벨 ${item.knife_count}개` : "칼 라벨 0개 · 실제 부재 확인");
-  $("kind").classList.toggle("negative",!item.knife_count);
-  $("dimensions").textContent=`${item.width} × ${item.height}${item.batch_id ? ` · ${item.batch_id}` : ""}${item.source_id ? ` · ${item.source_id}` : ""}${item.timestamp_s!=null ? ` · ${item.timestamp_s}초` : ""}`;
+  $("kind").classList.toggle("negative",!proposalCount);
+  const [left, top, right, bottom] = imageBounds(item);
+  const region = [left, top, right - left, bottom - top];
+  $("dimensions").textContent=`${region[2]} × ${region[3]}${item.batch_id ? ` · ${item.batch_id}` : ""}${item.source_id ? ` · ${item.source_id}` : ""}${item.timestamp_s!=null ? ` · ${item.timestamp_s}초` : ""}`;
   $("original").href=item.image_url;
   if(!explicitReview()) $("verdict-guide").textContent=item.knife_count ? "정상 = 보이는 칼이 모두 정확한 박스 안에 있음. 틀린 박스·칼 누락은 ‘문제 있음’." : "정상 = 실제 칼이 없음. 칼이 하나라도 보이면 ‘문제 있음’.";
   $("saved-badge").textContent=item.version ? "검수 기록 있음" : "미검수";
-  $("image-svg").setAttribute("viewBox",`0 0 ${item.width} ${item.height}`);
-  $("image-svg").replaceChildren();
+  const svg = $("image-svg");
+  svg.setAttribute("viewBox", region.join(" "));
+  svg.replaceChildren();
+  let content = svg;
+  if (item.review_crop) {
+    const clip = document.createElementNS(svgNS, "clipPath");
+    clip.id = "review-crop-clip";
+    svgRect(clip, item.review_crop, "");
+    content = document.createElementNS(svgNS, "g");
+    content.setAttribute("clip-path", "url(#review-crop-clip)");
+    svg.append(clip, content);
+  }
   const ns="http://www.w3.org/2000/svg";
   const image=document.createElementNS(ns,"image");
   const hasPreview=videoReview() && Boolean(item.preview_url);
@@ -367,19 +378,18 @@ function show(index) {
     $("image-quality").textContent="4K 재시도";
     status("원본을 불러오지 못했습니다. 다시 시도해주세요.","error");
   });
-  $("image-svg").append(image);
+  content.append(image);
   if(videoReview()) {
     const layer = document.createElementNS(svgNS, "g");
     layer.id = "box-layer";
-    $("image-svg").append(layer);
+    content.append(layer);
   }
   for (const [left,top,right,bottom] of (videoReview() ? [] : item.boxes)) {
     const rect=document.createElementNS(ns,"rect"); rect.classList.add("bbox");
     for (const [key,value] of Object.entries({x:left,y:top,width:right-left,height:bottom-top,fill:"none",stroke:"#00ff7f","stroke-width":2,"vector-effect":"non-scaling-stroke"})) rect.setAttribute(key,value);
     $("image-svg").append(rect);
   }
-  $("image-view").classList.remove("zoom2","zoom3"); $("image-view").scrollTop=0; $("image-view").scrollLeft=0; $("zoom").textContent="확대 1×";
-  if(centerFocusAvailable)setFrameFocus(true);
+  setZoom(1);
   dirty=restoredDraft; paintChoices(); refreshProgress();
   if(videoReview()) paintVideoBoxes();
   if(team){document.querySelectorAll(".choices button").forEach(button=>button.disabled=!item.editable);$("notes").readOnly=!item.editable;$("save-next").disabled=teamAdmin;$("save-next").textContent=item.editable?"저장하고 다음 →":"다음 미검수 받기 →";$("saved-badge").textContent=item.editable?"내 담당":"읽기 전용 · 다음 미검수 받기";}
@@ -435,11 +445,19 @@ async function save(force=false) {
   if (!dirty) return true;
   if(team&&!items[current].editable)return false;
   if (!complete()) { if(force) status("이름과 두 질문을 확인해주세요. 문제 있음은 한 줄 메모가 필요합니다.","error"); return false; }
+  if (items[current].review_crop && values.domain === "target_cctv" && ["yes", "no"].includes(values.knife_presence)
+      && $("image-view").matches(".zoom2, .zoom3")) {
+    setZoom(1);
+    paintVideoBoxes();
+    status("중앙 영역 전체를 확인한 뒤 같은 버튼을 다시 눌러주세요.", "error");
+    return false;
+  }
   if(saving) return false;
   saving=true; const id=current; const captured=JSON.stringify(values); let succeeded=false;
   $("save-next").disabled=true; status("저장 중…");
   try {
-    const response=await fetch(apiUrl("/api/review"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id,version:items[id].version,fields:values,pack_hash:pack})});
+    const fields = reviewScope ? {...values, review_scope: reviewScope} : values;
+    const response=await fetch(apiUrl("/api/review"),{method:"POST",headers:{"Content-Type":"application/json","X-Review-Token":csrf},body:JSON.stringify({id,version:items[id].version,fields,pack_hash:pack})});
     const result=await response.json(); if(result.assignment_lost){assignmentLost(id);return false;} if(!response.ok) throw new Error(result.error || "저장 실패");
     items[id].version=result.version; items[id].review=result.review;
     succeeded=true;
@@ -685,7 +703,8 @@ async function init() {
   if(videoReview()) $("filter").querySelector('option[value="negative"]').textContent = "미검출 후보만";
   items=data.items; csrf=data.csrf; pack=data.pack_hash;
   team=Boolean(data.team);signedReviewer=data.reviewer||"";teamAdmin=Boolean(data.admin);
-  centerFocusAvailable=videoReview() && Boolean(data.direct_review);
+  reviewScope=data.review_scope ?? null;
+  if (data.direct_review && !reviewScope) throw new Error("중앙 검수 영역을 불러올 수 없습니다. 새로고침해주세요.");
   buildFields();
   if(sceneReview() || quickFrame())document.body.classList.add("video-review-focus");
   $("reviewer-field").hidden=Boolean(data.video_only);
@@ -722,8 +741,13 @@ async function init() {
   }
   if(quickFrame()){
     document.body.classList.add("quick-frame-review");
-    document.querySelector(".intro h1").textContent="칼이 보이나요?";
+    document.querySelector(".intro h1").textContent=reviewScope?"중앙 영역에 칼이 보이나요?":"칼이 보이나요?";
     document.querySelector(".review-title h2").textContent="칼이 보이나요?";
+    if (reviewScope) {
+      $("original").textContent = "전체 원본 참고 ↗";
+      $("image-svg").setAttribute("aria-label", "칼 유무를 검수할 중앙 50% 영역");
+      document.querySelector(".image-note").textContent = "칼 유무와 박스는 이 중앙 영역을 기준으로 판정합니다.";
+    }
     $("verdict-guide").hidden=true;
     $("frame-no-knife").onclick=()=>submitFrame("target_cctv","no");
     $("frame-confirm-box").onclick=()=>submitFrame("target_cctv","yes");
@@ -793,8 +817,12 @@ async function init() {
   $("filter").addEventListener("change",async()=>{if(!explicitReview()&&dirty&&complete())await save();refreshProgress();const visible=visibleItems();if(visible.length)await jump(visible[0].id);else status("이 조건에 해당하는 이미지가 없습니다.");});
   $("show-boxes").addEventListener("change",()=>$("image-view").classList.toggle("hide-boxes",!$("show-boxes").checked));
   $("image-quality").onclick=useOriginalImage;
-  $("frame-focus").onclick=()=>setFrameFocus(!centerFocus);
-  $("zoom").addEventListener("click",()=>{useOriginalImage();const view=$("image-view");const zoom=view.classList.contains("zoom2")?3:view.classList.contains("zoom3")?1:2;view.classList.remove("zoom2","zoom3");if(zoom>1)view.classList.add(`zoom${zoom}`);$("zoom").textContent=`확대 ${zoom}×`;if(videoReview())paintVideoBoxes();});
+  $("zoom").addEventListener("click",()=>{
+    useOriginalImage();
+    const view = $("image-view");
+    setZoom(view.classList.contains("zoom2") ? 3 : view.classList.contains("zoom3") ? 1 : 2);
+    if(videoReview())paintVideoBoxes();
+  });
   document.querySelectorAll("[data-quick]").forEach(button=>button.addEventListener("click",()=>quick(button.dataset.quick)));
   document.addEventListener("keydown",event=>{if(["INPUT","TEXTAREA","SELECT"].includes(event.target.tagName)||event.ctrlKey||event.metaKey||event.altKey)return;if(event.key==="ArrowRight"){event.preventDefault();move(1);}if(event.key==="ArrowLeft"){event.preventDefault();move(-1);}if(!videoReview() && ["1","2","3"].includes(event.key)){event.preventDefault();quick({"1":"keep","2":"reject","3":"hold"}[event.key]);}});
   const first=items.find(item=>!item.version && (item.eligible!==false || item.editable)) || items.find(item=>item.version);

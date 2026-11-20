@@ -15,7 +15,10 @@ from datetime import timedelta
 from pathlib import Path
 from urllib.parse import urlsplit
 
-from .review_web import PRIVATE_REVIEW_SCHEMAS, SCENE_REVIEW_SCHEMA, VIDEO_REVIEW_SCHEMA, BatchReviewStore, ConflictError, ReviewStore, review_verdict
+from .review_web import (
+    CENTER_REVIEW_SCOPE, PRIVATE_REVIEW_SCHEMAS, SCENE_REVIEW_SCHEMA, VIDEO_REVIEW_SCHEMA,
+    BatchReviewStore, ConflictError, ReviewStore, center_review_crop, review_verdict,
+)
 
 ASSIGNMENT_TIMEOUT_SECONDS = 15 * 60
 
@@ -505,6 +508,8 @@ def create_app(config_path: Path):
             item["editable"] = bool(not g.user["admin"] and owners.get(item["id"]) == g.user["id"])
             item["assigned_elsewhere"] = item["id"] in owners and owners[item["id"]] != g.user["id"]
             item["coordinate_status"] = store.evidence[item["id"]].get("coordinate_status", "unconfirmed")
+            if pack in direct_packs:
+                item["review_crop"] = center_review_crop(item["width"], item["height"])
             if eligible is not None:
                 item["eligible"] = item["id"] in eligible
                 evidence = store.evidence[item["id"]]
@@ -527,7 +532,8 @@ def create_app(config_path: Path):
         return jsonify(items=result, csrf=csrf(), pack_hash=store.pack_hash, review_schema=store.review_schema, team=True,
                        reviewer=g.user["name"], reviewer_id=g.user["id"], admin=bool(g.user["admin"]), training_approved=False,
                        assignment_timeout_seconds=ASSIGNMENT_TIMEOUT_SECONDS, linked_review=pack in managed,
-                       video_only=video_only, direct_review=pack in direct_packs)
+                       video_only=video_only, direct_review=pack in direct_packs,
+                       review_scope=CENTER_REVIEW_SCOPE if pack in direct_packs else None)
 
     @app.post("/api/claim")
     def claim():
@@ -628,6 +634,10 @@ def create_app(config_path: Path):
         if store.evidence[sample].get("proposal_revision") and body.get("pack_hash") != store.pack_hash:
             return jsonify(pack_changed=True, error="초안 박스가 갱신됐습니다. 새로고침 후 다시 확인해주세요."), 409
         fields = {**body["fields"], "reviewer": g.user["name"], "review_schema": store.review_schema}
+        if pack in direct_packs and fields.get("review_scope") != CENTER_REVIEW_SCOPE:
+            return jsonify(error="검수 범위가 갱신됐습니다. 새로고침하고 중앙 영역을 확인해주세요."), 409
+        if pack not in direct_packs:
+            fields.pop("review_scope", None)
         # Hold the ownership lock until the review commits. Reclaim cannot race a save.
         with team.connect() as connection:
             connection.execute("BEGIN IMMEDIATE")

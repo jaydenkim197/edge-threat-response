@@ -18,6 +18,7 @@ from urllib.parse import urlsplit
 
 VIDEO_REVIEW_SCHEMA = "video-box-v1"
 SCENE_REVIEW_SCHEMA = "video-scene-v1"
+CENTER_REVIEW_SCOPE = "center-50-v1"
 PRIVATE_REVIEW_SCHEMAS = (VIDEO_REVIEW_SCHEMA, SCENE_REVIEW_SCHEMA)
 
 OPTIONS = {
@@ -33,7 +34,7 @@ OPTIONS = {
     "exclude": ["no", "yes", "uncertain"],
 }
 EDITABLE = {*OPTIONS, "reviewer", "notes"}
-VIDEO_FIELDS = {"domain", "knife_presence", "reviewed_boxes", "exclude_reason", "scene_type", "notes", "reviewer", "review_schema"}
+VIDEO_FIELDS = {"domain", "knife_presence", "reviewed_boxes", "exclude_reason", "scene_type", "notes", "reviewer", "review_schema", "review_scope"}
 SCENE_FIELDS = {"domain", "start_s", "end_s", "exclude_reason", "scene_type", "notes", "reviewer", "review_schema"}
 SCENE_EXCLUSION_TYPES = {"presenter": "non_cctv", "other_non_cctv": "non_cctv",
                          "overlay_occlusion": "cctv", "low_quality": "cctv", "other": "unclear"}
@@ -72,16 +73,23 @@ def _scene_review_fields(fields: dict, evidence: dict) -> dict:
             "annotation_verdict": {"target_cctv": "ok", "non_target": "problem", "unclear": "unclear"}[domain]}
 
 
-def _check_boxes(boxes: object, width: int, height: int) -> None:
+def center_review_crop(width: int, height: int) -> tuple[int, int, int, int]:
+    crop_width, crop_height = max(1, width // 2), max(1, height // 2)
+    left, top = (width - crop_width) // 2, (height - crop_height) // 2
+    return left, top, left + crop_width, top + crop_height
+
+
+def _check_boxes(boxes: object, width: int, height: int, *, crop=None) -> None:
     if not isinstance(boxes, list):
         raise ValueError("박스는 좌표 목록이어야 합니다.")
+    left, top, right, bottom = crop if crop is not None else (0, 0, width, height)
     for box in boxes:
         if (not isinstance(box, list) or len(box) != 4
                 or any(type(value) not in (int, float) for value in box)):
             raise ValueError("박스에는 숫자 좌표 4개가 필요합니다.")
         x1, y1, x2, y2 = box
-        if not (0 <= x1 < x2 <= width and 0 <= y1 < y2 <= height):
-            raise ValueError("박스는 이미지 안에 있어야 합니다.")
+        if not (left <= x1 < x2 <= right and top <= y1 < y2 <= bottom):
+            raise ValueError("박스는 중앙 검수 영역 안에 있어야 합니다." if crop else "박스는 이미지 안에 있어야 합니다.")
 
 
 def _video_review_fields(fields: dict, evidence: dict) -> dict:
@@ -98,11 +106,15 @@ def _video_review_fields(fields: dict, evidence: dict) -> dict:
     if not isinstance(notes, str) or len(notes) > 2000:
         raise ValueError("메모는 2000자까지 입력할 수 있습니다.")
     classification = _scene_classification(fields, domain)
+    scope = fields.get("review_scope")
+    if scope not in (None, CENTER_REVIEW_SCOPE):
+        raise ValueError("지원하지 않는 검수 범위입니다.")
     if domain == "target_cctv":
         if presence not in ("yes", "no", "unclear"):
             raise ValueError("칼 유무를 선택해주세요.")
         boxes = fields.get("reviewed_boxes")
-        _check_boxes(boxes, evidence["width"], evidence["height"])
+        size = evidence["width"], evidence["height"]
+        _check_boxes(boxes, *size, crop=center_review_crop(*size) if scope else None)
         if bool(boxes) != (presence == "yes"):
             raise ValueError("칼이 있으면 박스를 그려주세요. 칼 없음 또는 모르겠음은 박스 없이 저장해주세요.")
         verdict = "unclear" if presence == "unclear" else "ok"
@@ -111,7 +123,7 @@ def _video_review_fields(fields: dict, evidence: dict) -> dict:
         verdict = "unclear" if domain == "unclear" else "problem"
     return {"review_schema": VIDEO_REVIEW_SCHEMA, "domain": domain, "knife_presence": presence,
             "reviewed_boxes": boxes, "reviewer": reviewer, "notes": notes, **classification,
-            "annotation_verdict": verdict}
+            "annotation_verdict": verdict, **({"review_scope": scope} if scope else {})}
 
 
 def review_verdict(review: dict, knife_count: int) -> str:

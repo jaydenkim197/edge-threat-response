@@ -13,13 +13,7 @@ from tempfile import TemporaryDirectory
 
 from PIL import Image
 
-from edge_threat_response.dataset.review_web import VIDEO_REVIEW_SCHEMA, _check_boxes
-
-
-def crop_box(width, height):
-    crop_width, crop_height = width // 2, height // 2
-    left, top = (width - crop_width) // 2, (height - crop_height) // 2
-    return left, top, left + crop_width, top + crop_height
+from edge_threat_response.dataset.review_web import VIDEO_REVIEW_SCHEMA, _check_boxes, center_review_crop
 
 
 def yolo_lines(boxes, crop):
@@ -63,7 +57,7 @@ def export_session(root, output, audit):
             continue
         item = evidence[sample]
         size = item["width"], item["height"]
-        crop = crop_box(*size)
+        crop = center_review_crop(*size)
         boxes = review["reviewed_boxes"]
         _check_boxes(boxes, *size)
         if bool(boxes) != (presence == "yes"):
@@ -88,6 +82,7 @@ def export_session(root, output, audit):
         audit.write(json.dumps({
             "image": f"images/{stem}.jpg", "session": session, "sample": sample, "review_version": version,
             "source_sha256": source_hash, "crop_xyxy": crop, "knife_boxes": len(labels),
+            "review_scope": review.get("review_scope", "legacy-unspecified"),
         }) + "\n")
         counts["positive" if labels else "negative"] += 1
         counts["boxes"] += len(labels)
