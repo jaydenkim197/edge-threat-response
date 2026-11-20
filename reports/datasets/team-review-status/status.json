@@ -941,21 +941,21 @@
           "batch": "initial",
           "offset": 0,
           "prepared": 985,
-          "reviewed": 497
+          "reviewed": 985
         }
       ],
-      "reviewed": 497,
-      "held": 21,
-      "history": 517,
+      "reviewed": 985,
+      "held": 105,
+      "history": 1019,
       "review_schema": "video-box-v1",
       "direct_review": true,
       "visible_in_video_public": true,
       "judgments": {
-        "knife_absent": 224,
-        "knife_present": 252,
-        "confirmed_boxes": 254,
-        "excluded": 7,
-        "uncertain": 14
+        "knife_absent": 334,
+        "knife_present": 546,
+        "confirmed_boxes": 559,
+        "excluded": 83,
+        "uncertain": 22
       }
     },
     "p430-20261119-session-02": {
@@ -965,17 +965,65 @@
           "batch": "initial",
           "offset": 0,
           "prepared": 1088,
-          "reviewed": 1
+          "reviewed": 1088
         }
       ],
-      "reviewed": 1,
-      "held": 1,
-      "history": 1,
+      "reviewed": 1088,
+      "held": 26,
+      "history": 1105,
       "review_schema": "video-box-v1",
       "direct_review": true,
       "visible_in_video_public": true,
       "judgments": {
-        "excluded": 1
+        "knife_absent": 669,
+        "excluded": 25,
+        "knife_present": 393,
+        "confirmed_boxes": 397,
+        "uncertain": 1
+      }
+    },
+    "p430-multibox-check-20261120": {
+      "prepared": 3,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 3,
+          "reviewed": 3
+        }
+      ],
+      "reviewed": 3,
+      "held": 0,
+      "history": 3,
+      "review_schema": "video-box-v1",
+      "direct_review": true,
+      "visible_in_video_public": true,
+      "judgments": {
+        "knife_present": 3,
+        "confirmed_boxes": 3
+      }
+    },
+    "p430-outlier-check-20261120": {
+      "prepared": 13,
+      "batches": [
+        {
+          "batch": "initial",
+          "offset": 0,
+          "prepared": 13,
+          "reviewed": 13
+        }
+      ],
+      "reviewed": 13,
+      "held": 9,
+      "history": 13,
+      "review_schema": "video-box-v1",
+      "direct_review": true,
+      "visible_in_video_public": true,
+      "judgments": {
+        "excluded": 9,
+        "knife_present": 3,
+        "confirmed_boxes": 3,
+        "knife_absent": 1
       }
     }
   },
@@ -984,16 +1032,16 @@
       "integrity": "ok",
       "tables": {
         "assignment_activity": {
-          "count": 7344,
-          "sha256": "cd542c3c89cda66f1d952f1319c3cb13c4b1d61cdea4d16d4576aedfcfdc04c0"
+          "count": 8935,
+          "sha256": "3aa7674a46e6faa0aec5857ef71a3c2f5c9f03212a741fba09bc697e8e9274fd"
         },
         "assignments": {
-          "count": 7344,
-          "sha256": "f254fc44b49c2790fe0cfd42cc59c4b85ae5edc84b373706e881d99765239a11"
+          "count": 8935,
+          "sha256": "13973ed7ddce884ef027fbaacf79214f1933b19ae0c6a328e0a43b89b03a0b53"
         },
         "review_batches": {
-          "count": 52,
-          "sha256": "bf2d34440b2bb61f77710b4556937e76251f95fdb8cb1a118b95a2a94a99387a"
+          "count": 54,
+          "sha256": "33a5a0ccc6c319c4968860d1163ab083da9de33c566a741298dfc8017367e305"
         },
         "users": {
           "count": 23,
@@ -1001,7 +1049,7 @@
         },
         "video_review_budget": {
           "count": 1,
-          "sha256": "6cb4a7b66fb19967725dde7a73907c5edb41b513e39a6ffec2d55cce4376ba8b"
+          "sha256": "e23f0e5eb3d9ae327d493ed6c6a7812aeea41a65a0955ac5a96938e2e136054d"
         }
       }
     },
@@ -2092,50 +2140,93 @@
       "integrity": "ok",
       "tables": {
         "history": {
-          "count": 517,
-          "sha256": "8dc656760f89d04cd3ffd4dc3fe25bdde54c4452dbef1df0c88aec65b24bcfad"
+          "count": 1019,
+          "sha256": "c65c3df63a7e217f8f501da7753f49a153d292d8a7b0487c0551ad9267ec0c27"
         },
         "metadata": {
           "count": 2,
           "sha256": "cc1594d285a13856e794f8012898101cdaa8aaa1efe3fa22ab8237d8412aaa94"
         },
         "reviews": {
-          "count": 497,
-          "sha256": "b9683490170b8d1b5d1ebbcca240d6d017cf6437979e1392180f254c3cfeab37"
+          "count": 985,
+          "sha256": "83c305374f82f5fbe8204139bfd64312a8d0d75127882a7a48fe26d6e5da8243"
         }
       },
       "verdicts": {
-        "ok": 476,
-        "problem": 7,
-        "unclear": 14
+        "ok": 880,
+        "problem": 83,
+        "unclear": 22
       }
     },
     "p430-20261119-session-02": {
       "integrity": "ok",
       "tables": {
         "history": {
-          "count": 1,
-          "sha256": "7ccf611753e14677c90fdaf34f0a66d375dadc318aeb2d0ef2de80fb32529edd"
+          "count": 1105,
+          "sha256": "e126da12cc78027a08b7daf75d00fc8b439af654f287ccc113b316d8e6012a58"
         },
         "metadata": {
           "count": 2,
           "sha256": "78e97a2229a455894b0898c4882d743435c18889a474dde772181137ae18423f"
         },
         "reviews": {
-          "count": 1,
-          "sha256": "7ccf611753e14677c90fdaf34f0a66d375dadc318aeb2d0ef2de80fb32529edd"
+          "count": 1088,
+          "sha256": "b9076cbdbe43052f9d919a7bebb814c87d4f9bfdcd89c0a9865afc5fa02908ee"
         }
       },
       "verdicts": {
-        "problem": 1
+        "ok": 1062,
+        "problem": 25,
+        "unclear": 1
+      }
+    },
+    "p430-multibox-check-20261120": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 3,
+          "sha256": "459bb07f69e68428ced2fca96ac3f5dc5239349cc90f866f4bc8d98483be7648"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "c5efe6d5af828128074ec5227cc004469fd8c1a3c9a66bbb95e82f404f2652b3"
+        },
+        "reviews": {
+          "count": 3,
+          "sha256": "38326456b293311dfd854ddc92bc26f608f0df84569d064b9b6a0da35c363346"
+        }
+      },
+      "verdicts": {
+        "ok": 3
+      }
+    },
+    "p430-outlier-check-20261120": {
+      "integrity": "ok",
+      "tables": {
+        "history": {
+          "count": 13,
+          "sha256": "5de932acb75e770de5ad671fa6f13ec276468cc5a169d3eb02bbb20f520dc8f6"
+        },
+        "metadata": {
+          "count": 2,
+          "sha256": "0f9ab9c981d0a4f6d1c0eff824ae3731a14d8a8601a6235cd2eb550b71125c37"
+        },
+        "reviews": {
+          "count": 13,
+          "sha256": "8eee129a52dd80781ed4ba9c5a054b24995b9d958560caab65e9b5fea3dcd9f1"
+        }
+      },
+      "verdicts": {
+        "problem": 9,
+        "ok": 4
       }
     }
   },
   "metadata": {
     "schema_version": 1,
-    "observed_from_kst": "2026-11-19T20:46:40+09:00",
-    "observed_until_kst": "2026-11-19T20:46:41+09:00",
-    "site_commit": "0a6af812dca5affdcf15d370976d4b8539064001",
+    "observed_from_kst": "2026-11-20T22:16:22+09:00",
+    "observed_until_kst": "2026-11-20T22:16:22+09:00",
+    "site_commit": "3e542c5602f52f6655365fc99817d78a519f6fc6",
     "reviewer_login": "video_public",
     "scope": "Aggregate review status and table count/hash evidence only; not training approval. Per-database read transactions while service remains running; not one global atomic snapshot."
   }
