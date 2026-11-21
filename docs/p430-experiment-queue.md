@@ -38,7 +38,7 @@ GPU 잠금 경합 또는 비정상 종료로 완료 영수증이 없는 단계�
 
 ## 신규 광학 줌 및 HOI 입력
 
-PC13에서 **실제 검수와 개발용 분할 승인 뒤** 원본 폴더에 아래 manifest를 두고 마지막에 approval.json을 원자적으로 옮겨 둔다. approval은 `{"schema_version":1,"approved_development":true,"annotation_origin":"human","manifest_sha256":"<SHA-256>"}` 형식이다. 파일 해시는 `Get-FileHash -Algorithm SHA256`으로 얻는다. 내부 경로와 키는 GitHub에 올리지 않는다.
+PC13에서 **실제 검수와 개발용 분할 승인 뒤** 원본 폴더에 아래 manifest를 두고 마지막에 approval.json을 원자적으로 옮겨 둔다. approval은 `{"schema_version":1,"approved_development":true,"annotation_origin":"human","manifest_sha256":"<SHA-256>"}` 형식이다. 파일 해시는 `(Get-FileHash -Algorithm SHA256 -LiteralPath $manifest).Hash.ToLowerInvariant()`으로 얻는다. 내부 경로와 키는 GitHub에 올리지 않는다.
 
 - **광학 줌**은 `zoom/manifest.json`의 `schema_version=1`, `partition=tuning`, `frames`를 사용한다. 각 프레임은 `image_path`(상대 경로), `image_sha256`, `source_video_sha256`, `pair_group`, `zoom`(1·3·5), `expected_in_view`, `in_view`, `holding_label`, `boxes`(정규화된 YOLO cx/cy/w/h, 0개나 1개)를 담는다. 비교할 원본 프레임은 기존과 같은 중앙 1920×1080으로 준비한다. 배율마다 동등하게 뽑힌 대조 촬영 묶음을 사용한다. 대상 이탈을 별도 집계하고 개발용 Recall·AP50·음성 오탐을 출력한다.
 - **HOI**는 `hoi/pairs.jsonl`과 이미지 경로를 함께 준비한다. G와 VG를 기존 학습기로 순서대로 실행하고 검수 원본·결과 해시를 저장한다. [Holding 라벨 규격](hoi-annotation-contract.md)
@@ -47,3 +47,20 @@ PC13에서 **실제 검수와 개발용 분할 승인 뒤** 원본 폴더에 아
 ## 검증
 
 표준 라이브러리와 기존 학습·GPU 잠금·박스 평가·HOI 구현을 사용한다. `tests/test_p430_queue.py`에서 양쪽 세션 통과 조건, FP 프레임 단위 상한, 완료 결과 재개와 해시 변경, 오류 후 재실행 방지, 결과 저장을 검사한다.
+
+## 2026-11-21 배포 확인
+
+21:52 KST에 실행기 `45f6831`을 네 학습 PC에서 시작했다. PC13 수집기 PID는 2692다. 아래는 시작 당시 관측한 자식 PID다.
+
+| PC | 큐 작업 ID | 워커 PID | 학습 PID | 첫 CUDA epoch 배치 수 |
+| --- | --- | ---: | ---: | ---: |
+| PC11 | `p430-auto-20261121-v1-pc11-train` | 20524 | 22044 | 132 |
+| PC12 | `p430-auto-20261121-v1-pc12-train` | 8976 | 4520 | 132 |
+| PC13 | `p430-auto-20261121-v1-pc13-train` | 6264 | 2144 | 164 |
+| PC14 | `p430-auto-20261121-v1-pc14-train` | 16024 | 12912 | 164 |
+
+RTX 3060 네 대에서 실제 loader와 배치 실행을 확인했다. 시작에 사용한 SSH 세션이 끝난 뒤 다시 접속해 같은 PID와 진행 로그, PC13의 네 상태 수신을 확인했다. Windows 격리 작업에서 실패한 하위 프로세스의 종료 영수증, 실패 반복 방지, 완료 영수증 재사용과 중복 잠금을 확인했다. 이전 50 epoch 네 실행에 대해 저장된 체크포인트·예측 52쌍의 해시를 대조했고, PC13 개발 자료로 기존 평가의 선택점·AP50·AP50–95를 재현했다. 이전 검증 값은 PC13 운영 폴더의 `prior-t1-comparison.json`에도 보관했다. 상태 수집기는 권한 없는 쓰기에 HTTP 403을 반환했고 검수 사이트의 HTTPS 로그인 연결은 동작했다.
+
+단기 학습과 그 직후 평가·후속 분기의 실측 결과는 실행 중이다. 수집 계층에 공급하는 광학 줌과 HOI 실제 자료, 물리 장비와 독립 평가는 별도 검증이다.
+
+로컬 `.venv-ml`에서 `PYTHONUTF8=1`로 전체 테스트 234개를 실행해 232개가 통과했고 선택 의존성 검사 2개를 건너뛰었다.
