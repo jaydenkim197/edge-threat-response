@@ -127,7 +127,7 @@ def export_tile(work,r):
     restored=original_boxes(output)
     require(len(restored)==len(coords) and all(abs(x-y)<1e-8 for a,b in zip(restored,coords,strict=True)
                                                for x,y in zip(a,b,strict=True)), "Tile labels changed in serialization")
-    return key, {"image_sha256":sha(tile),"label_sha256":sha(output),"region":crop}
+    return key, {"image_sha256":sha(tile),"label_sha256":sha(output),"region":list(crop)}
 
 
 def draw_parents(pools,tiles):
