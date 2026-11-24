@@ -388,12 +388,12 @@ def trainer_factory(draw_paths, val_paths, freeze, state):
 
         model.add_callback("on_train_epoch_start",start)
         model.add_callback("on_train_batch_start",first_batch)
-        model.add_callback("on_fit_epoch_end",epoch_done)
+        model.add_callback("on_train_epoch_end",epoch_done)
         return model
     return factory
 
 
-def execute(work,node):
+def execute(work,node, *, recovery=False):
     import torch
     from ultralytics import __version__
 
@@ -407,8 +407,19 @@ def execute(work,node):
     require(plan["summary"]["protection_sha256"]==pin["protection_sha256"]
             and plan["summary"]["scope"]=="development_only","Development-only protection contract failed")
     run=work/f"{work.name}-{node}"
-    run.mkdir(exist_ok=False)
     state=run/"state.json"
+    if recovery:
+        prior=read(state)
+        invocation=run/"train-invocation.json"
+        receipt=read(invocation)
+        require(prior=={"status":"FAILED","reason":"Observed batch count differs","at":prior["at"]}
+                and receipt["status"]=="failed" and receipt["error"]=="ValueError: Observed batch count differs"
+                and receipt["dataset_manifest"]["sha256"]==pin["plan_sha256"]
+                and receipt["model_source"]["sha256"]==MODEL_SHA
+                and receipt["config_sha256"]==sha(run/"profile.json"),
+                "Evaluation-only recovery requires the known final-callback failure")
+    else:
+        run.mkdir(exist_ok=False)
     initial=work.parent/"p430-t1-20261120-v1/initial.pt"
     require(sha(initial)==MODEL_SHA,"Prior initial weight changed")
     previous=work.parent/"p430-t1-20261120-v1"
@@ -416,25 +427,35 @@ def execute(work,node):
     with gpu_training_lock(work.parent/"training/gpu0-training.lock",owner=run.name):
         try:
             save(state,{"status":"RUNNING","phase":"preflight","at":now()})
-            verify_inputs(work,plan,tiled)
             val=development_rows(work,plan)
-            geometry=[[input_paths(work,plan,key,tiled and use)[0] for key,use in deck] for deck in plan["draws"]]
-            eval_list=[Path(r["image_file"]) for r in val["tune"]]
-            for name,files in (("train",sorted(set().union(*map(set,geometry)))),("val",eval_list)):
-                (run/f"{name}.txt").write_text("".join(x.as_posix()+"\n" for x in files),encoding="utf-8")
-            data=run/"data.yaml"
-            data.write_text(f"path: {run.as_posix()}\ntrain: train.txt\nval: val.txt\nnames:\n  0: knife\n",encoding="utf-8")
-            options={**read(previous/"config.json")["args"],"epochs":EPOCHS,"imgsz":640,"nbs":8,
-                     "lr0":.0001,"save_period":3,"freeze":11 if freeze else 0}
-            profile=run/"profile.json"
-            save(profile,{"schema_version":1,"profile_id":run.name,"model":str(initial),
-                          "task":"detect","run_name":"train","arguments":options})
-            run_training(profile,data_yaml=data,output_dir=run,dataset_manifest=plan_path,
-                         model_factory=trainer_factory(geometry,eval_list,freeze,state))
+            if not recovery:
+                verify_inputs(work,plan,tiled)
+                geometry=[[input_paths(work,plan,key,tiled and use)[0] for key,use in deck] for deck in plan["draws"]]
+                eval_list=[Path(r["image_file"]) for r in val["tune"]]
+                for name,files in (("train",sorted(set().union(*map(set,geometry)))),("val",eval_list)):
+                    (run/f"{name}.txt").write_text("".join(x.as_posix()+"\n" for x in files),encoding="utf-8")
+                data=run/"data.yaml"
+                data.write_text(f"path: {run.as_posix()}\ntrain: train.txt\nval: val.txt\nnames:\n  0: knife\n",encoding="utf-8")
+                options={**read(previous/"config.json")["args"],"epochs":EPOCHS,"imgsz":640,"nbs":8,
+                         "lr0":.0001,"save_period":3,"freeze":11 if freeze else 0}
+                profile=run/"profile.json"
+                save(profile,{"schema_version":1,"profile_id":run.name,"model":str(initial),
+                              "task":"detect","run_name":"train","arguments":options})
+                run_training(profile,data_yaml=data,output_dir=run,dataset_manifest=plan_path,
+                             model_factory=trainer_factory(geometry,eval_list,freeze,state))
             with (run/"train/results.csv").open(newline="",encoding="utf-8") as stream:
-                require(len(list(csv.DictReader(stream)))==EPOCHS,"Missing epochs")
+                epochs=[int(row["epoch"]) for row in csv.DictReader(stream)]
+            require(epochs==list(range(1,EPOCHS+1)),"Missing epochs")
             weights=run/"train/weights"
-            candidates=[initial,weights/"best.pt",weights/"last.pt",*sorted(weights.glob("epoch*.pt"))]
+            candidates=[initial,weights/"best.pt",weights/"last.pt",
+                        *(weights/f"epoch{epoch}.pt" for epoch in range(0,EPOCHS,3))]
+            require(all(p.is_file() and p.stat().st_size>0 for p in candidates),"Missing training checkpoints")
+            if recovery:
+                summary=run/"evaluation-recovery.json"
+                require(not summary.exists(),"Prior recovery already exists")
+                save(summary,{"training_state":prior,"training_receipt_sha256":sha(invocation),
+                              "results_csv_sha256":sha(run/"train/results.csv"),"epochs":epochs,
+                              "checkpoints":{p.name:sha(p) for p in candidates},"at":now()})
             unique=list({sha(p):p for p in reversed(candidates)}.values())
             save(state,{"status":"RUNNING","phase":"evaluation","at":now()})
             report={}
@@ -458,7 +479,7 @@ def execute(work,node):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("action",choices=("prepare","launch","worker"))
+    parser.add_argument("action",choices=("prepare","launch","worker","launch-evaluation","evaluate"))
     parser.add_argument("work",type=Path)
     parser.add_argument("node",nargs="?",choices=ROUNDS)
     ns=parser.parse_args()
@@ -466,13 +487,16 @@ def main():
         prepare(ns.work)
         return
     require(ns.node is not None,"Missing GPU node")
-    if ns.action=="worker":
+    if ns.action in {"worker","evaluate"}:
         with process_lock(ns.work/f"{ns.node}.lock"):
-            execute(ns.work,ns.node)
+            execute(ns.work,ns.node,recovery=ns.action=="evaluate")
         return
-    with (ns.work/f"{ns.node}-stdout.log").open("xb") as out,(ns.work/f"{ns.node}-stderr.log").open("xb") as err:
+    evaluation=ns.action=="launch-evaluation"
+    label=f"{ns.node}-evaluation" if evaluation else ns.node
+    action="evaluate" if evaluation else "worker"
+    with (ns.work/f"{label}-stdout.log").open("xb") as out,(ns.work/f"{label}-stderr.log").open("xb") as err:
         env={**os.environ,"YOLO_AUTOINSTALL":"false","PYTHONUTF8":"1","KMP_DUPLICATE_LIB_OK":"TRUE"}
-        job=subprocess.Popen([sys.executable,"-u",str(Path(__file__).resolve()),"worker",str(ns.work),ns.node],
+        job=subprocess.Popen([sys.executable,"-u",str(Path(__file__).resolve()),action,str(ns.work),ns.node],
                              stdin=subprocess.DEVNULL,stdout=out,stderr=err,env=env,
                              creationflags=0x01000000|subprocess.DETACHED_PROCESS|subprocess.CREATE_NEW_PROCESS_GROUP)
     print(job.pid)
