@@ -46,3 +46,9 @@ P430 2차 개발 영상에서 칼 박스 짧은 변의 중앙값은 전체 영�
 | 11/19 영상 | 206–381 | 694–838 |
 
 사건 검수에는 기존 [사건 정답 양식](../templates/experiments/ground-truth.template.json)을 사용한다. B4 학습에 쓰는 사람–칼 관계 정답은 train 구간에서 별도로 검수하고, tune/dev-check의 관계 라벨은 각각 설정 조정과 개발 평가에 쓴다. [실험 프로토콜](controlled-experiment-protocol.md) · [Holding 규격](hoi-annotation-contract.md)
+
+## 11/24 비교 평가 복구
+
+PC11~14의 학습 CSV에 12개 epoch가 모두 기록됐고 `best.pt`, `last.pt`, 0/3/6/9 epoch 체크포인트가 보존됐다. Ultralytics는 훈련이 끝난 뒤 검증 전용 `final_eval`에서 `on_fit_epoch_end`를 다시 호출한다. 이때 학습 배치를 검사한 것이 실패 원인이었다. 검사 hook을 실제 학습 epoch 종료로 옮겼다.
+
+`e61bed7` 평가 실행기는 12개 학습 epoch와 이전 실패 사유·입력 계획·설정·초기 가중치 SHA를 확인하고 저장 가중치로만 비교 평가를 재개한다. 각 장비의 `evaluation-recovery.json`에 최초 상태, 호출 기록 SHA, 학습 CSV SHA, 평가 입력 가중치 SHA를 보존했다. 재개 PID는 PC11 3852, PC12 23708, PC13 9700, PC14 16136이며 네 곳에서 평가 단계와 최초 예측 파일을 확인했다. 큐·박스 평가 테스트 13개가 통과했다. 최종 홀드아웃과 사건 평가는 이 복구와 별개다.
