@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — 새 세션용 연구실 GPU 접속 안내
+
+기존 연구실 서버 계획에 비대화형 접속·허용 GPU 조회 명령과 사용 제한을 추가했다. 저장소 `AGENTS.md`와 로컬 상위 폴더 `AGENTS.md`에서 같은 문서를 참조한다. 문서의 명령으로 호스트 키 검증과 RTX 3080 0·5 조회를 확인했다. 인증 정보는 로컬 SSH 설정으로 관리한다. [프로젝트 인프라 운영 가이드](lab-gpu-training-plan.md)
+
 ## 2026-11-26 — 연구실 서버 접속·GPU 조사 및 Track A 배정
 
 Windows의 `BatchMode=yes` SSH로 서버 OS, 홈 NVMe, Python·Git, NVIDIA 드라이버와 RTX 3080 #0·#5의 UUID·CUDA 작업 상태를 확인했다. 두 GPU로 n/s를 비교하도록 Track A를 수정했다. PC13의 기준 가중치 두 개와 기존 계획의 SHA-256을 대조했다. 서버→PC13 직접 연결이 거부되어 Windows 중계 전송을 계획했고, 기존 러너의 단일 GPU 잠금과 Linux 경로 호환을 차기 구현 사항으로 기록했다. 환경 설치, 데이터 전송, CUDA smoke, 학습은 이번 조사 범위 이후다. [조사 결과와 운영 계획](lab-gpu-training-plan.md)

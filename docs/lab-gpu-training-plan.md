@@ -1,8 +1,20 @@
-# 연구실 GPU 서버 학습 환경 계획
+# 프로젝트 인프라 — 연구실 GPU 서버 운영 가이드
 
 2026-11-26 KST · SSH 및 장비 상태 `VERIFIED` · 환경 구성, 데이터 반입, 실행 `PLANNED`
 
-## 접속·장비 조사
+## 새 Codex 세션의 접속 절차
+
+연구실 네트워크 또는 승인된 VPN에 연결된 Windows 호스트에서 기존 OpenSSH alias `lab-gpu`와 로컬 SSH Agent를 사용한다. 로컬 SSH 설정과 신뢰할 호스트 키는 접속 호스트에서 관리한다. 비밀번호, 토큰, SSH 개인키와 SSH 설정 원문은 저장소에 넣지 않는다. 클라우드 세션은 별도로 승인된 네트워크·인증 경로가 제공될 때 접속할 수 있다.
+
+PowerShell에서 다음 읽기 전용 명령으로 접속과 허용 GPU 상태를 확인한다. GPU별 첫 행은 물리 번호, UUID, 모델, 전체·사용 VRAM, 사용률이다. 뒤이어 출력되는 PID가 있으면 해당 GPU에 CUDA 작업이 있다.
+
+```powershell
+ssh -o BatchMode=yes -o StrictHostKeyChecking=yes -o ConnectTimeout=8 lab-gpu 'hostname; for gpu in 0 5; do nvidia-smi -i "$gpu" --query-gpu=index,uuid,name,memory.total,memory.used,utilization.gpu --format=csv,noheader || exit; nvidia-smi -i "$gpu" --query-compute-apps=pid,used_memory --format=csv,noheader || exit; done'
+```
+
+별칭을 찾지 못하거나 연결이 타임아웃되면 실행 호스트의 로컬 SSH 설정과 네트워크를 확인한다. 공개키 인증 거부는 그 호스트의 SSH Agent와 등록 상태를 점검한다. 호스트 키가 미등록이거나 변경됐으면 운영자가 제공한 지문을 먼저 대조한다. 접속과 상태 조회가 성공하면 실제 작업 직전에 [GPU 예약 절차](#gpu-예약장시간-실행복구)를 적용한다.
+
+## 장비 및 실행 환경
 
 Windows의 기존 SSH alias와 OpenSSH Agent로 `BatchMode=yes` 접속했다. 서버는 Linux Mint 20.3 x86-64, glibc 2.31이며 Threadripper 3960X 24코어/48스레드와 RAM 251 GiB를 장착하고 있다. 조회 당시 가용 RAM은 232 GiB였다. 일반 사용자 홈은 쓰기 가능하고 루트와 같은 NVMe ext4에 있다. `df`의 여유 279 GiB는 해당 파일시스템의 공유 수치다. 계정별 quota는 확인되지 않았다. 별도 HDD와 NVMe 마운트는 초기 운영에서 제외한다. Git 2.25.1, rsync 3.1.3, `nohup`, `flock`, `sha256sum`을 확인했다. `tmux`·`screen`은 PATH에 없고, 사용자 systemd는 조회 시 동작하나 `Linger=no`였다.
 
@@ -13,6 +25,12 @@ Windows의 기존 SSH alias와 OpenSSH Agent로 `BatchMode=yes` 접속했다. �
 | 3, 4 | GTX 1080 Ti 각 11 GiB, Pascal, CC 6.1 | 각 7 MiB. 사용 권한 확인 대기 |
 
 RTX 3080 두 장의 물리 번호·PCI bus ID·UUID를 대조했고, 18:16 KST 재조회에서도 두 장의 CUDA 작업 목록이 비어 있었다. UUID 원문과 접속 값은 로컬 운영 정보로 관리한다. 드라이버 560.35.05의 `nvidia-smi`는 CUDA 12.6을 보고한다. 시스템 PATH에 `nvcc`가 없었고, Python 3.8.10 및 pip 20.0.2에는 `ensurepip`, torch, Ultralytics가 없었다. Conda와 uv는 PATH와 확인한 일반 설치 경로에서 발견되지 않았다. 프로젝트는 Python ≥3.10이 필요하다. [NVIDIA 드라이버 호환 표](https://docs.nvidia.com/cuda/archive/12.6.3/cuda-toolkit-release-notes/index.html#cuda-toolkit-and-minimum-required-driver-version-for-cuda-minor-version-compatibility) · [NVIDIA GPU별 Compute Capability](https://developer.nvidia.com/cuda/gpus) · [Pascal Compute Capability](https://developer.nvidia.com/cuda/gpus/legacy)
+
+## 사용 범위
+
+- 학습과 CUDA 검증은 허가된 RTX 3080 물리 ID **0·5**에서만 수행한다. GPU 1·2의 다른 연구 작업과 파일, 시스템 전역 설정, NVIDIA 드라이버는 변경 금지다. GPU 3·4는 별도 사용 승인을 받은 뒤 배정한다.
+- 사용자 홈과 프로젝트 전용 가상환경 범위에서 작업한다. `sudo`, 공유 디스크 사용, 부팅 시 자동 실행이 필요해지면 연구실 운영 권한을 확인한다.
+- 데이터와 가중치는 승인된 입력만 전송하고 원본과 수신본 해시를 대조한다. 최종 독립 평가 영상·파생 프레임·정답은 외부 반입 대상에서 제외한다.
 
 ## 사용자 전용 구축과 검증
 
