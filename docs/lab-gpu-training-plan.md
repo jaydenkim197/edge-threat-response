@@ -51,9 +51,9 @@ PC13을 입력 릴리스와 결과 수집의 기준으로 사용한다. PC11/12/
 
 ## GPU 예약·장시간 실행·복구
 
-- 두 트랙에서 동일한 물리 UUID별 `flock`을 공유한다. 한 UUID에는 한 작업을 배정한다. 잠금을 획득한 뒤 `nvidia-smi -i "$GPU_UUID"`에서 물리 ID→전체 UUID와 할당 모델·VRAM을 확인하고, CUDA 작업을 재조회한다. UUID 불일치, 다른 작업 점유, 잠금 실패 시 보류한다. `CUDA_VISIBLE_DEVICES=<전체 UUID>`를 해당 프로세스에만 설정하고 trainer에는 `device=0`을 전달한다. 이 잠금은 우리 프로젝트 안의 경쟁을 막는다. 연구실 전체의 독점 예약이 필요하면 운영자 일정이나 예약 시스템을 사용한다. [Ultralytics 장치 선택](https://docs.ultralytics.com/reference/utils/torch_utils/#ultralytics.utils.torch_utils.select_device)
+- 모든 트랙에서 동일한 물리 UUID별 `flock`을 공유한다. 한 UUID에는 한 작업을 배정한다. 잠금을 획득한 뒤 `nvidia-smi -i "$GPU_UUID"`에서 물리 ID→전체 UUID와 할당 모델·VRAM을 확인하고, CUDA 작업을 재조회한다. UUID 불일치, 다른 작업 점유, 잠금 실패 시 보류한다. `CUDA_VISIBLE_DEVICES=<전체 UUID>`를 해당 프로세스에만 설정하고 trainer에는 `device=0`을 전달한다. 이 잠금은 우리 프로젝트 안의 경쟁을 막는다. 연구실 전체의 독점 예약이 필요하면 운영자 일정이나 예약 시스템을 사용한다. [Ultralytics 장치 선택](https://docs.ultralytics.com/reference/utils/torch_utils/#ultralytics.utils.torch_utils.select_device)
 - 트랙별 run ID·출력·로그·설정 캐시를 분리하고 승인 데이터는 공용 읽기 전용 입력으로 재사용한다. 스왑·공용 CPU/I/O 경합을 줄이기 위해 작은 worker 수부터 시작한다. 작업 순서와 서버 동시 실행 상한은 [통합 실행 계획](training-resource-schedule.md)을 따른다.
 - 사용자 홈에서 `nohup`으로 표준 입력을 닫고 작업별 stdout/stderr를 저장한다. PID, 시작 시각, UUID, 데이터/설정/소스 해시, 상태, 종료 코드를 남긴다. 재접속해 `tail -F`, PID와 시작 시각, `results.csv` 마지막 행, 해당 UUID의 GPU 상태를 함께 확인한다. 연결 해제 유지 시험을 통과한 방식으로만 본 실행에 사용한다. 호스트 재부팅이나 로그아웃 정책으로 종료되면 원인을 남기고, 동일 조건의 optimizer 상태가 들어 있는 최신 학습 체크포인트와 manifest를 검증해 새 시도 ID로 재개한다. optimizer가 빠진 가중치는 새 fine-tuning의 초기값으로만 사용한다. 자동 부팅 재개가 필요하면 연구실 스케줄러나 사용자 서비스 지속 권한을 확인한다.
 - 공유 디스크로의 이동이나 장기 디스크 예약은 해당 권한을 확인한 뒤 진행한다. 프로젝트 전용 홈 환경에는 관리자 설정이 필요하지 않다.
 
-[Track A 실험 및 장비 배정](p430-phase2-optimization-plan.md)
+[Track A·B·C 통합 실행 계획](training-resource-schedule.md) · [Track A 실험](p430-phase2-optimization-plan.md)

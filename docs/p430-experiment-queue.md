@@ -1,6 +1,6 @@
 # P430 자동 학습 큐
 
-이 문서는 기존 PC11~14 큐의 실행과 복구 규격을 기록한다. 연구실 서버 및 Track A·B 통합 배정의 설계는 [통합 실행 계획](training-resource-schedule.md)을 따른다.
+이 문서는 기존 PC11~14 큐의 실행과 복구 규격을 기록한다. 연구실 서버 및 Track A·B·C 통합 배정의 설계는 [통합 실행 계획](training-resource-schedule.md)을 따른다.
 
 ## 실행 범위
 

@@ -49,7 +49,7 @@ def make_truth(rows):
     }
 
 
-def evaluate_checkpoint(checkpoint: Path, rows: list[dict], output: Path) -> dict:
+def evaluate_checkpoint(checkpoint: Path, rows: list[dict], output: Path, *, imgsz: int = 960) -> dict:
     import torch
     from PIL import Image
     from ultralytics import YOLO
@@ -69,7 +69,7 @@ def evaluate_checkpoint(checkpoint: Path, rows: list[dict], output: Path) -> dic
                 if image.size != (1920, 1080):
                     raise ValueError("The development protocol expects a 1920x1080 central crop")
                 images.append(image.convert("RGB"))
-        batch = model.predict(images, imgsz=960, device=0, batch=len(images), rect=False,
+        batch = model.predict(images, imgsz=imgsz, device=0, batch=len(images), rect=False,
                               conf=.001, classes=[0], iou=.7, max_det=100, verbose=False)
         for index, result in enumerate(batch, start=start):
             prediction, _ = canonical_prediction(

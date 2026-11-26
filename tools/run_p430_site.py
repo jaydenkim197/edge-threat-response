@@ -3,6 +3,7 @@
 import argparse
 from collections import Counter, defaultdict
 from concurrent.futures import ThreadPoolExecutor
+from copy import deepcopy
 import csv
 import os
 from pathlib import Path
@@ -17,7 +18,8 @@ from edge_threat_response.training import gpu_training_lock, run_training
 from run_p430_integration import jsonl, paths, repeated
 
 ROUNDS = {"pc11": (False, False), "pc12": (False, True),
-          "pc13": (True, False), "pc14": (True, True)}
+          "pc13": (True, False), "pc14": (True, True),
+          "lab0": (True, False), "lab1": (True, False), "lab5": (True, False)}
 BUDGET = {"p430": 4096, "cctv": 2458, "m2": 1638}
 EPOCHS = 12
 DRAWS = sum(BUDGET.values())
@@ -263,7 +265,7 @@ def development_rows(work, plan):
     return result
 
 
-def tile_predictions(checkpoint, rows):
+def tile_predictions(checkpoint, rows, *, restore=None, clahe=False):
     import torch
     from PIL import Image
     from torchvision.ops import nms
@@ -272,12 +274,25 @@ def tile_predictions(checkpoint, rows):
 
     model=YOLO(checkpoint)
     require(model.names=={0:"knife"},"Unexpected knife detector classes")
+    if clahe:
+        import cv2
+        import numpy as np
+
+        enhancement=cv2.createCLAHE(clipLimit=2.0,tileGridSize=(8,8))
     output=[]
     for row,image in zip(rows,make_truth(rows)["images"],strict=True):
         with Image.open(row["image_file"]) as parent:
             require(parent.size==(1920,1080),"Tile evaluation expects reviewed P430 dimensions")
             grid=regions(*parent.size)
-            chips=[parent.crop(region).convert("RGB") for region in grid]
+            source=parent.convert("RGB")
+            if clahe:
+                lab=cv2.cvtColor(np.asarray(source),cv2.COLOR_RGB2LAB)
+                lab[:,:,0]=enhancement.apply(lab[:,:,0])
+                source=Image.fromarray(cv2.cvtColor(lab,cv2.COLOR_LAB2RGB))
+            chips=[source.crop(region) for region in grid]
+            if restore is not None:
+                chips=[chip.resize((chip.width//2,chip.height//2),Image.Resampling.BOX)
+                       .resize(chip.size,restore) for chip in chips]
         predicted=model.predict(chips,imgsz=640,batch=len(chips),rect=False,conf=.001,device=0,
                                 iou=.7,classes=[0],max_det=100,verbose=False)
         boxes,scores=[],[]
@@ -315,7 +330,7 @@ def score_mode(checkpoint, rows, output, mode, threshold=None, locked=False):
     return record
 
 
-def trainer_factory(draw_paths, val_paths, freeze, state):
+def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=False):
     import torch
     from ultralytics import YOLO
     from ultralytics.models.yolo.detect import DetectionTrainer
@@ -354,7 +369,8 @@ def trainer_factory(draw_paths, val_paths, freeze, state):
 
     def factory(checkpoint):
         model=SiteModel(checkpoint)
-        require(model.names=={0:"knife"} and len(model.model.yaml["backbone"])==11,"Unverified backbone layout")
+        expected_classes = len(model.names)==80 and model.names[0]=="person" if coco else model.names=={0:"knife"}
+        require(expected_classes and len(model.model.yaml["backbone"])==11,"Unverified model layout or classes")
         counts=Counter()
         verified={}
 
@@ -378,6 +394,8 @@ def trainer_factory(draw_paths, val_paths, freeze, state):
             counts[trainer.epoch]+=1
 
         def epoch_done(trainer):
+            if phase2 and counts[trainer.epoch]==0 and all(counts[e]==DRAWS//8 for e in range(EPOCHS)):
+                return  # Final evaluation callback has no additional training batches.
             require(counts[trainer.epoch]==DRAWS//8,"Observed batch count differs")
             if freeze:
                 end=trainer.model.model[:11].state_dict()
@@ -389,6 +407,21 @@ def trainer_factory(draw_paths, val_paths, freeze, state):
         model.add_callback("on_train_epoch_start",start)
         model.add_callback("on_train_batch_start",first_batch)
         model.add_callback("on_train_epoch_end",epoch_done)
+        if phase2:
+            def observe(trainer):
+                batch=counts[trainer.epoch]
+                if batch%64==0:
+                    save(state,{"status":"RUNNING","phase":"training","epoch":trainer.epoch+1,
+                                "epochs":EPOCHS,"batch":batch,"train_batches":DRAWS//8,"at":now()})
+                if trainer.epoch==0 and batch in (256,512,768,1024):
+                    target=state.parent/f"ema-batch-{batch:04d}.pt"
+                    temporary=target.with_suffix(".tmp")
+                    torch.save({"ema":deepcopy(trainer.ema.ema).half(),
+                                "train_args":vars(trainer.args)},temporary)
+                    temporary.replace(target)
+                    save(target.with_suffix(".json"),{"batch":batch,"sha256":sha(target),
+                         "ema_updates":trainer.ema.updates,"lr":[g["lr"] for g in trainer.optimizer.param_groups]})
+            model.add_callback("on_train_batch_end",observe)
         return model
     return factory
 
@@ -400,6 +433,11 @@ def execute(work,node, *, recovery=False):
     require(torch.cuda.is_available() and __version__=="8.4.152","Unexpected or unavailable GPU environment")
     tiled,freeze=ROUNDS[node]
     pin=read(work/"release.json")
+    variant=pin.get("variant")
+    require(variant in (None,"replicate","coco"),"Unexpected site recipe")
+    if variant is not None:
+        require(pin.get("seed") in (3407,3408,3409),"Unpinned site training seed")
+        tiled,freeze=True,False
     plan_path=work/"plan.json"
     require(sha(plan_path)==pin["plan_sha256"] and sha(work/"protection.json")==pin["protection_sha256"]
             and sha(Path(__file__).resolve())==pin["runner_sha256"],"Run release changed")
@@ -422,9 +460,20 @@ def execute(work,node, *, recovery=False):
         run.mkdir(exist_ok=False)
     initial=work.parent/"p430-t1-20261120-v1/initial.pt"
     require(sha(initial)==MODEL_SHA,"Prior initial weight changed")
+    checkpoint=initial
+    if variant=="coco":
+        require(pin.get("model") in ("yolo26n.pt","yolo26s.pt","yolo26m.pt"),"Unexpected COCO weight")
+        checkpoint=work/pin["model"]
+        require(sha(checkpoint)==pin["initial_sha256"],"COCO weight hash changed")
     previous=work.parent/"p430-t1-20261120-v1"
     sys.path.insert(0,str(previous/"evaluation-deps"))
-    with gpu_training_lock(work.parent/"training/gpu0-training.lock",owner=run.name):
+    lock_name="gpu0-training.lock"
+    if os.name!="nt" and node.startswith("lab"):
+        visible=os.environ.get("CUDA_VISIBLE_DEVICES","")
+        require(visible.startswith("GPU-") and visible[4:].replace("-","").isalnum()
+                and torch.cuda.device_count()==1,"Expected one masked physical GPU")
+        lock_name=f"{visible}-training.lock"
+    with gpu_training_lock(work.parent/"training"/lock_name,owner=run.name):
         try:
             save(state,{"status":"RUNNING","phase":"preflight","at":now()})
             val=development_rows(work,plan)
@@ -438,17 +487,22 @@ def execute(work,node, *, recovery=False):
                 data.write_text(f"path: {run.as_posix()}\ntrain: train.txt\nval: val.txt\nnames:\n  0: knife\n",encoding="utf-8")
                 options={**read(previous/"config.json")["args"],"epochs":EPOCHS,"imgsz":640,"nbs":8,
                          "lr0":.0001,"save_period":3,"freeze":11 if freeze else 0}
+                if variant is not None:
+                    options["seed"]=pin["seed"]
                 profile=run/"profile.json"
-                save(profile,{"schema_version":1,"profile_id":run.name,"model":str(initial),
+                save(profile,{"schema_version":1,"profile_id":run.name,"model":str(checkpoint),
                               "task":"detect","run_name":"train","arguments":options})
                 run_training(profile,data_yaml=data,output_dir=run,dataset_manifest=plan_path,
-                             model_factory=trainer_factory(geometry,eval_list,freeze,state))
+                             model_factory=trainer_factory(geometry,eval_list,freeze,state,
+                                                           phase2=variant is not None,coco=variant=="coco"))
             with (run/"train/results.csv").open(newline="",encoding="utf-8") as stream:
                 epochs=[int(row["epoch"]) for row in csv.DictReader(stream)]
             require(epochs==list(range(1,EPOCHS+1)),"Missing epochs")
             weights=run/"train/weights"
             candidates=[initial,weights/"best.pt",weights/"last.pt",
                         *(weights/f"epoch{epoch}.pt" for epoch in range(0,EPOCHS,3))]
+            if variant is not None:
+                candidates.extend(run/f"ema-batch-{batch:04d}.pt" for batch in (256,512,768,1024))
             require(all(p.is_file() and p.stat().st_size>0 for p in candidates),"Missing training checkpoints")
             if recovery:
                 summary=run/"evaluation-recovery.json"
@@ -465,7 +519,8 @@ def execute(work,node, *, recovery=False):
                 baseline=next(r for r in tune if r["checkpoint_sha256"]==MODEL_SHA)
                 report[mode]={"tune":tune,"selected_checkpoint":best["checkpoint"],
                               "dev_check":{r["checkpoint"]:score_mode(
-                                  initial if r is baseline else weights/r["checkpoint"],val["dev_check"],
+                                  initial if r is baseline else
+                                  (run if r["checkpoint"].startswith("ema-batch-") else weights)/r["checkpoint"],val["dev_check"],
                                   run/f"dev-{mode}-{r['checkpoint']}.jsonl",mode,
                                   threshold=r["point"]["confidence"],locked=True) for r in (baseline,best)}}
                 save(run/"evaluation.json",report)

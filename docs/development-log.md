@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — 2차 P430 학습과 대안 탐지 실제 실행
+
+A를 YOLO, B를 대안 탐지, C를 Holding/HOI·시스템으로 통일했다. PC11/12의 D1 재현과 PC13 동일 가중치 비교를 완료했다. 연구실 SSH 문제가 있어 PC11=n, PC14=s, PC12=m으로 크기 비교를 시작하고, 진단이 끝난 PC13에서 ALT-07을 시작했다. 개발 전송 묶음 34,022개를 검증했고 독립 테스트 자료는 제외했다. [실측 및 작업 기록](../reports/training/p430-phase2-2026-11-26/report.md)
+
 ## 2026-11-26 — GPU 10장 합성 벤치마크와 Track A·B 배정
 
 연구실 여섯 장의 사용 승인에 따라 운영 가이드와 `AGENTS.md`의 배정 규칙을 갱신했다. 사용자 전용 Python 3.12·cu124 환경을 만들고 GPU 10장에서 YOLO26n FP32 학습 스텝·CUDA NMS와 배치별 처리량을 측정했다. 3090/3080의 s·m 추가 측정을 반영했다. 실데이터 배치 및 서버 동시 부하 검증, 통합 큐·실패 복구 배포는 계획 단계다. [실측 기록](training-gpu-benchmark-2026-11-26.md) · [통합 실행 계획](training-resource-schedule.md)
