@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — GPU 10장 합성 벤치마크와 Track A·B 배정
+
+연구실 여섯 장의 사용 승인에 따라 운영 가이드와 `AGENTS.md`의 배정 규칙을 갱신했다. 사용자 전용 Python 3.12·cu124 환경을 만들고 GPU 10장에서 YOLO26n FP32 학습 스텝·CUDA NMS와 배치별 처리량을 측정했다. 3090/3080의 s·m 추가 측정을 반영했다. 실데이터 배치 및 서버 동시 부하 검증, 통합 큐·실패 복구 배포는 계획 단계다. [실측 기록](training-gpu-benchmark-2026-11-26.md) · [통합 실행 계획](training-resource-schedule.md)
+
 ## 2026-11-26 — 새 세션용 연구실 GPU 접속 안내
 
 기존 연구실 서버 계획에 비대화형 접속·허용 GPU 조회 명령과 사용 제한을 추가했다. 저장소 `AGENTS.md`와 로컬 상위 폴더 `AGENTS.md`에서 같은 문서를 참조한다. 문서의 명령으로 호스트 키 검증과 RTX 3080 0·5 조회를 확인했다. 인증 정보는 로컬 SSH 설정으로 관리한다. [프로젝트 인프라 운영 가이드](lab-gpu-training-plan.md)

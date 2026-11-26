@@ -11,6 +11,7 @@
 - 기준 개발 작업공간은 상위 수업 폴더의 `03_개발_GitHub`이다. 작업 시작 전 `git pull --ff-only`를 실행하고, 완료·검증된 의도적 변경은 commit 후 원격 `main`까지 push한다. 상위 폴더의 회의록·제출물·팀원 자료는 저장소 밖에 둔다.
 - material task 시작 전 `docs/project-plan.md`, `docs/mvp-research-specification.md`, `docs/open-decisions.md`, `docs/architecture.md`, `docs/verification.md`, `docs/development-log.md`와 관련 코드를 확인한다. dataset·model 작업은 `docs/model-data-plan.md`도 확인한다.
 - 연구실 GPU 서버에 접속하거나 학습을 배정하기 전에 [프로젝트 인프라 운영 가이드](docs/lab-gpu-training-plan.md)를 읽는다. 문서의 SSH 명령으로 접속을 확인하고, 허용 GPU의 UUID·점유 상태와 데이터 반입 범위를 확인한 뒤 작업한다. 인증은 접속 호스트의 기존 로컬 SSH 설정과 Agent를 사용한다.
+- PC11~14 및 연구실 GPU 학습을 배정하기 전 [Track A·B 통합 실행 계획](docs/training-resource-schedule.md)을 확인한다. 서버의 검증된 동시 부하 상한과 GPU별 잠금을 적용하고 다른 사용자의 실행은 보호한다. 합성 배치 한계와 실제 데이터 안정 배치를 구분하고, 실패 시 원래 로그·설정·체크포인트를 보존한다.
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.
 - 프로젝트 방향·일정·평가 가능성과 충돌하는 요청은 충돌을 먼저 명시하고 범위를 조정한다.
 - `PROPOSAL`을 팀 결정 없이 `DECISION`으로 바꾸지 않는다.

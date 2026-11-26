@@ -1,5 +1,7 @@
 # 병렬 개발 연구: 학습 기반 Human-Knife Interaction Detection (B4)
 
+2026-11-26 자원 배정은 [Track A·B 통합 실행 계획](training-resource-schedule.md)을 따른다. 승인된 관계 라벨을 기다리는 동안 GPU를 예약하지 않으며, 준비되면 G/VG와 predicted-box 평가의 의존 조건에 따라 배정한다.
+
 <!-- docs-refresh-20261106:begin -->
 ## 현재 단계 — 2026-11-06
 

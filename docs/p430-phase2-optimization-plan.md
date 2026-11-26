@@ -1,6 +1,6 @@
 # P430 2차 최적화 실험 계획
 
-2026-11-26 · `PROPOSAL` · Track A 학습 자원 RTX 3060 PC11~14와 연구실 서버 RTX 3080 두 장 · Jetson Orin Nano에서 실기기 평가
+2026-11-26 · `PROPOSAL` · Track A는 PC11~14와 연구실 서버의 승인 GPU를 [통합 실행 계획](training-resource-schedule.md)에서 배정 · Jetson Orin Nano에서 실기기 평가
 
 ## 기준점과 가장 큰 오류
 
@@ -18,12 +18,14 @@ D0는 기존 S1+CCTV 가중치다. D1은 PC13의 첫 epoch 저장본 `epoch0.pt`
 | PC14 RTX 3060 | 양성 불일치·음성 오탐 원인 분류, train 검수 팩 준비 | 다음 학습이 배경 오탐 또는 라벨 손실을 실제로 보완하는지 판별 |
 | 연구실 RTX 3080 물리 ID 0 · 10 GiB | COCO 초기 YOLO26n, D1과 동일 자료·학습 조건으로 시작 | n/s 규모 비교용 초기 이력 대조군 |
 | 연구실 RTX 3080 물리 ID 5 · 10 GiB | COCO 초기 YOLO26s | 모델 용량 증가 효과와 직접 배포 가능성 평가 |
-| 후속 슬롯 | n/s 이후 표준 n의 대조 조건과 YOLO26n-P2 짧은 학습·내보내기 검증 | P2의 특징맵 효과와 배포 비용 확인 |
+| 연구실 RTX 3090 물리 ID 1 · 24 GiB | 같은 초기화·update 예산의 COCO 초기 YOLO26m·640 | 모델 크기에 따른 실질 이득 확인 |
+| 연구실 RTX 3090 물리 ID 2 · 24 GiB | n-P2 짧은 학습·내보내기 검증, 근거 확보 후 960·증류 | P2의 특징맵 효과와 추가 VRAM 활용 확인 |
+| 연구실 GTX 1080 Ti 물리 ID 3·4 · 각 11 GiB | FP32 평가·독립 추론 중심, 남는 조합에서 가벼운 학습 | 전체 검증 완료 시간 단축 |
 | Jetson Orin Nano | D1 및 통과 후보, 6타일·전체 화면+고정 ROI 비교 | 검출 이득이 실제 런타임 비용에서 유지되는지 검증 |
 
-- 연구실 서버에서 3080 두 장이 유휴였음을 확인했다. 사용자 가상환경과 Linux 데이터 릴리스, GPU별 단독·동시 smoke를 통과한 뒤 각각 독립 run을 실행한다. RTX 3090 1·2는 다른 연구에 사용 중이므로 m 학습과 증류를 초기 큐에서 보류한다. GTX 1080 Ti 3·4는 권한 확인 대기다. 연구실 Track B는 Track A가 반환한 슬롯을 같은 UUID 잠금으로 사용한다. [환경·전송·동시 작업 계획](lab-gpu-training-plan.md)
+- 연구실 여섯 장의 사용 승인과 공통 CUDA 합성 실측을 확인했다. 표의 배정은 우선 슬롯이며, 1장부터 시작해 호스트 동시 부하 기준을 통과한 작업 수 안에서 실행한다. 먼저 마칠 수 있는 적합 장비로 대기 작업을 배정한다. Track B도 같은 GPU 잠금·배정 기록을 사용한다. [통합 큐와 자원 상한](training-resource-schedule.md) · [벤치마크 결과](training-gpu-benchmark-2026-11-26.md)
 - 재현은 D1과 같은 시작 가중치, 출처 P430/외부 CCTV/M2 50/30/20, 동일 샘플링 규칙과 warm-up을 적용한다. 첫 epoch의 256/512/768/1,024 미니배치와 이후 epoch마다 EMA 기준 가중치, 실제 optimizer step 및 LR을 기록한다. 초기 이득이 반복된 뒤에 LR을 0.00005와 기존 0.0001로 한 번 비교한다. 기존 스케줄이 바뀌지 않게 비교한다.
-- 크기 비교는 n/s를 각각 같은 COCO 사전학습 단계에서 출발시키고, 같은 학습 데이터와 실제 optimizer update 예산을 맞춘다. batch 차이가 불가피하면 유효 batch·정밀도·BN 조건을 보고한다. 역사적 S1+CCTV 초기값을 쓴 D1과는 운용 후보 비교를 병기한다. YOLO26m은 충분한 VRAM과 사용 승인 확보 후에 같은 조건으로 추가한다. YOLO26l/x는 m의 유효한 개선 이후 확장한다. [YOLO26 공식 모델](https://docs.ultralytics.com/models/yolo26/)
+- 크기 비교는 n/s/m을 같은 COCO 사전학습 단계에서 출발시키고 공통 학습 데이터·정밀도·batch·optimizer update 예산을 맞춘다. 같은 조건의 시작 batch 8은 GPU 합성 측정을 통과했다. 로더와 validation 포함 재확인 뒤 적용한다. 역사적 S1+CCTV 초기값을 쓴 D1과는 운용 후보 비교를 병기한다. YOLO26l/x는 m의 유효한 개선 이후 확장한다. [YOLO26 공식 모델](https://docs.ultralytics.com/models/yolo26/)
 - P2는 stride 4 특징맵을 더한다. 입력의 칼 픽셀이 보존된 상태에서 로컬 특징의 공간 해상도가 성능을 제한하는지 확인하는 실험이다. 표준 n과 같은 입력·자료·초기화 출처를 사용하고, 공통 backbone에 이식한 범위와 새로 초기화한 neck/head를 기록한다. 공식 YAML은 PC13 설치본에 있다. 짧은 CUDA 학습과 내보내기 이후 전체 후보로 올린다. [FPN](https://arxiv.org/abs/1612.03144) · [YOLO26-P2 구성](https://github.com/ultralytics/ultralytics/blob/main/ultralytics/cfg/models/26/yolo26-p2.yaml)
 
 ## 추론 및 선택 조건
