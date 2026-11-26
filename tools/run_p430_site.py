@@ -97,7 +97,7 @@ def original_boxes(label):
     return rows
 
 
-def export_tile(work,r):
+def export_tile(work,r,window=None):
     from PIL import Image
 
     image_path,label_path=paths(work,r)
@@ -106,7 +106,7 @@ def export_tile(work,r):
     require(len(labels)==r["n"], "Tile label count mismatch")
     with Image.open(image_path) as image:
         w,h=image.size
-        available=regions(w,h)
+        available=regions(w,h) if window is None else tile_grid(w,h,*window)
         # Larger external frames are admitted through the older reviewed range;
         # outside that native grid use the parent rather than leave gaps.
         if w>2304 or h>1280 or not available:
@@ -132,7 +132,7 @@ def export_tile(work,r):
     return key, {"image_sha256":sha(tile),"label_sha256":sha(output),"region":list(crop)}
 
 
-def draw_parents(pools,tiles):
+def draw_parents(pools,tiles,budget=BUDGET,tile_share=None):
     rng=random.Random(3407)
     # Interleave public source groups first, then cycle to cover the whole pool
     # before repeating public images in later epochs.
@@ -150,11 +150,11 @@ def draw_parents(pools,tiles):
         keys=[key for key in keys if by_group[key]]
     decks=[]
     for epoch in range(EPOCHS):
-        start=epoch*BUDGET["m2"]
-        draw=[(public[i%len(public)],False) for i in range(start,start+BUDGET["m2"])]
+        start=epoch*budget["m2"]
+        draw=[(public[i%len(public)],False) for i in range(start,start+budget["m2"])]
         for domain in ("p430","cctv"):
             source=pools[domain]
-            count=BUDGET[domain]
+            count=budget[domain]
             positives=[r for r in source if r["n"]]
             negatives=[r for r in source if not r["n"]]
             pos=round(count*len(positives)/len(source))
@@ -166,9 +166,33 @@ def draw_parents(pools,tiles):
                 selected=set(eligible[:quota])
                 draw.extend((r["image_sha256"],i in selected) for i,r in enumerate(cohort))
         rng.shuffle(draw)
+        if tile_share is not None:
+            draw=replace_tiles(draw,tiles,tile_share)
         require(len(draw)==DRAWS,"Unexpected draw count")
         decks.append(draw)
     return decks
+
+
+def replace_tiles(deck,tiles,tile_share):
+    eligible=sorted((i for i,(key,_) in enumerate(deck) if key in tiles),
+                    key=lambda i: (not deck[i][1], i))
+    wanted=round(len(deck)*tile_share)
+    require(len(eligible)>=wanted,"Insufficient reviewed tiles for the requested share")
+    chosen=set(eligible[:wanted])
+    return [(key,i in chosen) for i,(key,_) in enumerate(deck)]
+
+
+def tile_grid(width,height,size,overlap):
+    if min(width,height)<size:
+        return []
+    stride=round(size*(1-overlap))
+    require(0<stride<=size,"Invalid tile overlap")
+
+    def starts(length):
+        last=length-size
+        return sorted(set(range(0,last+1,stride))|{last})
+
+    return [(x,y,x+size,y+size) for y in starts(height) for x in starts(width)]
 
 
 def prepare(work):
@@ -223,10 +247,10 @@ def input_paths(work, plan, key, tiled):
     return paths(work, plan["pool"][key])
 
 
-def verify_inputs(work, plan, tiled):
+def verify_inputs(work, plan, tiled, budget=BUDGET):
     seen={key for deck in plan["draws"] for key,_ in deck}
     require(all(len(deck)==DRAWS for deck in plan["draws"]) and len(plan["draws"])==EPOCHS,"Invalid draw budget")
-    require(all(Counter(plan["pool"][key]["domain"] for key,_ in deck)==BUDGET for deck in plan["draws"]),
+    require(all(Counter(plan["pool"][key]["domain"] for key,_ in deck)==budget for deck in plan["draws"]),
             "Source budget changed")
     held=set().union(*map(set,plan["validation"].values()))
     require(not (held&seen),"Training draws contain protected development frames")
@@ -241,7 +265,8 @@ def verify_inputs(work, plan, tiled):
             path,label=input_paths(work,plan,key,True)
             evidence=plan["tiles"][key]
             if not path.exists() and not label.exists():
-                require(export_tile(work,plan["pool"][key])==(key,evidence),"Cross-PC tile output mismatch")
+                require(export_tile(work,plan["pool"][key],plan["summary"].get("tile_window"))==(key,evidence),
+                        "Cross-PC tile output mismatch")
             require(sha(path)==evidence["image_sha256"] and sha(label)==evidence["label_sha256"],"Tile changed")
 
 
@@ -265,7 +290,7 @@ def development_rows(work, plan):
     return result
 
 
-def tile_predictions(checkpoint, rows, *, restore=None, clahe=False):
+def tile_predictions(checkpoint, rows, *, restore=None, clahe=False, window=None, imgsz=640, trace=None, roi=None):
     import torch
     from PIL import Image
     from torchvision.ops import nms
@@ -283,7 +308,7 @@ def tile_predictions(checkpoint, rows, *, restore=None, clahe=False):
     for row,image in zip(rows,make_truth(rows)["images"],strict=True):
         with Image.open(row["image_file"]) as parent:
             require(parent.size==(1920,1080),"Tile evaluation expects reviewed P430 dimensions")
-            grid=regions(*parent.size)
+            grid=[roi] if roi else tile_grid(*parent.size,*window) if window else regions(*parent.size)
             source=parent.convert("RGB")
             if clahe:
                 lab=cv2.cvtColor(np.asarray(source),cv2.COLOR_RGB2LAB)
@@ -293,17 +318,27 @@ def tile_predictions(checkpoint, rows, *, restore=None, clahe=False):
             if restore is not None:
                 chips=[chip.resize((chip.width//2,chip.height//2),Image.Resampling.BOX)
                        .resize(chip.size,restore) for chip in chips]
-        predicted=model.predict(chips,imgsz=640,batch=len(chips),rect=False,conf=.001,device=0,
-                                iou=.7,classes=[0],max_det=100,verbose=False)
+        predicted=[]
+        for start in range(0,len(chips),8):
+            chunk=chips[start:start+8]
+            predicted.extend(model.predict(chunk,imgsz=imgsz,batch=len(chunk),rect=False,conf=.001,device=0,
+                                           iou=.7,classes=[0],max_det=100,verbose=False))
         boxes,scores=[],[]
+        removed=[]
         for result,(x,y,x2,y2) in zip(predicted,grid,strict=True):
             for (a,b,c,d),confidence in zip(result.boxes.xyxy.tolist(),result.boxes.conf.tolist(),strict=True):
-                if (x>0 and a<3) or (y>0 and b<3) or (x2<1920 and c>x2-x-3) or (y2<1080 and d>y2-y-3):
+                if not roi and ((x>0 and a<3) or (y>0 and b<3) or (x2<1920 and c>x2-x-3) or (y2<1080 and d>y2-y-3)):
+                    if trace is not None:
+                        removed.append([a+x,b+y,c+x,d+y])
                     continue
                 boxes.append([a+x,b+y,c+x,d+y])
                 scores.append(confidence)
         keep=nms(torch.tensor(boxes,dtype=torch.float32),torch.tensor(scores),.55).tolist()[:300] if boxes else []
         prediction,_=canonical_prediction(image,[boxes[i] for i in keep],[scores[i] for i in keep],[0]*len(keep),0)
+        if trace is not None:
+            retained=set(keep)
+            trace.append({"source_id":image["source_id"],"edge_removed":removed,
+                          "merge_removed":[box for i,box in enumerate(boxes) if i not in retained]})
         output.append(prediction)
     return output
 
@@ -439,7 +474,7 @@ def execute(work,node, *, recovery=False):
     tiled,freeze=ROUNDS[node]
     pin=read(work/"release.json")
     variant=pin.get("variant")
-    require(variant in (None,"replicate","coco","p2"),"Unexpected site recipe")
+    require(variant in (None,"replicate","coco","p2","followup"),"Unexpected site recipe")
     if variant is not None:
         require(pin.get("seed") in (3407,3408,3409),"Unpinned site training seed")
         tiled,freeze=True,False
@@ -449,6 +484,11 @@ def execute(work,node, *, recovery=False):
     plan=read(plan_path)
     require(plan["summary"]["protection_sha256"]==pin["protection_sha256"]
             and plan["summary"]["scope"]=="development_only","Development-only protection contract failed")
+    spec=pin.get("experiment",{})
+    budget=spec.get("budget",BUDGET)
+    require(set(budget)==set(BUDGET) and sum(budget.values())==DRAWS,"Unexpected epoch budget")
+    require(spec.get("imgsz",640) in (640,960,1280) and spec.get("lr0",.0001) in (.0001,.00005),
+            "Unexpected resolution or learning rate")
     run=work/f"{work.name}-{node}"
     state=run/"state.json"
     if recovery:
@@ -468,7 +508,8 @@ def execute(work,node, *, recovery=False):
     checkpoint=initial
     model_yaml=None
     if variant in ("coco","p2"):
-        require(pin.get("model") in ("yolo26n.pt","yolo26s.pt","yolo26m.pt"),"Unexpected COCO weight")
+        require(pin.get("model") in ("yolo26n.pt","yolo26s.pt","yolo26m.pt","yolo26l.pt","yolo26x.pt"),
+                "Unexpected COCO weight")
         checkpoint=work/pin["model"]
         require(sha(checkpoint)==pin["initial_sha256"],"COCO weight hash changed")
     if variant=="p2":
@@ -487,7 +528,7 @@ def execute(work,node, *, recovery=False):
             save(state,{"status":"RUNNING","phase":"preflight","at":now()})
             val=development_rows(work,plan)
             if not recovery:
-                verify_inputs(work,plan,tiled)
+                verify_inputs(work,plan,tiled,budget)
                 geometry=[[input_paths(work,plan,key,tiled and use)[0] for key,use in deck] for deck in plan["draws"]]
                 eval_list=[Path(r["image_file"]) for r in val["tune"]]
                 for name,files in (("train",sorted(set().union(*map(set,geometry)))),("val",eval_list)):
@@ -496,6 +537,11 @@ def execute(work,node, *, recovery=False):
                 data.write_text(f"path: {run.as_posix()}\ntrain: train.txt\nval: val.txt\nnames:\n  0: knife\n",encoding="utf-8")
                 options={**read(previous/"config.json")["args"],"epochs":EPOCHS,"imgsz":640,"nbs":8,
                          "lr0":.0001,"save_period":3,"freeze":11 if freeze else 0}
+                options.update({key:spec[key] for key in ("imgsz","lr0","save_period") if key in spec})
+                if "teacher_sha256" in spec:
+                    teacher=work/"teacher.pt"
+                    require(sha(teacher)==spec["teacher_sha256"],"Distillation teacher changed")
+                    options.update(distill_model=str(teacher),dis=6.0)
                 if variant is not None:
                     options["seed"]=pin["seed"]
                 profile=run/"profile.json"
@@ -511,6 +557,8 @@ def execute(work,node, *, recovery=False):
             weights=run/"train/weights"
             candidates=[initial,weights/"best.pt",weights/"last.pt",
                         *(weights/f"epoch{epoch}.pt" for epoch in range(0,EPOCHS,3))]
+            if spec.get("save_period")==1:
+                candidates.extend(weights/f"epoch{epoch}.pt" for epoch in range(EPOCHS))
             if variant is not None:
                 candidates.extend(run/f"ema-batch-{batch:04d}.pt" for batch in (256,512,768,1024))
             require(all(p.is_file() and p.stat().st_size>0 for p in candidates),"Missing training checkpoints")

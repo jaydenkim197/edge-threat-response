@@ -1,6 +1,6 @@
 # Track A·B·C 통합 실험 및 GPU 배정
 
-2026-11-26 KST. 연구실 서버 6장과 PC11~14 총 10장 승인 `DECISION`. 단일 GPU 합성 벤치마크 `VERIFIED`. 개발 데이터 예행연습, 서버 동시 부하, 통합 배정·복구 자동화 `PLANNED`.
+2026-11-26 KST. 연구실 서버 6장과 PC11~14 총 10장 승인 `DECISION`. 단일 GPU 벤치마크 및 호스트별 야간 조건부 큐 `VERIFIED`. 서버 다중 부하와 작업의 호스트 간 재배치·중간 optimizer 재개는 `PLANNED`. [야간 큐 실행 기록](p430-overnight-queue.md)
 
 Track A는 YOLO 검출기를 최적화하고, Track B는 대안 탐지 방법을 검증하며, Track C는 Holding/HOI와 시스템을 평가한다. 11/24 독립 최종 영상과 파생물은 학습·오류 분석·임계값 선택·서버 반입에서 제외한다. 기존 P430 개발 분할, 외부 검증 보호 그룹, seed·샘플링 순서 및 파일 해시를 유지한다. 최종 B0~B4에는 같은 동결 검출기와 공통 입력·시간 조건을 사용한다. [Track A 실험](p430-phase2-optimization-plan.md) · [Track B 대안 탐지](p430-track-b-alternative-detection-plan.md) · [Track C 입력 규격](hoi-annotation-contract.md) · [독립 평가](controlled-experiment-protocol.md)
 
@@ -42,7 +42,7 @@ Track A는 YOLO 검출기를 최적화하고, Track B는 대안 탐지 방법을
 
 ## 대기열·동적 배정·실패 복구
 
-기존 [P430 큐](p430-experiment-queue.md)의 작업 영수증, `pause.request`, 하위 프로세스 재확인, 완료 결과 해시 재사용을 확장한다. 그 워커는 PC11~14·기존 단계용이다. 11/26은 독립 원격 프로세스로 실행했다. Linux 다중 GPU와 세 트랙의 자동 재배정·복구는 별도 구현 대상이다. Windows에서 승인된 VPN/SSH 경로로 양쪽을 조회한다.
+초기 11/26 학습은 독립 원격 프로세스로 실행했고, 이후 [야간 큐](p430-overnight-queue.md)에서 완료 영수증을 받아 지정 호스트별 우선순위로 후속을 시작한다. 아래는 후속 확장 시 적용할 계획이다. Windows에서 승인된 VPN/SSH 경로로 양쪽을 조회한다.
 
 1. **대기열과 배정.** 작업마다 `job_id`, 트랙, 선행 작업, 입력/설정/commit SHA, 필요한 VRAM·런타임, 계획 update 수, 상태, 우선순위를 둔다. 준비된 작업 중 마감까지 선행 경로가 가장 긴 작업을 우선한다. 장비는 가용 시각에 데이터 전송·실측 처리량·평가·결과 회수 시간을 더해 가장 빨리 완료하는 호스트로 선택한다. 3090이 필요한 작업이 대기할 때는 적합한 3060/3080가 가벼운 작업을 가져간다. GTX 1080 Ti는 같은 부하 상한에서 전체 종료가 빨라질 때 사용한다. DDP는 단일 GPU 대비 실제 단축과 유효 배치 일치가 확인될 때만 검토한다.
 2. **충돌 방지.** 하나의 배정 기록을 원자적으로 갱신하고, 실행 호스트에서 `host+GPU UUID` 단위 GPU 잠금과 작업 키 잠금을 확보한다. 점유 재조회 후 해당 UUID만 노출한다. 상태에는 PID와 시작 시각, 최근 heartbeat, run/attempt 경로, 마지막 checkpoint SHA를 기록한다. SSH가 끊기면 상태를 미확인으로 두고 원격 PID·잠금·영수증을 대조한 뒤 배정을 재개한다. heartbeat만으로 슬롯을 해제하거나 다른 사용자의 프로세스를 종료하지 않는다.

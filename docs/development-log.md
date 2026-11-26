@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — Track A 전체 조건부 야간 큐 가동
+
+기존 실험은 유지하고 PC11~14와 연구실 서버의 Worker, Windows 결과 동기화를 가동했다. EMA 비교 완료 뒤 LR 학습 자동 시작, 타일 960 기준 미달 뒤 고해상도 학습 자동 보류, PC13의 A 소진 뒤 B-ALT13 실행을 확인했다. Orin에서 개발 파일 24장의 D1을 측정했다. 미충족 입력, 결과, 각 실행 장비는 [야간 큐 등록 및 검증](p430-overnight-queue.md)에 기록했다.
+
 ## 2026-11-26 — 연구실 VPN 복구와 P2 작업 인계
 
 연구실 SSH를 재확인하고 개발 전용 아카이브 3,465,840,640 bytes를 전송했다. 수신 SHA-256이 Windows와 일치했다. 독립 P2 실험은 #2 RTX 3090에 배정했고, 승인 파일 재검증과 GPU 확인을 거치는 `nohup` 실행을 서버에 제출했다. Windows의 n/s/m 작업은 기존 장비에서 계속 진행한다. [실행과 검증 기록](../reports/training/p430-phase2-2026-11-26/report.md)

@@ -1,0 +1,690 @@
+{
+  "schema_version": 1,
+  "scope": "development_only",
+  "jobs": [
+    {
+      "id": "D1-3408",
+      "track": "A",
+      "node": "pc11",
+      "kind": "existing",
+      "purpose": "D0 기반 D1 가중치 재현 seed 3408"
+    },
+    {
+      "id": "D1-3409",
+      "track": "A",
+      "node": "pc12",
+      "kind": "existing",
+      "purpose": "D0 기반 D1 가중치 재현 seed 3409"
+    },
+    {
+      "id": "A0",
+      "track": "A",
+      "node": "pc13",
+      "kind": "existing",
+      "purpose": "D1 전체 960/1280, 6타일, 같은 가중치 결합"
+    },
+    {
+      "id": "A-N",
+      "track": "A",
+      "node": "pc11",
+      "kind": "existing",
+      "purpose": "COCO 초기 YOLO26n·640 대조군"
+    },
+    {
+      "id": "A-S",
+      "track": "A",
+      "node": "pc14",
+      "kind": "existing",
+      "purpose": "COCO 초기 YOLO26s·640"
+    },
+    {
+      "id": "A-M",
+      "track": "A",
+      "node": "pc12",
+      "kind": "existing",
+      "purpose": "COCO 초기 YOLO26m·640"
+    },
+    {
+      "id": "A-P2",
+      "track": "A",
+      "node": "lab",
+      "kind": "existing",
+      "purpose": "COCO 초기 YOLO26n-P2·640"
+    },
+    {
+      "id": "B-ALT07",
+      "track": "B",
+      "node": "pc13",
+      "kind": "existing",
+      "purpose": "D1 native/bicubic/Lanczos 개발 비교"
+    },
+    {
+      "id": "B-ALT12",
+      "track": "B",
+      "node": "pc13",
+      "kind": "existing",
+      "purpose": "D1 native/CLAHE 개발 비교"
+    },
+    {
+      "id": "A-TILE-GRID",
+      "track": "A",
+      "node": "pc13",
+      "kind": "grid",
+      "purpose": "D1 동일 가중치 512/640px 타일과 25/40% 중첩",
+      "gpu": true,
+      "after": [
+        "A0"
+      ],
+      "variants": {
+        "w512o25": {
+          "window": [
+            512,
+            0.25
+          ]
+        },
+        "w512o40": {
+          "window": [
+            512,
+            0.4
+          ]
+        },
+        "w640o25": {
+          "window": [
+            640,
+            0.25
+          ]
+        },
+        "w640o40": {
+          "window": [
+            640,
+            0.4
+          ]
+        }
+      },
+      "compare": "D1 6타일; 최대 음성 오탐 1/147, 작은 칼·전체 TP·AP50/95"
+    },
+    {
+      "id": "A-TRACE",
+      "track": "A",
+      "node": "pc13",
+      "kind": "trace",
+      "purpose": "D1 경계·병합·점수·위치·후보 누락 분리",
+      "gpu": true,
+      "after": [
+        "A0"
+      ],
+      "compare": "D1 tune 임계값 적용, 59 누락 분류"
+    },
+    {
+      "id": "A-TILE960-EVAL",
+      "track": "A",
+      "node": "pc13",
+      "kind": "grid",
+      "purpose": "기존 768×640 타일의 네트워크 입력 960",
+      "gpu": true,
+      "after": [
+        "A0"
+      ],
+      "variants": {
+        "network960": {
+          "imgsz": 960
+        }
+      },
+      "compare": "같은 타일 640"
+    },
+    {
+      "id": "A-ROI",
+      "track": "A",
+      "node": "pc13",
+      "kind": "grid",
+      "purpose": "전체 화면과 고정 중앙 ROI 1개 결합",
+      "gpu": true,
+      "after": [
+        "A0"
+      ],
+      "variants": {
+        "full960FixedRoi": {
+          "full": 960,
+          "roi": [
+            384,
+            216,
+            1536,
+            864
+          ]
+        }
+      },
+      "compare": "D1 6타일·기존 전체+타일"
+    },
+    {
+      "id": "A-EMA",
+      "track": "A",
+      "node": "pc11",
+      "kind": "early",
+      "purpose": "seed 두 개의 256/512/768/1024 EMA 및 이후 epoch 저장점 비교",
+      "after": [
+        "D1-3408",
+        "D1-3409"
+      ],
+      "compare": "같은 tune 및 고정 dev, seed별 선택 저장점"
+    },
+    {
+      "id": "A-EMA-ALL",
+      "track": "A",
+      "node": "pc11",
+      "kind": "train",
+      "purpose": "초기 선택이 재현되지 않을 때 epoch별 EMA 재검증",
+      "gpu": true,
+      "after": [
+        "A-EMA"
+      ],
+      "when": [
+        [
+          "equals",
+          "A-EMA",
+          "replicated_early",
+          false
+        ]
+      ],
+      "parameters": {
+        "save_period": 1
+      },
+      "compare": "D1·두 seed 결과"
+    },
+    {
+      "id": "A-LR",
+      "track": "A",
+      "node": "pc11",
+      "kind": "train",
+      "purpose": "LR0 0.00005와 기존 0.0001의 초기 학습 비교",
+      "gpu": true,
+      "after": [
+        "A-EMA",
+        "A0"
+      ],
+      "when": [
+        [
+          "equals",
+          "A-EMA",
+          "replicated_early",
+          true
+        ]
+      ],
+      "parameters": {
+        "lr0": 0.00005
+      },
+      "compare": "D1의 동일 D0/seed/warm-up/batch/update"
+    },
+    {
+      "id": "A-MIX30",
+      "track": "A",
+      "node": "pc14",
+      "kind": "train",
+      "purpose": "P430/외부 CCTV/M2 30/30/40, 전체 타일 48%",
+      "gpu": true,
+      "after": [
+        "A0"
+      ],
+      "parameters": {
+        "budget": {
+          "p430": 2458,
+          "cctv": 2458,
+          "m2": 3276
+        },
+        "tile_share": 0.48
+      },
+      "compare": "50/30/20, 타일 48%"
+    },
+    {
+      "id": "A-MIX70",
+      "track": "A",
+      "node": "pc13",
+      "kind": "train",
+      "purpose": "P430/외부 CCTV/M2 70/20/10, 전체 타일 48%",
+      "gpu": true,
+      "after": [
+        "A0"
+      ],
+      "parameters": {
+        "budget": {
+          "p430": 5734,
+          "cctv": 1638,
+          "m2": 820
+        },
+        "tile_share": 0.48
+      },
+      "compare": "50/30/20, 타일 48%"
+    },
+    {
+      "id": "A-MIX80",
+      "track": "A",
+      "node": "pc14",
+      "kind": "train",
+      "purpose": "P430 비중 80/10/10의 추가 비교",
+      "gpu": true,
+      "after": [
+        "A-MIX70",
+        "A0"
+      ],
+      "when": [
+        [
+          "win",
+          "A-MIX70",
+          "A0"
+        ]
+      ],
+      "parameters": {
+        "budget": {
+          "p430": 6554,
+          "cctv": 819,
+          "m2": 819
+        },
+        "tile_share": 0.48
+      },
+      "compare": "70/20/10 및 D1"
+    },
+    {
+      "id": "A-TILE30",
+      "track": "A",
+      "node": "pc12",
+      "kind": "train",
+      "purpose": "같은 부모 순서에서 전체 타일 비중 30% vs 48%",
+      "gpu": true,
+      "after": [
+        "A0"
+      ],
+      "parameters": {
+        "tile_share": 0.3
+      },
+      "compare": "원본 mix 50/30/20의 타일 48%"
+    },
+    {
+      "id": "A-TILE70",
+      "track": "A",
+      "node": "pc12",
+      "kind": "train",
+      "purpose": "전체 타일 비중 70% 실험",
+      "gpu": true,
+      "after": [
+        "A0",
+        "A-TILE30"
+      ],
+      "approval": "A-TILE70.json",
+      "parameters": {
+        "tile_share": 0.7
+      },
+      "compare": "50/30/20, 동일 부모 30/48%"
+    },
+    {
+      "id": "A-TILE-TRAIN",
+      "track": "A",
+      "node": "pc13",
+      "kind": "train",
+      "purpose": "이긴 타일 크기·중첩으로 다시 학습",
+      "gpu": true,
+      "after": [
+        "A-TILE-GRID",
+        "A0"
+      ],
+      "when": [
+        [
+          "win",
+          "A-TILE-GRID",
+          "A0"
+        ],
+        [
+          "exists",
+          "A-TILE-GRID",
+          "window"
+        ]
+      ],
+      "parameters": {
+        "best_tiles": true
+      },
+      "compare": "동일 D0, base tile, 48% 및 공통 추론"
+    },
+    {
+      "id": "A-HARDNEG",
+      "track": "A",
+      "node": "pc14",
+      "kind": "train",
+      "purpose": "사람 검수한 장소 특화 음성만 동수 대체",
+      "gpu": true,
+      "after": [
+        "A-TRACE"
+      ],
+      "approval": "A-HARDNEG.json",
+      "parameters": {
+        "hard_negative": true
+      },
+      "compare": "같은 양성·음성 추출량과 D1"
+    },
+    {
+      "id": "A-HIRES960",
+      "track": "A",
+      "node": "lab",
+      "kind": "train",
+      "purpose": "YOLO26n 계열의 입력 960 학습",
+      "gpu": true,
+      "after": [
+        "A0",
+        "A-TILE960-EVAL"
+      ],
+      "when": [
+        [
+          "win",
+          "A-TILE960-EVAL",
+          "A0"
+        ]
+      ],
+      "parameters": {
+        "imgsz": 960
+      },
+      "compare": "같은 D0와 640 학습, 같은 개발 평가"
+    },
+    {
+      "id": "A-HIRES1280",
+      "track": "A",
+      "node": "lab",
+      "kind": "train",
+      "purpose": "960 개선 시 1280 학습 여유 검증",
+      "gpu": true,
+      "after": [
+        "A-HIRES960",
+        "A0"
+      ],
+      "when": [
+        [
+          "win",
+          "A-HIRES960",
+          "A0"
+        ]
+      ],
+      "parameters": {
+        "imgsz": 1280
+      },
+      "compare": "같은 D0 및 960"
+    },
+    {
+      "id": "A-L",
+      "track": "A",
+      "node": "lab",
+      "kind": "train",
+      "purpose": "m이 이겼을 때 YOLO26l로 용량 확장",
+      "gpu": true,
+      "after": [
+        "A-M",
+        "A-S",
+        "A-N",
+        "A0"
+      ],
+      "when": [
+        [
+          "win",
+          "A-M",
+          "A-N"
+        ],
+        [
+          "win",
+          "A-M",
+          "A-S"
+        ]
+      ],
+      "parameters": {
+        "model": "yolo26l.pt"
+      },
+      "compare": "COCO 초기, 동일 n/s/m 데이터·예산"
+    },
+    {
+      "id": "A-X",
+      "track": "A",
+      "node": "lab",
+      "kind": "train",
+      "purpose": "l 추가 이득이 있을 때 YOLO26x",
+      "gpu": true,
+      "after": [
+        "A-M",
+        "A-L"
+      ],
+      "when": [
+        [
+          "win",
+          "A-L",
+          "A-M"
+        ]
+      ],
+      "parameters": {
+        "model": "yolo26x.pt"
+      },
+      "compare": "COCO 초기, 같은 l 및 예산"
+    },
+    {
+      "id": "A-P2-NCTRL",
+      "track": "A",
+      "node": "lab",
+      "kind": "train",
+      "purpose": "동일 Linux 스택의 표준 n으로 P2 효과 재현",
+      "gpu": true,
+      "after": [
+        "A-P2",
+        "A-N"
+      ],
+      "when": [
+        [
+          "win",
+          "A-P2",
+          "A-N"
+        ]
+      ],
+      "parameters": {
+        "model": "yolo26n.pt"
+      },
+      "compare": "Linux P2·Windows n"
+    },
+    {
+      "id": "A-P2-EXPORT",
+      "track": "A",
+      "node": "lab",
+      "kind": "approved",
+      "purpose": "P2 내보내기 및 호환성 증거",
+      "gpu": true,
+      "after": [
+        "A-P2",
+        "A0"
+      ],
+      "when": [["win", "A-P2", "A0"]],
+      "approval": "A-P2-EXPORT.json",
+      "compare": "ORT/TensorRT 변환과 기준 출력 parity"
+    },
+    {
+      "id": "A-DISTILL",
+      "track": "A",
+      "node": "lab",
+      "kind": "train",
+      "purpose": "개선·과부하가 확인된 호환 teacher → n 증류",
+      "gpu": true,
+      "after": [
+        "A-M",
+        "A-S",
+        "A0"
+      ],
+      "when": [
+        [
+          "win_any",
+          "A-M",
+          "A0",
+          "A-S"
+        ]
+      ],
+      "approval": "A-DISTILL.json",
+      "parameters": {
+        "model": "yolo26n.pt",
+        "teacher": true
+      },
+      "compare": "같은 n 초기값·자료·해상도·업데이트, neck shape 및 Orin 비용 근거"
+    },
+    {
+      "id": "A-ENSEMBLE",
+      "track": "A",
+      "node": "pc13",
+      "kind": "approved",
+      "purpose": "상위 후보의 상호 보완 검출과 공통 점수 결합",
+      "gpu": true,
+      "after": [
+        "A-N",
+        "A-S",
+        "A0"
+      ],
+      "approval": "A-ENSEMBLE.json",
+      "compare": "FN 보완·동일 음성 오탐 상한과 단일 모델"
+    },
+    {
+      "id": "A-SESSION",
+      "track": "A",
+      "node": "pc13",
+      "kind": "approved",
+      "purpose": "개발 촬영 블록별 민감도 및 필요시 D0 기반 세션 교차",
+      "gpu": true,
+      "after": [
+        "A0",
+        "A-N"
+      ],
+      "approval": "A-SESSION.json",
+      "compare": "촬영 그룹별 고정 임계값, 타 세션 미학습 초기값"
+    },
+    {
+      "id": "A-LEGACY",
+      "track": "A",
+      "node": "pc14",
+      "kind": "approved",
+      "purpose": "고유 Legacy 또는 합성 1종의 후속 효과",
+      "gpu": true,
+      "after": [
+        "A-MIX30",
+        "A-MIX70"
+      ],
+      "approval": "A-LEGACY.json",
+      "compare": "승인된 고유 source 한 가지와 원본 mix 대조"
+    },
+    {
+      "id": "A-ORIN-FILE",
+      "track": "A",
+      "node": "lab",
+      "kind": "approved",
+      "purpose": "Orin 승인 개발 파일로 D1 전체 화면·고정 ROI·타일 지연 비교",
+      "after": [
+        "A-ROI",
+        "A-P2"
+      ],
+      "approval": "A-ORIN-FILE.json",
+      "compare": "같은 승인 개발 영상에서 FPS·누락률·p95·메모리"
+    },
+    {
+      "id": "A-ORIN-LIVE",
+      "track": "A",
+      "node": "lab",
+      "kind": "approved",
+      "purpose": "선택 모델의 Orin RTSP·사람 검출·판단·경보 파이프라인 계측",
+      "after": ["A-ORIN-FILE"],
+      "approval": "A-ORIN-LIVE.json",
+      "compare": "카메라 포함 p95, 유효 FPS, 누락률, 메모리, 경보 정합"
+    },
+    {
+      "id": "A-SESSION-CROSS",
+      "track": "A",
+      "node": "lab",
+      "kind": "approved",
+      "purpose": "D0부터 재학습한 깨끗한 양방향 개발 세션 대조",
+      "gpu": true,
+      "after": ["A-SESSION"],
+      "approval": "A-SESSION-CROSS.json",
+      "compare": "타 세션을 본 초기값 배제, 양쪽 세션 개선과 같은 오탐 상한"
+    },
+    {
+      "id": "A-TENSORRT",
+      "track": "A",
+      "node": "lab",
+      "kind": "approved",
+      "purpose": "Orin TensorRT FP16 변환 및 parity",
+      "after": [
+        "A-ORIN-FILE"
+      ],
+      "approval": "A-TENSORRT.json",
+      "compare": "PyTorch 대비 좌표/score·검출 Recall/FP·p95"
+    },
+    {
+      "id": "A-FREEZE",
+      "track": "A",
+      "node": "pc13",
+      "kind": "approved",
+      "purpose": "독립 평가 전 검출기와 비교 규칙 동결",
+      "after": [
+        "A-ORIN-LIVE",
+        "A0"
+      ],
+      "approval": "A-FREEZE.json",
+      "compare": "개발 성능·장비 제한·가중치·threshold·K/N 및 FSM SHA-256"
+    },
+    {
+      "id": "B-ALT01",
+      "track": "B",
+      "node": "pc13",
+      "kind": "approved",
+      "purpose": "D1 저점수 후보를 검수 크롭으로 재검증",
+      "gpu": true,
+      "after": [
+        "A-TRACE",
+        "A0"
+      ],
+      "approval": "B-ALT01.json",
+      "compare": "동일 운영점 재현율·오탐"
+    },
+    {
+      "id": "B-ALT02",
+      "track": "B",
+      "node": "pc14",
+      "kind": "approved",
+      "purpose": "승인된 고정 배경에서만 후보 재점수화",
+      "gpu": true,
+      "after": [
+        "A-TRACE"
+      ],
+      "approval": "B-ALT02.json",
+      "compare": "기존 RGB 및 정지 양성"
+    },
+    {
+      "id": "B-ALT04",
+      "track": "B",
+      "node": "lab",
+      "kind": "approved",
+      "purpose": "RF-DETR Small 또는 DEIMv2 순수 대조",
+      "gpu": true,
+      "after": [
+        "A-N"
+      ],
+      "approval": "B-ALT04.json",
+      "compare": "matched 동일 P430 개발 자료 및 export"
+    },
+    {
+      "id": "B-ALT13",
+      "track": "B",
+      "node": "pc13",
+      "kind": "approved",
+      "purpose": "타일 위치·객체 크기 점수 보정",
+      "after": [
+        "A-TRACE"
+      ],
+      "approval": "B-ALT13.json",
+      "compare": "전역 monotonic 보정 및 D1"
+    },
+    {
+      "id": "C-HOI",
+      "track": "C",
+      "node": "pc14",
+      "kind": "approved",
+      "purpose": "승인 Holding 라벨로 G/VG 실험",
+      "gpu": true,
+      "approval": "C-HOI.json",
+      "compare": "동일 Holding과 그룹 분리, B4 predicted-box"
+    }
+  ]
+}
