@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — 연구실 서버 접속·GPU 조사 및 Track A 배정
+
+Windows의 `BatchMode=yes` SSH로 서버 OS, 홈 NVMe, Python·Git, NVIDIA 드라이버와 RTX 3080 #0·#5의 UUID·CUDA 작업 상태를 확인했다. 두 GPU로 n/s를 비교하도록 Track A를 수정했다. PC13의 기준 가중치 두 개와 기존 계획의 SHA-256을 대조했다. 서버→PC13 직접 연결이 거부되어 Windows 중계 전송을 계획했고, 기존 러너의 단일 GPU 잠금과 Linux 경로 호환을 차기 구현 사항으로 기록했다. 환경 설치, 데이터 전송, CUDA smoke, 학습은 이번 조사 범위 이후다. [조사 결과와 운영 계획](lab-gpu-training-plan.md)
+
 ## 2026-11-26 — P430 2차 최적화 계획 검토
 
 D1이 놓친 전체 59개 중 작은 칼 이외의 48개를 확인했다. 같은 가중치의 전역·타일 결합 및 seed 재현을 우선하고, n/s/m의 초기 이력을 맞춘 규모 비교와 P2 점검을 병행한다. 설치본의 증류 옵션을 확인했으며 직접 학습 대조군에 이기는 teacher 조건에서만 증류를 제안한다. [2차 계획과 장비 배정](p430-phase2-optimization-plan.md)
