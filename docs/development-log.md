@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — P430 2차 최적화 계획 검토
+
+D1이 놓친 전체 59개 중 작은 칼 이외의 48개를 확인했다. 같은 가중치의 전역·타일 결합 및 seed 재현을 우선하고, n/s/m의 초기 이력을 맞춘 규모 비교와 P2 점검을 병행한다. 설치본의 증류 옵션을 확인했으며 직접 학습 대조군에 이기는 teacher 조건에서만 증류를 제안한다. [2차 계획과 장비 배정](p430-phase2-optimization-plan.md)
+
 ## 2026-11-26 — PC11~14 상호 Wake-on-LAN 설치
 
 네 PC의 실제 유선 서브넷, 드라이버의 Magic Packet·Shutdown Wake-on-LAN과 Windows `wake_armed` 상태를 확인했다. 별도 의존성 없이 PowerShell을 사용하고 각 PC에 다른 세 대를 깨울 수 있는 명령을 설치했다. PktMon 캡처에서 각 송신 IP와 대상 MAC을 포함한 UDP payload를 비교해 12개 방향의 수신을 검증했다. PC14 Tailscale 무인 실행 설정을 활성화하고 SSH 재접속을 확인했다. 실제 절전·종료 후 기동 검증은 남아 있다. [실행 명령과 검증 범위](pc-wake-on-lan.md).
