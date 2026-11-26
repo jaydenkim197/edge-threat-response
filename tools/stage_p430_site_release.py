@@ -66,9 +66,34 @@ def stage(work, output):
     print(f"STAGED files={len(entries)} bytes={output.stat().st_size} sha256={receipt['archive_sha256']}", flush=True)
 
 
+def unstage(archive, output):
+    """Verify the incoming release and publish the extracted tree atomically."""
+    receipt = read(archive.with_suffix(".json"))
+    files = receipt["files"]
+    require(receipt["scope"] == "development_only" and len(files) == receipt["file_count"]
+            and sha(archive) == receipt["archive_sha256"], "Incoming archive evidence mismatch")
+    require(not output.exists(), "The destination already contains a released dataset")
+    partial = output.with_name(output.name + ".partial")
+    partial.mkdir(exist_ok=False)
+    with tarfile.open(archive, "r:") as bundle:
+        members = bundle.getmembers()
+        require(len(members) == len(files) and {member.name for member in members} == files.keys()
+                and all(member.isfile() and not member.name.startswith("/")
+                        and not {".", "..", ""}.intersection(member.name.split("/"))
+                        and "\\" not in member.name and ":" not in member.name for member in members),
+                "Unexpected or unsafe archive path")
+        bundle.extractall(path=partial, members=members, filter="data")
+    for relative, digest in files.items():
+        require(sha(partial / relative) == digest, f"Extracted file changed: {relative}")
+    save(partial / "development-receipt.json", {key: receipt[key] for key in ("scope", "archive_sha256", "file_count")})
+    partial.rename(output)
+    print(f"VERIFIED files={len(files)} sha256={receipt['archive_sha256']}", flush=True)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("work", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--unpack", action="store_true", help="Verify and unpack the staged archive on Python 3.12+.")
     args = parser.parse_args()
-    stage(args.work, args.output)
+    (unstage if args.unpack else stage)(args.work, args.output)

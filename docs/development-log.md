@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — 연구실 VPN 복구와 P2 작업 인계
+
+연구실 SSH를 재확인하고 개발 전용 아카이브 3,465,840,640 bytes를 전송했다. 수신 SHA-256이 Windows와 일치했다. 독립 P2 실험은 #2 RTX 3090에 배정했고, 승인 파일 재검증과 GPU 확인을 거치는 `nohup` 실행을 서버에 제출했다. Windows의 n/s/m 작업은 기존 장비에서 계속 진행한다. [실행과 검증 기록](../reports/training/p430-phase2-2026-11-26/report.md)
+
 ## 2026-11-26 — 2차 P430 학습과 대안 탐지 실제 실행
 
 A를 YOLO, B를 대안 탐지, C를 Holding/HOI·시스템으로 통일했다. PC11/12의 D1 재현과 PC13 동일 가중치 비교를 완료했다. 연구실 SSH 문제가 있어 PC11=n, PC14=s, PC12=m으로 크기 비교를 시작하고, 진단이 끝난 PC13에서 ALT-07을 시작했다. 개발 전송 묶음 34,022개를 검증했고 독립 테스트 자료는 제외했다. [실측 및 작업 기록](../reports/training/p430-phase2-2026-11-26/report.md)

@@ -19,7 +19,7 @@ from run_p430_integration import jsonl, paths, repeated
 
 ROUNDS = {"pc11": (False, False), "pc12": (False, True),
           "pc13": (True, False), "pc14": (True, True),
-          "lab0": (True, False), "lab1": (True, False), "lab5": (True, False)}
+          "lab0": (True, False), "lab1": (True, False), "lab2": (True, False), "lab5": (True, False)}
 BUDGET = {"p430": 4096, "cctv": 2458, "m2": 1638}
 EPOCHS = 12
 DRAWS = sum(BUDGET.values())
@@ -330,7 +330,7 @@ def score_mode(checkpoint, rows, output, mode, threshold=None, locked=False):
     return record
 
 
-def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=False):
+def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=False, model_yaml=None, seed=None):
     import torch
     from ultralytics import YOLO
     from ultralytics.models.yolo.detect import DetectionTrainer
@@ -371,6 +371,11 @@ def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=
         model=SiteModel(checkpoint)
         expected_classes = len(model.names)==80 and model.names[0]=="person" if coco else model.names=={0:"knife"}
         require(expected_classes and len(model.model.yaml["backbone"])==11,"Unverified model layout or classes")
+        if model_yaml is not None:
+            torch.manual_seed(seed)
+            model=SiteModel(model_yaml).load(checkpoint)
+            require(len(model.model.yaml["backbone"])==11 and len(model.model.model[-1].f)==4,
+                    "Expected a YOLO26 P2–P5 detection head")
         counts=Counter()
         verified={}
 
@@ -434,7 +439,7 @@ def execute(work,node, *, recovery=False):
     tiled,freeze=ROUNDS[node]
     pin=read(work/"release.json")
     variant=pin.get("variant")
-    require(variant in (None,"replicate","coco"),"Unexpected site recipe")
+    require(variant in (None,"replicate","coco","p2"),"Unexpected site recipe")
     if variant is not None:
         require(pin.get("seed") in (3407,3408,3409),"Unpinned site training seed")
         tiled,freeze=True,False
@@ -461,10 +466,14 @@ def execute(work,node, *, recovery=False):
     initial=work.parent/"p430-t1-20261120-v1/initial.pt"
     require(sha(initial)==MODEL_SHA,"Prior initial weight changed")
     checkpoint=initial
-    if variant=="coco":
+    model_yaml=None
+    if variant in ("coco","p2"):
         require(pin.get("model") in ("yolo26n.pt","yolo26s.pt","yolo26m.pt"),"Unexpected COCO weight")
         checkpoint=work/pin["model"]
         require(sha(checkpoint)==pin["initial_sha256"],"COCO weight hash changed")
+    if variant=="p2":
+        model_yaml=work/"yolo26n-p2.yaml"
+        require(pin["model"]=="yolo26n.pt" and sha(model_yaml)==pin["architecture_sha256"],"P2 source changed")
     previous=work.parent/"p430-t1-20261120-v1"
     sys.path.insert(0,str(previous/"evaluation-deps"))
     lock_name="gpu0-training.lock"
@@ -494,7 +503,8 @@ def execute(work,node, *, recovery=False):
                               "task":"detect","run_name":"train","arguments":options})
                 run_training(profile,data_yaml=data,output_dir=run,dataset_manifest=plan_path,
                              model_factory=trainer_factory(geometry,eval_list,freeze,state,
-                                                           phase2=variant is not None,coco=variant=="coco"))
+                                                           phase2=variant is not None,coco=variant in ("coco","p2"),
+                                                           model_yaml=model_yaml,seed=pin.get("seed")))
             with (run/"train/results.csv").open(newline="",encoding="utf-8") as stream:
                 epochs=[int(row["epoch"]) for row in csv.DictReader(stream)]
             require(epochs==list(range(1,EPOCHS+1)),"Missing epochs")
