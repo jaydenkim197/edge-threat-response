@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-26 — PC11~14 상호 Wake-on-LAN 설치
+
+네 PC의 실제 유선 서브넷, 드라이버의 Magic Packet·Shutdown Wake-on-LAN과 Windows `wake_armed` 상태를 확인했다. 별도 의존성 없이 PowerShell을 사용하고 각 PC에 다른 세 대를 깨울 수 있는 명령을 설치했다. PktMon 캡처에서 각 송신 IP와 대상 MAC을 포함한 UDP payload를 비교해 12개 방향의 수신을 검증했다. PC14 Tailscale 무인 실행 설정을 활성화하고 SSH 재접속을 확인했다. 실제 절전·종료 후 기동 검증은 남아 있다. [실행 명령과 검증 범위](pc-wake-on-lan.md).
+
 ## 2026-11-25 — P430 타일·백본 비교 네 건 결과 확인
 
 네 PC의 학습·평가를 완료했고 결과와 선택 가중치 해시를 대조했다. 동일 6타일 추론에서 기존 작은 칼 4/58, 전체 프레임 학습 20/58, 타일 혼합 학습 PC13 47/58이었다. PC13은 음성 147장에서 검출된 프레임 0장, 전체 오탐 23개를 기록했다. 최종 후보는 별도 평가 전 개발 후보 상태다. [네 장비의 전체 결과](p430-site-finetuning-rationale.md#1125-완료-확인과-개발-성능)
