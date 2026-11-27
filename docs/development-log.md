@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — Orin 표준 JPEG 저장 및 사람 CUDA Graph 대조
+
+4K 파일 200장의 표준 CLI에서 동기·병렬 모드의 검출·판단·실제 디스크의 JPEG 두 장이 일치했다. 사람 CUDA Graph는 24장·34박스를 정확히 재현했고 사람 검출 p95를 52.42→47.99 ms로 줄였다. 두 검출기 Graph를 결합한 4K 예비 시험은 p95 229.59 ms로 통과해 장시간 시험을 시작했다. [실기기 결과와 측정 범위](../reports/training/p430-autonomous-2026-11-27/report.md#표준-cli-4k-파일-저장과-사람-cuda-graph-검증)
+
 ## 2026-11-28 — 4K 세 구간 결과와 대비 변형 대조군 가동
 
 Orin의 4K 장시간 파일 p95는 248.28·252.16·246.39 ms다. 7,199/7,200 유효 슬롯과 동일 JPEG 450건, RAM·큐 안정성을 확인했으나 두 번째 구간이 지연 기준을 넘었다. PC12에서는 승인 외부 CCTV의 대비만 0.80배로 낮추는 학습 Worker를 시작했다. [실측과 학습 설정](../reports/training/p430-autonomous-2026-11-27/report.md#cuda-graph와-병렬-jpeg의-세-구간-최종-결과)
