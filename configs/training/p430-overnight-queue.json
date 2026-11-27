@@ -701,6 +701,16 @@
       "compare": "동일 운영점 재현율·오탐"
     },
     {
+      "id": "B-ALT02-BACKGROUND-PILOT",
+      "track": "B",
+      "node": "pc13",
+      "kind": "approved",
+      "after": ["A-MIX70", "B-ALT01-CROP-PILOT"],
+      "approval": "B-ALT02-BACKGROUND-PILOT.json",
+      "purpose": "학습에서 반복 관측된 배경 위치의 MIX70 점수 감점",
+      "compare": "학습 위치 근거만 사용, 튜닝셋 개선 시 개발 확인"
+    },
+    {
       "id": "B-ALT02",
       "track": "B",
       "node": "pc14",
