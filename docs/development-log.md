@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — Orin RT-DETRv2 R18 변환과 순차 6타일 지연 확인
+
+합성 입력에서 TensorRT와 CPU가 반환한 후보는 행 순서와 무관하게 허용치 안의 상대 후보를 모두 찾았다. 순차 6타일 p95는 353.99ms로 이 설정은 배포 지연 기준을 초과했다. PC12 움직임 보호와 PC14 R18 학습은 계속 진행 중이다. [보드 실측과 실행 상태](../reports/training/p430-autonomous-2026-11-27/report.md#orin의-rt-detrv2-r18-tensorrt-예비-검증)
+
 ## 2026-11-28 — 교차 세션 합성 결과와 RT-DETRv2 R18 착수
 
 PC14 합성 학습은 튜닝을 통과했으며 공통 개발 확인은 전체 37/140·소형 15/58·음성 오탐 6/147로 예비 D1을 유지한다. RT-DETRv2 R18은 CPU 학습·저장·ONNX 일치와 PC14 CUDA 8회 업데이트를 통과한 뒤 12 epoch의 첫 실제 학습 배치를 실행했다. [공통 검증과 대안 모델 착수](../reports/training/p430-autonomous-2026-11-27/report.md#교차-세션-합성-학습의-잠금-결과)
