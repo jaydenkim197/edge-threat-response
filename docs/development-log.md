@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-27 — 원본 타일 축소 보간법 비교
+
+과거의 축소·복원 실험과 구분하기 위해 PC13 CPU에서 동일 D1과 원본 타일을 기본 보간·Lanczos·bicubic으로 비교하는 Worker를 시작했다. 입력 크기와 원좌표 필터를 유지하고 튜닝에서 고른 조건만 개발 확인셋으로 넘긴다. 회귀 테스트와 실행 PID를 확인했다. [비교 조건](../reports/training/p430-autonomous-2026-11-27/report.md#b-alt07-native-resize-실행)
+
 ## 2026-11-27 — 반복 배경 오탐의 위치 보정 검증
 
 학습 전용 음성에서 MIX70의 반복 검출 위치 3건을 골라 PC13 CPU에서 감점 규칙 두 가지를 시험했다. 튜닝 298장에서 후보 박스가 이 위치들과 IoU 0.50 이상 겹친 사례는 0건이었다. 튜닝 지표가 같아 개발 확인으로 넘기지 않았고, 두 진행 중 학습의 완료 영수증을 다음 비교의 진입점으로 남겼다. [수치·검증 범위](../reports/training/p430-autonomous-2026-11-27/report.md#b-alt02-background-pilot-결과)

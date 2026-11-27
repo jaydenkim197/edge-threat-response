@@ -284,11 +284,12 @@ def development_rows(work, plan):
 
 
 def tile_predictions(checkpoint, rows, *, restore=None, clahe=False, window=None, imgsz=640, trace=None, roi=None,
-                     device=0):
+                     device=0, interpolation=None):
     from PIL import Image
     from ultralytics import YOLO
     from edge_threat_response.detector_comparison import canonical_prediction
 
+    require(interpolation is None or restore is None, "Choose native interpolation or simulated degradation")
     model=YOLO(checkpoint)
     require(model.names=={0:"knife"},"Unexpected knife detector classes")
     if clahe:
@@ -310,6 +311,14 @@ def tile_predictions(checkpoint, rows, *, restore=None, clahe=False, window=None
             if restore is not None:
                 chips=[chip.resize((chip.width//2,chip.height//2),Image.Resampling.BOX)
                        .resize(chip.size,restore) for chip in chips]
+            if interpolation is not None:
+                # Resize directly to the unpadded letterbox dimensions. The model then only pads.
+                resized=[]
+                for chip in chips:
+                    ratio=imgsz/max(chip.size)
+                    size=(round(chip.width*ratio),round(chip.height*ratio))
+                    resized.append(chip.resize(size,interpolation))
+                chips=resized
         predicted=[]
         for start in range(0,len(chips),8):
             chunk=chips[start:start+8]
@@ -317,9 +326,12 @@ def tile_predictions(checkpoint, rows, *, restore=None, clahe=False, window=None
                                            iou=.7,classes=[0],max_det=100,verbose=False))
         boxes,scores=[],[]
         removed=[]
-        for result,region in zip(predicted,grid,strict=True):
-            x,y,_,_=region
+        for result,region,chip in zip(predicted,grid,chips,strict=True):
+            x,y,x2,y2=region
             for box,confidence in zip(result.boxes.xyxy.tolist(),result.boxes.conf.tolist(),strict=True):
+                if interpolation is not None:
+                    sx,sy=(x2-x)/chip.width,(y2-y)/chip.height
+                    box=[box[0]*sx,box[1]*sy,box[2]*sx,box[3]*sy]
                 a,b,c,d=box
                 if not roi and touches_internal_tile_edge(box,region):
                     if trace is not None:

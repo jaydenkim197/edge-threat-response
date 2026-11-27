@@ -711,6 +711,16 @@
       "compare": "학습 위치 근거만 사용, 튜닝셋 개선 시 개발 확인"
     },
     {
+      "id": "B-ALT07-NATIVE-RESIZE",
+      "track": "B",
+      "node": "pc13",
+      "kind": "approved",
+      "after": ["A0", "B-ALT07", "B-ALT02-BACKGROUND-PILOT"],
+      "approval": "B-ALT07-NATIVE-RESIZE.json",
+      "purpose": "원본 타일을 D1 입력으로 축소할 때 보간법 검증",
+      "compare": "동일 CPU 원본 대조군, 튜닝 통과 후보의 고정 임계값 확인"
+    },
+    {
       "id": "B-ALT02",
       "track": "B",
       "node": "pc14",
