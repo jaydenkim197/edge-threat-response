@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 블러 학습 노출 검증과 4K 지연 분해
+
+PC12 블러 재학습이 12 epoch를 완료했고 실제 변환 입력 15,528회가 계획과 일치했다. 전체 화면 개발 확인의 검출은 무변환 56/140에서 블러 39/140으로 줄었고 타일 평가는 진행 중이다. Orin의 4K 소프트웨어 경로는 전체 p95 310.16ms, 경보가 없는 프레임도 p95 282.94ms였다. [학습 영수증과 단계별 지연](../reports/training/p430-autonomous-2026-11-27/report.md#소프트웨어-경로의-지연-분해)
+
 ## 2026-11-28 — 요청 프레임만 BGR로 변환하는 Orin 예비 시험
 
 4K HEVC 3,000프레임을 디코딩하고 판단용 448장만 변환했다. 10개 표본의 BGR 픽셀은 기존 `read()`와 일치했다. 본측정에서 4.00 FPS·누락 0%였으며 읽기→경보 p95는 329.06 ms로 기존 305.50 ms보다 높아 적용을 보류했다. [단계별 지연과 결과 영수증](../reports/training/p430-autonomous-2026-11-27/report.md#ffmpeg의-요청-프레임-bgr-변환)
