@@ -138,3 +138,5 @@ PYTHONPATH="src:$GPIO_PYTHON_DIR" .venv-orin/bin/python tools/p430_orin_j_benchm
 ```
 
 `--write-snapshots`를 지정하면 표준 실행기의 사건 JPEG 저장을 지연에 포함한다. 결과 폴더는 새로 만들며, 검증용으로 승인된 장면의 JPEG·사건 기록을 로컬에 보관한다. GPIO 구성은 활성화 명령의 성공 건수와 사건 수를 비교한다. `live_j_gpio_command_path_pass`를 충족하더라도 현장에서 실제 경보의 동작과 해제를 관찰해 별도 기록한다. 기존 모의 경보·메모리 JPEG 비교에는 세 출력 옵션을 생략한다.
+
+11/28에는 예비 D1의 검출기·B3 설정과 위 도구의 소스 묶음을 Orin의 `runs/p430-goal-runtime-20261127/d1-p430-j-preflight-v1`에 준비했다. 후보 확정 뒤 이 묶음을 사용할 때는 `manifest.json`의 코드·설정·두 가중치 해시를 확인한다. 위 명령의 `PYTHONPATH`에서 `src` 대신 묶음의 `src`를, 도구 경로 대신 묶음의 `tools/p430_orin_j_benchmark.py`를 사용한다. 사람·칼 양쪽에 CUDA Graph가 켜져 있고 FFmpeg 4스레드·OpenCV 2스레드로 측정한다. 동일 GPU의 다른 작업과 시간대가 겹치면 기존 Orin 잠금 `orin-dev-file.lock`으로 순서를 조정한다.

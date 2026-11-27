@@ -1,5 +1,13 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 예비 D1 현장 검증 묶음
+
+D1의 4K 현장 측정에 필요한 소스, 사람·칼 검출기, B3 구성과 가중치 해시를 Orin에서 확인했다. 현장 연결 없이 설정 로드와 실행기 기동을 검증했다. [사전 준비 증거](../reports/training/p430-autonomous-2026-11-27/report.md#예비-d1-현장-검증-사전-준비)
+
+두 CUDA Graph의 4K 개발 파일 10분 세 구간은 7,200/7,200 유효 슬롯, FPS 4.00, 지연 p95 228.84·232.65·225.54 ms를 기록했다. RAM·지연·큐 조건을 포함한 파일 기준을 통과했다. [장시간 측정](../reports/training/p430-autonomous-2026-11-27/report.md#orin-두-cuda-graph의-4k-파일-장시간-통과)
+
+BatchNorm 통계 중간점은 같은 튜닝 오탐 상한에서 전체 122→91개, 작은 칼 90→71개로 줄어 후보에서 제외했다. [튜닝 결과](../reports/training/p430-autonomous-2026-11-27/report.md#기존-통계와-재계산-batchnorm-통계의-중간점)
+
 ## 2026-11-28 — BatchNorm 통계 중간점과 Orin GPIO import
 
 기존 보간 가중치의 원래 통계와 재계산 통계 중간점을 Orin 튜닝 큐에 등록했다. GPU 가상환경에서 시스템 Jetson.GPIO 2.1.13 import와 기존 ML 패키지 경로의 동일성도 확인했다. [실험 조건과 증거](../reports/training/p430-autonomous-2026-11-27/report.md#기존-통계와-재계산-batchnorm-통계의-중간점)
