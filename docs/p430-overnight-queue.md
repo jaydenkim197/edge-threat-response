@@ -2,6 +2,8 @@
 
 2026-11-26 KST · PC11~14 및 연구실 서버에 로컬 Worker 배포. Windows에서 별도 결과 동기화 프로세스를 실행한다. [초기 Track A 연구 계획](p430-phase2-optimization-plan.md) · [설치·장비 배정](training-resource-schedule.md)
 
+11/27 집계에서 Track A 19건 완료·10건 건너뜀·7건 대기를 확인했다. 이번 학습 후보를 검토한 결과 개발 기준선 D1을 유지한다. 아래 등록 표는 11/26 시점의 실행 이력이다. [최신 학습 결과와 해석](../reports/training/p430-overnight-2026-11-27/report.md)
+
 ## 실행과 결과 위치
 
 - [등록 목록](../configs/training/p430-overnight-queue.json)이 실험 ID, 실행 노드, 종류, 선행 조건, 건너뛰기 조건, 대조 기준, 필요한 승인 파일을 정한다. `gpu:true`는 해당 호스트의 GPU가 필요하다는 뜻이다. Windows 4대는 각 RTX 3060, 연구실 일반 학습은 RTX 3090 #2로 고정했고 초기 서버 동시 부하는 한 작업이다. 다른 사용자가 자원을 쓰면 작업을 대기시킨다.
