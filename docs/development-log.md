@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 블러 보간 비율 대조와 4K 디스크 저장 시험
+
+블러 가중치 75%는 AP50–95를 높였으나 같은 저오탐 상한에서 전체 122→118개, 작은 칼 90→88개로 줄었다. 개발 확인에 넘기지 않고, Orin에서 표준 JPEG 디스크 경로를 포함한 4K 파일 시험을 시작했다. [튜닝 결과와 Orin 실행](../reports/training/p430-autonomous-2026-11-27/report.md#블러-가중치-75의-동일-batchnorm-재계산)
+
 ## 2026-11-28 — 예비 D1 현장 검증 묶음
 
 D1의 4K 현장 측정에 필요한 소스, 사람·칼 검출기, B3 구성과 가중치 해시를 Orin에서 확인했다. 현장 연결 없이 설정 로드와 실행기 기동을 검증했다. [사전 준비 증거](../reports/training/p430-autonomous-2026-11-27/report.md#예비-d1-현장-검증-사전-준비)
