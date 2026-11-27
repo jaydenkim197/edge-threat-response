@@ -6,12 +6,28 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from edge_threat_response.detect_cli import detect_main, run_main
+from edge_threat_response.detect_cli import DetectorConfig, detect_main, run_main
 from edge_threat_response.detector import CallableBackend, MappedDetector
 from edge_threat_response.media import FramePacket, IterableFrameSource
 
 
 class DetectionCliReadinessTests(unittest.TestCase):
+    def test_cuda_graph_is_an_optional_component_boolean(self):
+        detector = {"schema_version": 1, "topology": "single", "components": [
+            {"component_id": "knife", "weights": "weight.pt", "class_map": {"0": "knife"}}
+        ]}
+        with tempfile.TemporaryDirectory() as temp:
+            config = Path(temp) / "detector.json"
+            config.write_text(json.dumps(detector))
+            self.assertFalse(DetectorConfig.load(config).components[0].cuda_graph)
+            detector["components"][0]["cuda_graph"] = True
+            config.write_text(json.dumps(detector))
+            self.assertTrue(DetectorConfig.load(config).components[0].cuda_graph)
+            detector["components"][0]["cuda_graph"] = "true"
+            config.write_text(json.dumps(detector))
+            with self.assertRaisesRegex(ValueError, "cuda_graph must be a boolean"):
+                DetectorConfig.load(config)
+
     def test_native_policy_failure_stops_before_model_loading(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp)

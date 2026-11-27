@@ -41,7 +41,9 @@ def tile_nms_indices(boxes, scores) -> list[int]:
 
 
 class P430TiledBackend(UltralyticsBackend):
-    def __init__(self, weights: str, *, predict_arguments: dict[str, object]) -> None:
+    def __init__(
+        self, weights: str, *, predict_arguments: dict[str, object], cuda_graph: bool = False
+    ) -> None:
         if predict_arguments.keys() - {"device", "conf", "premerge_conf", "half"}:
             raise ValueError("P430 tile predict_arguments supports device, conf, premerge_conf and half.")
         confidence = predict_arguments.get("conf", .001)
@@ -62,7 +64,7 @@ class P430TiledBackend(UltralyticsBackend):
         }
         if half:
             arguments["half"] = True
-        super().__init__(weights, predict_arguments=arguments)
+        super().__init__(weights, predict_arguments=arguments, cuda_graph=cuda_graph)
 
     def predict(self, image: Any) -> tuple[RawDetection, ...]:
         shape = getattr(image, "shape", ())

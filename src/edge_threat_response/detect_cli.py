@@ -23,6 +23,7 @@ class DetectorComponentConfig:
     class_map: dict[int, str]
     predict_arguments: dict[str, object]
     input_layout: str = "full_frame"
+    cuda_graph: bool = False
 
 
 @dataclass(frozen=True)
@@ -58,7 +59,9 @@ def build_detector(config: DetectorConfig):
     components = []
     for item in config.components:
         backend_class = P430TiledBackend if item.input_layout == "p430_tile640" else UltralyticsBackend
-        backend = backend_class(item.weights, predict_arguments=item.predict_arguments)
+        backend = backend_class(
+            item.weights, predict_arguments=item.predict_arguments, cuda_graph=item.cuda_graph
+        )
         components.append(MappedDetector(item.component_id, backend, item.class_map))
     return components[0] if config.topology == "single" else CompositeDetector(components)
 
@@ -206,12 +209,16 @@ def _parse_component(payload: object) -> DetectorComponentConfig:
     forbidden = {"source", "verbose"}.intersection(arguments)
     if forbidden:
         raise ValueError(f"Predict arguments are controlled by the adapter: {sorted(forbidden)}")
+    cuda_graph = payload.get("cuda_graph", False)
+    if not isinstance(cuda_graph, bool):
+        raise ValueError("cuda_graph must be a boolean.")
     return DetectorComponentConfig(
         component_id=component_id,
         weights=weights,
         class_map=class_map,
         predict_arguments=dict(arguments),
         input_layout=input_layout,
+        cuda_graph=cuda_graph,
     )
 
 

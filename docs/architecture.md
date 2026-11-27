@@ -105,6 +105,7 @@ Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay�
 - `etr-detect`: OpenCV image/video frame을 single 또는 required-component composite detector에 입력하고 canonical detection JSONL과 component latency를 기록한다.
 - model-local class는 adapter config에서 runtime `person`/`knife` 문자열로 remap한다. unmapped model class는 downstream 계약에 내보내지 않는다.
 - composite의 required component 하나라도 실패하면 부분 detection을 안전 상태처럼 사용하지 않고 해당 frame 전체를 `detector_error`로 기록한다.
+- 검출기 component 설정의 `"cuda_graph": true`는 native CUDA PyTorch forward의 고정 입력을 재생한다. 첫 호출은 원래 실행으로 준비하고 포착 직후 원시 출력 일치를 확인한다. 이후에는 같은 shape·stride·dtype·device·추론 인수를 요구한다. 드라이버와 전체 경로의 실기기 성능은 별도 파일 시험에서 확인한다.
 - `etr-run`: current decoded frame을 snapshot port에 동기 binding하고 pipeline의 `CONFIRMED` 진입 시 JPEG 한 장을 저장한다.
 - B3의 `etr-run --parallel-jpeg`는 다음 프레임에서 `CONFIRMED`로 진입할 수 있을 때 한 Worker로 같은 프레임의 JPEG를 추론 중 생성한다. 확정된 프레임만 임시 파일을 거쳐 저장하고 JPEG 완료 후 사건 기록과 경보를 처리한다. 확정되지 않은 인코딩은 폐기하며 다음 프레임 전에는 남은 작업을 회수한다. 기본 설정은 동기 저장이다.
 - input, detector/pipeline config와 로컬 weight의 path·size·SHA-256을 summary provenance에 기록한다.

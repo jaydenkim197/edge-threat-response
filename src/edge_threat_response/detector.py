@@ -143,26 +143,40 @@ class UltralyticsBackend:
         *,
         predict_arguments: dict[str, object] | None = None,
         model_factory: Callable[[str], Any] | None = None,
+        cuda_graph: bool = False,
     ) -> None:
         self.weights = str(weights)
         self.predict_arguments = dict(predict_arguments or {})
         self._model_factory = model_factory
         self._model: Any | None = None
+        self._install_cuda_graph = cuda_graph
 
     def predict(self, image: Any) -> Iterable[RawDetection]:
-        model = self._get_model()
         arguments = {"verbose": False, **self.predict_arguments}
-        results = model.predict(source=image, **arguments)
+        results = self._predict(image, arguments)
         if not results:
             return ()
         return _raw_detections(results[0])
 
     def predict_batch(self, images: list[Any]) -> tuple[tuple[RawDetection, ...], ...]:
         arguments = {"verbose": False, **self.predict_arguments, "batch": len(images)}
-        results = self._get_model().predict(source=images, **arguments)
+        results = self._predict(images, arguments)
         if len(results) != len(images):
             raise RuntimeError("Ultralytics returned a different number of results than input images.")
         return tuple(_raw_detections(result) for result in results)
+
+    def _predict(self, source: Any, arguments: dict[str, object]) -> Any:
+        model = self._get_model()
+        results = model.predict(source=source, **arguments)
+        if self._install_cuda_graph:
+            from .cuda_graph import FixedCudaGraphForward
+
+            backend = model.predictor.model
+            if backend.format != "pt" or backend.device.type != "cuda":
+                raise ValueError("CUDA Graph requires a native CUDA PyTorch detector.")
+            backend.forward = FixedCudaGraphForward(backend.forward)
+            self._install_cuda_graph = False
+        return results
 
     def _get_model(self) -> Any:
         if self._model is None:

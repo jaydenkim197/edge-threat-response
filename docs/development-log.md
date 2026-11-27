@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — CUDA Graph 선언 설정과 대비 변형 첫 배치
+
+표준 검출기 component에 `cuda_graph` 선택 설정을 추가하고 초기 출력 동등성과 고정 입력 계약을 적용했다. Orin의 실모델 4K 표준 CLI 대조는 장시간 벤치마크의 GPU 잠금을 기다린다. PC12 대비 실험은 첫 epoch에서 계획대로 변형 입력 2,458회를 사용했고 두 번째 epoch를 실행 중이다. [표준 경로와 노출 증거](../reports/training/p430-autonomous-2026-11-27/report.md#표준-검출기-cuda-graph-설정과-대비-입력-노출)
+
 ## 2026-11-28 — Orin 표준 JPEG 저장 및 사람 CUDA Graph 대조
 
 4K 파일 200장의 표준 CLI에서 동기·병렬 모드의 검출·판단·실제 디스크의 JPEG 두 장이 일치했다. 사람 CUDA Graph는 24장·34박스를 정확히 재현했고 사람 검출 p95를 52.42→47.99 ms로 줄였다. 두 검출기 Graph를 결합한 4K 예비 시험은 p95 229.59 ms로 통과해 장시간 시험을 시작했다. [실기기 결과와 측정 범위](../reports/training/p430-autonomous-2026-11-27/report.md#표준-cli-4k-파일-저장과-사람-cuda-graph-검증)

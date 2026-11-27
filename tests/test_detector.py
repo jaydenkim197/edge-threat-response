@@ -1,5 +1,8 @@
 import unittest
+from types import SimpleNamespace
+from unittest.mock import Mock
 
+from edge_threat_response.cuda_graph import FixedCudaGraphForward
 from edge_threat_response.detector import (
     CallableBackend,
     CompositeDetector,
@@ -77,6 +80,24 @@ class DetectorAdapterTests(unittest.TestCase):
         self.assertEqual(1, len(result))
         self.assertEqual(0, result[0].class_id)
         self.assertEqual((1.0, 2.0, 10.0, 20.0), result[0].bbox_xyxy)
+
+    def test_explicit_cuda_graph_wraps_only_native_cuda_predictor_once(self):
+        for kind, device in (("pt", "cuda"), ("onnx", "cuda"), ("pt", "cpu")):
+            with self.subTest(kind=kind, device=device):
+                predictor = SimpleNamespace(format=kind, device=SimpleNamespace(type=device), forward=Mock())
+                model = SimpleNamespace(predict=Mock(return_value=[]), predictor=SimpleNamespace(model=predictor))
+                backend = UltralyticsBackend("fixture.pt", model_factory=lambda _: model, cuda_graph=True)
+                if kind == "pt" and device == "cuda":
+                    backend.predict("first")
+                    hook = predictor.forward
+                    backend.predict("second")
+                    self.assertIsInstance(hook, FixedCudaGraphForward)
+                    self.assertIs(predictor.forward, hook)
+                    self.assertFalse(hook.captured)
+                    self.assertNotIn("cuda_graph", model.predict.call_args.kwargs)
+                else:
+                    with self.assertRaisesRegex(ValueError, "native CUDA PyTorch"):
+                        backend.predict("first")
 
 
 if __name__ == "__main__":
