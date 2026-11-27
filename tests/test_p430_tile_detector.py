@@ -113,6 +113,38 @@ class P430TileDetectorTests(unittest.TestCase):
                 self.assertIn("number of results", short_batch.error)
                 self.assertEqual((), short_batch.detections)
 
+    def test_declarative_precision_and_prefilter_keep_postmerge_threshold(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            config = DetectorConfig.load(self.write_config(
+                root, root / "knife.pt", predict_arguments={"conf": .3, "premerge_conf": .15, "half": True},
+            ))
+            detector = build_detector(config)
+            model = Mock(names={0: "knife"})
+            model.predict.return_value = [result(((80, 80, 90, 90), .2), ((120, 120, 140, 140), .4)),
+                                          *[result()] * 5]
+            with (
+                patch("edge_threat_response.detector.UltralyticsBackend._get_model", return_value=model),
+                patch("edge_threat_response.p430_tile_detector.tile_nms_indices", return_value=[1, 0]),
+            ):
+                observed = detector.infer(Frame((1080, 1920, 3)))
+            self.assertEqual((.4,), tuple(item.confidence for item in observed.detections))
+            self.assertEqual(.15, model.predict.call_args.kwargs["conf"])
+            self.assertIs(True, model.predict.call_args.kwargs["half"])
+
+    def test_declarative_profile_rejects_invalid_filters_or_precision(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for extra, error in (({"premerge_conf": .4}, "premerge_conf"),
+                                 ({"premerge_conf": True}, "premerge_conf"),
+                                 ({"half": "yes"}, "half")):
+                with self.subTest(extra=extra):
+                    config = DetectorConfig.load(self.write_config(
+                        root, root / "knife.pt", predict_arguments={"conf": .3, **extra},
+                    ))
+                    with self.assertRaisesRegex(ValueError, error):
+                        build_detector(config)
+
     def test_tiled_person_component_is_rejected(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

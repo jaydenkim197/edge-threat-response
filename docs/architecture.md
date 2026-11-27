@@ -14,7 +14,9 @@ B0~B3 공통 판단 구조에 독립 HOI/B4 점수 경로를 구현하고 합성
 
 ## 2026-11-27 P430 타일 검출
 
-P430 D1은 knife 전용 component에 `input_layout: "p430_tile640"`을 지정하면 4K 주 스트림의 중앙 1920×1080 또는 이미 검수 범위로 잘린 1080p 입력을 6타일로 처리한다. 개발 평가와 타일 격자·내부 경계 제외·NMS를 공유하고 탐지 좌표를 입력 프레임으로 되돌린다. `predict_arguments.conf`는 타일 병합 이후 임계값이다. Orin 파일 검출 경로와 실시간 검증 범위는 별도로 기록한다. [실측](../reports/training/p430-autonomous-2026-11-27/report.md#orin-파일-실측과-동결-시점)
+P430 D1은 knife 전용 component에 `input_layout: "p430_tile640"`을 지정하면 4K 주 스트림의 중앙 1920×1080 또는 이미 검수 범위로 잘린 1080p 입력을 6타일로 처리한다. 개발 평가와 타일 격자·내부 경계 제외·NMS를 공유하고 탐지 좌표를 입력 프레임으로 되돌린다.
+
+타일 검출의 `predict_arguments.conf`는 병합 이후 출력 임계값이다. 선택 항목인 `premerge_conf`는 병합 전에 각 타일에서 보존하는 후보의 하한이며 기본값은 0.001이다. 설정 범위는 0.001부터 `conf`까지다. `half: true`를 해당 component에 지정하면 Ultralytics에 FP16 추론을 요청한다. 생략 시 기존 정밀도 설정을 사용한다. 타일 후보 하한과 정밀도는 장비별 평가에서 함께 기록한다. [Orin 실측](../reports/training/p430-autonomous-2026-11-27/report.md#orin-파일-실측과-동결-시점)
 
 ## 2026-11-05 구현 추가
 

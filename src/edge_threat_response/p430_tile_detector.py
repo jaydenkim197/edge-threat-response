@@ -42,16 +42,27 @@ def tile_nms_indices(boxes, scores) -> list[int]:
 
 class P430TiledBackend(UltralyticsBackend):
     def __init__(self, weights: str, *, predict_arguments: dict[str, object]) -> None:
-        if predict_arguments.keys() - {"device", "conf"}:
-            raise ValueError("P430 tile predict_arguments supports device and post-merge conf.")
+        if predict_arguments.keys() - {"device", "conf", "premerge_conf", "half"}:
+            raise ValueError("P430 tile predict_arguments supports device, conf, premerge_conf and half.")
         confidence = predict_arguments.get("conf", .001)
         if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not .001 <= confidence <= 1:
             raise ValueError("P430 tile confidence must be in [0.001, 1].")
+        premerge_confidence = predict_arguments.get("premerge_conf", .001)
+        if (isinstance(premerge_confidence, bool) or not isinstance(premerge_confidence, (int, float))
+                or not .001 <= premerge_confidence <= confidence):
+            raise ValueError("P430 tile premerge_conf must be in [0.001, conf].")
+        half = predict_arguments.get("half", False)
+        if not isinstance(half, bool):
+            raise ValueError("P430 tile half must be a boolean.")
+
         self.output_confidence = float(confidence)
-        super().__init__(weights, predict_arguments={
+        arguments = {
             "device": predict_arguments.get("device", 0), "imgsz": 640, "rect": False,
-            "conf": .001, "iou": .7, "classes": [0], "max_det": 100,
-        })
+            "conf": float(premerge_confidence), "iou": .7, "classes": [0], "max_det": 100,
+        }
+        if half:
+            arguments["half"] = True
+        super().__init__(weights, predict_arguments=arguments)
 
     def predict(self, image: Any) -> tuple[RawDetection, ...]:
         shape = getattr(image, "shape", ())
