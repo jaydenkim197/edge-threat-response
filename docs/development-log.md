@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 4K 사전 필터·CUDA Graph·JPEG 비용 분리
+
+사전 필터의 4K 파일 p95는 전체 313.77 ms, 경보 없는 구간 247.51 ms였다. CUDA Graph는 24장 검출을 보존하며 칼 검출 p95를 129.16→118.34 ms로 줄였다. NVJPEG는 속도·화질 기준을 함께 통과하지 못했다. 같은 JPEG를 추론 중 생성하고 경보 전에 완료를 확인하는 후속 4K 파일 시험을 시작했다. [실측과 실행 조건](../reports/training/p430-autonomous-2026-11-27/report.md#4k-후보-사전-필터와-고정-모델-cuda-graph)
+
 ## 2026-11-28 — Orin 4K 디코더 스레드 비교
 
 1·2·4개 FFmpeg 스레드에서 첫 24개 픽셀 해시가 일치했고 유효 4.00 FPS·누락 0건이었다. 4개는 2개 대비 읽기 p95를 73.32→40.16 ms로 줄였으나 세 실행의 전체 p95는 307.24 ms 이상이었다. 최종 박스 일치를 확인한 뒤 타일 후보 사전 필터를 결합하는 후속 파일 시험을 시작했다. [측정 결과와 후속 조건](../reports/training/p430-autonomous-2026-11-27/report.md#ffmpeg-디코더-스레드-수에-따른-4k-지연)
