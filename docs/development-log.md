@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — R18 첫 epoch 튜닝 표본 채점
+
+같은 승인 튜닝 표본에서 R18 전체 16/46·작은 칼 12/22였고 D1은 20/46·13/22였다. R18이 놓친 30개 중 27개가 낮은 점수 후보로 남았다. 첫 가중치의 Orin 변환을 보류하고 3 epoch 초기 평가와 본학습을 계속한다. [비교와 누락 분해](../reports/training/p430-autonomous-2026-11-27/report.md#rt-detrv2-1-epoch의-초기-평가와-누락-분해)
+
 ## 2026-11-28 — 낮은 bias warmup 첫 epoch와 R18 초기 평가
 
 PC12의 학습에서 bias 그룹 0.0001이 첫 1,024번 업데이트에 적용됐고 D0 대비 BatchNorm bias 이동량이 121.832→0.976이었다. 검출 효과는 등록된 튜닝으로 판단한다. PC14 R18의 초기 체크포인트 두 개는 승인 튜닝 78장으로 별도 CPU 평가에 착수했다. [학습 계측과 CPU 평가 근거](../reports/training/p430-autonomous-2026-11-27/report.md#낮은-bias-warmup의-첫-학습-구간-확인)
