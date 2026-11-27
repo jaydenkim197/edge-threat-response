@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-27 — TensorRT 대조와 PyTorch 칼 검출 정밀도 시험
+
+Orin TensorRT FP16의 두 빌드가 같은 셰이더 오류를 냈다. FP32 엔진은 승인 표본에서 박스와 경보가 일치했고 PyTorch보다 느렸다. PyTorch 칼 검출만 FP16으로 바꾼 단기 시험은 빨라졌으나 한 프레임의 박스 수가 달라 같은 두 개발 분할 585장의 짝 비교를 시작했다. seed 3409 후보의 앞 프레임 점수 보정은 튜닝에서 작은 칼 검출 1개를 추가해 승격 기준에 미달했다. [실행과 지표](../reports/training/p430-autonomous-2026-11-27/report.md)
+
 ## 2026-11-27 — Orin 30분 파일 기준 통과 및 D1 내보내기 정합 복구
 
 D1 타일 사전 필터에서 Orin 파일 기준을 통과했다. 모든 구간이 4.00 FPS와 누락 0%였고 최대 p95는 248.33ms였다. ONNX의 최초 후보에서 PyTorch와 검출 헤드가 다른 이유를 찾아 기존 헤드를 보존하는 두 번째 그래프를 검증했다. 승인 튜닝 16장에서 박스 수가 같고 최소 IoU는 0.999997이었다. 이 그래프로 실기기 TensorRT 예비 변환을 시작했다. [측정·내보내기 영수증](../reports/training/p430-autonomous-2026-11-27/report.md)
