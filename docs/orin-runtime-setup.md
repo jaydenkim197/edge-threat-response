@@ -126,9 +126,12 @@ smaps의 Rss/Pss_Anon/AnonHugePages는 warmup 이후와 종료 시에만 기록�
 
 P430 4K main과 현장 핀 연결을 확인한 뒤 Orin에서 아래 명령을 사용한다. 입력 JSON은 작업자가 보관하는 비공개 파일이다. 두 CUDA Graph를 비교할 때는 사람·칼 양쪽에 `"cuda_graph": true`인 검출기 설정을 사용한다.
 
+11/28에는 Orin 실험 폴더의 `runs/p430-goal-runtime-20261127/gpio-pythonpath-v1`에 시스템 Jetson Python 패키지만 연결했다. GPU 가상환경에서 해당 경로로 Jetson.GPIO 2.1.13을 불러와 보드를 인식했고 Torch·OpenCV·Ultralytics의 import 경로가 동일했다. 핀 초기화와 GPIO 출력은 이 import 검사에서 수행하지 않았다.
+
 ```bash
 cd ~/edge-threat-response
-PYTHONPATH=src .venv-orin/bin/python tools/p430_orin_j_benchmark.py \
+GPIO_PYTHON_DIR="$PWD/runs/p430-goal-runtime-20261127/gpio-pythonpath-v1"
+PYTHONPATH="src:$GPIO_PYTHON_DIR" .venv-orin/bin/python tools/p430_orin_j_benchmark.py \
   "$P430_CONNECTION_JSON" "$DETECTOR_JSON" "$PIPELINE_JSON" "$J_OUTPUT_DIR" \
   --ram-drift-mib 64 --latency-drift-ms 10 --decoder-threads 4 --opencv-threads 2 \
   --write-snapshots --parallel-jpeg --gpio-alarm-config "$GPIO_CONFIG_JSON"

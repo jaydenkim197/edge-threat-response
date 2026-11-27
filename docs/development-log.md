@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — BatchNorm 통계 중간점과 Orin GPIO import
+
+기존 보간 가중치의 원래 통계와 재계산 통계 중간점을 Orin 튜닝 큐에 등록했다. GPU 가상환경에서 시스템 Jetson.GPIO 2.1.13 import와 기존 ML 패키지 경로의 동일성도 확인했다. [실험 조건과 증거](../reports/training/p430-autonomous-2026-11-27/report.md#기존-통계와-재계산-batchnorm-통계의-중간점)
+
 ## 2026-11-28 — 현장 4K 벤치마크의 디스크 저장·GPIO 명령
 
 P430 벤치마크에서 표준 실행기의 병렬 JPEG와 GPIO 명령을 함께 측정할 수 있게 했다. 가상 검증에서 사건별 파일 저장과 출력 오류 판정을 확인했다. 현장 카메라와 경보 응답은 별도로 검증한다. [현장 실행 절차](orin-runtime-setup.md#현장-4k-벤치마크)
