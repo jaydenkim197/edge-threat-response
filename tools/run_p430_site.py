@@ -537,6 +537,23 @@ def execute(work,node, *, recovery=False):
             if not recovery:
                 verify_inputs(work,plan,tiled,budget)
                 geometry=[[input_paths(work,plan,key,tiled and use)[0] for key,use in deck] for deck in plan["draws"]]
+                if "training_views_sha256" in spec:
+                    views_file=work/"training-views.json"
+                    require(sha(views_file)==spec["training_views_sha256"],"Augmented training views changed")
+                    views=read(views_file)
+                    replacements={}
+                    for item in views:
+                        key,use=item["parent"],item["tiled"]
+                        require(plan["pool"][key]["domain"]=="cctv","Only external CCTV training may be transformed")
+                        origin,source_label=input_paths(work,plan,key,use)
+                        image=work/"views/images"/item["image"]
+                        label=work/"views/labels"/image.with_suffix(".txt").name
+                        require(image.parent==work/"views/images" and origin not in replacements
+                                and sha(image)==item["sha256"] and sha(label)==sha(source_label),
+                                "Augmented image or label mismatch")
+                        replacements[origin]=image
+                    require(replacements.keys() <= set().union(*map(set,geometry)),"Transformed source not in training draws")
+                    geometry=[[replacements.get(image,image) for image in epoch] for epoch in geometry]
                 eval_list=[Path(r["image_file"]) for r in val["tune"]]
                 for name,files in (("train",sorted(set().union(*map(set,geometry)))),("val",eval_list)):
                     (run/f"{name}.txt").write_text("".join(x.as_posix()+"\n" for x in files),encoding="utf-8")

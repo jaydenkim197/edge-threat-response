@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-27 — RF-DETR 최소 학습과 CCTV 교차 실험 큐 등록
+
+독립 RF-DETR 환경을 구축하고 COCO 가중치 해시를 확인했다. 기본 검증 백엔드 충돌을 CPU에서 재현해 대체 백엔드로 작은 학습과 체크포인트 저장을 검증했다. 연구실 #2의 대비 변형·무변환 대조와 RF-DETR 재시도·동일 추출 YOLO 대조를 등록했다. PC12에는 양방향 촬영 교차 학습을 등록했다. [실행 순서·검증과 비교 한계](training-resource-schedule.md#1127-실제-착수와-우선순위-변경)
+
 ## 2026-11-27 — 잔여 학습의 단계별 GPU 배정
 
 연구실 큐와 승인 분할을 확인하고 ALT-04의 환경 검증·본학습·조건부 추가 모델을 RTX 3090 #2에 순차 배정했다. PC11·14에는 ALT-05 준비와 한 변수 대조, PC13에는 공통 입력 및 연속 영상 준비를 배정안에 기록했다. 서버 환경에 RF-DETR·ONNX가 없음을 확인했다. 이번 변경은 실행 순서와 선행 조건을 기록한 `PLANNED` 상태다. [배정안과 착수 조건](training-resource-schedule.md#1127-잔여-학습-배정)

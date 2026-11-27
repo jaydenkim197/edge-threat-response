@@ -652,6 +652,28 @@
       "compare": "타 세션을 본 초기값 배제, 양쪽 세션 개선과 같은 오탐 상한"
     },
     {
+      "id": "A-SESSION-CROSS-1",
+      "track": "A",
+      "node": "pc12",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "D0 초기화로 11/17 학습·튜닝, 11/19 개발 확인",
+      "after": ["A0"],
+      "approval": "A-SESSION-CROSS-1.json",
+      "compare": "원본 촬영 보류, 같은 출처 학습량·타일·임계값 규약"
+    },
+    {
+      "id": "A-SESSION-CROSS-2",
+      "track": "A",
+      "node": "pc12",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "D0 초기화로 11/19 학습·튜닝, 11/17 개발 확인",
+      "after": ["A0"],
+      "approval": "A-SESSION-CROSS-2.json",
+      "compare": "원본 촬영 보류, 같은 출처 학습량·타일·임계값 규약"
+    },
+    {
       "id": "A-TENSORRT",
       "track": "A",
       "node": "lab",
@@ -755,6 +777,50 @@
       ],
       "approval": "B-ALT04.json",
       "compare": "matched 동일 P430 개발 자료 및 export"
+    },
+    {
+      "id": "B-ALT04-R4",
+      "track": "B",
+      "node": "lab",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "COCO 검증 backend 교체 후 RF-DETR Small 최소 학습 및 본학습",
+      "after": ["A-N"],
+      "approval": "B-ALT04-R4.json",
+      "compare": "공통 튜닝·사전 고정 임계값·6타일 개발 평가"
+    },
+    {
+      "id": "B-ALT04-AR00",
+      "track": "B",
+      "node": "lab",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "RF-DETR와 같은 고정 데이터 추출에서 COCO YOLO26n 학습",
+      "after": ["B-ALT04-R4"],
+      "approval": "B-ALT04-AR00.json",
+      "compare": "COCO 초기화 계열, 동일 원본·타일·추출량·입력 크기·6타일 평가"
+    },
+    {
+      "id": "B-ALT05-DG05",
+      "track": "B",
+      "node": "lab",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "외부 CCTV 학습 이미지의 대비만 0.8배로 조정한 변형",
+      "after": ["A0"],
+      "approval": "B-ALT05-DG05.json",
+      "compare": "같은 D0·출처·타일·예산, 촬영별 확인 성능 비교"
+    },
+    {
+      "id": "B-ALT05-DG00",
+      "track": "B",
+      "node": "lab",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "열화 변형과 동일 입력 목록의 무변환 대조",
+      "after": ["A0"],
+      "approval": "B-ALT05-DG00.json",
+      "compare": "같은 초기 가중치·seed·draw 및 6타일 평가"
     },
     {
       "id": "B-ALT13",
