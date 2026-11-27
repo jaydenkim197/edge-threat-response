@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 움직임 보호 공통 평가와 bias 대조 착수
+
+PC12 움직임 보호 학습은 튜닝을 통과했으나 공통 확인에서 전체 78/140·작은 칼 43/58·음성 오탐 1/147이었다. 예비 D1을 유지한다. 양방향 BatchNorm bias 교환은 Orin FP16과 짝 FP32 표본에서 검출을 잃었다. PC12 Worker는 낮은 bias warmup의 첫 실제 학습 배치를 실행했다. [공통 평가와 재개 지점](../reports/training/p430-autonomous-2026-11-27/report.md#1119-움직임-보호-학습의-공통-평가-완료)
+
 ## 2026-11-28 — PC12 초기 bias 학습률 대조 등록
 
 승인 원본을 그대로 사용하고 bias warmup 시작값만 0.1→0.0001로 낮추는 PC12 학습을 등록했다. 기존 움직임 보호 학습·튜닝 뒤 실행하며, 승인 튜닝을 통과한 후보 한 개만 공통 확인에 사용한다. [실행 계약과 확인 조건](../reports/training/p430-autonomous-2026-11-27/report.md#초기-bias-학습률을-낮춘-대조-등록)
