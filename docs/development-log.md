@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 사람 검출 CUDA Graph 조건부 실측 등록
+
+동일 사람 검출의 FP32·640 설정에서 원래 실행과 CUDA Graph의 24장 짝 대조를 Orin에 등록했다. 출력이 같고 사람 검출 p95가 3 ms 이상 줄 때만 4K 전체 파일 및 장시간 시험으로 이어진다. 기존 표준 CLI 파일 대조가 끝나면 같은 GPU 잠금으로 시작한다. [승격 기준과 실행 순서](../reports/training/p430-autonomous-2026-11-27/report.md#기존-사람-검출의-cuda-graph-대조-등록)
+
 ## 2026-11-28 — B3 표준 실행기 병렬 JPEG
 
 `etr-run --parallel-jpeg`를 추가했다. PC 합성 4K 시험에서 동기 저장과 사건 JPEG·판단·모의 경보가 동일했고 Orin 실모델 파일 대조를 등록했다. 기존 Orin 장시간 성능 시험의 두 번째 구간 p95는 252.16 ms로 250 ms 기준을 넘었다. [기능 검증과 실기기 상태](../reports/training/p430-autonomous-2026-11-27/report.md#표준-b3-실행기의-병렬-jpeg-옵션)
