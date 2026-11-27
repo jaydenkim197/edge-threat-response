@@ -12,6 +12,10 @@ B0~B3 공통 판단 구조에 독립 HOI/B4 점수 경로를 구현하고 합성
 물리 GPIO, 실제 Holding 정확도, 자동 복구와 최종 사건 성능은 미검증이다. 아래 설명은 현재 구현과 설계 요건을 구분한다. 신규 제한 자료의 반입은 [데이터 처리 원칙](research-overview-en.md)을 따른다.
 <!-- docs-refresh-20261106:end -->
 
+## 2026-11-27 P430 타일 검출
+
+P430 D1은 knife 전용 component에 `input_layout: "p430_tile640"`을 지정하면 4K 주 스트림의 중앙 1920×1080 또는 이미 검수 범위로 잘린 1080p 입력을 6타일로 처리한다. 개발 평가와 타일 격자·내부 경계 제외·NMS를 공유하고 탐지 좌표를 입력 프레임으로 되돌린다. `predict_arguments.conf`는 타일 병합 이후 임계값이다. Orin 파일 검출 경로와 실시간 검증 범위는 별도로 기록한다. [실측](../reports/training/p430-autonomous-2026-11-27/report.md#orin-파일-실측과-동결-시점)
+
 ## 2026-11-05 구현 추가
 
 - 기존 B0~B3와 기본 출력 계약을 유지하고, B4는 같은 nearest-person 후보의 Holding score로 association 여부만 교체한다. K/N·FSM·경보/metadata/snapshot 포트는 공유한다. 모델/점수 없이 B3로 대체하지 않는다.

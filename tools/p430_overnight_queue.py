@@ -301,11 +301,14 @@ def deliver_ensemble(root,options,states):
         require(sha(receipt)==data["result_sha256"],"Remote evaluation receipt differs")
         tile=read(receipt)["result"]["tile640"]
         name=tile["selected_checkpoint"]
-        stem=Path(name).stem
         records={"tune":next(item for item in tile["tune"] if item["checkpoint"]==name),"dev_check":tile["dev_check"][name]}
+        filenames = {
+            "tune": f"tune-tile640-{Path(name).stem}.jsonl",
+            "dev_check": f"dev-tile640-{name}.jsonl",
+        }
         for partition,record in records.items():
             cache=assets/f"{key}-{partition}.jsonl"
-            original=f"{source.rsplit('/',1)[0]}/{'tune' if partition=='tune' else 'dev'}-tile640-{stem}.jsonl"
+            original=f"{source.rsplit('/',1)[0]}/{filenames[partition]}"
             subprocess.run(["scp","-q",*SSH,f"{host}:{original}",str(cache)],timeout=50,check=True,capture_output=True)
             require(sha(cache)==record["predictions_sha256"],"Remote prediction cache differs")
             subprocess.run(["scp","-q",*SSH,str(cache),f"{target}/assets/{cache.name}"],timeout=50,check=True,capture_output=True)

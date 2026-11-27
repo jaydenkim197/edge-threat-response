@@ -13,6 +13,7 @@ import sys
 
 from edge_threat_response.p430_evaluation import evaluate_checkpoint, make_truth, rank_key, score_predictions
 from edge_threat_response.p430_queue import process_lock
+from edge_threat_response.p430_tile_detector import tile_nms_indices, tile_regions as regions, touches_internal_tile_edge
 from edge_threat_response.p430_workflow import MODEL_SHA, SOURCE_SHA, now, read, require, save, sha
 from edge_threat_response.training import gpu_training_lock, run_training
 from run_p430_integration import jsonl, paths, repeated
@@ -62,14 +63,6 @@ def split_development(rows):
     for name in ("train", "tune", "dev_check"):
         require({bool(r["knife_boxes"]) for r in parts[name]} == {False, True}, f"{name} needs positive and negative labels")
     return parts, cuts
-
-
-def regions(w, h):
-    if w < 768 or h < 640 or (w,h) == (768,640):
-        return []
-    # 3 by 2 grid matches the earlier 1920x1080 evaluation. The two
-    # edge positions are pinned to the image boundary.
-    return [(x,y,x+768,y+640) for y in (0,h-640) for x in (0,(w-768)//2,w-768) if x+768 <= w]
 
 
 def normalized_crop(boxes, region):
@@ -250,7 +243,7 @@ def input_paths(work, plan, key, tiled):
 def verify_inputs(work, plan, tiled, budget=BUDGET):
     seen={key for deck in plan["draws"] for key,_ in deck}
     require(all(len(deck)==DRAWS for deck in plan["draws"]) and len(plan["draws"])==EPOCHS,"Invalid draw budget")
-    require(all(Counter(plan["pool"][key]["domain"] for key,_ in deck)==budget for deck in plan["draws"]),
+    require(all(Counter(plan["pool"][key]["domain"] for key,_ in deck)==Counter(budget) for deck in plan["draws"]),
             "Source budget changed")
     held=set().union(*map(set,plan["validation"].values()))
     require(not (held&seen),"Training draws contain protected development frames")
@@ -290,10 +283,9 @@ def development_rows(work, plan):
     return result
 
 
-def tile_predictions(checkpoint, rows, *, restore=None, clahe=False, window=None, imgsz=640, trace=None, roi=None):
-    import torch
+def tile_predictions(checkpoint, rows, *, restore=None, clahe=False, window=None, imgsz=640, trace=None, roi=None,
+                     device=0):
     from PIL import Image
-    from torchvision.ops import nms
     from ultralytics import YOLO
     from edge_threat_response.detector_comparison import canonical_prediction
 
@@ -321,19 +313,21 @@ def tile_predictions(checkpoint, rows, *, restore=None, clahe=False, window=None
         predicted=[]
         for start in range(0,len(chips),8):
             chunk=chips[start:start+8]
-            predicted.extend(model.predict(chunk,imgsz=imgsz,batch=len(chunk),rect=False,conf=.001,device=0,
+            predicted.extend(model.predict(chunk,imgsz=imgsz,batch=len(chunk),rect=False,conf=.001,device=device,
                                            iou=.7,classes=[0],max_det=100,verbose=False))
         boxes,scores=[],[]
         removed=[]
-        for result,(x,y,x2,y2) in zip(predicted,grid,strict=True):
-            for (a,b,c,d),confidence in zip(result.boxes.xyxy.tolist(),result.boxes.conf.tolist(),strict=True):
-                if not roi and ((x>0 and a<3) or (y>0 and b<3) or (x2<1920 and c>x2-x-3) or (y2<1080 and d>y2-y-3)):
+        for result,region in zip(predicted,grid,strict=True):
+            x,y,_,_=region
+            for box,confidence in zip(result.boxes.xyxy.tolist(),result.boxes.conf.tolist(),strict=True):
+                a,b,c,d=box
+                if not roi and touches_internal_tile_edge(box,region):
                     if trace is not None:
                         removed.append([a+x,b+y,c+x,d+y])
                     continue
                 boxes.append([a+x,b+y,c+x,d+y])
                 scores.append(confidence)
-        keep=nms(torch.tensor(boxes,dtype=torch.float32),torch.tensor(scores),.55).tolist()[:300] if boxes else []
+        keep=tile_nms_indices(boxes,scores)
         prediction,_=canonical_prediction(image,[boxes[i] for i in keep],[scores[i] for i in keep],[0]*len(keep),0)
         if trace is not None:
             retained=set(keep)
@@ -486,7 +480,8 @@ def execute(work,node, *, recovery=False):
             and plan["summary"]["scope"]=="development_only","Development-only protection contract failed")
     spec=pin.get("experiment",{})
     budget=spec.get("budget",BUDGET)
-    require(set(budget)==set(BUDGET) and sum(budget.values())==DRAWS,"Unexpected epoch budget")
+    require(set(budget)==set(BUDGET) and all(type(n) is int and n >= 0 for n in budget.values())
+            and sum(budget.values())==DRAWS,"Unexpected epoch budget")
     require(spec.get("imgsz",640) in (640,960,1280) and spec.get("lr0",.0001) in (.0001,.00005),
             "Unexpected resolution or learning rate")
     run=work/f"{work.name}-{node}"

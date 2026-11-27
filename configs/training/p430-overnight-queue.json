@@ -538,6 +538,58 @@
       "compare": "FN 보완·동일 음성 오탐 상한과 단일 모델"
     },
     {
+      "id": "A-FUSION-P0",
+      "track": "A",
+      "node": "pc13",
+      "kind": "approved",
+      "purpose": "D1·MIX70·seed 3409 저장 예측으로 CPU 결합 검증",
+      "after": ["A0", "A-MIX70", "D1-3409"],
+      "approval": "A-FUSION-P0.json",
+      "compare": "튜닝셋에서만 규칙·임계값 선택 후 공통 개발 확인셋에 고정 적용"
+    },
+    {
+      "id": "A-MIX70-NEG-MINE",
+      "track": "A",
+      "node": "pc12",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "MIX70 오탐 후보를 기존 중앙 검수 학습 음성에서 수집",
+      "after": ["A-MIX70"],
+      "approval": "A-MIX70-NEG-MINE.json",
+      "compare": "train-only 출처·중복 검증, 재검수 후보 선정"
+    },
+    {
+      "id": "A-MIX70-NEG-TRAIN",
+      "track": "A",
+      "node": "pc12",
+      "kind": "train",
+      "gpu": true,
+      "purpose": "기존 MIX70 구성에서 동일 세션의 전체 화면 음성만 5% 동수 교체",
+      "after": ["A-MIX70-NEG-MINE", "A-MIX70"],
+      "approval": "A-MIX70-NEG-TRAIN.json",
+      "parameters": {
+        "budget": {"p430": 5734, "cctv": 1638, "m2": 820},
+        "tile_share": 0.48,
+        "hard_negative": true,
+        "hard_negative_fraction": 0.05
+      },
+      "compare": "기존 MIX70과 같은 D0, seed 3407, 12 epoch, 배치 8, LR, 튜닝셋 운영점"
+    },
+    {
+      "id": "A-P430-ONLY",
+      "track": "A",
+      "node": "lab",
+      "kind": "train",
+      "gpu": true,
+      "after": ["A0"],
+      "purpose": "고정 위치 적응을 위해 P430만 학습하고 승인 타일 48% 유지",
+      "parameters": {
+        "budget": {"p430": 8192, "cctv": 0, "m2": 0},
+        "tile_share": 0.48
+      },
+      "compare": "D1 및 MIX70 구성에서 혼합 출처만 제거한 D0 기반 적응"
+    },
+    {
       "id": "A-SESSION",
       "track": "A",
       "node": "pc13",
@@ -623,6 +675,16 @@
       ],
       "approval": "A-FREEZE.json",
       "compare": "개발 성능·장비 제한·가중치·threshold·K/N 및 FSM SHA-256"
+    },
+    {
+      "id": "B-ALT01-CROP-PILOT",
+      "track": "B",
+      "node": "pc13",
+      "kind": "approved",
+      "after": ["A-MIX70", "A-FUSION-P0"],
+      "approval": "B-ALT01-CROP-PILOT.json",
+      "purpose": "중앙 영역 검수 학습 자료로 MIX70 후보 RGB 크롭 검증",
+      "compare": "공통 후보·박스에서 점수만 변경, 튜닝에서 개선한 경우에만 개발 확인"
     },
     {
       "id": "B-ALT01",

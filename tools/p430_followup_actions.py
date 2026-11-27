@@ -13,7 +13,7 @@ import sys
 from edge_threat_response.detection_evaluation import BBox, evaluate_boxes, iou
 from edge_threat_response.detector_comparison import POLICY
 from edge_threat_response.p430_evaluation import evaluate_checkpoint, make_truth, score_predictions
-from edge_threat_response.p430_workflow import read, require, save, sha
+from edge_threat_response.p430_workflow import SOURCE_SHA, read, require, save, sha
 from edge_threat_response.training import gpu_training_lock
 from run_p430_integration import jsonl
 from run_p430_site import (BUDGET, development_rows, draw_parents, execute, export_tile,
@@ -117,6 +117,37 @@ def early_check(output, evidence):
     return {"replicated_early":all(row["selected"].startswith("ema-batch-") for row in report.values()),"runs":report}
 
 
+def replace_reviewed_negatives(deck, pool, keys, fraction):
+    require(0 < fraction <= .20, "Invalid reviewed negative replacement fraction")
+    targets = defaultdict(list)
+    for key in keys:
+        targets[pool[key]["source_group"]].append(key)
+    selected_keys = set(keys)
+    rng = random.Random(3407)
+    replacements = []
+    for epoch in deck:
+        slots = defaultdict(list)
+        for index, (key, tiled) in enumerate(epoch):
+            row = pool[key]
+            group = row["source_group"]
+            if group in targets and row["domain"] == "p430" and row["n"] == 0 and not tiled and key not in selected_keys:
+                slots[group].append(index)
+        replaced = 0
+        for group, candidates in sorted(targets.items()):
+            eligible = slots[group]
+            count = min(round(fraction * len(eligible)), 5 * len(candidates))
+            if not count:
+                continue
+            sequence = sorted(candidates)
+            rng.shuffle(sequence)
+            for step, index in enumerate(rng.sample(eligible, count)):
+                epoch[index] = (sequence[step % len(sequence)], False)
+            replaced += count
+        require(replaced > 0, "No equivalent reviewed negative slots were available")
+        replacements.append(replaced)
+    return replacements
+
+
 def setup_train(job, settings, base, plan, output, evidence):
     params=dict(job.get("parameters",{}))
     work=base.parent/f"overnight-{job['id'].lower()}-{output.name}"
@@ -145,7 +176,7 @@ def setup_train(job, settings, base, plan, output, evidence):
     elif share is not None:
         deck=[replace_tiles(epoch,plan["tiles"],share) for epoch in deck]
     if params.pop("hard_negative",False):
-        negative=read(Path(settings["approvals"])/"A-HARDNEG.json")
+        negative=read(Path(settings["approvals"])/job["approval"])
         require(negative["approved_development"] is True and negative["base_plan_sha256"]==PLAN_SHA,
                 "Hard-negative approval did not match the release")
         held=set().union(*map(set,plan["validation"].values()))
@@ -153,13 +184,25 @@ def setup_train(job, settings, base, plan, output, evidence):
         require(keys and len(keys)==len(set(keys)) and not held.intersection(keys) and all(
             k in plan["pool"] and plan["pool"][k]["n"]==0 and plan["pool"][k]["domain"]=="p430" for k in keys),
             "Hard negatives must be verified P430 train-only files")
-        rng=random.Random(3407)
-        for epoch in deck:
-            eligible=[i for i,(k,tiled) in enumerate(epoch) if not tiled and plan["pool"][k]["domain"]=="p430"
-                      and plan["pool"][k]["n"]==0]
-            require(eligible,"No equivalent negative slot for the approved images")
-            for i in rng.sample(eligible,min(len(keys),max(1,len(eligible)//5))):
-                epoch[i]=(rng.choice(keys),False)
+        fraction = params.pop("hard_negative_fraction", None)
+        if fraction is not None:
+            mine = evidence[job["after"][0]]["data"]
+            require(mine["scope"] == "development_train_review_candidates" and mine["base_plan_sha256"] == PLAN_SHA
+                    and mine["reviewed_manifest_sha256"] == SOURCE_SHA
+                    and set(keys) == {item["image_sha256"] for item in mine["candidates"]},
+                    "Hard-negative manifest does not match the verified mining receipt")
+            plan["summary"]["hard_negative_replacements"] = replace_reviewed_negatives(
+                deck, plan["pool"], keys, fraction
+            )
+            plan["summary"]["hard_negative_fraction"] = fraction
+        else:
+            rng=random.Random(3407)
+            for epoch in deck:
+                eligible=[i for i,(k,tiled) in enumerate(epoch) if not tiled and plan["pool"][k]["domain"]=="p430"
+                          and plan["pool"][k]["n"]==0]
+                require(eligible,"No equivalent negative slot for the approved images")
+                for i in rng.sample(eligible,min(len(keys),max(1,len(eligible)//5))):
+                    epoch[i]=(rng.choice(keys),False)
     if not window:
         for key in {key for epoch in deck for key,tiled in epoch if tiled}:
             for folder,suffix in (("images",".jpg"),("labels",".txt")):

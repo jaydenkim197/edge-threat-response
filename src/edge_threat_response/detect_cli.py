@@ -12,6 +12,7 @@ from .config import load_pipeline_config
 from .detector import CompositeDetector, MappedDetector, UltralyticsBackend
 from .media import OpenCVFrameSource, RTSPFrameSource
 from .jetson_memory import prepare_jetson_memory
+from .p430_tile_detector import P430TiledBackend
 from .runtime import run_detection_stream, run_live_pipeline
 
 
@@ -21,6 +22,7 @@ class DetectorComponentConfig:
     weights: str
     class_map: dict[int, str]
     predict_arguments: dict[str, object]
+    input_layout: str = "full_frame"
 
 
 @dataclass(frozen=True)
@@ -53,16 +55,11 @@ class DetectorConfig:
 
 
 def build_detector(config: DetectorConfig):
-    components = tuple(
-        MappedDetector(
-            item.component_id,
-            UltralyticsBackend(
-                item.weights, predict_arguments=item.predict_arguments
-            ),
-            item.class_map,
-        )
-        for item in config.components
-    )
+    components = []
+    for item in config.components:
+        backend_class = P430TiledBackend if item.input_layout == "p430_tile640" else UltralyticsBackend
+        backend = backend_class(item.weights, predict_arguments=item.predict_arguments)
+        components.append(MappedDetector(item.component_id, backend, item.class_map))
     return components[0] if config.topology == "single" else CompositeDetector(components)
 
 
@@ -193,6 +190,11 @@ def _parse_component(payload: object) -> DetectorComponentConfig:
         raise ValueError("Detector class_map keys must be integer-like.") from exc
     if any(value not in {"person", "knife"} for value in class_map.values()):
         raise ValueError("Detector class_map values must be person or knife.")
+    input_layout = payload.get("input_layout", "full_frame")
+    if input_layout not in ("full_frame", "p430_tile640"):
+        raise ValueError("Detector input_layout must be full_frame or p430_tile640.")
+    if input_layout == "p430_tile640" and class_map != {0: "knife"}:
+        raise ValueError("p430_tile640 requires class_map {0: knife}.")
     arguments = payload.get("predict_arguments", {})
     if not isinstance(arguments, dict):
         raise ValueError("predict_arguments must be an object.")
@@ -204,6 +206,7 @@ def _parse_component(payload: object) -> DetectorComponentConfig:
         weights=weights,
         class_map=class_map,
         predict_arguments=dict(arguments),
+        input_layout=input_layout,
     )
 
 

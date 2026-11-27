@@ -155,22 +155,14 @@ class UltralyticsBackend:
         results = model.predict(source=image, **arguments)
         if not results:
             return ()
-        boxes = getattr(results[0], "boxes", None)
-        if boxes is None:
-            return ()
-        xyxy = _to_rows(getattr(boxes, "xyxy"))
-        confidences = _to_values(getattr(boxes, "conf"))
-        classes = _to_values(getattr(boxes, "cls"))
-        if not (len(xyxy) == len(confidences) == len(classes)):
-            raise RuntimeError("Ultralytics result arrays have inconsistent lengths.")
-        return tuple(
-            RawDetection(
-                class_id=int(class_id),
-                confidence=float(confidence),
-                bbox_xyxy=tuple(float(value) for value in coordinates),
-            )
-            for coordinates, confidence, class_id in zip(xyxy, confidences, classes)
-        )
+        return _raw_detections(results[0])
+
+    def predict_batch(self, images: list[Any]) -> tuple[tuple[RawDetection, ...], ...]:
+        arguments = {"verbose": False, **self.predict_arguments, "batch": len(images)}
+        results = self._get_model().predict(source=images, **arguments)
+        if len(results) != len(images):
+            raise RuntimeError("Ultralytics returned a different number of results than input images.")
+        return tuple(_raw_detections(result) for result in results)
 
     def _get_model(self) -> Any:
         if self._model is None:
@@ -182,6 +174,24 @@ class UltralyticsBackend:
             self._model = factory(self.weights)
         return self._model
 
+
+def _raw_detections(result: Any) -> tuple[RawDetection, ...]:
+    boxes = getattr(result, "boxes", None)
+    if boxes is None:
+        return ()
+    xyxy = _to_rows(getattr(boxes, "xyxy"))
+    confidences = _to_values(getattr(boxes, "conf"))
+    classes = _to_values(getattr(boxes, "cls"))
+    if not (len(xyxy) == len(confidences) == len(classes)):
+        raise RuntimeError("Ultralytics result arrays have inconsistent lengths.")
+    return tuple(
+        RawDetection(
+            class_id=int(class_id),
+            confidence=float(confidence),
+            bbox_xyxy=tuple(float(value) for value in coordinates),
+        )
+        for coordinates, confidence, class_id in zip(xyxy, confidences, classes)
+    )
 
 def _to_rows(value: Any) -> list[list[float]]:
     converted = value.detach().cpu().tolist() if hasattr(value, "detach") else value
