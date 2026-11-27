@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — D1과 블러 가중치 보간 튜닝
+
+동일 D0를 쓴 D1과 블러 모델의 가중치를 25·50·75%로 보간해 Orin 튜닝에서 확인했다. 가장 많이 검출한 50% 팔은 작은 칼 87/105·전체 108/161·음성 오탐 0/137이었다. D1의 전체 113/161에 미달해 개발 확인셋 평가는 생략했다. [세 팔의 결과와 보간 근거](../reports/training/p430-autonomous-2026-11-27/report.md#d1과-블러-가중치-보간)
+
 ## 2026-11-28 — 블러 비교 완료와 RF-DETR 대조군 병렬 실행
 
 PC12 블러 타일은 개발 확인에서 작은 칼 51/58·전체 96/140·음성 오탐 4/147을 기록했다. Orin에서 별도 튜닝을 고정해 다시 확인한 결과는 46/58·81/140·2/147로, D1을 예비 후보로 유지했다. PC14의 미실행 COCO YOLO26n 대조군을 PC12로 옮겨 학습을 시작했고 PC14 RF-DETR은 계속 실행했다. [고정 비교](../reports/training/p430-autonomous-2026-11-27/report.md#블러-재학습-공통-평가-완료) · [장비 배정](training-resource-schedule.md#1128-rf-detr-windows-대체-실행)
