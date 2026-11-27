@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — BatchNorm 단독 가중치 대조
+
+같은 통계 재계산과 오탐 상한에서 D1·블러 단독은 튜닝 전체 78·119개를 검출했다. 50% 보간은 122개였고, 단독 모델의 후속 확인 조건은 성립하지 않았다. 보간 후보의 저점수 구분을 시험하기 위해 승인 학습 761장의 Orin 후보 저장을 시작했다. [대조 결과와 입력 경계](../reports/training/p430-autonomous-2026-11-27/report.md#같은-batchnorm-절차를-적용한-단독-가중치-대조)
+
 ## 2026-11-28 — 가중치 보간의 BatchNorm 통계 재계산
 
 승인 학습 입력 128개로 50% 보간 가중치의 BatchNorm 통계만 다시 계산했다. Orin의 고정 개발 확인에서 작은 칼 54/58과 AP50 71.60%·AP50–95 21.66%로 해당 목표를 넘었다. 전체 92/140·음성 오탐 2/147은 목표에 미달했다. D1을 예비 운영 후보로 유지한다. [고정 임계값과 누락 원인](../reports/training/p430-autonomous-2026-11-27/report.md#보간-모델의-batchnorm-통계-재계산)
