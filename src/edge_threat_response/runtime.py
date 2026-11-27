@@ -6,6 +6,8 @@ import math
 import statistics
 import time
 from collections import Counter
+from concurrent.futures import ThreadPoolExecutor
+from contextlib import nullcontext
 from datetime import datetime, timezone
 from pathlib import Path
 from itertools import islice
@@ -13,7 +15,7 @@ from typing import Iterable
 
 from .config import PipelineConfig
 from .detector import CanonicalDetector, DetectorInference
-from .domain import FrameDetections, FrameStatus
+from .domain import AblationMode, FrameDetections, FrameStatus
 from .media import CurrentFrameSnapshot, FramePacket
 from .pipeline import ThreatPipeline
 from .ports import JsonlEventRecorder, MockAlarm
@@ -81,9 +83,12 @@ def run_live_pipeline(
     provenance: dict[str, object] | None = None,
     relation: RelationProvider | None = None,
     relation_threshold: float = .5,
+    parallel_jpeg: bool = False,
 ) -> dict[str, object]:
     if max_frames is not None and max_frames < 1:
         raise ValueError("max_frames must be positive.")
+    if parallel_jpeg and config.mode is not AblationMode.B3:
+        raise ValueError("Parallel JPEG requires the B3 pipeline.")
     _prepare_output(output_dir)
     recorder = JsonlEventRecorder(output_dir / "events.jsonl")
     alarm = MockAlarm()
@@ -96,17 +101,31 @@ def run_live_pipeline(
     detection_count = event_count = action_error_count = 0
     statuses: Counter[str] = Counter()
     detection_path = output_dir / "detections.jsonl"
+    encoder_context = (
+        ThreadPoolExecutor(max_workers=1, thread_name_prefix="etr-jpeg")
+        if parallel_jpeg else nullcontext()
+    )
     with (detection_path.open("x",encoding="utf-8") as detections,
           (output_dir/"decisions.jsonl").open("x",encoding="utf-8") as decisions,
-          (output_dir/"latency.jsonl").open("x",encoding="utf-8") as latencies):
+          (output_dir/"latency.jsonl").open("x",encoding="utf-8") as latencies,
+          encoder_context as encoder):
         for packet in islice(frames,max_frames):
             started = time.perf_counter()
-            inference = detector.infer(packet.image)
-            frame = frame_from_inference(packet,inference)
-            snapshot.bind(packet)
-            if relation is not None and hasattr(relation, "bind"):
-                relation.bind(packet)
-            decision = pipeline.process(frame)
+            jpeg = None
+            if encoder is not None and pipeline.b3_may_enter_confirmed_next():
+                jpeg = encoder.submit(snapshot.encode_jpeg, packet.image)
+            try:
+                inference = detector.infer(packet.image)
+                frame = frame_from_inference(packet,inference)
+                snapshot.bind(packet, jpeg=jpeg)
+                if relation is not None and hasattr(relation, "bind"):
+                    relation.bind(packet)
+                decision = pipeline.process(frame)
+            finally:
+                if jpeg is not None and not jpeg.cancel():
+                    # Reap unused work before the next frame. Snapshot errors at
+                    # a real event are already recorded by the pipeline.
+                    jpeg.exception()
             processing_ms = (time.perf_counter()-started)*1000
             _write_row(detections,_frame_to_dict(frame))
             _write_row(decisions,decision.to_dict())
@@ -125,6 +144,8 @@ def run_live_pipeline(
         summary["capture"] = dict(frames.stats)
     if provenance is not None:
         summary["provenance"] = provenance
+    if parallel_jpeg:
+        summary["parallel_jpeg"] = True
     summary.update(
         {
             "mode": config.mode.value,

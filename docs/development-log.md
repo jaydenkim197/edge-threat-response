@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — B3 표준 실행기 병렬 JPEG
+
+`etr-run --parallel-jpeg`를 추가했다. PC 합성 4K 시험에서 동기 저장과 사건 JPEG·판단·모의 경보가 동일했고 Orin 실모델 파일 대조를 등록했다. 기존 Orin 장시간 성능 시험의 두 번째 구간 p95는 252.16 ms로 250 ms 기준을 넘었다. [기능 검증과 실기기 상태](../reports/training/p430-autonomous-2026-11-27/report.md#표준-b3-실행기의-병렬-jpeg-옵션)
+
 ## 2026-11-28 — COCO YOLO26n 대조군 공통 평가
 
 PC12는 12 epoch와 공통 평가를 완료했다. 고정 개발 확인 287장에서 6타일 전체 33/140·작은 칼 11/58·음성 오탐 1/147, 전체 화면은 62/140·38/58·2/147이었다. 두 방식 모두 11/19에서 0/21이었다. 저장 예측과 튜닝 임계값을 대조해 재집계했고 D1을 예비 후보로 유지한다. [공통 비교와 11/19 누락 분해](../reports/training/p430-autonomous-2026-11-27/report.md#coco-yolo26n-대조군의-공통-평가-완료)

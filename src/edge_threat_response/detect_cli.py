@@ -79,6 +79,10 @@ def build_run_parser() -> argparse.ArgumentParser:
     )
     _add_common_arguments(parser)
     parser.add_argument("--pipeline-config", type=Path, required=True)
+    parser.add_argument(
+        "--parallel-jpeg", action="store_true",
+        help="Overlap candidate B3 snapshot encoding with inference; save only confirmed events.",
+    )
     parser.add_argument("--relation-checkpoint", type=Path)
     parser.add_argument("--relation-device", default="cpu")
     return parser
@@ -129,6 +133,7 @@ def run_main(argv: Sequence[str] | None = None) -> int:
             max_frames=args.max_frames,
             relation=relation,
             relation_threshold=relation.threshold if relation is not None else .5,
+            parallel_jpeg=args.parallel_jpeg,
             provenance={
                 **_provenance(args.input, args.detector_config, detector_config, rtsp_env=args.rtsp_env),
                 "pipeline_config": _file_record(args.pipeline_config),

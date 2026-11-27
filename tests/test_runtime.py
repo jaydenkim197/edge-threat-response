@@ -1,7 +1,10 @@
 import json
 import tempfile
 import unittest
+from dataclasses import replace
 from pathlib import Path
+from threading import Event
+from unittest.mock import patch
 
 from edge_threat_response.config import load_pipeline_config
 from edge_threat_response.detector import CallableBackend, MappedDetector, RawDetection
@@ -117,8 +120,6 @@ class RuntimeIntegrationTests(unittest.TestCase):
                     writer=lambda path, image: written.append((path, image)) is None,
                 )
 
-            from unittest.mock import patch
-
             with patch.object(CurrentFrameSnapshot, "__init__", fixture_init):
                 summary = run_live_pipeline(frames, detector, config, output_dir=output)
 
@@ -126,6 +127,59 @@ class RuntimeIntegrationTests(unittest.TestCase):
             self.assertEqual(1, len(written))
             event = json.loads((output / "events.jsonl").read_text(encoding="utf-8"))
             self.assertEqual("captured", event["snapshot_status"])
+
+    def test_parallel_jpeg_starts_before_detection_and_saves_only_trigger_frame(self):
+        speculated = {index: Event() for index in (1, 3)}
+
+        def encode(image):
+            speculated[image].set()
+            return True, f"jpeg-of-{image}".encode()
+
+        def predictions(image):
+            if image in speculated:
+                self.assertTrue(speculated[image].wait(timeout=2))
+            if image == 1:
+                return ()
+            return (
+                RawDetection(0, .95, (0, 0, 100, 200)),
+                RawDetection(1, .90, (40, 80, 60, 120)),
+            )
+
+        config = replace(load_pipeline_config(PIPELINE_CONFIG), temporal_k=2, temporal_n=2)
+        detector = MappedDetector("parallel-fixture", CallableBackend(predictions), {0: "person", 1: "knife"})
+        frames = (FramePacket(i, i / 4, "fixture", i) for i in range(4))
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp)
+            with patch.object(CurrentFrameSnapshot, "encode_jpeg", side_effect=encode) as jpeg:
+                summary = run_live_pipeline(frames, detector, config, output_dir=output, parallel_jpeg=True)
+            self.assertEqual([1, 3], [call.args[0] for call in jpeg.call_args_list])
+            event = json.loads((output / "events.jsonl").read_text(encoding="utf-8"))
+            self.assertEqual(3, event["frame_index"])
+            self.assertEqual(1, summary["snapshot_count"])
+            self.assertEqual(0, summary["action_error_count"])
+            self.assertTrue(summary["parallel_jpeg"])
+            self.assertEqual([Path(event["snapshot_path"])], list((output / "snapshots").iterdir()))
+            self.assertEqual(b"jpeg-of-3", Path(event["snapshot_path"]).read_bytes())
+
+    def test_parallel_jpeg_failure_still_records_and_activates_alarm(self):
+        config = replace(load_pipeline_config(PIPELINE_CONFIG), temporal_k=1, temporal_n=1)
+        predictions = (
+            RawDetection(0, .95, (0, 0, 100, 200)),
+            RawDetection(1, .90, (40, 80, 60, 120)),
+        )
+        detector = MappedDetector("parallel-fixture", CallableBackend(lambda _: predictions), {0: "person", 1: "knife"})
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp)
+            with patch.object(CurrentFrameSnapshot, "encode_jpeg", side_effect=OSError("encoder failure")):
+                summary = run_live_pipeline(
+                    [FramePacket(0, 0, "fixture", object())], detector, config,
+                    output_dir=output, parallel_jpeg=True,
+                )
+            event = json.loads((output / "events.jsonl").read_text(encoding="utf-8"))
+            self.assertEqual("failed", event["snapshot_status"])
+            self.assertEqual(0, summary["snapshot_count"])
+            self.assertEqual(1, summary["action_error_count"])
+            self.assertTrue(summary["alarm_signals"][0]["active"])
 
 
 if __name__ == "__main__":

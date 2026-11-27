@@ -127,6 +127,17 @@ class ThreatPipeline:
     def state(self) -> AlertState:
         return self._state_machine.state
 
+    def b3_may_enter_confirmed_next(self) -> bool:
+        """Return whether one new positive B3 association could trigger an event."""
+        if self.config.mode is not AblationMode.B3 or self.state not in {
+            AlertState.CLEAR, AlertState.CANDIDATE
+        }:
+            return False
+        association = self._association_temporal
+        values = association.values
+        retained = values[1:] if len(values) == association.n else values
+        return sum(retained) + 1 >= association.k
+
     def process(self, frame: FrameDetections) -> FrameResult:
         self._validate_sequence(frame)
         people, knives = self._reliable_detections(frame)

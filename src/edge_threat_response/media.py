@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+from concurrent.futures import Future
 from dataclasses import dataclass
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Any, Callable, Iterable, Iterator
 
 from .domain import FrameDetections
@@ -145,7 +147,7 @@ class RTSPFrameSource:
 
 
 class CurrentFrameSnapshot:
-    """Bind the current decoded frame to the synchronous pipeline snapshot port."""
+    """Save the triggering frame, optionally using an already started JPEG."""
 
     def __init__(
         self,
@@ -156,9 +158,19 @@ class CurrentFrameSnapshot:
         self.output_dir = Path(output_dir)
         self.writer = writer
         self._packet: FramePacket | None = None
+        self._jpeg: Future[tuple[bool, Any]] | None = None
 
-    def bind(self, packet: FramePacket) -> None:
+    @staticmethod
+    def encode_jpeg(image: Any) -> tuple[bool, Any]:
+        import cv2
+
+        return cv2.imencode(".jpg", image)
+
+    def bind(
+        self, packet: FramePacket, *, jpeg: Future[tuple[bool, Any]] | None = None
+    ) -> None:
         self._packet = packet
+        self._jpeg = jpeg
 
     def capture(self, event_id: str, frame: FrameDetections) -> SnapshotResult:
         packet = self._packet
@@ -168,6 +180,21 @@ class CurrentFrameSnapshot:
             return SnapshotResult(status="failed", error="bound frame does not match event")
         self.output_dir.mkdir(parents=True, exist_ok=True)
         path = self.output_dir / f"{event_id}.jpg"
+        if self._jpeg is not None:
+            encoded, data = self._jpeg.result()
+            if not encoded:
+                return SnapshotResult(status="failed", error="JPEG encoding failed")
+            temporary = None
+            try:
+                with NamedTemporaryFile(dir=self.output_dir, suffix=".tmp", delete=False) as handle:
+                    temporary = Path(handle.name)
+                    handle.write(memoryview(data))
+                temporary.replace(path)
+            finally:
+                if temporary is not None:
+                    temporary.unlink(missing_ok=True)
+            return SnapshotResult(status="captured", path=str(path.resolve()))
+
         writer = self.writer
         if writer is None:
             try:
