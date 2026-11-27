@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-27 — P430 전용 학습 결과 확인
+
+연구실 RTX 3090 `A-P430-ONLY`의 선택 가중치와 평가 파일 해시를 대조했다. 공통 개발 확인에서 작은 칼 25/58, 전체 62/140, 음성 오탐 5/147로 D1보다 검출이 줄고 오탐이 늘었다. P430 전용 모델은 후보로 올리지 않는다. [공통 평가와 영수증](../reports/training/p430-autonomous-2026-11-27/report.md#a-p430-only-결과)
+
 ## 2026-11-27 — 원본 보간 결과와 RGB 크롭 비교
 
 PC13 원본 타일 튜닝에서 Lanczos는 작은 칼·전체 TP가 각각 1건 줄었고 bicubic은 두 검출·오탐 지표가 같았다. 같은 MIX70 후보에 적용한 MobileNetV3-Small RGB 특징도 오탐을 줄이지 못했다. 두 실험 모두 사전 기준에 미달해 개발 확인셋으로 넘기지 않았다. Orin에서는 승인 개발 파일로 D1 4Hz 장시간 기준 측정을 시작했다. [조건·결과·실기기 범위](../reports/training/p430-autonomous-2026-11-27/report.md)
