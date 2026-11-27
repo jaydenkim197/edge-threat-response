@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import sys
 from tempfile import TemporaryDirectory
+from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import patch
 
@@ -14,6 +15,29 @@ with patch.object(sys, "path", [str(ROOT / "tools"), *sys.path]):
         replace_reviewed_negatives, replace_reviewed_positives,
     )
     from run_p430_site import replace_tiles, tile_grid, verify_inputs
+    from run_p430_alt04 import knife_predictions
+
+
+class RFDetrForegroundTests(TestCase):
+    def test_background_above_floor_does_not_displace_knife(self):
+        box = (1, 2, 3, 4)
+        prediction = SimpleNamespace(
+            xyxy=[(0, 0, 10, 10), box], confidence=[.8, .3], class_id=[1, 0],
+            data={"class_name": ["__background__", "knife"]},
+        )
+        self.assertEqual([(box, .3)], list(knife_predictions(prediction)))
+
+    def test_unknown_or_inconsistent_class_is_rejected(self):
+        for class_id, name in ((2, "knife"), (1, "knife"), (0, "__background__"), (2, "")):
+            with self.subTest(class_id=class_id, name=name):
+                prediction = SimpleNamespace(xyxy=[(1, 2, 3, 4)], confidence=[.2],
+                                             class_id=[class_id], data={"class_name": [name]})
+                with self.assertRaisesRegex(ValueError, "Unexpected fine-tuned class"):
+                    list(knife_predictions(prediction))
+
+    def test_empty_prediction_is_valid(self):
+        prediction = SimpleNamespace(xyxy=[], confidence=[], class_id=[], data={"class_name": []})
+        self.assertEqual([], list(knife_predictions(prediction)))
 
 
 class OvernightQueueTests(TestCase):

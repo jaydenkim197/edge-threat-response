@@ -70,9 +70,24 @@ def balanced_pilot(items, count):
     return positives[:count // 2] + negatives[:count // 2]
 
 
+def knife_predictions(prediction):
+    names = prediction.data.get("class_name")
+    require(names is not None and prediction.class_id is not None, "RF-DETR prediction has no class metadata")
+    for box, score, class_id, name in zip(
+        prediction.xyxy, prediction.confidence, prediction.class_id, names, strict=True,
+    ):
+        # RF-DETR 1.11.2 remaps the exported knife category to foreground
+        # slot 0 and can return the no-object slot 1 above the score floor.
+        if class_id == 1 and name == "__background__":
+            continue
+        require(class_id == 0 and str(name).lower() == "knife", "Unexpected fine-tuned class")
+        yield box, score
+
+
 def infer_tiles(model, rows):
     from PIL import Image
 
+    require(tuple(model.class_names) == ("knife",), "Expected a knife-only RF-DETR checkpoint")
     outputs = []
     for row, truth in zip(rows, make_truth(rows)["images"], strict=True):
         with Image.open(row["image_file"]) as image:
@@ -83,10 +98,7 @@ def infer_tiles(model, rows):
         boxes, scores = [], []
         for region, prediction in zip(grid, detections, strict=True):
             x, y = region[:2]
-            names = prediction.data.get("class_name")
-            for index, (box, score) in enumerate(zip(prediction.xyxy, prediction.confidence, strict=True)):
-                if names is not None:
-                    require(str(names[index]).lower() == "knife", "Unexpected fine-tuned class")
+            for box, score in knife_predictions(prediction):
                 if not touches_internal_tile_edge(box, region):
                     boxes.append([float(box[0] + x), float(box[1] + y), float(box[2] + x), float(box[3] + y)])
                     scores.append(float(score))
