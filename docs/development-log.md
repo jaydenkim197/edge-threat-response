@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 요청 프레임만 BGR로 변환하는 Orin 예비 시험
+
+4K HEVC 3,000프레임을 디코딩하고 판단용 448장만 변환했다. 10개 표본의 BGR 픽셀은 기존 `read()`와 일치했다. 본측정에서 4.00 FPS·누락 0%였으며 읽기→경보 p95는 329.06 ms로 기존 305.50 ms보다 높아 적용을 보류했다. [단계별 지연과 결과 영수증](../reports/training/p430-autonomous-2026-11-27/report.md#ffmpeg의-요청-프레임-bgr-변환)
+
 ## 2026-11-28 — Orin 4K HEVC 파일 지연 비교
 
 같은 4K HEVC 파일에서 소프트웨어·하드웨어·변환 전 선별을 각각 60초 동안 비교했다. 본측정은 세 경로 모두 4.00 FPS·누락 0%였지만 읽기→경보 p95는 각각 305.50·367.63·470.76 ms였다. 실제 P430·물리 경보 시험은 남아 있다. [측정 범위와 결과 영수증](../reports/training/p430-autonomous-2026-11-27/report.md#4k-hevc-파일-수신-경로-예비-시험)
