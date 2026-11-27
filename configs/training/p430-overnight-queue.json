@@ -926,6 +926,17 @@
       "compare": "연구실 R4와 동일 COCO 초기값·추출·예산·임계값 규약, Windows CUDA 스택 차이 별도 기록"
     },
     {
+      "id": "B-ALT04-AR00-WIN",
+      "track": "B",
+      "node": "pc14",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "Windows RF-DETR와 같은 학습 추출에서 COCO YOLO26n 대조 학습",
+      "after": ["B-ALT04-R4-WIN"],
+      "approval": "B-ALT04-AR00-WIN.json",
+      "compare": "첫 epoch의 8192회 추출·개발 분할·입력 640·12 epoch·평가 규약 일치, 모델별 전처리와 최적화 차이 기록"
+    },
+    {
       "id": "B-ALT01-ONE-CROP",
       "track": "B",
       "node": "pc14",

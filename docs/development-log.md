@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — RF-DETR의 학습 입력 대조군과 좌우 반전 결과
+
+PC14 RF-DETR 완료 뒤 같은 8,192회 추출·12 epoch로 COCO YOLO26n을 학습하도록 `B-ALT04-AR00-WIN`을 실제 Queue에 등록했다. D1 좌우 반전은 튜닝의 동일 음성 오탐 1장 조건에서 전체 검출 113→100으로 승격 기준에 미달했다. [실험 기록](../reports/training/p430-autonomous-2026-11-27/report.md#같은-타일-수에서-입력-좌우-반전)
+
 ## 2026-11-28 — RF-DETR Windows 입력과 대체 Queue
 
 RF-DETR의 Windows COCO 입력을 하드링크로 준비하고 공용 GPU 잠금을 연동했다. 로컬 Windows CPU에서 승인 입력의 1 epoch, 체크포인트 재로딩 및 칼 클래스 추론을 검증했다. PC14에는 격리 패키지 58개를 설치해 호환성을 확인했고, 기존 무변환 대조 이후 GPU 검증과 본학습을 실행할 Queue를 활성화했다. Orin의 0.001 하한 파일 시험 첫 10분은 4.00 FPS·누락 0%·p95 219.82 ms였다. [실행과 검증 범위](training-resource-schedule.md#1128-rf-detr-windows-대체-실행)
