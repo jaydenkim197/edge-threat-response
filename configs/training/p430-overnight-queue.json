@@ -904,6 +904,17 @@
       "compare": "PC14 무변환 대조와 동일 학습 추출, 라벨, 개발 분할 및 점수 규약"
     },
     {
+      "id": "B-ALT05-BLUR-WIN-R2",
+      "track": "B",
+      "node": "pc12",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "실제 블러 입력 노출을 검증하며 기존 학습 계획을 재실행",
+      "after": ["B-ALT05-BLUR-WIN"],
+      "approval": "B-ALT05-BLUR-WIN-R2.json",
+      "compare": "첫 배치와 epoch별 블러 사용 횟수 대조 후 기존 무변환 팔과 같은 공통 평가"
+    },
+    {
       "id": "B-ALT05-BLUR-CONTROL-WIN",
       "track": "B",
       "node": "pc14",

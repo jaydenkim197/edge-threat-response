@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 블러 실입력 복구와 RF-DETR 본학습 시작
+
+첫 블러 학습의 변환 PNG 1,140개가 구버전 실행기의 실제 목록에 연결되지 않아 결과를 무효로 기록했다. 실제 배치 순서와 변환 사용 횟수를 대조하도록 실행기를 수정하고 PC12 재실행을 등록했다. PC14 RF-DETR은 640px CUDA 최소 학습·재로딩을 통과해 본학습을 시작했다. Orin 0.001 하한은 파일 시험 10분×3에서 4.00 FPS·누락 0%·최대 p95 221.14 ms였다. [입력 원인과 측정 기록](../reports/training/p430-autonomous-2026-11-27/report.md)
+
 ## 2026-11-28 — RF-DETR의 학습 입력 대조군과 좌우 반전 결과
 
 PC14 RF-DETR 완료 뒤 같은 8,192회 추출·12 epoch로 COCO YOLO26n을 학습하도록 `B-ALT04-AR00-WIN`을 실제 Queue에 등록했다. D1 좌우 반전은 튜닝의 동일 음성 오탐 1장 조건에서 전체 검출 113→100으로 승격 기준에 미달했다. [실험 기록](../reports/training/p430-autonomous-2026-11-27/report.md#같은-타일-수에서-입력-좌우-반전)

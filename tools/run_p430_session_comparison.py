@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from collections import defaultdict
+from inspect import signature
 import os
 from pathlib import Path
 import shutil
@@ -68,6 +69,8 @@ def prepare_run(base, plan, settings, tag, transform=None, coco=False):
         from PIL import Image, ImageEnhance, ImageFilter
 
         require(transform in {"contrast", "blur"}, "Unknown training transform")
+        require("transformed_paths" in signature(run_p430_site.trainer_factory).parameters,
+                "The training runner must audit transformed inputs")
         verify_inputs(work, plan, True)
         views = []
         for key, tiled in sorted(used):
@@ -145,7 +148,10 @@ if __name__ == "__main__":
     mode.add_argument("--train-session", type=int, choices=(1, 2))
     mode.add_argument("--degradation", choices=("control", "contrast", "blur"))
     mode.add_argument("--rf-control", action="store_true")
+    parser.add_argument("--attempt", type=int, default=1)
     args = parser.parse_args()
+    if args.attempt < 1 or (args.attempt != 1 and args.degradation is None):
+        parser.error("--attempt must be positive and is only available for degradation runs")
     settings = read(args.settings)
     base = Path(settings["base"])
     plan = pin_plan(base)
@@ -157,12 +163,21 @@ if __name__ == "__main__":
         save(args.evidence, {**site_receipt(work / f"{work.name}-{node}"), "scope": "development_only",
              "deck": "epoch-1 of pinned plan repeated each epoch", "initial_sha256": read(work / "release.json")["initial_sha256"]})
     elif args.degradation:
-        work, node = prepare_run(base, plan, settings, f"alt05-{args.degradation}",
+        suffix = f"-attempt{args.attempt}" if args.attempt > 1 else ""
+        work, node = prepare_run(base, plan, settings, f"alt05-{args.degradation}{suffix}",
                                  transform=None if args.degradation == "control" else args.degradation)
         save(args.evidence.parent / "work.json", {"path": str(work), "plan_sha256": sha(work / "plan.json")})
         execute(work, node)
-        save(args.evidence, {**site_receipt(work / f"{work.name}-{node}"), "degradation": args.degradation,
-                            "initial_sha256": MODEL_SHA})
+        run = work / f"{work.name}-{node}"
+        result = {**site_receipt(run), "degradation": args.degradation, "initial_sha256": MODEL_SHA}
+        if args.degradation != "control":
+            exposure = run / "training-view-exposure.json"
+            observed = read(exposure)
+            counts = observed["observed_per_epoch"]
+            require(counts == observed["expected_per_epoch"] and len(counts) == len(plan["draws"])
+                    and all(count > 0 for count in counts), "Missing observed training views")
+            result.update(training_view_exposure_sha256=sha(exposure), transformed_draws_per_epoch=counts)
+        save(args.evidence, result)
     elif args.train_session is None:
         profile(base, plan, args.evidence)
     else:

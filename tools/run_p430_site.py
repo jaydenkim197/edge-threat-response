@@ -371,10 +371,19 @@ def score_mode(checkpoint, rows, output, mode, threshold=None, locked=False):
     return record
 
 
-def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=False, model_yaml=None, seed=None):
+def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=False, model_yaml=None, seed=None,
+                    transformed_paths=()):
     import torch
     from ultralytics import YOLO
     from ultralytics.models.yolo.detect import DetectionTrainer
+
+    transformed = set(transformed_paths)
+    batches = Counter()
+    observed_views = Counter()
+    view_receipt = {
+        "expected_per_epoch": [sum(path in transformed for path in deck) for deck in draw_paths],
+        "observed_per_epoch": [],
+    } if transformed else None
 
     class PlannedSampler(torch.utils.data.Sampler):
         def __init__(self, indices):
@@ -388,6 +397,19 @@ def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=
             return iter(self.indices[self.epoch])
 
     class SiteTrainer(DetectionTrainer):
+        def preprocess_batch(self, batch):
+            if transformed:
+                index = batches[self.epoch] - 1
+                files = list(map(Path, batch["im_file"]))
+                require(index >= 0 and files == draw_paths[self.epoch][index * 8:(index + 1) * 8],
+                        "Loaded training batch differs from the approved draw order")
+                count = sum(path in transformed for path in files)
+                observed_views[self.epoch] += count
+                if self.epoch == index == 0:
+                    view_receipt["observed_first_batch"] = count
+                    save(state.parent / "training-view-exposure.json", view_receipt)
+            return super().preprocess_batch(batch)
+
         def get_dataloader(self, dataset_path, batch_size=16, rank=0, mode="train"):
             loader=super().get_dataloader(dataset_path,batch_size,rank,mode)
             paths_on_loader=list(map(Path,loader.dataset.im_files))
@@ -417,7 +439,6 @@ def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=
             model=SiteModel(model_yaml).load(checkpoint)
             require(len(model.model.yaml["backbone"])==11 and len(model.model.model[-1].f)==4,
                     "Expected a YOLO26 P2–P5 detection head")
-        counts=Counter()
         verified={}
 
         def start(trainer):
@@ -426,7 +447,7 @@ def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=
 
         def first_batch(trainer):
             optimizer_parameters=[p for group in trainer.optimizer.param_groups for p in group["params"]]
-            if counts[trainer.epoch]==0 and trainer.epoch==0:
+            if batches[trainer.epoch]==0 and trainer.epoch==0:
                 backbone=trainer.model.model[:11]
                 params=list(backbone.parameters())
                 require(params and all(p.requires_grad != freeze for p in params),"Backbone freeze contract mismatch")
@@ -437,25 +458,32 @@ def trainer_factory(draw_paths, val_paths, freeze, state, *, phase2=False, coco=
                     verified.update({k:v.detach().cpu().clone() for k,v in backbone.state_dict().items()})
                 save(state,{"status":"RUNNING","phase":"training","epoch":1,"epochs":EPOCHS,
                             "train_batches":len(trainer.train_loader),"freeze_verified":freeze,"at":now()})
-            counts[trainer.epoch]+=1
+            batches[trainer.epoch]+=1
 
         def epoch_done(trainer):
-            if phase2 and counts[trainer.epoch]==0 and all(counts[e]==DRAWS//8 for e in range(EPOCHS)):
+            if phase2 and batches[trainer.epoch]==0 and all(batches[e]==DRAWS//8 for e in range(EPOCHS)):
                 return  # Final evaluation callback has no additional training batches.
-            require(counts[trainer.epoch]==DRAWS//8,"Observed batch count differs")
+            require(batches[trainer.epoch]==DRAWS//8,"Observed batch count differs")
+            if transformed:
+                observed = observed_views[trainer.epoch]
+                require(observed == view_receipt["expected_per_epoch"][trainer.epoch],
+                        "Observed transformed training views differ from the approved draw plan")
+                require(len(view_receipt["observed_per_epoch"]) == trainer.epoch, "Unexpected training epoch order")
+                view_receipt["observed_per_epoch"].append(observed)
+                save(state.parent / "training-view-exposure.json", view_receipt)
             if freeze:
                 end=trainer.model.model[:11].state_dict()
                 require(all(torch.equal(value,end[name].detach().cpu()) for name,value in verified.items()),
                         "Frozen backbone parameters or buffers changed")
             save(state,{"status":"RUNNING","phase":"training","epochs_completed":trainer.epoch+1,"epochs":EPOCHS,
-                        "train_batches":counts[trainer.epoch],"at":now()})
+                        "train_batches":batches[trainer.epoch],"at":now()})
 
         model.add_callback("on_train_epoch_start",start)
         model.add_callback("on_train_batch_start",first_batch)
         model.add_callback("on_train_epoch_end",epoch_done)
         if phase2:
             def observe(trainer):
-                batch=counts[trainer.epoch]
+                batch=batches[trainer.epoch]
                 if batch%64==0:
                     save(state,{"status":"RUNNING","phase":"training","epoch":trainer.epoch+1,
                                 "epochs":EPOCHS,"batch":batch,"train_batches":DRAWS//8,"at":now()})
@@ -537,11 +565,11 @@ def execute(work,node, *, recovery=False):
             if not recovery:
                 verify_inputs(work,plan,tiled,budget)
                 geometry=[[input_paths(work,plan,key,tiled and use)[0] for key,use in deck] for deck in plan["draws"]]
+                replacements={}
                 if "training_views_sha256" in spec:
                     views_file=work/"training-views.json"
                     require(sha(views_file)==spec["training_views_sha256"],"Augmented training views changed")
                     views=read(views_file)
-                    replacements={}
                     for item in views:
                         key,use=item["parent"],item["tiled"]
                         require(plan["pool"][key]["domain"]=="cctv","Only external CCTV training may be transformed")
@@ -552,7 +580,8 @@ def execute(work,node, *, recovery=False):
                                 and sha(image)==item["sha256"] and sha(label)==sha(source_label),
                                 "Augmented image or label mismatch")
                         replacements[origin]=image
-                    require(replacements.keys() <= set().union(*map(set,geometry)),"Transformed source not in training draws")
+                    require(replacements and replacements.keys() <= set().union(*map(set,geometry)),
+                            "Missing transformed sources or sources outside the training draws")
                     geometry=[[replacements.get(image,image) for image in epoch] for epoch in geometry]
                 eval_list=[Path(r["image_file"]) for r in val["tune"]]
                 for name,files in (("train",sorted(set().union(*map(set,geometry)))),("val",eval_list)):
@@ -574,7 +603,8 @@ def execute(work,node, *, recovery=False):
                 run_training(profile,data_yaml=data,output_dir=run,dataset_manifest=plan_path,
                              model_factory=trainer_factory(geometry,eval_list,freeze,state,
                                                            phase2=variant is not None,coco=variant in ("coco","p2"),
-                                                           model_yaml=model_yaml,seed=pin.get("seed")))
+                                                           model_yaml=model_yaml,seed=pin.get("seed"),
+                                                           transformed_paths=replacements.values()))
             with (run/"train/results.csv").open(newline="",encoding="utf-8") as stream:
                 epochs=[int(row["epoch"]) for row in csv.DictReader(stream)]
             require(epochs==list(range(1,EPOCHS+1)),"Missing epochs")
