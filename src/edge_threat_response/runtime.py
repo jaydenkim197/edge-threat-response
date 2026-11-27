@@ -11,14 +11,14 @@ from contextlib import nullcontext
 from datetime import datetime, timezone
 from pathlib import Path
 from itertools import islice
-from typing import Iterable
+from typing import ContextManager, Iterable
 
 from .config import PipelineConfig
 from .detector import CanonicalDetector, DetectorInference
 from .domain import AblationMode, FrameDetections, FrameStatus
 from .media import CurrentFrameSnapshot, FramePacket
 from .pipeline import ThreatPipeline
-from .ports import JsonlEventRecorder, MockAlarm
+from .ports import AlarmPort, JsonlEventRecorder, MockAlarm, RecordingAlarm
 from .relations import RelationProvider
 
 
@@ -84,6 +84,7 @@ def run_live_pipeline(
     relation: RelationProvider | None = None,
     relation_threshold: float = .5,
     parallel_jpeg: bool = False,
+    alarm_context: ContextManager[AlarmPort] | None = None,
 ) -> dict[str, object]:
     if max_frames is not None and max_frames < 1:
         raise ValueError("max_frames must be positive.")
@@ -91,12 +92,7 @@ def run_live_pipeline(
         raise ValueError("Parallel JPEG requires the B3 pipeline.")
     _prepare_output(output_dir)
     recorder = JsonlEventRecorder(output_dir / "events.jsonl")
-    alarm = MockAlarm()
     snapshot = CurrentFrameSnapshot(output_dir / "snapshots")
-    pipeline = ThreatPipeline(
-        config, alarm=alarm, recorder=recorder, snapshot=snapshot,
-        relation=relation, relation_threshold=relation_threshold,
-    )
     inference_samples, processing_samples = [], []
     detection_count = event_count = action_error_count = 0
     statuses: Counter[str] = Counter()
@@ -108,7 +104,13 @@ def run_live_pipeline(
     with (detection_path.open("x",encoding="utf-8") as detections,
           (output_dir/"decisions.jsonl").open("x",encoding="utf-8") as decisions,
           (output_dir/"latency.jsonl").open("x",encoding="utf-8") as latencies,
-          encoder_context as encoder):
+          encoder_context as encoder,
+          (alarm_context if alarm_context is not None else nullcontext()) as alarm_driver):
+        alarm = MockAlarm() if alarm_driver is None else RecordingAlarm(alarm_driver)
+        pipeline = ThreatPipeline(
+            config, alarm=alarm, recorder=recorder, snapshot=snapshot,
+            relation=relation, relation_threshold=relation_threshold,
+        )
         for packet in islice(frames,max_frames):
             started = time.perf_counter()
             jpeg = None
@@ -146,6 +148,8 @@ def run_live_pipeline(
         summary["provenance"] = provenance
     if parallel_jpeg:
         summary["parallel_jpeg"] = True
+    if alarm_context is not None:
+        summary["alarm_output"] = "external_driver_commands"
     summary.update(
         {
             "mode": config.mode.value,

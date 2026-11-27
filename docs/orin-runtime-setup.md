@@ -115,3 +115,9 @@ smaps의 Rss/Pss_Anon/AnonHugePages는 warmup 이후와 종료 시에만 기록�
 `file_processing_fps`는 warmup 이후 반복 파일의 decode·추론·판단·저장·로그를 포함한 처리율이다. 영상의 논리 timestamp와 실제 경과 시간은 다르며 camera FPS나 사건 경보 지연으로 사용하지 않는다. scalar latency 목록과 mock alarm 이력은 실행 길이에 따라 여전히 증가하므로 무기한 운용/24시간 안정성 증거가 아니다. [이번 실기기 결과](../reports/runtime/orin-readiness-2026-10-27/report.md).
 
 다음은정식patch/runtime동결,새M1/T1배포·물리GPIO,실제촬영/사건정답·자원/독립평가다. P430카메라연결은이미pilot을통과했다. 원격 재부팅 후 접속 유지·장시간 운용·TensorRT는 아직 검증하지 않았다.
+
+## Jetson GPIO 경보 옵션
+
+`etr-run --gpio-alarm-config <로컬 JSON 경로>`에서 사용할 출력만 지정한다. JSON은 정수 `schema_version` 1과 `outputs` 배열을 갖는다. 각 출력에는 장비에서 확인한 헤더 번호 `board_pin`과 동작 극성 `active_low`를 넣는다. BOARD 헤더 번호, pinmux, 부하·전압 및 비활성 상태는 해당 캐리어 보드와 경보 회로 사양으로 확인한다. [NVIDIA Orin Nano 하드웨어 안내](https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/latest/hardware_layout.html)
+
+2026-11-28 Orin의 시스템 Python에서 NVIDIA Jetson.GPIO 2.1.13이 `JETSON_ORIN_NANO`를 인식했고 접속 계정의 GPIO 장치 읽기·쓰기 권한을 조회했다. GPU 가상환경에서 이 모듈을 읽으려면 현장 통합 시 런타임 import 경로를 확인한다. 기본 모드는 모의 경보다. GPIO 설정으로 실행하면 summary의 `alarm_signals`는 드라이버가 성공한 명령이고 `provenance.gpio_alarm_config`에 설정 파일의 해시가 남는다. 현장에서 배선과 실제 응답을 확인해야 한다. [Jetson.GPIO 운영 문서](https://github.com/NVIDIA/jetson-gpio/blob/master/README.md)

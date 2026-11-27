@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — Jetson GPIO 경보 경로와 4K 첫 구간
+
+표준 실행기의 선택 GPIO 출력을 가상 드라이버로 검증했다. Orin 시스템에서 Jetson.GPIO 2.1.13과 보드 인식을 확인했고 실제 핀·배선은 현장 검증에서 준비한다. 두 검출기 CUDA Graph의 첫 10분은 4.00 FPS, p95 228.84 ms, 누락·오류 0건으로 끝났다. [설정과 파일 측정](../reports/training/p430-autonomous-2026-11-27/report.md#gpio-경보-경로와-두-검출기-graph-첫-장시간-구간)
+
 ## 2026-11-28 — CUDA Graph 선언 설정과 대비 변형 첫 배치
 
 표준 검출기 component에 `cuda_graph` 선택 설정을 추가하고 초기 출력 동등성과 고정 입력 계약을 적용했다. Orin의 실모델 4K 표준 CLI 대조는 장시간 벤치마크의 GPU 잠금을 기다린다. PC12 대비 실험은 첫 epoch에서 계획대로 변형 입력 2,458회를 사용했고 두 번째 epoch를 실행 중이다. [표준 경로와 노출 증거](../reports/training/p430-autonomous-2026-11-27/report.md#표준-검출기-cuda-graph-설정과-대비-입력-노출)

@@ -74,7 +74,7 @@ Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay�
 | Spatial Association | v1은 nearest person + 정규화 거리 + 확장 bbox, 신규 v2는 nearest person + 확장 bbox 판정과 정규화 거리 진단값 산출 | v1/v2 `IMPLEMENTED`, PC `VERIFIED` |
 | Temporal Confirmation | knife/associated source-level boolean history를 K-of-N으로 판단 | 공통 순수 로직, `IMPLEMENTED` |
 | Alert State Machine | 확정된 상태 전이와 clear-frame rearm | 공통 순수 로직, `IMPLEMENTED` |
-| GPIO Alarm | LED·부저 경보 port | MockAlarm `IMPLEMENTED`/검증, 물리Jetson GPIO `PLANNED` |
+| GPIO Alarm | LED·부저 경보 port | Jetson GPIO adapter `IMPLEMENTED`, 가상 드라이버 검증, 물리 출력 `PLANNED` |
 | Event Recorder | metadata·snapshot 및 선택적 clip·보존 정책 관리 | JSONL+동기 current-frame snapshot PC `IMPLEMENTED`; 보존 정책 `PLANNED` |
 | Resource Monitor | CPU/GPU/RAM/온도/전력 수집 | Jetson `tegrastats` 등 |
 | Dashboard/Event API | 위험 이벤트의 표시·선택적 전송 | 네트워크·서버 의존 |
@@ -108,6 +108,7 @@ Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay�
 - 검출기 component 설정의 `"cuda_graph": true`는 native CUDA PyTorch forward의 고정 입력을 재생한다. 첫 호출은 원래 실행으로 준비하고 포착 직후 원시 출력 일치를 확인한다. 이후에는 같은 shape·stride·dtype·device·추론 인수를 요구한다. 드라이버와 전체 경로의 실기기 성능은 별도 파일 시험에서 확인한다.
 - `etr-run`: current decoded frame을 snapshot port에 동기 binding하고 pipeline의 `CONFIRMED` 진입 시 JPEG 한 장을 저장한다.
 - B3의 `etr-run --parallel-jpeg`는 다음 프레임에서 `CONFIRMED`로 진입할 수 있을 때 한 Worker로 같은 프레임의 JPEG를 추론 중 생성한다. 확정된 프레임만 임시 파일을 거쳐 저장하고 JPEG 완료 후 사건 기록과 경보를 처리한다. 확정되지 않은 인코딩은 폐기하며 다음 프레임 전에는 남은 작업을 회수한다. 기본 설정은 동기 저장이다.
+- `etr-run --gpio-alarm-config`는 명시한 Jetson BOARD 출력 핀과 극성을 사용한다. 외부 경보 명령은 기존 FSM 전이에서 실행한다. 설정한 핀을 비활성 상태로 준비하고 처리 종료 또는 출력 오류 시 비활성화와 해제를 시도한다. 성공 명령을 기록하며 실제 LED·부저의 반응은 현장에서 확인한다. [Orin 경보 설정](orin-runtime-setup.md#jetson-gpio-경보-옵션)
 - input, detector/pipeline config와 로컬 weight의 path·size·SHA-256을 summary provenance에 기록한다.
 - Ultralytics와 OpenCV는 lazy optional dependency라 pure core와 replay test는 ML package 없이 유지된다.
 - CLI는 누락된 local weight와 기존 비어 있지 않은 output을 거부한다. detection/decision/latency는 완료 frame마다 flush하며 source 중단 시 성공 summary를 남기지 않는다. 반환된 snapshot 실패도 action error로 집계한다. 모든 frame이 오류면 CLI exit2이며, 부분 오류는 summary로 별도 판단한다.

@@ -86,6 +86,7 @@ def build_run_parser() -> argparse.ArgumentParser:
         "--parallel-jpeg", action="store_true",
         help="Overlap candidate B3 snapshot encoding with inference; save only confirmed events.",
     )
+    parser.add_argument("--gpio-alarm-config", type=Path, help="Use explicit Jetson GPIO BOARD alarm outputs.")
     parser.add_argument("--relation-checkpoint", type=Path)
     parser.add_argument("--relation-device", default="cpu")
     return parser
@@ -128,6 +129,11 @@ def run_main(argv: Sequence[str] | None = None) -> int:
                 raise ValueError("--relation-checkpoint is only used by B4")
             relation = TorchRelationProvider(args.relation_checkpoint, device=args.relation_device)
         frames = _frame_source(args)
+        alarm = None
+        if args.gpio_alarm_config is not None:
+            from .gpio_alarm import JetsonGpioAlarm
+
+            alarm = JetsonGpioAlarm.load(args.gpio_alarm_config)
         summary = run_live_pipeline(
             frames,
             detector,
@@ -137,10 +143,12 @@ def run_main(argv: Sequence[str] | None = None) -> int:
             relation=relation,
             relation_threshold=relation.threshold if relation is not None else .5,
             parallel_jpeg=args.parallel_jpeg,
+            alarm_context=alarm,
             provenance={
                 **_provenance(args.input, args.detector_config, detector_config, rtsp_env=args.rtsp_env),
                 "pipeline_config": _file_record(args.pipeline_config),
                 "native_memory": native_memory,
+                **({"gpio_alarm_config": _file_record(args.gpio_alarm_config)} if alarm is not None else {}),
                 **({"relation_checkpoint": _file_record(args.relation_checkpoint), "relation_threshold": relation.threshold} if relation is not None else {}),
             },
         )
@@ -148,6 +156,8 @@ def run_main(argv: Sequence[str] | None = None) -> int:
         print(f"error: {exc}", file=sys.stderr)
         return 2
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
+    if alarm is not None and summary["action_error_count"]:
+        return 2
     return 0 if summary["frame_status_counts"].get("valid",0) else 2
 
 

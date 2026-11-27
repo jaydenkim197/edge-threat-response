@@ -62,6 +62,22 @@ class MockAlarm:
         )
 
 
+class RecordingAlarm:
+    """Record successful commands sent to an alarm driver."""
+
+    def __init__(self, driver: AlarmPort) -> None:
+        self._driver = driver
+        self._trace = MockAlarm()
+
+    @property
+    def signals(self) -> list[AlarmSignal]:
+        return self._trace.signals
+
+    def set_active(self, active: bool, frame: FrameDetections, event: ThreatEvent | None) -> None:
+        self._driver.set_active(active, frame, event)
+        self._trace.set_active(active, frame, event)
+
+
 class MemoryEventRecorder:
     def __init__(self) -> None:
         self.events: list[ThreatEvent] = []
