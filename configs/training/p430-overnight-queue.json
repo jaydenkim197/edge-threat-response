@@ -893,6 +893,39 @@
       "compare": "같은 초기 가중치·seed·draw 및 6타일 평가"
     },
     {
+      "id": "B-ALT05-BLUR-WIN",
+      "track": "B",
+      "node": "pc12",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "동일 D0에서 외부 CCTV 일부의 가우시안 블러 학습",
+      "after": ["A0"],
+      "approval": "B-ALT05-BLUR-WIN.json",
+      "compare": "PC14 무변환 대조와 동일 학습 추출, 라벨, 개발 분할 및 점수 규약"
+    },
+    {
+      "id": "B-ALT05-BLUR-CONTROL-WIN",
+      "track": "B",
+      "node": "pc14",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "동일 D0와 추출의 외부 CCTV 무변환 학습 대조",
+      "after": ["A0"],
+      "approval": "B-ALT05-BLUR-CONTROL-WIN.json",
+      "compare": "PC12 블러 팔과 같은 초기값, seed, 배치, 총 학습량 및 고정 개발 평가"
+    },
+    {
+      "id": "B-ALT01-ONE-CROP",
+      "track": "B",
+      "node": "pc14",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "기준 검출이 없는 영상에서 약한 후보 한 개만 확대 재검증",
+      "after": ["A0"],
+      "approval": "B-ALT01-ONE-CROP.json",
+      "compare": "동일 D1 및 타일, 점수만 보정, 추가 검출과 두 오탐 지표를 튜닝에서 확인"
+    },
+    {
       "id": "B-ALT12-GLOBAL-CONTRAST",
       "track": "B",
       "node": "pc12",
@@ -902,6 +935,17 @@
       "after": ["A0"],
       "approval": "B-ALT12-GLOBAL-CONTRAST.json",
       "compare": "튜닝의 11/19 TP 2개 이상 증가와 공통 재현율·음성 오탐 상한, 통과 시 고정 설정만 확인"
+    },
+    {
+      "id": "B-ALT12-GLOBAL-CONTRAST-R1",
+      "track": "B",
+      "node": "pc12",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "배치 어댑터를 맞춘 뒤 저대비 D1 통제 비교 재시도",
+      "after": ["A0"],
+      "approval": "B-ALT12-GLOBAL-CONTRAST-R1.json",
+      "compare": "동일 변환과 운영점 규약, 첫 실패 영수증 보존"
     },
     {
       "id": "B-ALT13",

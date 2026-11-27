@@ -10,7 +10,7 @@ from statistics import median
 from edge_threat_response.p430_workflow import MODEL_SHA, now, read, require, save, sha
 from p430_followup_actions import PLAN_SHA, pin_plan, site_receipt
 from run_p430_integration import paths
-from run_p430_site import BUDGET, development_rows, draw_parents, execute, input_paths, original_boxes
+from run_p430_site import BUDGET, development_rows, draw_parents, execute, input_paths, original_boxes, verify_inputs
 import run_p430_site
 
 
@@ -44,7 +44,7 @@ def profile(base, plan, evidence):
                     "limits": "Image-domain proxies; scene content differs and no codec cause is inferred."})
 
 
-def prepare_run(base, plan, settings, tag, transform=False, coco=False):
+def prepare_run(base, plan, settings, tag, transform=None, coco=False):
     node = settings["trainer_node"]
     work = base.parent / f"overnight-{tag}-{node}-20261127-v1"
     work.mkdir(exist_ok=False)
@@ -64,14 +64,18 @@ def prepare_run(base, plan, settings, tag, transform=False, coco=False):
             except OSError:
                 shutil.copyfile(origin, target)
     spec = {"budget": BUDGET}
-    if transform:
-        from PIL import Image, ImageEnhance
+    if transform is not None:
+        from PIL import Image, ImageEnhance, ImageFilter
 
+        require(transform in {"contrast", "blur"}, "Unknown training transform")
+        verify_inputs(work, plan, True)
         views = []
         for key, tiled in sorted(used):
             if plan["pool"][key]["domain"] != "cctv":
                 continue
-            original, original_label = input_paths(base, plan, key, tiled)
+            if transform == "blur" and int(key[0], 16) >= 8:
+                continue
+            original, original_label = input_paths(work, plan, key, tiled)
             meta = plan["tiles"][key] if tiled else plan["pool"][key]
             require(sha(original) == (meta["image_sha256"] if tiled else key)
                     and sha(original_label) == meta["label_sha256"], "External CCTV pair changed")
@@ -80,12 +84,16 @@ def prepare_run(base, plan, settings, tag, transform=False, coco=False):
             image.parent.mkdir(exist_ok=True, parents=True)
             label.parent.mkdir(exist_ok=True, parents=True)
             with Image.open(original) as pixels:
-                ImageEnhance.Contrast(pixels.convert("RGB")).enhance(.8).save(image)
+                rgb = pixels.convert("RGB")
+                changed = (ImageEnhance.Contrast(rgb).enhance(.8) if transform == "contrast"
+                           else rgb.filter(ImageFilter.GaussianBlur(radius=.8)))
+                changed.save(image)
             shutil.copyfile(original_label, label)
             views.append({"parent": key, "tiled": tiled, "image": name, "sha256": sha(image)})
         require(views, "No external CCTV training input available")
         save(work / "training-views.json", views)
         spec["training_views_sha256"] = sha(work / "training-views.json")
+        spec["training_transform"] = transform
     save(work / "plan.json", plan)
     release = {"variant": "followup", "seed": 3407, "plan_sha256": sha(work / "plan.json"),
          "protection_sha256": sha(work / "protection.json"), "runner_sha256": sha(Path(run_p430_site.__file__)),
@@ -135,7 +143,7 @@ if __name__ == "__main__":
     parser.add_argument("evidence", type=Path)
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--train-session", type=int, choices=(1, 2))
-    mode.add_argument("--degradation", choices=("control", "contrast"))
+    mode.add_argument("--degradation", choices=("control", "contrast", "blur"))
     mode.add_argument("--rf-control", action="store_true")
     args = parser.parse_args()
     settings = read(args.settings)
@@ -150,7 +158,7 @@ if __name__ == "__main__":
              "deck": "epoch-1 of pinned plan repeated each epoch", "initial_sha256": read(work / "release.json")["initial_sha256"]})
     elif args.degradation:
         work, node = prepare_run(base, plan, settings, f"alt05-{args.degradation}",
-                                 transform=args.degradation=="contrast")
+                                 transform=None if args.degradation == "control" else args.degradation)
         save(args.evidence.parent / "work.json", {"path": str(work), "plan_sha256": sha(work / "plan.json")})
         execute(work, node)
         save(args.evidence, {**site_receipt(work / f"{work.name}-{node}"), "degradation": args.degradation,
