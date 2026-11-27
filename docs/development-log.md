@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — Orin 단일 프레임 선명화 대조
+
+튜닝에서 두 오탐 상한을 적용했을 때 전체 107→94/161, 소형 79→67/105였고 Orin 검출 p95는 선명화 포함 120.97→174.80ms였다. 이 조건의 승격 운영점은 없었다. PC12와 PC14의 예정된 학습·평가는 계속한다. [비교와 입력 검증](../reports/training/p430-autonomous-2026-11-27/report.md#orin에서-한-번의-경계-선명화-비교)
+
 ## 2026-11-28 — Orin RT-DETRv2 R18 변환과 순차 6타일 지연 확인
 
 합성 입력에서 TensorRT와 CPU가 반환한 후보는 행 순서와 무관하게 허용치 안의 상대 후보를 모두 찾았다. 순차 6타일 p95는 353.99ms로 이 설정은 배포 지연 기준을 초과했다. PC12 움직임 보호와 PC14 R18 학습은 계속 진행 중이다. [보드 실측과 실행 상태](../reports/training/p430-autonomous-2026-11-27/report.md#orin의-rt-detrv2-r18-tensorrt-예비-검증)
