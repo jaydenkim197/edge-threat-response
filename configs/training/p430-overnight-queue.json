@@ -683,8 +683,18 @@
       "kind": "approved",
       "after": ["A-MIX70", "A-FUSION-P0"],
       "approval": "B-ALT01-CROP-PILOT.json",
-      "purpose": "중앙 영역 검수 학습 자료로 MIX70 후보 RGB 크롭 검증",
+      "purpose": "중앙 영역 검수 학습 자료로 MIX70 후보의 회색조 HOG 크롭 검증",
       "compare": "공통 후보·박스에서 점수만 변경, 튜닝에서 개선한 경우에만 개발 확인"
+    },
+    {
+      "id": "B-ALT01-MOBILENET-PILOT",
+      "track": "B",
+      "node": "pc13",
+      "kind": "approved",
+      "after": ["A-MIX70", "B-ALT01-CROP-PILOT"],
+      "approval": "B-ALT01-MOBILENET-PILOT.json",
+      "purpose": "동일 검수 후보에 동결 MobileNetV3-Small RGB 특징을 적용",
+      "compare": "MIX70과 동일 튜닝 후보에서 재현율·두 오탐 지표 비열화와 건수 개선 확인"
     },
     {
       "id": "B-ALT01",

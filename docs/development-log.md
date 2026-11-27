@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-27 — 원본 보간 결과와 RGB 크롭 비교
+
+PC13 원본 타일 튜닝에서 Lanczos는 작은 칼·전체 TP가 각각 1건 줄었고 bicubic은 두 검출·오탐 지표가 같았다. 같은 MIX70 후보에 적용한 MobileNetV3-Small RGB 특징도 오탐을 줄이지 못했다. 두 실험 모두 사전 기준에 미달해 개발 확인셋으로 넘기지 않았다. Orin에서는 승인 개발 파일로 D1 4Hz 장시간 기준 측정을 시작했다. [조건·결과·실기기 범위](../reports/training/p430-autonomous-2026-11-27/report.md)
+
 ## 2026-11-27 — 원본 타일 축소 보간법 비교
 
 과거의 축소·복원 실험과 구분하기 위해 PC13 CPU에서 동일 D1과 원본 타일을 기본 보간·Lanczos·bicubic으로 비교하는 Worker를 시작했다. 입력 크기와 원좌표 필터를 유지하고 튜닝에서 고른 조건만 개발 확인셋으로 넘긴다. 회귀 테스트와 실행 PID를 확인했다. [비교 조건](../reports/training/p430-autonomous-2026-11-27/report.md#b-alt07-native-resize-실행)
