@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 4K 세 구간 결과와 대비 변형 대조군 가동
+
+Orin의 4K 장시간 파일 p95는 248.28·252.16·246.39 ms다. 7,199/7,200 유효 슬롯과 동일 JPEG 450건, RAM·큐 안정성을 확인했으나 두 번째 구간이 지연 기준을 넘었다. PC12에서는 승인 외부 CCTV의 대비만 0.80배로 낮추는 학습 Worker를 시작했다. [실측과 학습 설정](../reports/training/p430-autonomous-2026-11-27/report.md#cuda-graph와-병렬-jpeg의-세-구간-최종-결과)
+
 ## 2026-11-28 — 사람 검출 CUDA Graph 조건부 실측 등록
 
 동일 사람 검출의 FP32·640 설정에서 원래 실행과 CUDA Graph의 24장 짝 대조를 Orin에 등록했다. 출력이 같고 사람 검출 p95가 3 ms 이상 줄 때만 4K 전체 파일 및 장시간 시험으로 이어진다. 기존 표준 CLI 파일 대조가 끝나면 같은 GPU 잠금으로 시작한다. [승격 기준과 실행 순서](../reports/training/p430-autonomous-2026-11-27/report.md#기존-사람-검출의-cuda-graph-대조-등록)
