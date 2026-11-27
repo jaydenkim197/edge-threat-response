@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — PC12 초기 bias 학습률 대조 등록
+
+승인 원본을 그대로 사용하고 bias warmup 시작값만 0.1→0.0001로 낮추는 PC12 학습을 등록했다. 기존 움직임 보호 학습·튜닝 뒤 실행하며, 승인 튜닝을 통과한 후보 한 개만 공통 확인에 사용한다. [실행 계약과 확인 조건](../reports/training/p430-autonomous-2026-11-27/report.md#초기-bias-학습률을-낮춘-대조-등록)
+
 ## 2026-11-28 — 교차 세션 합성의 초기 bias 차이와 커널 대조
 
 네 초기 체크포인트에서 합성·무변환 학습의 가중치 차이 제곱합 중 99.94–99.97%가 BatchNorm bias에 있었다. 커널 차이 일부만 D1에 적용한 두 팔은 승인 튜닝에서 같은 오탐 상한의 전체 검출이 107→94·96/161로 줄었다. 승격 운영점은 없었다. [가중치 진단과 Orin 비교](../reports/training/p430-autonomous-2026-11-27/report.md#교차-세션-합성의-가중치-차이와-d1-합성곱-대조)
