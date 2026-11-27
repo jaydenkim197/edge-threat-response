@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 4K 병렬 JPEG 및 CUDA Graph 결합 시험
+
+병렬 JPEG는 4K 파일 240슬롯·4.00 FPS에서 전체 p95 253.83 ms를 기록했다. CUDA Graph를 결합하면 p95 249.05 ms였고 60초 예열·10분 3회의 장시간 파일 검증을 시작했다. 두 실행 각각 경보 15건의 JPEG 바이트 일치와 슬롯 누락·오류 0건을 확인했다. [결과와 자동 실행 조건](../reports/training/p430-autonomous-2026-11-27/report.md#4k-병렬-jpeg-완료-및-cuda-graph-결합)
+
 ## 2026-11-28 — 4K 사전 필터·CUDA Graph·JPEG 비용 분리
 
 사전 필터의 4K 파일 p95는 전체 313.77 ms, 경보 없는 구간 247.51 ms였다. CUDA Graph는 24장 검출을 보존하며 칼 검출 p95를 129.16→118.34 ms로 줄였다. NVJPEG는 속도·화질 기준을 함께 통과하지 못했다. 같은 JPEG를 추론 중 생성하고 경보 전에 완료를 확인하는 후속 4K 파일 시험을 시작했다. [실측과 실행 조건](../reports/training/p430-autonomous-2026-11-27/report.md#4k-후보-사전-필터와-고정-모델-cuda-graph)
