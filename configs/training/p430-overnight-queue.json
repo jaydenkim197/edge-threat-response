@@ -939,11 +939,11 @@
     {
       "id": "B-ALT04-AR00-WIN",
       "track": "B",
-      "node": "pc14",
+      "node": "pc12",
       "kind": "approved",
       "gpu": true,
       "purpose": "Windows RF-DETR와 같은 학습 추출에서 COCO YOLO26n 대조 학습",
-      "after": ["B-ALT04-R4-WIN"],
+      "after": ["A0"],
       "approval": "B-ALT04-AR00-WIN.json",
       "compare": "첫 epoch의 8192회 추출·개발 분할·입력 640·12 epoch·평가 규약 일치, 모델별 전처리와 최적화 차이 기록"
     },

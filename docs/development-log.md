@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 블러 비교 완료와 RF-DETR 대조군 병렬 실행
+
+PC12 블러 타일은 개발 확인에서 작은 칼 51/58·전체 96/140·음성 오탐 4/147을 기록했다. Orin에서 별도 튜닝을 고정해 다시 확인한 결과는 46/58·81/140·2/147로, D1을 예비 후보로 유지했다. PC14의 미실행 COCO YOLO26n 대조군을 PC12로 옮겨 학습을 시작했고 PC14 RF-DETR은 계속 실행했다. [고정 비교](../reports/training/p430-autonomous-2026-11-27/report.md#블러-재학습-공통-평가-완료) · [장비 배정](training-resource-schedule.md#1128-rf-detr-windows-대체-실행)
+
 ## 2026-11-28 — 블러 학습 노출 검증과 4K 지연 분해
 
 PC12 블러 재학습이 12 epoch를 완료했고 실제 변환 입력 15,528회가 계획과 일치했다. 전체 화면 개발 확인의 검출은 무변환 56/140에서 블러 39/140으로 줄었고 타일 평가는 진행 중이다. Orin의 4K 소프트웨어 경로는 전체 p95 310.16ms, 경보가 없는 프레임도 p95 282.94ms였다. [학습 영수증과 단계별 지연](../reports/training/p430-autonomous-2026-11-27/report.md#소프트웨어-경로의-지연-분해)
