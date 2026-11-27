@@ -53,9 +53,11 @@ def prepare_run(base, plan, settings, tag, transform=False, coco=False):
     for key, tiled in sorted(used):
         if not tiled:
             continue
-        for origin, target in zip(input_paths(base, plan, key, True), input_paths(work, plan, key, True), strict=True):
-            if not origin.is_file():
-                continue
+        originals = input_paths(base, plan, key, True)
+        # Site training verifies every pair and regenerates missing pairs from the pinned parent.
+        if not all(path.is_file() for path in originals):
+            continue
+        for origin, target in zip(originals, input_paths(work, plan, key, True), strict=True):
             target.parent.mkdir(exist_ok=True, parents=True)
             try:
                 os.link(origin, target)
@@ -119,7 +121,7 @@ def cross(base, plan, settings, train_session, evidence):
         sources[row["domain"]].append(row)
     plan["draws"] = draw_parents(sources, plan["tiles"], BUDGET)
     plan["summary"]["parent_plan_sha256"] = PLAN_SHA
-    work, node = prepare_run(base, plan, settings, f"session-cross-{train_session}")
+    work, node = prepare_run(base, plan, settings, f"session-cross-{train_session}-r1")
     save(evidence.parent / "work.json", {"path": str(work), "plan_sha256": sha(work / "plan.json"),
                                          "source_holdout": sorted(held), "tune": len(tuning), "check": len(check)})
     execute(work, node)

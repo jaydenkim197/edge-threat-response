@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-27 — 촬영 교차 학습 재시작과 Orin 지연 분해
+
+PC12 첫 두 시도가 타일 파일 경로 오류로 종료됐다. 승인 원본의 타일 재생성과 해시 검증을 재사용해 PC12·PC14에서 각 방향의 1/12 epoch 진입을 확인했다. MIX70 저점수 양성 보강은 공통 개발 기준에 미달했다. Orin 4Hz 장시간 파일 측정은 254.0~254.5ms로 250ms를 초과했다. 같은 출력이 관측된 타일 후보 사전 필터를 30분 파일 재검증에 올렸다. [학습·Orin 결과와 재개 지점](../reports/training/p430-autonomous-2026-11-27/report.md)
+
 ## 2026-11-27 — RF-DETR 최소 학습과 CCTV 교차 실험 큐 등록
 
 독립 RF-DETR 환경을 구축하고 COCO 가중치 해시를 확인했다. 기본 검증 백엔드 충돌을 CPU에서 재현해 대체 백엔드로 작은 학습과 체크포인트 저장을 검증했다. 연구실 #2의 대비 변형·무변환 대조와 RF-DETR 재시도·동일 추출 YOLO 대조를 등록했다. PC12에는 양방향 촬영 교차 학습을 등록했다. [실행 순서·검증과 비교 한계](training-resource-schedule.md#1127-실제-착수와-우선순위-변경)

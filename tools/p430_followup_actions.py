@@ -22,6 +22,11 @@ from run_p430_site_diagnostic import merge
 
 PLAN_SHA = "8a92eefb8f4bf275d5ace1aae46edb37ad7c6fce02a0484e497fec96deb0a28c"
 D1_SHA = "212a4b80e44674a3863daf240e127af797ac34f235a6e8356f23936b6348d190"
+POS_REPLAY_SCOPE = "development_train_review_positive_replay"
+POS_REPLAY_BUDGET = {"p430": 5734, "cctv": 1638, "m2": 820}
+POS_REPLAY_TILES = .48
+POS_REPLAY_FRACTION = .10
+POS_REPLAY_CAP = 2
 
 
 def pin_plan(base):
@@ -148,6 +153,82 @@ def replace_reviewed_negatives(deck, pool, keys, fraction):
     return replacements
 
 
+def replace_reviewed_positives(deck, pool, tiles, candidates, fraction):
+    require(fraction == POS_REPLAY_FRACTION, "Unexpected matched positive replay fraction")
+
+    def index(rows):
+        indexed = {}
+        for record in rows:
+            key = record["image_sha256"]
+            parent = pool.get(key, {})
+            view = tiles.get(key, {})
+            group, size = record["source_video_sha256"], record["short_side_bin"]
+            require(key not in indexed and parent.get("domain") == "p430" and parent.get("n") == 1
+                    and parent["source_group"] == group and parent["label_sha256"] == record["label_sha256"]
+                    and view.get("image_sha256") == record["tile_image_sha256"]
+                    and view.get("label_sha256") == record["tile_label_sha256"]
+                    and bool(view) and type(size) is int and 0 <= size <= 3,
+                    "Positive replay row differs from the pinned labelled P430 train tile")
+            indexed[key] = group, size
+        return indexed
+
+    target_index = index(candidates["candidates"])
+    donors = index(candidates["normal_donors"])
+    require(target_index and donors and not donors.keys() & target_index.keys(),
+            "Matched positive replay requires disjoint hard targets and ordinary donors")
+    targets = defaultdict(list)
+    for key, stratum in target_index.items():
+        targets[stratum].append(key)
+
+    rng = random.Random(3407)
+    replacements = []
+    for epoch in deck:
+        slots = defaultdict(list)
+        for position, (key, tiled) in enumerate(epoch):
+            if tiled and key in donors:
+                slots[donors[key]].append(position)
+        replaced = 0
+        for stratum, hard_keys in sorted(targets.items()):
+            eligible = slots[stratum]
+            count = min(round(fraction * len(eligible)), POS_REPLAY_CAP * len(hard_keys))
+            sequence = sorted(hard_keys)
+            rng.shuffle(sequence)
+            for step, position in enumerate(rng.sample(eligible, count)):
+                epoch[position] = (sequence[step % len(sequence)], True)
+            replaced += count
+        require(replaced > 0, "No equivalent reviewed positive slots were available")
+        replacements.append(replaced)
+    return replacements
+
+
+def approved_positive_replay(job, settings, evidence, plan):
+    approval = read(Path(settings["approvals"]) / job["approval"])
+    mines = [evidence[key] for key in job["after"]
+             if evidence[key].get("data", {}).get("scope") == POS_REPLAY_SCOPE]
+    require(len(mines) == 1 and mines[0]["status"] == "COMPLETED", "Completed positive mining receipt required")
+    mined = mines[0]["data"]
+    mix70 = evidence["A-MIX70"]
+    recipe = mined["recipe"]
+    keys = approval["image_sha256"]
+    target_keys = {record["image_sha256"] for record in mined["candidates"]}
+    donor_keys = {record["image_sha256"] for record in mined["normal_donors"]}
+    held = set().union(*map(set, plan["validation"].values()))
+    require(approval["approved_development"] is True and mined["schema_version"] == 1
+            and approval["base_plan_sha256"] == mined["base_plan_sha256"] == PLAN_SHA
+            and approval["reviewed_manifest_sha256"] == mined["reviewed_manifest_sha256"] == SOURCE_SHA
+            and approval["mine_result_sha256"] == mines[0]["result_sha256"]
+            and mix70["status"] == "COMPLETED"
+            and mined["mix70_checkpoint_sha256"] == mix70["data"]["checkpoint_sha256"]
+            and recipe["budget"] == POS_REPLAY_BUDGET and recipe["tile_share"] == POS_REPLAY_TILES
+            and recipe["tile_policy"] == "pinned-plan-native-768x640" and recipe["seed"] == 3407
+            and recipe["target_fraction"] == POS_REPLAY_FRACTION
+            and recipe["max_extra_uses_per_parent_per_epoch"] == POS_REPLAY_CAP
+            and len(keys) == len(target_keys) == len(mined["candidates"]) and set(keys) == target_keys
+            and not held.intersection(target_keys | donor_keys),
+            "Approved positive replay does not match the pin, mining receipt or candidate set")
+    return mined, mines[0]["result_sha256"]
+
+
 def setup_train(job, settings, base, plan, output, evidence):
     params=dict(job.get("parameters",{}))
     work=base.parent/f"overnight-{job['id'].lower()}-{output.name}"
@@ -159,6 +240,12 @@ def setup_train(job, settings, base, plan, output, evidence):
     protected={protect["edited_sha256"],*protect.get("original_sha256",[])}
     require(all(row["source_group"] not in protected and key not in protected for key,row in plan["pool"].items()),
             "Protected source appeared in the original train pool")
+    positive_replay=params.pop("hard_positive",False)
+    positive_fraction=params.pop("hard_positive_fraction",None)
+    if positive_replay:
+        require(params == {"budget": POS_REPLAY_BUDGET, "tile_share": POS_REPLAY_TILES}
+                and positive_fraction == POS_REPLAY_FRACTION,
+                "Positive replay must keep the other MIX70 training parameters fixed")
     window=evidence.get("A-TILE-GRID",{}).get("data",{}).get("window") if params.pop("best_tiles",False) else None
     share=params.pop("tile_share",None)
     if window:
@@ -203,6 +290,13 @@ def setup_train(job, settings, base, plan, output, evidence):
                 require(eligible,"No equivalent negative slot for the approved images")
                 for i in rng.sample(eligible,min(len(keys),max(1,len(eligible)//5))):
                     epoch[i]=(rng.choice(keys),False)
+    if positive_replay:
+        mined, mine_sha = approved_positive_replay(job, settings, evidence, plan)
+        plan["summary"]["hard_positive_replacements"] = replace_reviewed_positives(
+            deck, plan["pool"], plan["tiles"], mined, positive_fraction
+        )
+        plan["summary"]["hard_positive_fraction"] = positive_fraction
+        plan["summary"]["hard_positive_mining_sha256"] = mine_sha
     if not window:
         for key in {key for epoch in deck for key,tiled in epoch if tiled}:
             for folder,suffix in (("images",".jpg"),("labels",".txt")):
