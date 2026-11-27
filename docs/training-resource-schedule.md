@@ -45,6 +45,12 @@ Track A는 YOLO 검출기를 최적화하고, Track B는 대안 탐지 방법을
 - 연구실 등록 순서는 대비 변형 → `B-ALT04-R4` 실행 가능 시 RF-DETR 최소 동작·본학습 → 열화 무변환 대조 → RF-DETR 성공 시 `B-ALT04-AR00`이다. RF-DETR 훈련·저장·재로딩 단계는 ONNX 변환과 별도다. 완료된 후보의 개발 지표와 처리량을 확인한 뒤 11/29 12:00 KST까지 평가 시간을 확보할 수 있는 경우에만 두 번째 대형 구조를 시작한다.
 - 수정한 백엔드가 승인 입력의 320px CPU 최소 학습에서 1 epoch와 체크포인트 저장을 17:06 KST에 완료했다. 칼 클래스 재로딩과 예측, 320px ONNX 내보내기·형식 검증도 확인했다. 3090에서는 640px 최소 학습·재로딩·예측을 통과하면 같은 작업에서 COCO 초기값부터 12 epoch 학습을 시작한다. 640px CUDA 학습·Orin 추론 호환성은 별도 검증 항목이다.
 
+#### 11/28 RF-DETR Windows 대체 실행
+
+- RF-DETR 1.11.2의 공식 Small COCO 체크포인트를 해시로 대조했다. Windows에서는 같은 볼륨의 COCO 입력을 하드링크로 준비하고 공용 RTX 3060 학습 잠금을 확보한다. 로컬 Windows Python 3.11과 PyTorch 2.14.0 CPU에서 승인된 학습·튜닝 자료 각 8장의 320px 1 epoch 학습, 체크포인트 재로딩과 칼 클래스 추론을 확인했다. 결과 SHA-256은 `45605a604a5393e2daeea106cc48da31304bc435006d91ff5bc1667debea41f`다. [공식 설치 안내](https://rfdetr.roboflow.com/latest/getting-started/install/)
+- PC14에 해시로 고정한 Windows 휠 58개를 별도 디렉터리에 설치했다. 기존 Python 3.12·PyTorch 2.6.0+cu124·TorchVision 0.21.0+cu124에서 RF-DETR, 검증 백엔드, NumPy–Torch 변환을 확인했다. 설치 후 환경 SHA-256은 `719d3f0b19f735c36324e77ad24c2bb25d1c9e0de2be9350468d47146e47665f`다.
+- PC14의 실제 Queue에 `B-ALT04-R4-WIN`을 등록하고 환경·가중치·실행기·승인 계획의 해시를 대조해 실행을 활성화했다. 기존 무변환 대조가 완료되면 같은 GPU 잠금 아래 640px 최소 검증을 실행한다. 통과하면 기존 R4와 동일 데이터·추출·초기값에서 12 epoch 본학습과 공통 평가를 이어간다. 연구실과 Windows의 실행 환경 차이는 결과 표에 남긴다. 11/24 독립 자료는 두 경로에서 제외한다.
+
 ## GPU 처리량과 배치 검증
 
 공통 [벤치마크](../tools/benchmark_yolo_training.py)는 YOLO26n·640·1 class·FP32(TF32 끔)의 CUDA NMS, forward, loss, backward, AdamW step을 테스트한다. 같은 seed, GPU 생성 텐서, 2 warm-up + 6 timed step, 배치별 중앙값을 사용했다. 학습 입력을 서버로 보내지 않고 10개 GPU에서 서로 다른 노드의 성능을 확인했다. 결과 표는 [합성 벤치마크 기록](training-gpu-benchmark-2026-11-26.md)에 둔다. 실제 로더·타일·검증·IO는 별도로 측정한다.

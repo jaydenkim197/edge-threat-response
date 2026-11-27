@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — RF-DETR Windows 입력과 대체 Queue
+
+RF-DETR의 Windows COCO 입력을 하드링크로 준비하고 공용 GPU 잠금을 연동했다. 로컬 Windows CPU에서 승인 입력의 1 epoch, 체크포인트 재로딩 및 칼 클래스 추론을 검증했다. PC14에는 격리 패키지 58개를 설치해 호환성을 확인했고, 기존 무변환 대조 이후 GPU 검증과 본학습을 실행할 Queue를 활성화했다. Orin의 0.001 하한 파일 시험 첫 10분은 4.00 FPS·누락 0%·p95 219.82 ms였다. [실행과 검증 범위](training-resource-schedule.md#1128-rf-detr-windows-대체-실행)
+
 ## 2026-11-28 — 저점수 재평가와 0.001 Orin 전체 경로
 
 학습용 761장으로 적합한 기하 점수·MobileNet 검증기는 튜닝에서 전체 검출이 D1의 113개에서 각각 97·99개로 줄었다. 크기별 박스 위치 보정은 AP50–95 +1.05%p와 FP 박스 +1을 기록했다. 세 방식 모두 다음 평가 조건에 미달했다. Orin 전체 파일 경로의 0.001 하한 예비 시험은 4.00 FPS·누락 0%·p95 218.98 ms였고 같은 설정으로 장시간 시험을 시작했다. [결과와 실행 기록](../reports/training/p430-autonomous-2026-11-27/report.md)

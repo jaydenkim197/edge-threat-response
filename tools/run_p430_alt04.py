@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from collections import Counter
+from contextlib import nullcontext
 from pathlib import Path
 import os
 
@@ -9,7 +10,8 @@ from edge_threat_response.detector_comparison import canonical_prediction, coco_
 from edge_threat_response.p430_evaluation import make_truth, score_predictions
 from edge_threat_response.p430_tile_detector import tile_nms_indices, tile_regions, touches_internal_tile_edge
 from edge_threat_response.p430_workflow import now, read, require, save, sha
-from p430_followup_actions import D1_SHA, PLAN_SHA, locked, pin_plan
+from edge_threat_response.training import gpu_training_lock
+from p430_followup_actions import D1_SHA, PLAN_SHA, gpu_name, locked, pin_plan
 from run_p430_site import development_rows, input_paths, original_boxes
 
 
@@ -27,7 +29,11 @@ def export_coco(folder, items):
         filename = f"{image_id:06d}{image.suffix}"
         with Image.open(image) as pixels:
             width, height = pixels.size
-        (folder / filename).symlink_to(image)
+        target = folder / filename
+        if os.name == "nt":
+            os.link(image, target)
+        else:
+            target.symlink_to(image)
         images.append({"id": image_id, "file_name": filename, "width": width, "height": height})
         for x, y, w, h in boxes:
             left, top = max(0., (x - w / 2) * width), max(0., (y - h / 2) * height)
@@ -110,12 +116,22 @@ def fit(dataset, output, initial, epochs):
 
 
 def run(args):
+    settings = read(args.settings)
+    lock = (
+        gpu_training_lock(Path(settings["base"]).parent / "training" / gpu_name(settings), owner="RF-DETR")
+        if os.name == "nt" else nullcontext()
+    )
+    with lock:
+        train_and_evaluate(args, settings)
+
+
+def train_and_evaluate(args, settings):
     import importlib.metadata
     import torch
     from rfdetr import RFDETRSmall
     from edge_threat_response.replay import write_jsonl
 
-    base, output = Path(read(args.settings)["base"]), args.output.resolve()
+    base, output = Path(settings["base"]), args.output.resolve()
     output.mkdir(exist_ok=False)
     require(importlib.metadata.version("rfdetr") == "1.11.2" and torch.cuda.device_count() == 1
             and os.environ.get("CUDA_VISIBLE_DEVICES", "").startswith("GPU-"), "Expected pinned RF-DETR and one GPU")

@@ -915,6 +915,17 @@
       "compare": "PC12 블러 팔과 같은 초기값, seed, 배치, 총 학습량 및 고정 개발 평가"
     },
     {
+      "id": "B-ALT04-R4-WIN",
+      "track": "B",
+      "node": "pc14",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "연구실 접근이 지연될 때 RF-DETR Small의 640px 최소 GPU 검증과 본학습",
+      "after": ["B-ALT05-BLUR-CONTROL-WIN"],
+      "approval": "B-ALT04-R4-WIN.json",
+      "compare": "연구실 R4와 동일 COCO 초기값·추출·예산·임계값 규약, Windows CUDA 스택 차이 별도 기록"
+    },
+    {
       "id": "B-ALT01-ONE-CROP",
       "track": "B",
       "node": "pc14",
