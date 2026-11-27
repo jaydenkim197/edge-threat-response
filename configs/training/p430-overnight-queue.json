@@ -733,6 +733,17 @@
       "compare": "같은 출처별 예산과 타일 해시 유지, 기존 실패 보존"
     },
     {
+      "id": "A-D1-PREFILTER-PARITY",
+      "track": "A",
+      "node": "pc14",
+      "kind": "approved",
+      "gpu": true,
+      "purpose": "D1 타일 사전 필터의 고정 운영점 출력 동일성 확인",
+      "after": ["A0"],
+      "approval": "A-D1-PREFILTER-PARITY.json",
+      "compare": "고정 출력 임계값에서 개발 튜닝 298장 및 확인 287장의 좌표·점수·순서 일치"
+    },
+    {
       "id": "A-TENSORRT",
       "track": "A",
       "node": "lab",
