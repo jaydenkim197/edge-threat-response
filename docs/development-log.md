@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 현장 4K 벤치마크의 디스크 저장·GPIO 명령
+
+P430 벤치마크에서 표준 실행기의 병렬 JPEG와 GPIO 명령을 함께 측정할 수 있게 했다. 가상 검증에서 사건별 파일 저장과 출력 오류 판정을 확인했다. 현장 카메라와 경보 응답은 별도로 검증한다. [현장 실행 절차](orin-runtime-setup.md#현장-4k-벤치마크)
+
 ## 2026-11-28 — Jetson GPIO 경보 경로와 4K 첫 구간
 
 표준 실행기의 선택 GPIO 출력을 가상 드라이버로 검증했다. Orin 시스템에서 Jetson.GPIO 2.1.13과 보드 인식을 확인했고 실제 핀·배선은 현장 검증에서 준비한다. 두 검출기 CUDA Graph의 첫 10분은 4.00 FPS, p95 228.84 ms, 누락·오류 0건으로 끝났다. [설정과 파일 측정](../reports/training/p430-autonomous-2026-11-27/report.md#gpio-경보-경로와-두-검출기-graph-첫-장시간-구간)

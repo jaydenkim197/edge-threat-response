@@ -121,3 +121,17 @@ smaps의 Rss/Pss_Anon/AnonHugePages는 warmup 이후와 종료 시에만 기록�
 `etr-run --gpio-alarm-config <로컬 JSON 경로>`에서 사용할 출력만 지정한다. JSON은 정수 `schema_version` 1과 `outputs` 배열을 갖는다. 각 출력에는 장비에서 확인한 헤더 번호 `board_pin`과 동작 극성 `active_low`를 넣는다. BOARD 헤더 번호, pinmux, 부하·전압 및 비활성 상태는 해당 캐리어 보드와 경보 회로 사양으로 확인한다. [NVIDIA Orin Nano 하드웨어 안내](https://docs.nvidia.com/jetson/orin-nano-devkit/user-guide/latest/hardware_layout.html)
 
 2026-11-28 Orin의 시스템 Python에서 NVIDIA Jetson.GPIO 2.1.13이 `JETSON_ORIN_NANO`를 인식했고 접속 계정의 GPIO 장치 읽기·쓰기 권한을 조회했다. GPU 가상환경에서 이 모듈을 읽으려면 현장 통합 시 런타임 import 경로를 확인한다. 기본 모드는 모의 경보다. GPIO 설정으로 실행하면 summary의 `alarm_signals`는 드라이버가 성공한 명령이고 `provenance.gpio_alarm_config`에 설정 파일의 해시가 남는다. 현장에서 배선과 실제 응답을 확인해야 한다. [Jetson.GPIO 운영 문서](https://github.com/NVIDIA/jetson-gpio/blob/master/README.md)
+
+### 현장 4K 벤치마크
+
+P430 4K main과 현장 핀 연결을 확인한 뒤 Orin에서 아래 명령을 사용한다. 입력 JSON은 작업자가 보관하는 비공개 파일이다. 두 CUDA Graph를 비교할 때는 사람·칼 양쪽에 `"cuda_graph": true`인 검출기 설정을 사용한다.
+
+```bash
+cd ~/edge-threat-response
+PYTHONPATH=src .venv-orin/bin/python tools/p430_orin_j_benchmark.py \
+  "$P430_CONNECTION_JSON" "$DETECTOR_JSON" "$PIPELINE_JSON" "$J_OUTPUT_DIR" \
+  --ram-drift-mib 64 --latency-drift-ms 10 --decoder-threads 4 --opencv-threads 2 \
+  --write-snapshots --parallel-jpeg --gpio-alarm-config "$GPIO_CONFIG_JSON"
+```
+
+`--write-snapshots`를 지정하면 표준 실행기의 사건 JPEG 저장을 지연에 포함한다. 결과 폴더는 새로 만들며, 검증용으로 승인된 장면의 JPEG·사건 기록을 로컬에 보관한다. GPIO 구성은 활성화 명령의 성공 건수와 사건 수를 비교한다. `live_j_gpio_command_path_pass`를 충족하더라도 현장에서 실제 경보의 동작과 해제를 관찰해 별도 기록한다. 기존 모의 경보·메모리 JPEG 비교에는 세 출력 옵션을 생략한다.

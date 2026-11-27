@@ -17,7 +17,7 @@ from .config import PipelineConfig
 from .detector import CanonicalDetector, DetectorInference
 from .domain import AblationMode, FrameDetections, FrameStatus
 from .media import CurrentFrameSnapshot, FramePacket
-from .pipeline import ThreatPipeline
+from .pipeline import FrameResult, ThreatPipeline
 from .ports import AlarmPort, JsonlEventRecorder, MockAlarm, RecordingAlarm
 from .relations import RelationProvider
 
@@ -31,6 +31,30 @@ def frame_from_inference(packet: FramePacket, result: DetectorInference) -> Fram
         detections=result.detections if result.status is FrameStatus.VALID else (),
         error=result.error if result.status is FrameStatus.DETECTOR_ERROR else None,
     )
+
+
+def process_live_frame(
+    packet: FramePacket,
+    detector: CanonicalDetector,
+    pipeline: ThreatPipeline,
+    snapshot: CurrentFrameSnapshot,
+    *,
+    encoder: ThreadPoolExecutor | None = None,
+    relation: RelationProvider | None = None,
+) -> tuple[DetectorInference, FrameResult]:
+    jpeg = None
+    if encoder is not None and pipeline.b3_may_enter_confirmed_next():
+        jpeg = encoder.submit(snapshot.encode_jpeg, packet.image)
+    try:
+        inference = detector.infer(packet.image)
+        snapshot.bind(packet, jpeg=jpeg)
+        if relation is not None and hasattr(relation, "bind"):
+            relation.bind(packet)
+        return inference, pipeline.process(frame_from_inference(packet, inference))
+    finally:
+        if jpeg is not None and not jpeg.cancel():
+            # Reap unused work before the next frame. Event failures are recorded by the pipeline.
+            jpeg.exception()
 
 
 def run_detection_stream(
@@ -113,21 +137,10 @@ def run_live_pipeline(
         )
         for packet in islice(frames,max_frames):
             started = time.perf_counter()
-            jpeg = None
-            if encoder is not None and pipeline.b3_may_enter_confirmed_next():
-                jpeg = encoder.submit(snapshot.encode_jpeg, packet.image)
-            try:
-                inference = detector.infer(packet.image)
-                frame = frame_from_inference(packet,inference)
-                snapshot.bind(packet, jpeg=jpeg)
-                if relation is not None and hasattr(relation, "bind"):
-                    relation.bind(packet)
-                decision = pipeline.process(frame)
-            finally:
-                if jpeg is not None and not jpeg.cancel():
-                    # Reap unused work before the next frame. Snapshot errors at
-                    # a real event are already recorded by the pipeline.
-                    jpeg.exception()
+            inference, decision = process_live_frame(
+                packet, detector, pipeline, snapshot, encoder=encoder, relation=relation,
+            )
+            frame = decision.frame
             processing_ms = (time.perf_counter()-started)*1000
             _write_row(detections,_frame_to_dict(frame))
             _write_row(decisions,decision.to_dict())
