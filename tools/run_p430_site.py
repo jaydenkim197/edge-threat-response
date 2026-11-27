@@ -27,6 +27,16 @@ DRAWS = sum(BUDGET.values())
 FOLDS = ("ee22020ec86614adbade9472f23c79e2fe4942ddd6955661109d6840e52d5123",
          "63a32f9a7cb1db4d1957cce7373f37ce065dee40de4d6adb543f69680d86179b")
 GUARD = 10
+DETAIL_SOURCE = "e266d651798b48ac15bd3aec4fd4fbad02933ae2f6ec7cefc6a1f4880caece29"
+
+
+def eligible_training_view(key, parent, transform):
+    if transform == "p430-detail":
+        return (parent["domain"] == "p430" and parent["session"] == 1
+                and parent["source_group"] == DETAIL_SOURCE and int(key[0], 16) < 8)
+    if transform == "blur":
+        return parent["domain"] == "cctv" and int(key[0], 16) < 8
+    return transform == "contrast" and parent["domain"] == "cctv"
 
 
 def split_development(rows):
@@ -570,9 +580,11 @@ def execute(work,node, *, recovery=False):
                     views_file=work/"training-views.json"
                     require(sha(views_file)==spec["training_views_sha256"],"Augmented training views changed")
                     views=read(views_file)
+                    transform=spec.get("training_transform")
                     for item in views:
                         key,use=item["parent"],item["tiled"]
-                        require(plan["pool"][key]["domain"]=="cctv","Only external CCTV training may be transformed")
+                        require(eligible_training_view(key,plan["pool"][key],transform),
+                                "Training view is outside its approved transform cohort")
                         origin,source_label=input_paths(work,plan,key,use)
                         image=work/"views/images"/item["image"]
                         label=work/"views/labels"/image.with_suffix(".txt").name
@@ -582,6 +594,10 @@ def execute(work,node, *, recovery=False):
                         replacements[origin]=image
                     require(replacements and replacements.keys() <= set().union(*map(set,geometry)),
                             "Missing transformed sources or sources outside the training draws")
+                    if transform == "p430-detail":
+                        expected={input_paths(work,plan,k,tiled and use)[0] for epoch in plan["draws"]
+                                  for k,use in epoch if eligible_training_view(k,plan["pool"][k],transform)}
+                        require(replacements.keys()==expected,"P430 detail views do not match the full pinned cohort")
                     geometry=[[replacements.get(image,image) for image in epoch] for epoch in geometry]
                 eval_list=[Path(r["image_file"]) for r in val["tune"]]
                 for name,files in (("train",sorted(set().union(*map(set,geometry)))),("val",eval_list)):

@@ -13,6 +13,18 @@ from edge_threat_response.p430_workflow import read
 
 
 class TrainingViewTests(unittest.TestCase):
+    def test_p430_detail_is_restricted_to_pinned_training_source(self):
+        selected = {"domain": "p430", "session": 1, "source_group": site.DETAIL_SOURCE}
+        self.assertTrue(site.eligible_training_view("7a", selected, "p430-detail"))
+        for wrong in ({**selected, "session": 2}, {**selected, "source_group": "other"},
+                      {**selected, "domain": "cctv"}):
+            self.assertFalse(site.eligible_training_view("7a", wrong, "p430-detail"))
+        self.assertFalse(site.eligible_training_view("8a", selected, "p430-detail"))
+        self.assertFalse(site.eligible_training_view("7a", selected, "blur"))
+        self.assertTrue(site.eligible_training_view("7a", {"domain": "cctv"}, "blur"))
+        self.assertTrue(site.eligible_training_view("8a", {"domain": "cctv"}, "contrast"))
+        self.assertFalse(site.eligible_training_view("7a", selected, None))
+
     def test_stale_runner_cannot_start_transformed_training(self):
         with TemporaryDirectory() as temp:
             base = Path(temp) / "site"

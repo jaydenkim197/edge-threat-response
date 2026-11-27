@@ -11,8 +11,20 @@ from statistics import median
 from edge_threat_response.p430_workflow import MODEL_SHA, now, read, require, save, sha
 from p430_followup_actions import PLAN_SHA, pin_plan, site_receipt
 from run_p430_integration import paths
-from run_p430_site import BUDGET, development_rows, draw_parents, execute, input_paths, original_boxes, verify_inputs
+from run_p430_site import BUDGET, development_rows, draw_parents, eligible_training_view, execute, input_paths, original_boxes, verify_inputs
 import run_p430_site
+
+
+def transform_frame(rgb, transform):
+    from PIL import Image, ImageEnhance, ImageFilter
+
+    if transform == "contrast":
+        return ImageEnhance.Contrast(rgb).enhance(.8)
+    if transform == "blur":
+        return rgb.filter(ImageFilter.GaussianBlur(radius=.8))
+    require(transform == "p430-detail", "Unknown training transform")
+    low_frequency = rgb.filter(ImageFilter.GaussianBlur(radius=2.0))
+    return Image.blend(rgb, low_frequency, .45)
 
 
 def profile(base, plan, evidence):
@@ -66,34 +78,29 @@ def prepare_run(base, plan, settings, tag, transform=None, coco=False):
                 shutil.copyfile(origin, target)
     spec = {"budget": BUDGET}
     if transform is not None:
-        from PIL import Image, ImageEnhance, ImageFilter
+        from PIL import Image
 
-        require(transform in {"contrast", "blur"}, "Unknown training transform")
+        require(transform in {"contrast", "blur", "p430-detail"}, "Unknown training transform")
         require("transformed_paths" in signature(run_p430_site.trainer_factory).parameters,
                 "The training runner must audit transformed inputs")
         verify_inputs(work, plan, True)
         views = []
         for key, tiled in sorted(used):
-            if plan["pool"][key]["domain"] != "cctv":
-                continue
-            if transform == "blur" and int(key[0], 16) >= 8:
+            if not eligible_training_view(key, plan["pool"][key], transform):
                 continue
             original, original_label = input_paths(work, plan, key, tiled)
             meta = plan["tiles"][key] if tiled else plan["pool"][key]
             require(sha(original) == (meta["image_sha256"] if tiled else key)
-                    and sha(original_label) == meta["label_sha256"], "External CCTV pair changed")
+                    and sha(original_label) == meta["label_sha256"], "Training image or label pair changed")
             name = key + ("-tile" if tiled else "-full") + ".png"
             image, label = work / "views/images" / name, work / "views/labels" / (Path(name).stem + ".txt")
             image.parent.mkdir(exist_ok=True, parents=True)
             label.parent.mkdir(exist_ok=True, parents=True)
             with Image.open(original) as pixels:
-                rgb = pixels.convert("RGB")
-                changed = (ImageEnhance.Contrast(rgb).enhance(.8) if transform == "contrast"
-                           else rgb.filter(ImageFilter.GaussianBlur(radius=.8)))
-                changed.save(image)
+                transform_frame(pixels.convert("RGB"), transform).save(image)
             shutil.copyfile(original_label, label)
             views.append({"parent": key, "tiled": tiled, "image": name, "sha256": sha(image)})
-        require(views, "No external CCTV training input available")
+        require(views, "No eligible image for the selected training transform")
         save(work / "training-views.json", views)
         spec["training_views_sha256"] = sha(work / "training-views.json")
         spec["training_transform"] = transform
@@ -146,7 +153,7 @@ if __name__ == "__main__":
     parser.add_argument("evidence", type=Path)
     mode = parser.add_mutually_exclusive_group()
     mode.add_argument("--train-session", type=int, choices=(1, 2))
-    mode.add_argument("--degradation", choices=("control", "contrast", "blur"))
+    mode.add_argument("--degradation", choices=("control", "contrast", "blur", "p430-detail"))
     mode.add_argument("--rf-control", action="store_true")
     parser.add_argument("--attempt", type=int, default=1)
     args = parser.parse_args()
