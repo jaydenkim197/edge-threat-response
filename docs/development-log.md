@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — COCO YOLO26n 대조군 공통 평가
+
+PC12는 12 epoch와 공통 평가를 완료했다. 고정 개발 확인 287장에서 6타일 전체 33/140·작은 칼 11/58·음성 오탐 1/147, 전체 화면은 62/140·38/58·2/147이었다. 두 방식 모두 11/19에서 0/21이었다. 저장 예측과 튜닝 임계값을 대조해 재집계했고 D1을 예비 후보로 유지한다. [공통 비교와 11/19 누락 분해](../reports/training/p430-autonomous-2026-11-27/report.md#coco-yolo26n-대조군의-공통-평가-완료)
+
 ## 2026-11-28 — 두 모델의 학습 입력 검증과 4K 첫 장시간 구간
 
 PC12 YOLO26n 대조군은 12 epoch 후 공통 평가에 들어갔다. PC14의 RF-DETR와 승인 추출 계획의 순서 및 표본 40개의 실제 이미지·라벨을 맞춰 확인했다. Orin의 4K 첫 10분은 4.00 FPS·p95 248.28 ms, 누락·오류 0건으로 끝났다. [대조 입력과 파일 검증 기록](../reports/training/p430-autonomous-2026-11-27/report.md#rf-detr와-yolo26n의-실제-학습-입력-대조)
