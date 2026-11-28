@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · RF-DETR 추가 검출의 과거 D1 관측 대조
+
+- 승인 튜닝에서 과거 네 슬롯의 D1 관측으로 RF-DETR 추가 검출을 검증했다. 전체 +9·소형 +6에 FP 박스 9개였으나 11/19 비소형 추가 검출은 세 팔 모두 0건이라 공통 개발 확인으로 넘기지 않았다. [입력과 대조 결과](../reports/training/p430-autonomous-2026-11-27/report.md#과거-d1-관측으로-rf-detr-추가-검출을-제한한-대조)
+
 ## 2026-11-28 · Orin 4K RTSP 루프백 확인
 
 - 승인 4K 영상의 RTSP 루프백으로 D1·사람 검출·B3·모의 경보·JPEG 기록을 확인했다. 60초 240/240 슬롯에 처리 p95는 234.35 ms였다. 같은 조건의 10분 세 구간 측정을 분리 실행했다. [측정 조건과 결과](../reports/training/p430-autonomous-2026-11-27/report.md#orin-4k-rtsp-루프백-단기-확인과-장시간-실행)
