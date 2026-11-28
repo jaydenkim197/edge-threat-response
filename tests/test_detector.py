@@ -1,11 +1,15 @@
+import sys
 import unittest
+from contextlib import nullcontext
+from threading import Barrier, get_ident
 from types import SimpleNamespace
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from edge_threat_response.cuda_graph import FixedCudaGraphForward
 from edge_threat_response.detector import (
     CallableBackend,
     CompositeDetector,
+    CudaParallelCompositeDetector,
     MappedDetector,
     RawDetection,
     UltralyticsBackend,
@@ -46,6 +50,53 @@ class DetectorAdapterTests(unittest.TestCase):
         self.assertEqual(FrameStatus.DETECTOR_ERROR, result.status)
         self.assertEqual((), result.detections)
         self.assertIn("knife runtime unavailable", result.error)
+
+    def test_cuda_parallel_warms_serially_preserves_order_and_drains_errors(self):
+        streams = (Mock(), Mock())
+        owner = get_ident()
+        barrier = Barrier(2, timeout=5)
+        calls = {"person": [], "knife": []}
+
+        def predict(_image, label):
+            calls[label].append(get_ident())
+            if len(calls[label]) == 1 and label == "knife":
+                raise RuntimeError("temporary startup fault")
+            if get_ident() != owner:
+                barrier.wait()
+            return (RawDetection(0, .9, (1, 2, 10, 20)),)
+
+        cuda = SimpleNamespace(is_available=lambda: True, Stream=Mock(side_effect=streams),
+                               current_stream=Mock(return_value=object()), stream=lambda stream: nullcontext())
+        with patch.dict(sys.modules, {"torch": SimpleNamespace(cuda=cuda)}):
+            person = MappedDetector("p", CallableBackend(lambda image: predict(image, "person")), {0: "person"})
+            knife = MappedDetector("k", CallableBackend(lambda image: predict(image, "knife")), {0: "knife"})
+            combined = CudaParallelCompositeDetector((person, knife))
+        self.addCleanup(combined.close)
+
+        self.assertIs(combined.infer(object()).status, FrameStatus.DETECTOR_ERROR)
+        for _ in range(3):
+            self.assertIs(combined.infer(object()).status, FrameStatus.VALID)
+        self.assertEqual([owner] * 4, calls["person"])
+        self.assertEqual([owner] * 4, calls["knife"])
+        for stream in streams:
+            stream.wait_stream.assert_called_once_with(cuda.current_stream.return_value)
+
+        result = combined.infer(object())
+        self.assertEqual(("p:0", "k:0"), tuple(d.detection_id for d in result.detections))
+        self.assertEqual(("p", "k"), tuple(key for key, _ in result.component_latencies_ms))
+        self.assertNotEqual(calls["person"][-1], calls["knife"][-1])
+
+        streams[0].synchronize.side_effect = RuntimeError("stream fault")
+        result = combined.infer(object())
+        self.assertIs(result.status, FrameStatus.DETECTOR_ERROR)
+        self.assertEqual((), result.detections)
+        self.assertIn("p: RuntimeError: stream fault", result.error)
+        self.assertEqual(2, streams[1].synchronize.call_count)
+        self.assertEqual(calls["person"][-2], calls["person"][-1])
+        self.assertEqual(calls["knife"][-2], calls["knife"][-1])
+        combined.close()
+        with self.assertRaisesRegex(RuntimeError, "closed"):
+            combined.infer(object())
 
     def test_ultralytics_backend_parses_model_result_without_real_import(self):
         class Values:

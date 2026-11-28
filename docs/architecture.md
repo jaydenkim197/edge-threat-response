@@ -108,6 +108,7 @@ Recorded-detection replay와 PC image/video adapter가 구현돼 있다. Replay�
 - model-local class는 adapter config에서 runtime `person`/`knife` 문자열로 remap한다. unmapped model class는 downstream 계약에 내보내지 않는다.
 - composite의 required component 하나라도 실패하면 부분 detection을 안전 상태처럼 사용하지 않고 해당 frame 전체를 `detector_error`로 기록한다.
 - 검출기 component 설정의 `"cuda_graph": true`는 native CUDA PyTorch forward의 고정 입력을 재생한다. 첫 호출은 원래 실행으로 준비하고 포착 직후 원시 출력 일치를 확인한다. 이후에는 같은 shape·stride·dtype·device·추론 인수를 요구한다. 드라이버와 전체 경로의 실기기 성능은 별도 파일 시험에서 확인한다.
+- 검출기 최상위 `"parallel_cuda": true`는 명시한 device 0의 두 native PyTorch CUDA Graph component에서 선택할 수 있다. 유효 프레임 세 개를 직렬로 처리한 뒤 component별 Worker와 CUDA stream으로 다음 프레임을 평가한다. 같은 입력을 읽고 설정 순서로 병합하며, 실패한 구성요소가 있으면 해당 프레임 전체를 `detector_error`로 기록한다. 기본은 직렬이다. [Orin 비교 근거](../reports/training/p430-autonomous-2026-11-27/report.md#사람칼-병렬-검출의-orin-전체-경로-대조)
 - `etr-run`: current decoded frame을 snapshot port에 동기 binding하고 pipeline의 `CONFIRMED` 진입 시 JPEG 한 장을 저장한다.
 - B3의 `etr-run --parallel-jpeg`는 다음 프레임에서 `CONFIRMED`로 진입할 수 있을 때 한 Worker로 같은 프레임의 JPEG를 추론 중 생성한다. 확정된 프레임만 임시 파일을 거쳐 저장하고 JPEG 완료 후 사건 기록과 경보를 처리한다. 확정되지 않은 인코딩은 폐기하며 다음 프레임 전에는 남은 작업을 회수한다. 기본 설정은 동기 저장이다.
 - `etr-run --gpio-alarm-config`는 명시한 Jetson BOARD 출력 핀과 극성을 사용한다. 외부 경보 명령은 기존 FSM 전이에서 실행한다. 설정한 핀을 비활성 상태로 준비하고 처리 종료 또는 출력 오류 시 비활성화와 해제를 시도한다. 성공 명령을 기록하며 실제 LED·부저의 반응은 현장에서 확인한다. [Orin 경보 설정](orin-runtime-setup.md#jetson-gpio-경보-옵션)

@@ -8,7 +8,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from edge_threat_response.detect_cli import DetectorConfig, detect_main, run_main
+from edge_threat_response.detect_cli import DetectorConfig, build_detector, detect_main, run_main
 from edge_threat_response.detector import CallableBackend, MappedDetector
 from edge_threat_response.media import FramePacket, IterableFrameSource, OpenCVFrameSource
 
@@ -60,6 +60,27 @@ class DetectionCliReadinessTests(unittest.TestCase):
             with patch.dict(sys.modules, {"cv2": fake_cv2}), self.assertRaisesRegex(ValueError, "increasing decoder timestamps"):
                 list(OpenCVFrameSource(media, sample_hz=4.0))
             capture.release.assert_called_once_with()
+
+    def test_parallel_cuda_is_opt_in_and_requires_two_cuda_graph_checkpoints(self):
+        components = [{"component_id": name, "weights": name + ".pt", "class_map": {"0": name},
+                       "predict_arguments": {"device": 0}, "cuda_graph": True} for name in ("person", "knife")]
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "detector.json"
+            base = {"schema_version": 1, "topology": "composite", "components": components}
+            path.write_text(json.dumps(base), encoding="utf-8")
+            self.assertFalse(DetectorConfig.load(path).parallel_cuda)
+            path.write_text(json.dumps({**base, "parallel_cuda": True}), encoding="utf-8")
+            with patch("edge_threat_response.detect_cli.CudaParallelCompositeDetector") as runtime:
+                self.assertIs(build_detector(DetectorConfig.load(path)), runtime.return_value)
+                self.assertEqual(2, len(runtime.call_args.args[0]))
+            for override in ({"cuda_graph": False}, {"weights": "other.engine"},
+                             {"predict_arguments": {"device": "cpu"}}):
+                with self.subTest(override=override):
+                    invalid = [{**components[0], **override}, components[1]]
+                    path.write_text(json.dumps({**base, "parallel_cuda": True, "components": invalid}),
+                                    encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "native CUDA Graph"):
+                        DetectorConfig.load(path)
 
     def test_cuda_graph_is_an_optional_component_boolean(self):
         detector = {"schema_version": 1, "topology": "single", "components": [

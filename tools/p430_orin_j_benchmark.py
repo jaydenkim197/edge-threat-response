@@ -19,6 +19,7 @@ from threading import Lock
 import time
 
 from edge_threat_response.config import load_pipeline_config
+from edge_threat_response.detector import CudaParallelCompositeDetector
 from edge_threat_response.detect_cli import DetectorConfig, build_detector
 from edge_threat_response.domain import AblationMode, FrameStatus
 from edge_threat_response.gpio_alarm import JetsonGpioAlarm
@@ -263,6 +264,7 @@ def benchmark(
     provenance = {
         "benchmark_sha256": _sha256_file(Path(__file__)),
         "detector_sha256": _sha256_file(detector_path),
+        "detector_parallel_cuda": config.parallel_cuda,
         "pipeline_sha256": _sha256_file(pipeline_path),
         "weights_sha256": {c.component_id: _sha256_file(Path(c.weights)) for c in config.components},
     }
@@ -312,6 +314,8 @@ def benchmark(
     options = {"clock": time.monotonic, "sleep": time.sleep, "shared_used_mib": board_memory}
     windows = []
     with ExitStack() as stack:
+        if isinstance(detector, CudaParallelCompositeDetector):
+            stack.callback(detector.close)
         alarm = MockAlarm()
         if gpio_config is not None:
             alarm = RecordingAlarm(stack.enter_context(JetsonGpioAlarm.load(gpio_config)))

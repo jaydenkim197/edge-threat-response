@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import Sequence
 
 from .config import load_pipeline_config
-from .detector import CompositeDetector, MappedDetector, UltralyticsBackend
+from .detector import CompositeDetector, CudaParallelCompositeDetector, MappedDetector, UltralyticsBackend
 from .media import OpenCVFrameSource, RTSPFrameSource
 from .jetson_memory import prepare_jetson_memory
 from .p430_tile_detector import P430TiledBackend
@@ -31,6 +31,7 @@ class DetectorConfig:
     schema_version: int
     topology: str
     components: tuple[DetectorComponentConfig, ...]
+    parallel_cuda: bool = False
 
     @classmethod
     def load(cls, path: Path) -> "DetectorConfig":
@@ -52,7 +53,14 @@ class DetectorConfig:
         identifiers = [item.component_id for item in components]
         if len(set(identifiers)) != len(identifiers):
             raise ValueError("Detector component IDs must be unique.")
-        return cls(1, topology, components)
+        parallel_cuda = payload.get("parallel_cuda", False)
+        if not isinstance(parallel_cuda, bool):
+            raise ValueError("parallel_cuda must be a boolean.")
+        if parallel_cuda and (topology != "composite" or len(components) != 2 or any(
+                not part.cuda_graph or Path(part.weights).suffix.lower() != ".pt"
+                or str(part.predict_arguments.get("device")) not in {"0", "cuda:0"} for part in components)):
+            raise ValueError("parallel_cuda requires two native CUDA Graph components on explicit device 0.")
+        return cls(1, topology, components, parallel_cuda)
 
 
 def build_detector(config: DetectorConfig):
@@ -63,6 +71,8 @@ def build_detector(config: DetectorConfig):
             item.weights, predict_arguments=item.predict_arguments, cuda_graph=item.cuda_graph
         )
         components.append(MappedDetector(item.component_id, backend, item.class_map))
+    if config.parallel_cuda:
+        return CudaParallelCompositeDetector(components)
     return components[0] if config.topology == "single" else CompositeDetector(components)
 
 
@@ -95,6 +105,7 @@ def build_run_parser() -> argparse.ArgumentParser:
 
 def detect_main(argv: Sequence[str] | None = None) -> int:
     args = build_detect_parser().parse_args(argv)
+    detector = None
     try:
         config = DetectorConfig.load(args.detector_config)
         _validate_local_weights(config)
@@ -123,12 +134,16 @@ def detect_main(argv: Sequence[str] | None = None) -> int:
     except (ImportError, OSError, RuntimeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+    finally:
+        if isinstance(detector, CudaParallelCompositeDetector):
+            detector.close()
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
     return 0 if summary["frame_status_counts"].get("valid",0) else 2
 
 
 def run_main(argv: Sequence[str] | None = None) -> int:
     args = build_run_parser().parse_args(argv)
+    detector = None
     try:
         detector_config = DetectorConfig.load(args.detector_config)
         _validate_local_weights(detector_config)
@@ -168,6 +183,9 @@ def run_main(argv: Sequence[str] | None = None) -> int:
     except (ImportError, OSError, RuntimeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
+    finally:
+        if isinstance(detector, CudaParallelCompositeDetector):
+            detector.close()
     print(json.dumps(summary, ensure_ascii=False, sort_keys=True))
     if alarm is not None and summary["action_error_count"]:
         return 2

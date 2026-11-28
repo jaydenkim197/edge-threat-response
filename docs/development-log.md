@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · Orin 병렬 CUDA Graph 실행 옵션
+
+- 이전 4K 루프백의 사람·칼 병렬 호출을 표준 detector의 선택 옵션으로 옮겼다. 직렬 초기화, 구성요소 순서, 스트림 오류 시 해당 프레임 전체 거부, 실행 종료 후 Worker 정리를 검증했다. 기본 직렬 및 기존 현장 설정을 유지한다. [검출기 옵션](architecture.md#detector--media-adapter--implemented-pc-verified)
+
 ## 2026-11-28 · 개정 목표 적용과 Teacher·KD 실행 확인
 
 - D0는 S1의 가중치에서 이어 학습한 기록이 아니라 S1 데이터에 CCTV를 합쳐 같은 COCO 초기값에서 학습한 모델임을 확인했다. 연구실 RTX 3090에서 공식 YOLO26m→YOLO26n KD를 생성 자료로 실행해 손실·gradient·동결·저장 재로딩을 확인했다. [계보와 실행 근거](../reports/training/p430-autonomous-2026-11-27/report.md#1128-재개--d0-계보-복원과-공식-kd-실행-확인)

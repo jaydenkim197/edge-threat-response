@@ -2,8 +2,10 @@ from __future__ import annotations
 
 import math
 import time
+from concurrent.futures import ThreadPoolExecutor, wait
 from dataclasses import dataclass
 from pathlib import Path
+from threading import Lock
 from typing import Any, Callable, Iterable, Protocol
 
 from .domain import BBox, Detection, FrameStatus
@@ -100,7 +102,10 @@ class CompositeDetector:
             raise ValueError("Composite detector requires at least one component.")
 
     def infer(self, image: Any) -> DetectorInference:
-        results = tuple(component.infer(image) for component in self.components)
+        return self._combine(tuple(component.infer(image) for component in self.components))
+
+    @staticmethod
+    def _combine(results: tuple[DetectorInference, ...]) -> DetectorInference:
         latency = sum(item.inference_ms for item in results)
         component_latencies = tuple(
             pair for item in results for pair in item.component_latencies_ms
@@ -122,6 +127,66 @@ class CompositeDetector:
             inference_ms=latency,
             component_latencies_ms=component_latencies,
         )
+
+
+class CudaParallelCompositeDetector(CompositeDetector):
+    """Replay native CUDA Graphs on separate streams after serial initialization."""
+
+    def __init__(self, components: Iterable[MappedDetector]) -> None:
+        super().__init__(components)
+        import torch
+
+        if not torch.cuda.is_available():
+            raise ValueError("Parallel CUDA detectors require an available CUDA device.")
+        self._cuda = torch.cuda
+        self._streams = tuple(self._cuda.Stream(device=0) for _ in self.components)
+        self._pools = tuple(ThreadPoolExecutor(max_workers=1, thread_name_prefix="etr-cuda-detector")
+                            for _ in self.components)
+        self._warmup_remaining = 3
+        self._lock = Lock()
+        self._closed = False
+
+    def infer(self, image: Any) -> DetectorInference:
+        with self._lock:
+            if self._closed:
+                raise RuntimeError("Parallel CUDA detector is closed.")
+            if self._warmup_remaining:
+                # The first frame installs graph wrappers. The next captures and the third replays.
+                result = super().infer(image)
+                if result.status is FrameStatus.VALID:
+                    self._warmup_remaining -= 1
+                    if not self._warmup_remaining:
+                        current = self._cuda.current_stream(device=0)
+                        for stream in self._streams:
+                            stream.wait_stream(current)
+                return result
+            futures = []
+            try:
+                for pool, component, stream in zip(self._pools, self.components, self._streams, strict=True):
+                    futures.append(pool.submit(self._infer_component, component, stream, image))
+                return self._combine(tuple(future.result() for future in futures))
+            finally:
+                wait(futures)
+
+    def _infer_component(self, component: MappedDetector, stream: Any, image: Any) -> DetectorInference:
+        started = time.perf_counter()
+        try:
+            try:
+                with self._cuda.stream(stream):
+                    return component.infer(image)
+            finally:
+                stream.synchronize()
+        except Exception as exc:
+            elapsed = (time.perf_counter() - started) * 1000
+            return DetectorInference(status=FrameStatus.DETECTOR_ERROR, detections=(), inference_ms=elapsed,
+                                     component_latencies_ms=((component.component_id, elapsed),),
+                                     error=f"{component.component_id}: {type(exc).__name__}: {exc}")
+
+    def close(self) -> None:
+        with self._lock:
+            self._closed = True
+            for pool in self._pools:
+                pool.shutdown(wait=True)
 
 
 class CallableBackend:

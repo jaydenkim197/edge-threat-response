@@ -103,7 +103,7 @@ class OrinJBenchmarkTests(TestCase):
             files = root / "input"
             files.write_bytes(b"fixture")
             components = [SimpleNamespace(component_id="fixture", weights=files, class_map={0: "person", 1: "knife"})]
-            detector_config = SimpleNamespace(topology="composite", components=components)
+            detector_config = SimpleNamespace(topology="composite", components=components, parallel_cuda=False)
             for failed in (False, True):
                 with self.subTest(failed=failed):
                     clock = Clock()
@@ -155,6 +155,7 @@ class OrinJBenchmarkTests(TestCase):
                             write_snapshots=True, parallel_jpeg=True, gpio_config=files,
                             decoder_threads=4, opencv_threads=2,
                         )
+                    self.assertFalse(result["provenance"]["detector_parallel_cuda"])
                     cv2.setNumThreads.assert_called_once_with(2)
                     self.assertEqual(2, result["settings"]["opencv_threads"])
                     self.assertEqual(1, result["settings"]["effective_opencv_threads_after_warmup"])
