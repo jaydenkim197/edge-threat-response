@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 11/19 배경 정규화 대조 완료
+
+PC14에서 D1의 학습 파라미터를 고정하고 승인 학습 배경으로 BatchNorm 통계만 재계산했다. 11/19 단독 배경을 사용해도 해당 촬영 전체 검출이 83/111에서 62/111로 줄었다. 조건부 확인 실험은 건너뛰었고 PC12 중간 bias 실험은 계속한다. [튜닝 결과](../reports/training/p430-autonomous-2026-11-27/report.md#승인-배경으로-d1의-batchnorm-통계만-바꾼-대조)
+
 ## 2026-11-28 — RF-DETR 선별 학습 사례의 중복과 촬영 구간 확인
 
 승인 학습 47장을 원본 시각과 대조했다. 11/19 소형 구간 밖의 9장 중 8장은 기존 PC12 재노출 입력과 동일했다. 추가 1장으로는 별도 학습의 근거가 부족해 PC14 등록을 보류한다. [촬영별 집계](../reports/training/p430-autonomous-2026-11-27/report.md#rf-detr-선별-사례의-촬영-구간과-기존-재노출-중복)
