@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · 첫 에폭 BatchNorm bias 동결 대조 등록
+
+- 이전 warmup 변경의 영향을 분리하기 위해 첫 에폭 동안 BatchNorm bias만 고정한 학습을 PC12에 등록했다. 첫 시도의 콜백 순서 충돌을 보존하고 검사를 먼저 실행하는 재시도를 등록했다. [실험과 검증 조건](../reports/training/p430-autonomous-2026-11-27/report.md#batchnorm-bias-동결로-첫-학습-구간을-분리한-대조)
+
 ## 2026-11-28 · 사람 검출 위치를 쓴 RF-DETR 타일 실측
 
 - D1 저점수에 대한 한두 보조 모델 동의는 11/19 비소형 검출을 늘리지 못했다. 사람 위치로 타일을 선택한 고정 조합은 PC14 튜닝을 통과했고 공통 개발에서 81→85/140, 11/19에서 1→4/21을 기록했다. 음성 오탐 0/147과 소형 47/58은 같았다. [실험 결과](../reports/training/p430-autonomous-2026-11-27/report.md#사람-위치로-rf-detr-타일-한-장을-선택한-실측)
