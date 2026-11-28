@@ -1,5 +1,12 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · 개정 목표 적용과 Teacher·KD 실행 확인
+
+- D0는 S1의 가중치에서 이어 학습한 기록이 아니라 S1 데이터에 CCTV를 합쳐 같은 COCO 초기값에서 학습한 모델임을 확인했다. 연구실 RTX 3090에서 공식 YOLO26m→YOLO26n KD를 생성 자료로 실행해 손실·gradient·동결·저장 재로딩을 확인했다. [계보와 실행 근거](../reports/training/p430-autonomous-2026-11-27/report.md#1128-재개--d0-계보-복원과-공식-kd-실행-확인)
+
+- 승인 train 13,195장과 기존 val 1,423장의 무결성을 확인했다. 후속 튜닝용 CCTV 271장을 제외하고 YOLO26m 본학습을 기존 연구실 Worker에서 시작했다. PC12·PC14의 평가 복구 결과는 승격 기준에 미달했다.
+- 실제 Orin에 대해 RF-DETR 엔진 출력 일치, 사람·칼 병렬 및 D1 RTSP 루프백 하한 비교를 수집했다. B0~B3 사건 평가의 가상 연결과 파일 4Hz 시간축 보존을 검증했다. [동결·독립 평가 절차](controlled-experiment-protocol.md)
+
 ## 2026-11-28 · D1 두 후보 하한의 RTSP 비교 등록
 
 - 공통 개발 AP를 계산한 0.001과 기존 RTSP 증거의 0.15를 Orin 같은 입력에서 각각 측정하도록 등록했다. 평가와 운영 설정의 일치를 판단할 증거로 사용한다. [고정 변수 및 작업 위치](../reports/training/p430-autonomous-2026-11-27/report.md#d1의-후보-하한-두-값에-대한-4k-rtsp-짝비교-등록)

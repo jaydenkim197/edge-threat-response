@@ -223,8 +223,11 @@ def metrics(counts: dict[str, Any], latencies: list[float]) -> dict[str, Any]:
 def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Path) -> dict[str, Any]:
     document, recordings = load_ground_truth(ground_truth)
     policy = MatchingPolicy.load(policy_path)
-    if document["data_kind"] == "controlled" and policy.status == "synthetic_only":
-        raise ValueError("Synthetic-only matching policy cannot evaluate real recordings")
+    if document["data_kind"] == "controlled":
+        if policy.status == "synthetic_only":
+            raise ValueError("Synthetic-only matching policy cannot evaluate real recordings")
+        if policy.status != "frozen" and any(row.partition == "final_test" for row in recordings):
+            raise ValueError("Controlled final_test evaluation requires a frozen matching policy")
     bindings_document = read_json(replay_manifest)
     _schema(bindings_document)
     bindings = bindings_document.get("recordings")

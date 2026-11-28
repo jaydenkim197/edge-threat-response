@@ -1,17 +1,65 @@
 import contextlib
 import io
 import json
+import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 from edge_threat_response.detect_cli import DetectorConfig, detect_main, run_main
 from edge_threat_response.detector import CallableBackend, MappedDetector
-from edge_threat_response.media import FramePacket, IterableFrameSource
+from edge_threat_response.media import FramePacket, IterableFrameSource, OpenCVFrameSource
 
 
 class DetectionCliReadinessTests(unittest.TestCase):
+    def test_source_time_sampling_records_original_indices_timestamps_and_policy(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            media, weight = root / "input.mp4", root / "fixture.pt"
+            media.write_bytes(b"mock capture input")
+            weight.touch()
+            config = root / "detector.json"
+            config.write_text(json.dumps({"schema_version": 1, "topology": "single", "components": [
+                {"component_id": "knife", "weights": str(weight), "class_map": {"0": "knife"}}
+            ]}))
+            capture = Mock()
+            capture.isOpened.return_value = True
+            capture.read.side_effect = [(True, object()) for _ in range(7)] + [(False, None)]
+            capture.get.side_effect = [0.0, 100.0, 250.0, 251.0, 499.0, 520.0, 1001.0]
+            fake_cv2 = SimpleNamespace(VideoCapture=Mock(return_value=capture), CAP_PROP_POS_MSEC=0)
+            detector = MappedDetector("knife", CallableBackend(lambda image: ()), {0: "knife"})
+            output = root / "detections"
+            with patch.dict(sys.modules, {"cv2": fake_cv2}), \
+                    patch("edge_threat_response.detect_cli.build_detector", return_value=detector), \
+                    patch("edge_threat_response.detect_cli.prepare_jetson_memory", return_value=None), \
+                    contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(0, detect_main(["--input", str(media), "--source-id", "fixture",
+                    "--detector-config", str(config), "--sample-hz", "4", "--output-dir", str(output)]))
+            rows = [json.loads(line) for line in (output / "detections.jsonl").read_text(encoding="utf-8").splitlines()]
+            self.assertEqual([0, 2, 5, 6], [row["frame_index"] for row in rows])
+            self.assertEqual([0., .25, .52, 1.001], [row["timestamp_s"] for row in rows])
+            self.assertEqual({"fixture"}, {row["source_id"] for row in rows})
+            summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+            sampling = summary["provenance"]["sampling"]
+            self.assertEqual((4.0, 0.0, "skipped"), (sampling["sample_hz"], sampling["anchor_s"], sampling["empty_slots"]))
+            self.assertEqual(7, capture.get.call_count)
+            capture.release.assert_called_once_with()
+
+    def test_source_time_sampling_rejects_missing_pts_without_reconstructing_fps(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            media = Path(tmp) / "input.mp4"
+            media.touch()
+            capture = Mock()
+            capture.isOpened.return_value = True
+            capture.read.side_effect = [(True, object()), (True, object())]
+            capture.get.side_effect = [0.0, 0.0]
+            fake_cv2 = SimpleNamespace(VideoCapture=Mock(return_value=capture), CAP_PROP_POS_MSEC=0)
+            with patch.dict(sys.modules, {"cv2": fake_cv2}), self.assertRaisesRegex(ValueError, "increasing decoder timestamps"):
+                list(OpenCVFrameSource(media, sample_hz=4.0))
+            capture.release.assert_called_once_with()
+
     def test_cuda_graph_is_an_optional_component_boolean(self):
         detector = {"schema_version": 1, "topology": "single", "components": [
             {"component_id": "knife", "weights": "weight.pt", "class_map": {"0": "knife"}}
@@ -85,5 +133,5 @@ class DetectionCliReadinessTests(unittest.TestCase):
                      patch("edge_threat_response.detect_cli.prepare_jetson_memory",return_value=None):
                     with contextlib.redirect_stdout(io.StringIO()):
                         self.assertEqual(2,main(args))
-                summary=json.loads((output/"summary.json").read_text())
+                summary=json.loads((output/"summary.json").read_text(encoding="utf-8"))
                 self.assertEqual({"detector_error":1},summary["frame_status_counts"])

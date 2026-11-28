@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from concurrent.futures import Future
 from dataclasses import dataclass
 from pathlib import Path
@@ -30,11 +31,18 @@ class IterableFrameSource:
 class OpenCVFrameSource:
     IMAGE_SUFFIXES = {".jpg", ".jpeg", ".png", ".bmp", ".webp"}
 
-    def __init__(self, path: str | Path, *, source_id: str | None = None) -> None:
+    def __init__(
+        self, path: str | Path, *, source_id: str | None = None, sample_hz: float | None = None
+    ) -> None:
         self.path = Path(path)
         if not self.path.is_file():
             raise ValueError(f"Input media does not exist: {self.path}")
+        if sample_hz is not None and (
+            not math.isfinite(sample_hz) or sample_hz <= 0 or self.path.suffix.lower() in self.IMAGE_SUFFIXES
+        ):
+            raise ValueError("Source-time sampling requires a video file and a positive finite rate.")
         self.source_id = source_id or self.path.stem
+        self.sample_hz = sample_hz
 
     def __iter__(self) -> Iterator[FramePacket]:
         try:
@@ -51,22 +59,35 @@ class OpenCVFrameSource:
         capture = cv2.VideoCapture(str(self.path))
         if not capture.isOpened():
             raise RuntimeError(f"OpenCV could not open video: {self.path}")
-        fps = float(capture.get(cv2.CAP_PROP_FPS))
-        if fps <= 0:
-            fps = 30.0
         try:
+            if self.sample_hz is None:
+                fps = float(capture.get(cv2.CAP_PROP_FPS))
+                if fps <= 0:
+                    fps = 30.0
+            next_slot = 0
+            last_timestamp_ms = -1.0
             frame_index = 0
             while True:
                 ok, image = capture.read()
                 if not ok:
                     break
                 timestamp_ms = float(capture.get(cv2.CAP_PROP_POS_MSEC))
-                timestamp_s = (
-                    timestamp_ms / 1000.0
-                    if timestamp_ms > 0
-                    else frame_index / fps
-                )
-                yield FramePacket(frame_index, timestamp_s, self.source_id, image)
+                timestamp_s = timestamp_ms / 1000.0
+                if self.sample_hz is None:
+                    timestamp_s = timestamp_s if timestamp_ms > 0 else frame_index / fps
+                    yield FramePacket(frame_index, timestamp_s, self.source_id, image)
+                else:
+                    if not math.isfinite(timestamp_ms) or timestamp_ms < 0 or timestamp_ms <= last_timestamp_ms:
+                        raise ValueError(f"Source-time sampling requires increasing decoder timestamps (frame {frame_index}).")
+                    last_timestamp_ms = timestamp_ms
+                    slot_position = math.nextafter(timestamp_s * self.sample_hz, math.inf)
+                    if not math.isfinite(slot_position):
+                        raise ValueError("Source timestamp and sampling rate exceed the supported range.")
+                    slot = math.floor(slot_position)
+                    if slot >= next_slot:
+                        # Skip empty slots rather than repeat frames or alter source timestamps.
+                        next_slot = slot + 1
+                        yield FramePacket(frame_index, timestamp_s, self.source_id, image)
                 frame_index += 1
         finally:
             capture.release()

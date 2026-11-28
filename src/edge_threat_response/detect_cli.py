@@ -72,6 +72,7 @@ def build_detect_parser() -> argparse.ArgumentParser:
         description="Run detector adapters on image/video and write canonical JSONL.",
     )
     _add_common_arguments(parser)
+    parser.add_argument("--sample-hz", type=float, help="Sample a video on its source timeline without renumbering frames.")
     return parser
 
 
@@ -98,14 +99,25 @@ def detect_main(argv: Sequence[str] | None = None) -> int:
         config = DetectorConfig.load(args.detector_config)
         _validate_local_weights(config)
         native_memory = prepare_jetson_memory(inherit_thp=args.inherit_thp)
+        frames = _frame_source(args, sample_hz=args.sample_hz)
         detector = build_detector(config)
-        frames = _frame_source(args)
+        provenance = _provenance(args.input, args.detector_config, config, rtsp_env=args.rtsp_env)
+        provenance["native_memory"] = native_memory
+        if args.sample_hz is not None:
+            provenance["sampling"] = {
+                "sample_hz": args.sample_hz,
+                "mode": "first_decoded_frame_at_or_after_next_source_time_tick",
+                "anchor_s": 0.0,
+                "timestamp_basis": "OpenCV CAP_PROP_POS_MSEC; strictly increasing, no FPS fallback",
+                "frame_index_basis": "original zero-based decode index",
+                "empty_slots": "skipped",
+            }
         summary = run_detection_stream(
             frames,
             detector,
             output_dir=args.output_dir,
             max_frames=args.max_frames,
-            provenance={**_provenance(args.input, args.detector_config, config, rtsp_env=args.rtsp_env), "native_memory":native_memory},
+            provenance=provenance,
         )
     except (ImportError, OSError, RuntimeError, ValueError) as exc:
         print(f"error: {exc}", file=sys.stderr)
@@ -178,9 +190,11 @@ def _validate_local_weights(config: DetectorConfig) -> None:
             raise ValueError(f"Local weight is missing for {component.component_id}: {component.weights}")
 
 
-def _frame_source(args):
+def _frame_source(args, *, sample_hz: float | None = None):
     if args.input is not None:
-        return OpenCVFrameSource(args.input, source_id=args.source_id)
+        return OpenCVFrameSource(args.input, source_id=args.source_id, sample_hz=sample_hz)
+    if sample_hz is not None:
+        raise ValueError("--sample-hz is only supported with a video file.")
     import os
     if not args.source_id or args.max_frames is None or args.max_frames < 1:
         raise ValueError("RTSP requires --source-id and positive --max-frames")

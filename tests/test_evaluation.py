@@ -132,6 +132,32 @@ class EventEvaluationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "provenance"):
                 evaluate_replays(TRUTH, manifest, POLICY)
 
+    def test_controlled_final_test_requires_frozen_matching_policy(self):
+        truth = json.loads(TRUTH.read_text())
+        truth["data_kind"] = "controlled"
+        truth["recordings"][0]["partition"] = "final_test"
+        policy = json.loads(POLICY.read_text())
+        policy["status"] = "development"
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            truth_path = root / "truth.json"
+            truth_path.write_text(json.dumps(truth))
+            policy_path = root / "policy.json"
+            policy_path.write_text(json.dumps(policy))
+            manifest = root / "bindings.json"
+            with self.assertRaisesRegex(ValueError, "final_test evaluation requires a frozen matching policy"):
+                evaluate_replays(truth_path, manifest, policy_path)
+
+            detections = ROOT / "tests/fixtures/replay/basic.jsonl"
+            config = ROOT / "configs/replay/development-v2.example.json"
+            with redirect_stdout(StringIO()):
+                replay_main(["--input", str(detections), "--config", str(config), "--output-dir", str(root / "replay")])
+            manifest.write_text(json.dumps({"schema_version": 1, "recordings": [
+                {"recording_id": "fixture-recording", "detections": str(detections), "pipeline_config": str(config), "replay_dir": "replay"}]}))
+            policy_path.write_text(json.dumps({**policy, "status": "frozen"}))
+            self.assertEqual({"final_test"},
+                             {row["partition"] for row in evaluate_replays(truth_path, manifest, policy_path)["comparison"]})
+
 
 if __name__ == "__main__":
     unittest.main()
