@@ -1,6 +1,6 @@
 # Track A·B·C 통합 실험 및 GPU 배정
 
-2026-11-26 KST. 연구실 서버 6장과 PC11~14 총 10장 승인 `DECISION`. 단일 GPU 벤치마크 및 호스트별 야간 조건부 큐 `VERIFIED`. 서버 다중 부하와 작업의 호스트 간 재배치·중간 optimizer 재개는 `PLANNED`. [야간 큐 실행 기록](p430-overnight-queue.md)
+2026-11-28 KST · 신규 GPU 학습·평가는 연구실 서버 6장에 배정한다. PC11~14의 신규 사용은 종료했다(`DECISION`). Windows 장비 배정은 11/26 승인과 이후 실행 이력이다. 해당 호스트의 기존 결과와 체크포인트는 접속 순서대로 서버에 보존한다. [서버 운영 및 자료 이관](lab-gpu-training-plan.md#pc1114-자료-전달과-검증) · [야간 큐 실행 기록](p430-overnight-queue.md)
 
 Track A는 YOLO 검출기를 최적화하고, Track B는 대안 탐지 방법을 검증하며, Track C는 Holding/HOI와 시스템을 평가한다. 11/24 독립 최종 영상과 파생물은 학습·오류 분석·임계값 선택·서버 반입에서 제외한다. 기존 P430 개발 분할, 외부 검증 보호 그룹, seed·샘플링 순서 및 파일 해시를 유지한다. 최종 B0~B4에는 같은 동결 검출기와 공통 입력·시간 조건을 사용한다. [Track A 실험](p430-phase2-optimization-plan.md) · [Track B 대안 탐지](p430-track-b-alternative-detection-plan.md) · [Track C 입력 규격](hoi-annotation-contract.md) · [독립 평가](controlled-experiment-protocol.md)
 

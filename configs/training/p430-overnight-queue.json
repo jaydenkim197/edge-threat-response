@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "scope": "development_only",
+  "retired_nodes": ["pc11", "pc12", "pc13", "pc14"],
   "jobs": [
     {
       "id": "D1-3408",

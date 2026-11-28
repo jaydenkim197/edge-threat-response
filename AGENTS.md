@@ -11,7 +11,7 @@
 - 기준 개발 작업공간은 상위 수업 폴더의 `03_개발_GitHub`이다. 작업 시작 전 `git pull --ff-only`를 실행하고, 완료·검증된 의도적 변경은 commit 후 원격 `main`까지 push한다. 상위 폴더의 회의록·제출물·팀원 자료는 저장소 밖에 둔다.
 - material task 시작 전 `docs/project-plan.md`, `docs/mvp-research-specification.md`, `docs/open-decisions.md`, `docs/architecture.md`, `docs/verification.md`, `docs/development-log.md`와 관련 코드를 확인한다. dataset·model 작업은 `docs/model-data-plan.md`도 확인한다.
 - 연구실 GPU 서버에 접속하거나 학습을 배정하기 전에 [프로젝트 인프라 운영 가이드](docs/lab-gpu-training-plan.md)를 읽는다. 문서의 SSH 명령으로 접속을 확인하고, 허용 GPU의 UUID·점유 상태와 데이터 반입 범위를 확인한 뒤 작업한다. 인증은 접속 호스트의 기존 로컬 SSH 설정과 Agent를 사용한다.
-- PC11~14 및 연구실 GPU 학습을 배정하기 전 [Track A·B·C 통합 실행 계획](docs/training-resource-schedule.md)을 확인한다. A=YOLO 최적화, B=대안 탐지, C=Holding/HOI·시스템 검증이다. 실행 가능한 Track A가 없는 적합한 슬롯에 후속 작업을 배정한다. 서버의 검증된 동시 부하 상한과 GPU별 잠금을 적용하고 다른 사용자의 실행은 보호한다. 실패 시 원래 로그·설정·체크포인트를 보존한다.
+- 2026-11-28 사용자 결정에 따라 PC11~14에는 새 학습·평가 작업을 배정하지 않는다. 해당 PC에 접속할 때는 기존 학습 자료를 보존해 연구실 서버로 이관하기 위한 [운영 가이드](docs/lab-gpu-training-plan.md#pc1114-자료-전달과-검증)를 따른다. 신규 작업은 [Track A·B·C 통합 실행 계획](docs/training-resource-schedule.md)에 따라 연구실 서버의 가용 GPU에 배정한다. A=YOLO 최적화, B=대안 탐지, C=Holding/HOI·시스템 검증이다. 검증된 동시 부하 상한과 GPU별 잠금을 적용하고 다른 사용자의 실행 및 기존 작업의 로그·설정·체크포인트를 보존한다.
 - P430 후속 실험의 실시간 상태는 [야간 큐 운영 문서](docs/p430-overnight-queue.md)에 있는 노드별 완료 영수증과 집계 파일을 확인한다. 이미 실행 중인 원래 작업은 큐 외부에서 중복 실행하지 않는다.
 - P430 자율 연구 Goal로 착수하거나 재개할 때 [자율 연구 실행 계획](docs/autonomous-research-plan.md)의 평가·승격·종료 기준과 재개 절차를 확인한다.
 - 큰 작업은 구현 전 작업 카드(목적, 범위, 완료 기준, 위험, 문서 영향)를 제시한다.

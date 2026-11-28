@@ -195,9 +195,11 @@ def worker(root):
     with process_lock(root/"worker.lock"):
         states=load(root/"status.json",{}).get("jobs",{})
         jobs=[]
+        retired=False
         while True:
             registry=load(root/"registry.json",None)
             if registry is not None:
+                retired=settings["node"] in registry.get("retired_nodes", [])
                 jobs=sorted((job for job in registry["jobs"] if job["node"]==settings["node"]),
                             key=lambda job:ORDER[job["track"]])
             shared=load(root/"shared.json",{})
@@ -219,7 +221,10 @@ def worker(root):
                 prior=states.get(key,{})
                 if job["kind"]=="existing" or prior.get("status") in FINAL|{"RUNNING"}:
                     continue
-                status,reason=decide(job,{**shared,**states},settings)
+                if retired:
+                    status,reason="PENDING", "Execution host retired"
+                else:
+                    status,reason=decide(job,{**shared,**states},settings)
                 states[key]={**prior,"status":status,"reason":reason}
             persist(root,settings,states)
             if settings.get("exit_when_done") is True and jobs and all(
@@ -228,7 +233,7 @@ def worker(root):
             if any(states.get(job["id"],{}).get("status")=="RUNNING" and job["kind"]!="existing" for job in jobs):
                 time.sleep(15)
                 continue
-            if not (root/"pause.request").exists():
+            if not retired and not (root/"pause.request").exists():
                 for job in jobs:
                     key=job["id"]
                     if states.get(key,{}).get("status")!="READY":

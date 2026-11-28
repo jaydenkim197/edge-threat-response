@@ -10,7 +10,7 @@ from contextlib import nullcontext
 
 ROOT = Path(__file__).resolve().parents[1]
 with patch.object(sys, "path", [str(ROOT / "tools"), *sys.path]):
-    from p430_overnight_queue import busy, decide, deliver_ensemble, recover, reserve
+    from p430_overnight_queue import busy, decide, deliver_ensemble, recover, reserve, worker
     from p430_followup_actions import (
         PLAN_SHA, POS_REPLAY_BUDGET, POS_REPLAY_SCOPE, SOURCE_SHA, approved_positive_replay,
         replace_reviewed_negatives, replace_reviewed_positives,
@@ -42,6 +42,27 @@ class RFDetrForegroundTests(TestCase):
 
 
 class OvernightQueueTests(TestCase):
+    def test_retired_node_keeps_receipts_and_does_not_dispatch(self):
+        jobs = [dict(id=key, node="pc12", kind=kind, track="A")
+                for key, kind in (("prior", "existing"), ("running", "train"), ("next", "train"))]
+        with TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "settings.json").write_text(json.dumps({"node": "pc12", "sources": {"prior": {}}}))
+            (root / "registry.json").write_text(json.dumps({"retired_nodes": ["pc12"], "jobs": jobs}))
+            (root / "status.json").write_text(json.dumps({"jobs": {"running": {"status": "RUNNING"}}}))
+            with (patch("p430_overnight_queue.imported", return_value=("COMPLETED", {"receipt": "prior"})),
+                  patch("p430_overnight_queue.recover", return_value={"status": "COMPLETED"}) as recover_active,
+                  patch("p430_overnight_queue.action") as dispatch,
+                  patch("p430_overnight_queue.time.sleep", side_effect=InterruptedError)):
+                with self.assertRaises(InterruptedError):
+                    worker(root)
+            recover_active.assert_called_once()
+            dispatch.assert_not_called()
+            states = json.loads((root / "status.json").read_text(encoding="utf-8"))["jobs"]
+            self.assertEqual(states["prior"]["data"], {"receipt": "prior"})
+            self.assertEqual(states["running"]["status"], "COMPLETED")
+            self.assertEqual(states["next"], {"status": "PENDING", "reason": "Execution host retired"})
+
     def test_parallel_lab_worker_reserves_and_queries_only_its_selected_gpu(self):
         settings = {"node": "lab", "gpu_id": 1, "uuid": "GPU-selected", "locks": "locks",
                     "base": "data/site", "parallel_gpu": True}

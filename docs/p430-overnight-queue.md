@@ -4,6 +4,8 @@
 
 11/27 집계에서 Track A 19건 완료·10건 건너뜀·7건 대기를 확인했다. 이번 학습 후보를 검토한 결과 개발 기준선 D1을 유지한다. 아래 등록 표는 11/26 시점의 실행 이력이다. [최신 학습 결과와 해석](../reports/training/p430-overnight-2026-11-27/report.md)
 
+2026-11-28 운영 전환으로 PC11~14를 등록 목록의 `retired_nodes`에 지정했다. 해당 호스트의 Worker는 기존 실행과 영수증을 읽고 다음 작업의 기동을 막는다. 과거 registry를 사용하는 Windows Worker에는 접속 시 `pause.request`를 적용한다. 신규 GPU 실행은 연구실 서버에서 관리한다. [자료 이관](lab-gpu-training-plan.md#pc1114-자료-전달과-검증)
+
 ## 2026-11-28 독립 대조군 병렬 실행
 
 `A-TEACHER-D0-M-PROTECTED`는 기존 RTX 3090 #2 Worker에서 실행한다. 별도 Linux Worker의 RTX 3090 #1에는 `A-KD-CONTROL-N-D0` 일반 학습을 먼저 배정했다. 이 대조군은 D0 초기값, 동일한 보호 P430 추출 계획, seed 3407, 640px FP32, batch 8, 12 epoch·12,288 업데이트를 유지하며 Teacher 가중치를 사용하지 않는다.
