@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · Orin 4K RTSP 루프백 확인
+
+- 승인 4K 영상의 RTSP 루프백으로 D1·사람 검출·B3·모의 경보·JPEG 기록을 확인했다. 60초 240/240 슬롯에 처리 p95는 234.35 ms였다. 같은 조건의 10분 세 구간 측정을 분리 실행했다. [측정 조건과 결과](../reports/training/p430-autonomous-2026-11-27/report.md#orin-4k-rtsp-루프백-단기-확인과-장시간-실행)
+
 ## 2026-11-28 · 외부 CCTV 양성 타일 재표집 착수
 
 - 승인 학습에서 11/19와 크기·박스 내부 선명도가 유사한 외부 CCTV 36장과 원본 20개를 확인했다. PC14에서 24장을 에폭당 한 번씩 더 보는 동수 교체 학습을 시작했고 첫 배치 경로 검증을 확인했다. [표본 분석과 비교 조건](../reports/training/p430-autonomous-2026-11-27/report.md#외부-cctv에서-1119와-크기세부-명암이-비슷한-양성-재표집)

@@ -2014,3 +2014,17 @@ PC14에서 현재 장비 가용성과 원본 이미지·라벨·타일 일치를
 규모 집계 `a1315b45dd598976f6d8db17601a2e4d5a6745fc406bdfa38e990b4c953fe5ee`, 선명도 집계 `7b8930de12789dcb2141ad808f47c289bfc295ae44bd72dd78e51c2a033f51fb`, 편성 변경 `1b6b15fd0c300012adbcb9cba1fad18c4c9157f6ce3fc7004bd2c49ecfc52260`, 실행기 `a1f0176eab4b29a2af2b9780ea23544d943a025d8941952e8317fed9ff5c07d4`, 기존 70개 항목을 보존한 큐 `17d3f16f0bd0170b2ce549f8d2b160ee166169d3effa58dca1ccdaf637d88319`, 수집기 `69a626b003c0f0403b5a46b7e3586ba0b8ce5cad3fc68efee03932345c2cf346`.
 
 13:30:20 KST에 PC14 Worker PID 16300이 살아 있었고 첫 학습 배치에서 실제 경로 8개가 모두 편성과 일치했다. 증거 SHA-256 `aaf75cd14594689c1fdd8cde8f23c36726d15d37632bb39f766bcc1a43b3f139`. PC12의 BatchNorm 대조는 같은 시각까지 첫 세 epoch를 완료하고 계속 학습 중이다. 두 실험의 검출 결과는 각 승인 평가가 마무리된 뒤 비교한다.
+
+### Orin 4K RTSP 루프백 단기 확인과 장시간 실행
+
+D1 예비 설정과 승인 개발 영상으로 카메라를 연결하기 전 RTSP 수신 경로를 확인했다. 기존 해시 검증 4K HEVC 영상을 인코딩 변경 없이 128초로 이어 붙였다. 3840×2160·25 FPS·H.265 Main을 확인했다. GStreamer RTSP 서버를 Orin의 `127.0.0.1`에만 열고 TCP로 수신했다. 라이브러리 두 개는 Ubuntu 패키지의 SHA-256을 확인해 실험 폴더에만 압축을 풀었다. 루프백 서버와 패키지 파일의 적용 범위는 실험 디렉터리다. [GStreamer RTSP 미디어 팩터리](https://gstreamer.freedesktop.org/documentation/gst-rtsp-server/rtsp-media-factory.html)
+
+Orin 25 W에서 D1 FP16 6타일과 YOLO26n 사람 검출·B3·모의 경보·디스크 JPEG를 기존 RTSP 측정기로 실행했다. FFmpeg 디코더 스레드는 4개, OpenCV는 요청 2개에서 예열 후 실제 1개였다. 20초 예열 후 60초의 측정 결과를 아래에 기록했다. 짧은 측정에서 구간별 지연·큐 대기 추세는 집계할 수 없었다.
+
+| 목표 슬롯 처리 | 유효 FPS | 목표 샘플 누락 | 읽기 시작부터 조치까지 p95 | 캡처 큐 깊이 | 무효 프레임·동작 오류 | 모의 경보 |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 240/240 | 4.00 | 0% | 234.35 ms | 1 | 0 | 14 |
+
+예열을 포함한 이벤트 15건에 JPEG 15개가 대응했다. 소스 디코딩과 목표 간격의 샘플링을 구분해 누락을 집계했다. 단기 결과 SHA-256 `3b34ff26c67de2fcfc9752306d6fa46f12b6cd7d81613ed01f02d8de20330788`가 Orin·로컬 사본에서 일치했다. 런처·벤치마크·서버와 결과는 Orin `runs/p430-goal-runtime-20261127/d1-rtsp-loopback-v1/`에 저장했다.
+
+13:38:25 KST에 Orin에서 `d1-rtsp-loopback-endurance-v1`을 분리 실행했다. 기존 공유 잠금과 5초 간격 장비 점검을 쓰며, 같은 구성으로 60초 예열과 600초 세 구간을 측정한다. 연장 2,048초 입력 SHA-256은 `41820bc7c813aca84b2b3a77145561e7b98e6a8eb8b57285f45c8389c40dc457`, 장시간 측정 실행기 SHA-256은 `00b32ba4bbb372792b1a58203fa44c465e8c84b2695c6f5e0da07a308bbaa6dd`다. Orin Worker PID `2128318`의 시작과 장비 표본을 확인했다. 완료 후 `exit-code.txt`, `pipeline-run/result.json`, 경보·JPEG 대응과 장비 표본을 대조한다. 실제 P430·네트워크·물리 GPIO는 최종 통합 검증에 남아 있다. 11/24 독립 영상은 두 실행 모두에서 사용하지 않았다.
