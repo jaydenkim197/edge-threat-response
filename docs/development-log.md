@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · 구도 판별과 구도별 운영점의 시간 구간 검증
+
+- 승인 학습 배경 기준으로 두 촬영의 튜닝 프레임 297/298장을 알아봤다. 구도별 운영점은 시간 구간 검증에서 전체·소형 각 4개를 더 검출했으나 음성 오탐 2/137로 승격 기준을 넘었다. [조건과 시간 구간 평가](../reports/training/p430-autonomous-2026-11-27/report.md#카메라-구도-판별과-구도별-운영점의-시간-구간-대조)
+
 ## 2026-11-28 · RF-DETR ONNX 출력 일치 확인
 
 - PC14의 완료 가중치를 ONNX로 내보내 승인 튜닝 타일 12개의 고정 운영점 박스와 점수를 대조했다. Orin TensorRT FP32 시험은 기존 4K RTSP 반복 시험 뒤에 실행되도록 등록했다. [검증과 Orin 실행 위치](../reports/training/p430-autonomous-2026-11-27/report.md#rf-detr-small의-onnx-변환과-orin-엔진-시험-등록)
