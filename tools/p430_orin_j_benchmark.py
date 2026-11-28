@@ -326,6 +326,8 @@ def benchmark(
         stream = iter(frames)
         stack.callback(stream.close)
         warmup = run_window(stream, process, lookup_start, WARMUP_SECONDS, **options)
+        # A detector runtime loaded during warm-up can change OpenCV's process-wide setting.
+        effective_opencv_threads_after_warmup = cv2.getNumThreads()
         warmup_signal_count = len(alarm.signals)
         if warmup["problem"] is None:
             for _ in range(REPETITIONS):
@@ -368,6 +370,8 @@ def benchmark(
             "latency_drift_tolerance_ms": latency_tolerance_ms,
             "capture_profile": "P430 main 3840x2160",
             "parallel_jpeg": parallel_jpeg, "decoder_threads": decoder_threads, "opencv_threads": opencv_threads,
+            "effective_opencv_threads_after_warmup": effective_opencv_threads_after_warmup,
+            "effective_opencv_threads_after_measurement": cv2.getNumThreads(),
         },
         provenance=provenance, board=board, memory_policy=memory_policy,
         warmup=warmup, windows=windows, capture=dict(frames.stats),

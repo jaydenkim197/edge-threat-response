@@ -114,6 +114,7 @@ class OrinJBenchmarkTests(TestCase):
                     cv2 = Mock(CAP_FFMPEG=0, CAP_PROP_OPEN_TIMEOUT_MSEC=1,
                                CAP_PROP_READ_TIMEOUT_MSEC=2, CAP_PROP_N_THREADS=3)
                     cv2.VideoCapture.return_value = capture
+                    cv2.getNumThreads.return_value = 1
                     cv2.imencode.side_effect = lambda ext, image: (True, bytes([image.index]))
                     driver = Mock()
                     if failed:
@@ -155,6 +156,9 @@ class OrinJBenchmarkTests(TestCase):
                             decoder_threads=4, opencv_threads=2,
                         )
                     cv2.setNumThreads.assert_called_once_with(2)
+                    self.assertEqual(2, result["settings"]["opencv_threads"])
+                    self.assertEqual(1, result["settings"]["effective_opencv_threads_after_warmup"])
+                    self.assertEqual(1, result["settings"]["effective_opencv_threads_after_measurement"])
                     self.assertEqual([1, 20000, 2, 5000, 3, 4], cv2.VideoCapture.call_args.args[2])
                     capture.get.assert_called_once_with(3)
                     self.assertEqual([b"\0", b"\x04", b"\x08", b"\x0c"],
