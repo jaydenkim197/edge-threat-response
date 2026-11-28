@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · D1 두 후보 하한의 RTSP 비교 등록
+
+- 공통 개발 AP를 계산한 0.001과 기존 RTSP 증거의 0.15를 Orin 같은 입력에서 각각 측정하도록 등록했다. 평가와 운영 설정의 일치를 판단할 증거로 사용한다. [고정 변수 및 작업 위치](../reports/training/p430-autonomous-2026-11-27/report.md#d1의-후보-하한-두-값에-대한-4k-rtsp-짝비교-등록)
+
 ## 2026-11-28 · Orin 사람·칼 병렬 호출 대조 등록
 
 - 4K 승인 프레임에서 고정 모델의 순차·병렬 호출을 비교하도록 등록했다. 4K RTSP 반복 시험과 RF-DETR 엔진 시험이 끝나면 같은 GPU 잠금에서 실행한다. [지연과 출력 비교 기준](../reports/training/p430-autonomous-2026-11-27/report.md#orin에서-사람과-칼-검출의-cuda-스트림-대조-등록)
