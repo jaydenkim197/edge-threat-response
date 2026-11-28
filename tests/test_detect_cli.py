@@ -42,6 +42,7 @@ class DetectionCliReadinessTests(unittest.TestCase):
             self.assertEqual([0., .25, .52, 1.001], [row["timestamp_s"] for row in rows])
             self.assertEqual({"fixture"}, {row["source_id"] for row in rows})
             summary = json.loads((output / "summary.json").read_text(encoding="utf-8"))
+            self.assertIsNone(summary["provenance"]["max_frames"])
             sampling = summary["provenance"]["sampling"]
             self.assertEqual((4.0, 0.0, "skipped"), (sampling["sample_hz"], sampling["anchor_s"], sampling["empty_slots"]))
             self.assertEqual(7, capture.get.call_count)

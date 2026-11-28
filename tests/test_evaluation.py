@@ -7,7 +7,7 @@ from pathlib import Path
 
 from edge_threat_response.evaluation import (
     Alert, Interval, MatchingPolicy, Recording, TruthEvent,
-    evaluate_replays, load_ground_truth, score_recording,
+    evaluate_replays, file_sha256, load_ground_truth, score_recording,
 )
 from edge_threat_response.evaluate_cli import main as evaluate_main
 from edge_threat_response.replay_cli import main as replay_main
@@ -132,31 +132,74 @@ class EventEvaluationTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "provenance"):
                 evaluate_replays(TRUTH, manifest, POLICY)
 
-    def test_controlled_final_test_requires_frozen_matching_policy(self):
-        truth = json.loads(TRUTH.read_text())
+    def test_controlled_final_test_binds_frozen_detector_and_approval(self):
+        truth = json.loads(TRUTH.read_text(encoding="utf-8"))
         truth["data_kind"] = "controlled"
-        truth["recordings"][0]["partition"] = "final_test"
-        policy = json.loads(POLICY.read_text())
-        policy["status"] = "development"
+        video_hash, config_hash, weight_hash = "a" * 64, "b" * 64, "c" * 64
+        truth["recordings"][0].update(partition="final_test", video_sha256=video_hash,
+                                      annotator_id="author", boundary_check_id="reviewer")
+        policy = json.loads(POLICY.read_text(encoding="utf-8"))
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             truth_path = root / "truth.json"
-            truth_path.write_text(json.dumps(truth))
+            truth_path.write_text(json.dumps(truth), encoding="utf-8")
             policy_path = root / "policy.json"
-            policy_path.write_text(json.dumps(policy))
+            policy_path.write_text(json.dumps({**policy, "status": "development"}), encoding="utf-8")
             manifest = root / "bindings.json"
-            with self.assertRaisesRegex(ValueError, "final_test evaluation requires a frozen matching policy"):
+            with self.assertRaisesRegex(ValueError, "requires a frozen matching policy"):
+                evaluate_replays(truth_path, manifest, policy_path)
+            policy_path.write_text(json.dumps({**policy, "status": "frozen"}), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "requires a freeze receipt"):
                 evaluate_replays(truth_path, manifest, policy_path)
 
-            detections = ROOT / "tests/fixtures/replay/basic.jsonl"
+            detections = root / "detections.jsonl"
+            detections.write_bytes((ROOT / "tests/fixtures/replay/basic.jsonl").read_bytes())
             config = ROOT / "configs/replay/development-v2.example.json"
+            sampling = {"sample_hz": 4.0}
+            provenance = {"input": {"sha256": video_hash}, "detector_config": {"sha256": config_hash},
+                          "weights": [{"component_id": "knife", "sha256": weight_hash}], "sampling": sampling,
+                          "max_frames": None}
+            summary = root / "summary.json"
+            detection_receipt = {"schema_version": 1, "frame_count": 9, "detections_sha256": file_sha256(detections)}
+            summary.write_text(json.dumps({**detection_receipt, "provenance": provenance}), encoding="utf-8")
             with redirect_stdout(StringIO()):
-                replay_main(["--input", str(detections), "--config", str(config), "--output-dir", str(root / "replay")])
+                self.assertEqual(0, replay_main(["--input", str(detections), "--config", str(config),
+                                                "--output-dir", str(root / "replay")]))
             manifest.write_text(json.dumps({"schema_version": 1, "recordings": [
-                {"recording_id": "fixture-recording", "detections": str(detections), "pipeline_config": str(config), "replay_dir": "replay"}]}))
-            policy_path.write_text(json.dumps({**policy, "status": "frozen"}))
-            self.assertEqual({"final_test"},
-                             {row["partition"] for row in evaluate_replays(truth_path, manifest, policy_path)["comparison"]})
+                {"recording_id": "fixture-recording", "detections": str(detections),
+                 "pipeline_config": str(config), "replay_dir": "replay"}]}), encoding="utf-8")
+            receipt_path = root / "freeze.json"
+            receipt = {"schema_version": 1, "status": "frozen", "candidate_id": "fixture-detector",
+                       "approved_by_alias": "authority", "final_evaluator_alias": "reviewer",
+                       "code_commit": "fixture-code", "frozen_at_kst": "2026-11-29T12:00:00+09:00",
+                       "approval_receipt_sha256": "d" * 64, "protected_source_and_edit_lineage_receipt_sha256": "e" * 64,
+                       "approved_event_gt_sha256": file_sha256(truth_path),
+                       "event_annotation_version": truth["annotation_version"], "matching_policy_sha256": file_sha256(policy_path),
+                       "pipeline_config_sha256": file_sha256(config), "detector_config_sha256": config_hash,
+                       "detection_input_sampling": sampling, "final_eval_modes": ["B0", "B1", "B2", "B3"],
+                       "weights_sha256": {"knife": weight_hash}}
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+            result = evaluate_replays(truth_path, manifest, policy_path, freeze_receipt=receipt_path)
+            self.assertEqual({"final_test"}, {row["partition"] for row in result["comparison"]})
+            self.assertEqual(file_sha256(receipt_path), result["freeze_receipt_sha256"])
+            self.assertEqual(file_sha256(summary), result["inputs"][0]["detection_summary_sha256"])
+            args = ["--ground-truth", str(truth_path), "--replay-manifest", str(manifest), "--policy", str(policy_path),
+                    "--freeze-receipt", str(receipt_path), "--output-dir", str(root / "evaluation")]
+            with redirect_stdout(StringIO()):
+                self.assertEqual(0, evaluate_main(args))
+
+            for change in ({"max_frames": 9}, {"input": {"sha256": "0" * 64}},
+                           {"weights": [{"component_id": "knife", "sha256": "0" * 64}]}):
+                with self.subTest(change=change):
+                    summary.write_text(json.dumps({**detection_receipt, "provenance": {**provenance, **change}}),
+                                       encoding="utf-8")
+                    with self.assertRaisesRegex(ValueError, "Final detection provenance"):
+                        evaluate_replays(truth_path, manifest, policy_path, freeze_receipt=receipt_path)
+            receipt["approved_event_gt_sha256"] = "0" * 64
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "Ground truth or matching policy differs"):
+                evaluate_replays(truth_path, manifest, policy_path, freeze_receipt=receipt_path)
+
 
 
 if __name__ == "__main__":

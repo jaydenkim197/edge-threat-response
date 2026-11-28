@@ -108,4 +108,6 @@ $env:PYTHONPATH = 'src'
 
 실제 촬영에는 작성한 ground truth, 매칭 설정과 [replay 연결표](../templates/experiments/replay-manifest.template.json)를 사용한다. 연결표의 경로는 그 JSON 파일 위치 기준이다. 모든 영상에서 manifest의 `modes`에 선택한 각 mode의 `summary.json/events.jsonl`이 있어야 하며(기본 B0~B3, B4는 명시적으로 추가), 입력/config SHA-256·source·frame/timestamp·사건 개수·model/version·policy가 맞지 않으면 실패한다. 영상별 run ID는 달라도 판단/model 설정은 동일해야 한다.
 
-`comparison.csv`는 partition×선택 mode(B0~B4) 요약, `evaluation.json`은 일대일 대응·반복/배경 FP·FN·ignore·입력 해시의 원시 증거다. evaluator의 fingerprint 확인은 실제 모델 binary의 동일성을 단독 증명하지 않는다. `etr-detect` 실행의 weight SHA-256과 입력 영상 hash를 동결 기록에 함께 둔다. 실제 최종평가에는 policy status `frozen`과 승인된 정답 version을 사용한다.
+`comparison.csv`는 partition×선택 mode(B0~B4) 요약, `evaluation.json`은 일대일 대응·반복/배경 FP·FN·ignore·입력 해시의 원시 증거다. evaluator의 fingerprint 확인은 실제 모델 binary의 동일성을 단독 증명하지 않는다. `etr-detect` 실행의 weight SHA-256과 입력 영상 hash를 동결 기록에 함께 둔다. 통제된 최종평가에는 동결 정책과 승인된 정답을 사용한다. [평가 연결표](../templates/experiments/replay-manifest.template.json)의 각 detections 옆에 원래 검출 실행의 `summary.json`를 보존한다. 설정을 동결한 담당자는 candidate·commit·동결 시각·평가 승인 담당자와 승인 및 원본 계보 영수증 SHA-256을 기록한다. 승인된 정답·매칭 정책·공통 pipeline의 파일 SHA-256, detector config 및 component별 weight SHA-256, 검출 provenance의 샘플링·평가 mode를 같은 영수증에 둔다. B4를 실행하면 관계 모델 SHA-256과 임계값도 고정한다.
+
+최종 평가 담당자는 `etr-evaluate --freeze-receipt <승인_영수증.json>`로 승인된 영수증을 전달한다. 평가기는 각 영상의 정답 SHA와 검출 input SHA, 검출 결과·설정·가중치·샘플링·프레임 상한 사용 여부 및 독립 검수 식별자를 대조한다. 승인·계보 영수증 원문과 실행 환경의 실제 코드 식별은 담당자가 별도로 확인한다. 소프트웨어는 영수증의 승인 권한이나 영상 시간축을 작성한 사람의 실제 검수를 보증하지 않는다.

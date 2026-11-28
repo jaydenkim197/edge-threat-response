@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import mean, median
@@ -220,14 +221,32 @@ def metrics(counts: dict[str, Any], latencies: list[float]) -> dict[str, Any]:
                         "early_confirmation_count": sum(value < 0 for value in ordered)}}
 
 
-def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Path) -> dict[str, Any]:
+def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Path, *,
+                     freeze_receipt: Path | None = None) -> dict[str, Any]:
     document, recordings = load_ground_truth(ground_truth)
     policy = MatchingPolicy.load(policy_path)
-    if document["data_kind"] == "controlled":
-        if policy.status == "synthetic_only":
-            raise ValueError("Synthetic-only matching policy cannot evaluate real recordings")
-        if policy.status != "frozen" and any(row.partition == "final_test" for row in recordings):
+    controlled = document["data_kind"] == "controlled"
+    final_test = controlled and any(row.partition == "final_test" for row in recordings)
+    if controlled and policy.status == "synthetic_only":
+        raise ValueError("Synthetic-only matching policy cannot evaluate real recordings")
+    receipt = None
+    if final_test:
+        if policy.status != "frozen":
             raise ValueError("Controlled final_test evaluation requires a frozen matching policy")
+        if freeze_receipt is None:
+            raise ValueError("Controlled final_test evaluation requires a freeze receipt")
+        receipt = read_json(freeze_receipt)
+        _schema(receipt)
+        expected = {"status": "frozen", "approved_event_gt_sha256": file_sha256(ground_truth),
+                    "event_annotation_version": document["annotation_version"],
+                    "matching_policy_sha256": file_sha256(policy_path)}
+        if any(receipt.get(key) != value for key, value in expected.items()):
+            raise ValueError("Ground truth or matching policy differs from the freeze receipt")
+        for key in ("candidate_id", "code_commit", "frozen_at_kst", "approved_by_alias", "final_evaluator_alias"):
+            _text(receipt, key)
+        for key in ("approval_receipt_sha256", "protected_source_and_edit_lineage_receipt_sha256"):
+            if re.fullmatch(r"[0-9a-f]{64}", _text(receipt, key)) is None:
+                raise ValueError("Expected an approval and lineage receipt SHA-256")
     bindings_document = read_json(replay_manifest)
     _schema(bindings_document)
     bindings = bindings_document.get("recordings")
@@ -242,6 +261,9 @@ def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Pat
     modes = tuple(AblationMode(x) for x in selected_modes)
     if not modes or len(set(modes)) != len(modes):
         raise ValueError("Evaluation modes must be nonempty and unique")
+    if receipt is not None and receipt.get("final_eval_modes") != selected_modes:
+        raise ValueError("Evaluation modes differ from the freeze receipt")
+    truth_by_id = {_text(row, "recording_id"): row for row in document["recordings"]}
     per_mode: dict[str, list[dict[str, Any]]] = {mode.value: [] for mode in modes}
     relation_contract = None
     input_records: list[dict[str, Any]] = []
@@ -267,6 +289,17 @@ def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Pat
                       "pipeline_config_sha256": config_hash, "frame_count": len(frames),
                       "first_sample_s": frames[0].timestamp_s, "last_sample_s": frames[-1].timestamp_s,
                       "missing_or_error_frames": sum(frame.status.value != "valid" for frame in frames), "modes": {}}
+        frozen_input = receipt is not None and recording.partition == "final_test"
+        if frozen_input:
+            if config_hash != receipt.get("pipeline_config_sha256"):
+                raise ValueError("Pipeline config differs from the freeze receipt")
+            truth_row = truth_by_id[recording.recording_id]
+            if _text(truth_row, "annotator_id") == _text(truth_row, "boundary_check_id"):
+                raise ValueError("Final event annotations require a separate boundary reviewer")
+            provenance["detection_summary_sha256"] = _verify_frozen_detection(
+                detection_path.with_name("summary.json"), receipt,
+                _text(truth_row, "video_sha256"), input_hash, len(frames),
+            )
         for mode in modes:
             folder = replay_root / mode.value
             summary = read_json(folder / "summary.json")
@@ -291,6 +324,8 @@ def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Pat
                         or any(relation.get(k) != v for k, v in cache.provenance.items())):
                     raise ValueError("B4 relation provenance mismatch")
                 contract = (cache.provenance["classifier_sha256"], threshold)
+                if frozen_input and contract != (receipt.get("relation_model_sha256"), receipt.get("relation_threshold")):
+                    raise ValueError("B4 classifier or threshold differs from the freeze receipt")
                 if relation_contract is not None and relation_contract != contract:
                     raise ValueError("B4 classifier/threshold changed across recordings")
                 relation_contract = contract
@@ -331,8 +366,34 @@ def evaluate_replays(ground_truth: Path, replay_manifest: Path, policy_path: Pat
             "interval_semantics": "start inclusive, end exclusive; manual end_frame is last positive frame",
             "measurement_boundary": "Decision timestamps in source video, not GPIO or real-time end-to-end latency",
             "ground_truth_sha256": file_sha256(ground_truth), "replay_manifest_sha256": file_sha256(replay_manifest),
-            "policy_sha256": file_sha256(policy_path), "inputs": input_records,
+            "policy_sha256": file_sha256(policy_path),
+            **({"freeze_receipt_sha256": file_sha256(freeze_receipt)} if receipt is not None else {}),
+            "inputs": input_records,
             "comparison": comparison, "recordings": per_mode}
+
+
+def _verify_frozen_detection(path: Path, receipt: dict[str, Any], video_sha256: str,
+                             detection_sha256: str, frame_count: int) -> str:
+    summary = read_json(path)
+    _schema(summary)
+    provenance = summary.get("provenance")
+    if not isinstance(provenance, dict):
+        raise ValueError("Final detection summary requires recorded provenance")
+    weights = provenance.get("weights")
+    inputs = provenance.get("input")
+    detector = provenance.get("detector_config")
+    if not isinstance(weights, list) or not isinstance(inputs, dict) or not isinstance(detector, dict):
+        raise ValueError("Final detection summary requires input, detector and weight receipts")
+    weight_hashes = {_text(row, "component_id"): _text(row, "sha256") for row in weights}
+    sampling = receipt.get("detection_input_sampling")
+    if (summary.get("detections_sha256") != detection_sha256 or summary.get("frame_count") != frame_count
+            or inputs.get("sha256") != video_sha256
+            or detector.get("sha256") != _text(receipt, "detector_config_sha256")
+            or not weights or len(weight_hashes) != len(weights) or weight_hashes != receipt.get("weights_sha256")
+            or not isinstance(sampling, dict) or not sampling or provenance.get("sampling") != sampling
+            or "max_frames" not in provenance or provenance["max_frames"] is not None):
+        raise ValueError("Final detection provenance differs from the freeze receipt or approved video")
+    return file_sha256(path)
 
 
 def _schema(row: dict[str, Any]) -> None:

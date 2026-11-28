@@ -15,12 +15,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--ground-truth", required=True, type=Path)
     parser.add_argument("--replay-manifest", required=True, type=Path)
     parser.add_argument("--policy", required=True, type=Path)
+    parser.add_argument("--freeze-receipt", type=Path, help="Approved provenance for controlled final_test data")
     parser.add_argument("--output-dir", required=True, type=Path)
     args = parser.parse_args(argv)
     try:
         if args.output_dir.exists():
             raise ValueError("Evaluation output must be a new directory")
-        result = evaluate_replays(args.ground_truth, args.replay_manifest, args.policy)
+        result = evaluate_replays(args.ground_truth, args.replay_manifest, args.policy, freeze_receipt=args.freeze_receipt)
         result["git_commit"] = _git_commit()
         args.output_dir.mkdir(parents=True)
         (args.output_dir / "evaluation.json").write_text(

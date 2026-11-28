@@ -103,6 +103,7 @@ def detect_main(argv: Sequence[str] | None = None) -> int:
         detector = build_detector(config)
         provenance = _provenance(args.input, args.detector_config, config, rtsp_env=args.rtsp_env)
         provenance["native_memory"] = native_memory
+        provenance["max_frames"] = args.max_frames
         if args.sample_hz is not None:
             provenance["sampling"] = {
                 "sample_hz": args.sample_hz,
