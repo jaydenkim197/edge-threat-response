@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · BatchNorm 동결 해제와 외부 CCTV 음성 진단
+
+- PC12에서 첫 에폭 bias 114개 값의 고정과 이후 optimizer 학습 복귀를 확인했다. PC14의 외부 CCTV 음성 960장 중 기존 선별이 놓친 운영점 오탐은 17장, 원본 3개로 추가 학습 기준에 미달했다. [실측 기록](../reports/training/p430-autonomous-2026-11-27/report.md#동결-해제-확인과-외부-cctv의-추가-오탐-표본-점검)
+
 ## 2026-11-28 · 첫 에폭 BatchNorm bias 동결 대조 등록
 
 - 이전 warmup 변경의 영향을 분리하기 위해 첫 에폭 동안 BatchNorm bias만 고정한 학습을 PC12에 등록했다. 첫 시도의 콜백 순서 충돌을 보존하고 검사를 먼저 실행하는 재시도를 등록했다. [실험과 검증 조건](../reports/training/p430-autonomous-2026-11-27/report.md#batchnorm-bias-동결로-첫-학습-구간을-분리한-대조)
