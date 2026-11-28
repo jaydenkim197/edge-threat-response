@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — Orin 원본 픽셀 타일 입력 비교 완료
+
+원본 640×768의 칼 검출 p95는 117.88→99.07ms였다. 승인 튜닝의 동일 오탐 한도에서 전체 검출은 113→83개였고, 좌표만 교체한 대조도 승격 기준에 미달했다. [실험 결과](../reports/training/p430-autonomous-2026-11-27/report.md#orin-640768-원본-타일-입력-대조)
+
 ## 2026-11-28 — 중간 bias 학습의 초기 궤적 확인
 
 중간 bias 시작값 0.003의 초기 EMA 네 지점이 BatchNorm bias와 합성곱 커널 모두 기존 두 설정 사이에서 움직였다. PC12 평가가 끝나면 자동 수집기가 예측과 선택을 다시 집계한다. [초기 학습 기록](../reports/training/p430-autonomous-2026-11-27/report.md#중간-bias-warmup의-첫-epoch-가중치-대조)
