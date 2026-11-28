@@ -109,8 +109,11 @@ def busy(settings):
     lock="gpu0-training.lock" if node.startswith("pc") else f"{settings['uuid']}-training.lock"
     if (base.parent/"training"/lock).is_file():
         return True
-    entries=subprocess.run(["nvidia-smi","--query-compute-apps=pid,process_name","--format=csv,noheader"],
-                           text=True,capture_output=True,timeout=8,check=True).stdout.strip().splitlines()
+    command=["nvidia-smi"]
+    if os.name!="nt" and settings.get("parallel_gpu") is True:
+        command.extend(("-i",settings["uuid"]))
+    command.extend(("--query-compute-apps=pid,process_name","--format=csv,noheader"))
+    entries=subprocess.run(command,text=True,capture_output=True,timeout=8,check=True).stdout.strip().splitlines()
     if os.name!="nt":
         return bool(entries)
     if not entries:
@@ -131,7 +134,8 @@ def reserve(job,settings):
         if job.get("gpu"):
             if os.name!="nt":
                 locks=Path(settings["locks"])
-                stack.enter_context(process_lock(locks/"p430-phase2-one-gpu.lock"))
+                if settings.get("parallel_gpu") is not True:
+                    stack.enter_context(process_lock(locks/"p430-phase2-one-gpu.lock"))
                 stack.enter_context(process_lock(locks/f"{settings['uuid']}.lock"))
             visible=subprocess.check_output(["nvidia-smi","-i",str(settings["gpu_id"]),"--query-gpu=uuid",
                                              "--format=csv,noheader"],text=True,timeout=8).strip()
@@ -159,6 +163,8 @@ def action(root, job, settings, evidence, states):
     with (attempt/"stdout.log").open("xb") as stdout,(attempt/"stderr.log").open("xb") as stderr:
         child=subprocess.Popen(command,stdin=subprocess.DEVNULL,stdout=stdout,stderr=stderr,env=env)
         record={"status":"RUNNING","attempt":number,"pid":child.pid,"path":str(attempt),"time":now()}
+        if job.get("gpu"):
+            record.update(gpu_id=settings["gpu_id"],gpu_uuid=settings["uuid"])
         states[job["id"]]=record
         persist(root,settings,states)
         code=child.wait()
@@ -216,6 +222,9 @@ def worker(root):
                 status,reason=decide(job,{**shared,**states},settings)
                 states[key]={**prior,"status":status,"reason":reason}
             persist(root,settings,states)
+            if settings.get("exit_when_done") is True and jobs and all(
+                    states.get(job["id"],{}).get("status") in FINAL for job in jobs):
+                return
             if any(states.get(job["id"],{}).get("status")=="RUNNING" and job["kind"]!="existing" for job in jobs):
                 time.sleep(15)
                 continue

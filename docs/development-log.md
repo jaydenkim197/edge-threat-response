@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · 연구실 3090 두 장 동시 학습
+
+- GPU별 잠금을 사용하는 새 Worker로 #1의 YOLO26n 일반 대조군을 시작했다. #2의 YOLO26m Teacher 학습과 동시에 도는 두 GPU의 프로세스·메모리·대조군 배치 진행을 확인했다. 기존 비교에는 해시와 학습 예산이 일치한 선행 완료 결과를 재사용하도록 연결했다. [병렬 작업과 검증 조건](p430-overnight-queue.md#2026-11-28-독립-대조군-병렬-실행)
+
 ## 2026-11-28 · Orin 병렬 CUDA Graph 실행 옵션
 
 - 이전 4K 루프백의 사람·칼 병렬 호출을 표준 detector의 선택 옵션으로 옮겼다. 직렬 초기화, 구성요소 순서, 스트림 오류 시 해당 프레임 전체 거부, 실행 종료 후 Worker 정리를 검증했다. 기본 직렬 및 기존 현장 설정을 유지한다. [검출기 옵션](architecture.md#detector--media-adapter--implemented-pc-verified)

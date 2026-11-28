@@ -5,11 +5,12 @@ from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from unittest import TestCase
 from unittest.mock import patch
+from contextlib import nullcontext
 
 
 ROOT = Path(__file__).resolve().parents[1]
 with patch.object(sys, "path", [str(ROOT / "tools"), *sys.path]):
-    from p430_overnight_queue import decide, deliver_ensemble, recover
+    from p430_overnight_queue import busy, decide, deliver_ensemble, recover, reserve
     from p430_followup_actions import (
         PLAN_SHA, POS_REPLAY_BUDGET, POS_REPLAY_SCOPE, SOURCE_SHA, approved_positive_replay,
         replace_reviewed_negatives, replace_reviewed_positives,
@@ -41,6 +42,31 @@ class RFDetrForegroundTests(TestCase):
 
 
 class OvernightQueueTests(TestCase):
+    def test_parallel_lab_worker_reserves_and_queries_only_its_selected_gpu(self):
+        settings = {"node": "lab", "gpu_id": 1, "uuid": "GPU-selected", "locks": "locks",
+                    "base": "data/site", "parallel_gpu": True}
+        with (patch("p430_overnight_queue.os", SimpleNamespace(name="posix")),
+              patch("p430_overnight_queue.process_lock", side_effect=lambda _: nullcontext()) as lock,
+              patch("p430_overnight_queue.subprocess.check_output", return_value="GPU-selected\n"),
+              patch("p430_overnight_queue.subprocess.run", return_value=SimpleNamespace(stdout="")) as smi):
+            with reserve({"gpu": True}, settings):
+                pass
+            lock.assert_called_once_with(Path("locks/GPU-selected.lock"))
+            self.assertEqual(["nvidia-smi", "-i", "GPU-selected"], smi.call_args.args[0][:3])
+
+            smi.return_value = SimpleNamespace(stdout="77, python")
+            self.assertTrue(busy(settings))
+            with self.assertRaises(BlockingIOError):
+                with reserve({"gpu": True}, settings):
+                    self.fail("An occupied GPU must never be assigned")
+
+            smi.return_value = SimpleNamespace(stdout="")
+            lock.reset_mock()
+            with reserve({"gpu": True}, {**settings, "parallel_gpu": False}):
+                pass
+            self.assertEqual([Path("locks/p430-phase2-one-gpu.lock"), Path("locks/GPU-selected.lock")],
+                             [call.args[0] for call in lock.call_args_list])
+
     def test_site_only_verification_accepts_explicit_zero_draw_sources(self):
         plan = {
             "draws": [[("entry", False)]],
