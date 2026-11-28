@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — R18 12 epoch 및 등록 평가 완료
+
+다섯 체크포인트의 승인 튜닝 결과를 재검산했다. R18 최선은 전체 94/161·소형 65/105로 D1의 113/161·84/105에 미달했다. 공통 개발 확인으로 넘어간 운영점은 0개였다. PC12 중간 bias 대조는 계속한다. [전체 비교](../reports/training/p430-autonomous-2026-11-27/report.md#r18-12-epoch-및-등록-튜닝-평가-완료)
+
 ## 2026-11-28 — 중간 bias warmup 대조 학습 시작
 
 PC12에서 같은 학습 계획의 bias warmup 시작값을 0.003으로 설정했다. 첫 256번째 업데이트에서 실제 bias 학습률과 기준 인자 일치를 확인했다. 기존 Worker가 튜닝 선택과 조건부 공통 평가를 이어서 실행한다. [등록과 실행 증거](../reports/training/p430-autonomous-2026-11-27/report.md#중간-bias-warmup-대조-학습-시작)
