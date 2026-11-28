@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · Orin 사람·칼 병렬 호출 대조 등록
+
+- 4K 승인 프레임에서 고정 모델의 순차·병렬 호출을 비교하도록 등록했다. 4K RTSP 반복 시험과 RF-DETR 엔진 시험이 끝나면 같은 GPU 잠금에서 실행한다. [지연과 출력 비교 기준](../reports/training/p430-autonomous-2026-11-27/report.md#orin에서-사람과-칼-검출의-cuda-스트림-대조-등록)
+
 ## 2026-11-28 · 구도 판별과 구도별 운영점의 시간 구간 검증
 
 - 승인 학습 배경 기준으로 두 촬영의 튜닝 프레임 297/298장을 알아봤다. 구도별 운영점은 시간 구간 검증에서 전체·소형 각 4개를 더 검출했으나 음성 오탐 2/137로 승격 기준을 넘었다. [조건과 시간 구간 평가](../reports/training/p430-autonomous-2026-11-27/report.md#카메라-구도-판별과-구도별-운영점의-시간-구간-대조)
