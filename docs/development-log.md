@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 중간 bias warmup 대조 학습 시작
+
+PC12에서 같은 학습 계획의 bias warmup 시작값을 0.003으로 설정했다. 첫 256번째 업데이트에서 실제 bias 학습률과 기준 인자 일치를 확인했다. 기존 Worker가 튜닝 선택과 조건부 공통 평가를 이어서 실행한다. [등록과 실행 증거](../reports/training/p430-autonomous-2026-11-27/report.md#중간-bias-warmup-대조-학습-시작)
+
 ## 2026-11-28 — R18 9 epoch 튜닝 표본과 D1 준비본 대조
 
 R18 9 epoch는 이전과 동일한 튜닝에서 전체 12/46·소형 6/22였다. 정답 위치 후보가 늘었지만 가장 가까운 다음 점수에서 FP 박스 상한을 넘었다. D1 준비본 설정과 기존 장시간 파일 증거의 일치를 다시 확인했고 등록 R18 평가를 계속한다. [비교와 해시 대조](../reports/training/p430-autonomous-2026-11-27/report.md#r18-9-epoch의-동일-튜닝-표본-비교)
