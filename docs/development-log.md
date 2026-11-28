@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — 낮은 bias warmup 공통 개발 평가 완료
+
+PC12의 고정 후보는 D1 대비 공통 개발에서 전체 81→95/140, 소형 47→44/58, 음성 오탐 0→6/147이었다. AP 두 항목은 개선됐고 검출·오탐 목표에는 미달했다. 원격 평가 양쪽 예측을 재집계했고 D1을 예비 후보로 유지한다. [튜닝·공통 개발 결과](../reports/training/p430-autonomous-2026-11-27/report.md#낮은-bias-warmup의-고정-공통-개발-평가)
+
 ## 2026-11-28 — R18 혼합 FP16 변환 한계 확인
 
 같은 R18 ONNX의 Orin 혼합 FP16 변환에서 Builder 단계 0·1은 같은 단언 실패를 기록했고, 단계 3은 지정한 300초 안에 완료되지 않았다. 세 팔 모두 합성 입력의 정밀도·지연 계측 전 종료됐다. PC14 본학습과 PC12 낮은 bias 결과의 기존 평가를 유지한다. [빌드 결과와 재개 조건](../reports/training/p430-autonomous-2026-11-27/report.md#r18-orin-혼합-fp16-변환의-제한-확인)
