@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — RF-DETR 선별 학습 사례의 중복과 촬영 구간 확인
+
+승인 학습 47장을 원본 시각과 대조했다. 11/19 소형 구간 밖의 9장 중 8장은 기존 PC12 재노출 입력과 동일했다. 추가 1장으로는 별도 학습의 근거가 부족해 PC14 등록을 보류한다. [촬영별 집계](../reports/training/p430-autonomous-2026-11-27/report.md#rf-detr-선별-사례의-촬영-구간과-기존-재노출-중복)
+
 ## 2026-11-28 — R18 12 epoch 및 등록 평가 완료
 
 다섯 체크포인트의 승인 튜닝 결과를 재검산했다. R18 최선은 전체 94/161·소형 65/105로 D1의 113/161·84/105에 미달했다. 공통 개발 확인으로 넘어간 운영점은 0개였다. PC12 중간 bias 대조는 계속한다. [전체 비교](../reports/training/p430-autonomous-2026-11-27/report.md#r18-12-epoch-및-등록-튜닝-평가-완료)
