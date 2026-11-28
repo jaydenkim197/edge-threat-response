@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · 첫 에폭 재현 종료 및 예비 D1 설정 대조
+
+- PC12에서 EMA 512의 텐서 708개를 정확히 재현했다. 인접 다섯 저장점은 튜닝에서 승격하지 못했다. 예비 D1의 기존 Orin 개발 예측 585장에서 두 후보 하한의 고정 운영점 좌표·점수가 일치했고 AP는 하한별로 달랐다. [재현 결과](../reports/training/p430-autonomous-2026-11-27/report.md#원본-타일-첫-에폭-재현과-인접-체크포인트의-결과) · [운영 하한](../reports/training/p430-autonomous-2026-11-27/report.md#예비-d1의-평가-하한과-운영-하한-대조)
+
 ## 2026-11-28 · 원본 타일 EMA 초반 학습 재현 착수
 
 - 두 기존 운영점에서 달라진 15건은 모두 상대 모델에도 IoU 0.50 이상의 낮은 점수 후보가 있었다. PC12에 원래 스케줄을 유지한 첫 에폭 재현과 다섯 새 체크포인트 검증을 등록했다. [판정 차이와 작업 조건](../reports/training/p430-autonomous-2026-11-27/report.md#원본-타일-ema의-고정-판정-차이와-첫-에폭-재현)
