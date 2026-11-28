@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · 외부 CCTV 양성 타일 재표집 착수
+
+- 승인 학습에서 11/19와 크기·박스 내부 선명도가 유사한 외부 CCTV 36장과 원본 20개를 확인했다. PC14에서 24장을 에폭당 한 번씩 더 보는 동수 교체 학습을 시작했고 첫 배치 경로 검증을 확인했다. [표본 분석과 비교 조건](../reports/training/p430-autonomous-2026-11-27/report.md#외부-cctv에서-1119와-크기세부-명암이-비슷한-양성-재표집)
+
 ## 2026-11-28 · BatchNorm 동결 해제와 외부 CCTV 음성 진단
 
 - PC12에서 첫 에폭 bias 114개 값의 고정과 이후 optimizer 학습 복귀를 확인했다. PC14의 외부 CCTV 음성 960장 중 기존 선별이 놓친 운영점 오탐은 17장, 원본 3개로 추가 학습 기준에 미달했다. [실측 기록](../reports/training/p430-autonomous-2026-11-27/report.md#동결-해제-확인과-외부-cctv의-추가-오탐-표본-점검)
