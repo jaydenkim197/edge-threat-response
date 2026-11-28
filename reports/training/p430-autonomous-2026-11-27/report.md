@@ -2067,3 +2067,13 @@ RF-DETR의 고정 운영점 0.60341734로 승인 학습 음성에 남은 오탐 
 이 조건에서 음성 오탐은 줄지 않았다. 정검출 335프레임 중 315프레임에서 같은 비교가 가능했고 그중 감점 조건에 든 프레임은 0개다. 이 수치는 사건 단위 소지나 정지 양성의 보존을 검증하지 않는다. 11/17에서 확인된 빈 전체 프레임이 확보되지 않았고 RF-DETR 음성 오탐이 촬영별로 2·6건인 점도 한계다. 배경 감점을 튜닝 후보나 운영 경로에 반영하지 않았다. 승인 튜닝, 공통 개발 확인, 11/24 독립 영상은 사용하지 않았다.
 
 합성 밝기 변화·가려진 픽셀 마스크와 두 실행기의 Python 컴파일을 확인했다. 기존 배경 위치 실험의 자동 테스트 5건도 통과했다. 실행기는 `audit-p430-bg-reference-preflight.py`, `audit-p430-bg-rf-train-preflight.py`, 집계는 `p430-bg-reference-preflight-v1.json` SHA-256 `22f2df6e3e4028a68843022401903d9c6d141727a592a0eacdf9ea6b4e881175`와 `p430-bg-rf-train-preflight-v1.json` SHA-256 `de4d7190f16f91860bf22a16cc71a6349a441047d25a70733f899599321f5289`에 보존했다.
+
+### RF-DETR Small의 ONNX 변환과 Orin 엔진 시험 등록
+
+PC14에서 완료된 RF-DETR Small 가중치를 고정하고 별도 CPU 환경에서 ONNX로 변환했다. 가중치 SHA-256은 `845ab6a1d593d10c9e67618ab20c085f0db98dd964e170bfe34a39fbb1f068be`다. RF-DETR 1.11.2·PyTorch 2.14.0 CPU에서 입력 `1×3×640×640` FP32, 배치 1, opset 17을 사용했다. ONNX checker의 전체 검사와 ONNX Runtime 1.23.2의 CPU 재로딩·추론을 확인했다. [RF-DETR 1.11.2](https://github.com/roboflow/rf-detr/releases/tag/1.11.2)
+
+승인 튜닝에서 촬영별 양성 소형·비소형·음성 각 2장, 총 12개 타일을 뽑고 각 이미지 해시를 확인했다. 학습 때의 768×640 타일에서 패키지의 640×640 전처리를 공유했다. 원래 후처리처럼 두 클래스의 상위 300쌍을 고른 뒤 배경 클래스 1을 제거했다. 기존 운영점 0.60341734의 칼 박스 **6개**는 타일별 건수가 모두 같았다. 최대 점수 차 **0.00000060**, 타일 좌표 차 **0.000061px**였다. 원시 출력의 최대 정규화 박스 차 0.00008747, 로짓 차 0.00029469도 사전 변환 허용 범위 이내였다. 이는 지정 타일의 변환 일치 검사다.
+
+ONNX SHA-256 `9ccd23719d126431011c96fb2e092587f6e1a0d02efaad2afc26fca1678e72fa`, 검증 텐서 `a86fc700910a5bf2f2b79b861064b0728b685087e1e3e5958b2a8f0294afb5f5`, CPU 영수증 `15d99a5a61db07cc60fa507a61202354abcb5fc5ba10d32a206cad4f14fc1a44`를 Orin에서 다시 확인했다. Orin `runs/p430-goal-runtime-20261127/rf-detr-small-fp32-build-v1/`에 TensorRT FP32 빌드 및 일치 검사를 등록했다. 빌드는 25 W·공유 잠금·온도 및 가용 RAM 검사 후 시작한다. 동일 12개 입력의 운영점 박스·점수와 GPU 입력 준비 상태의 1타일·직렬 6타일 지연을 확인하도록 구성했다. 실행기는 기존 패키지와 이 프로젝트의 로컬 TensorRT 런타임을 재사용한다. [TensorRT 실행 옵션](https://docs.nvidia.com/deeplearning/tensorrt/latest/reference/command-line-programs.html)
+
+13:54:34 KST에 Orin의 Worker PID `2138063`이 접수했다. 원래 4K RTSP 반복 시험이 GPU를 사용하는 동안 별도 `flock` 프로세스에서 잠금을 기다리는 상태를 확인했다. 두 스크립트의 컴파일·구문 확인과 수신 해시 대조를 마쳤다. Orin 엔진 생성·출력 일치·처리 시간 확인은 작업이 끝난 뒤 판정한다. 학습, 공통 개발 확인 및 11/24 독립 영상에는 이번 변환을 적용하지 않았다.

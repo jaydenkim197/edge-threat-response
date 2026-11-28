@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · RF-DETR ONNX 출력 일치 확인
+
+- PC14의 완료 가중치를 ONNX로 내보내 승인 튜닝 타일 12개의 고정 운영점 박스와 점수를 대조했다. Orin TensorRT FP32 시험은 기존 4K RTSP 반복 시험 뒤에 실행되도록 등록했다. [검증과 Orin 실행 위치](../reports/training/p430-autonomous-2026-11-27/report.md#rf-detr-small의-onnx-변환과-orin-엔진-시험-등록)
+
 ## 2026-11-28 · 승인 학습 자료의 배경 기준 확인
 
 - P430 두 촬영의 배경은 같은 좌표에서 차이가 컸다. 촬영별 배경으로도 승인 학습 음성의 RF-DETR 오탐 8프레임 중 정적 배경과 일치한 사례는 0개였다. 검출 점수에는 반영하지 않았다. [배경 자료와 오탐 검사](../reports/training/p430-autonomous-2026-11-27/report.md#고정형-cctv-배경-기준의-학습-자료-사전-확인)
