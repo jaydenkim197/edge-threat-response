@@ -52,12 +52,17 @@ class P430TileDetectorTests(unittest.TestCase):
             root = Path(temp)
             weights = root / "fixture.pt"
             weights.touch()
-            config = self.write_config(root, weights)
-            for (height, width, _), left, top in (
-                ((2160, 3840, 3), 960, 540),
-                ((1080, 1920, 3), 0, 0),
+            for (height, width, _), left, top, size in (
+                ((2160, 3840, 3), 960, 540, None),
+                ((1080, 1920, 3), 0, 0, None),
+                ((2160, 3840, 3), 960, 540, [640, 768]),
+                ((1080, 1920, 3), 0, 0, [640, 768]),
             ):
-                with self.subTest(width=width):
+                with self.subTest(width=width, imgsz=size):
+                    arguments = {"conf": .3, "device": 0}
+                    if size is not None:
+                        arguments["imgsz"] = size
+                    config = self.write_config(root, weights, predict_arguments=arguments)
                     model = Mock(names={0: "knife"})
                     model.predict.return_value = [
                         result(((600, 100, 620, 120), .8), ((80, 80, 90, 90), .2)),
@@ -65,7 +70,7 @@ class P430TileDetectorTests(unittest.TestCase):
                         result(), result(), result(), result(),
                     ]
                     frames = IterableFrameSource([FramePacket(0, 0, "mock-p430", Frame((height, width, 3)))])
-                    output = root / f"out-{width}"
+                    output = root / f"out-{width}-{size is not None}"
                     with (
                         patch("edge_threat_response.detector.UltralyticsBackend._get_model", return_value=model),
                         patch("edge_threat_response.detect_cli.OpenCVFrameSource", return_value=frames),
@@ -92,7 +97,7 @@ class P430TileDetectorTests(unittest.TestCase):
                             (slice(top + y, top + y + 640), slice(left + x, left + x + 768))
                             for y in (0, 440) for x in (0, 576, 1152)
                         ],
-                        verbose=False, device=0, imgsz=640, rect=False,
+                        verbose=False, device=0, imgsz=640 if size is None else size, rect=False,
                         conf=.001, iou=.7, classes=[0], max_det=100, batch=6,
                     )
 
@@ -117,7 +122,7 @@ class P430TileDetectorTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             config = DetectorConfig.load(self.write_config(
-                root, root / "knife.pt", predict_arguments={"conf": .3, "premerge_conf": .15, "half": True},
+                root, root / "knife.pt", predict_arguments={"conf": .3, "premerge_conf": .15, "half": True, "imgsz": 640},
             ))
             detector = build_detector(config)
             model = Mock(names={0: "knife"})
@@ -132,12 +137,17 @@ class P430TileDetectorTests(unittest.TestCase):
             self.assertEqual(.15, model.predict.call_args.kwargs["conf"])
             self.assertIs(True, model.predict.call_args.kwargs["half"])
 
-    def test_declarative_profile_rejects_invalid_filters_or_precision(self):
+    def test_declarative_profile_rejects_invalid_filters_precision_or_input_size(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             for extra, error in (({"premerge_conf": .4}, "premerge_conf"),
                                  ({"premerge_conf": True}, "premerge_conf"),
-                                 ({"half": "yes"}, "half")):
+                                 ({"half": "yes"}, "half"),
+                                 ({"imgsz": [768, 640]}, "imgsz"),
+                                 ({"imgsz": [640.0, 768]}, "imgsz"),
+                                 ({"imgsz": 960}, "imgsz"),
+                                 ({"imgsz": "640"}, "imgsz"),
+                                 ({"imgsz": None}, "imgsz")):
                 with self.subTest(extra=extra):
                     config = DetectorConfig.load(self.write_config(
                         root, root / "knife.pt", predict_arguments={"conf": .3, **extra},

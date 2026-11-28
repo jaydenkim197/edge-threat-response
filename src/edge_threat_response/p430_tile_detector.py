@@ -44,8 +44,13 @@ class P430TiledBackend(UltralyticsBackend):
     def __init__(
         self, weights: str, *, predict_arguments: dict[str, object], cuda_graph: bool = False
     ) -> None:
-        if predict_arguments.keys() - {"device", "conf", "premerge_conf", "half"}:
-            raise ValueError("P430 tile predict_arguments supports device, conf, premerge_conf and half.")
+        if predict_arguments.keys() - {"device", "conf", "premerge_conf", "half", "imgsz"}:
+            raise ValueError("P430 tile predict_arguments supports device, conf, premerge_conf, half and imgsz.")
+        size = predict_arguments.get("imgsz", 640)
+        square = type(size) is int and size == 640
+        native = isinstance(size, list) and size == [640, 768] and all(type(dimension) is int for dimension in size)
+        if not (square or native):
+            raise ValueError("P430 tile imgsz must be 640 or [640, 768] (height, width).")
         confidence = predict_arguments.get("conf", .001)
         if isinstance(confidence, bool) or not isinstance(confidence, (int, float)) or not .001 <= confidence <= 1:
             raise ValueError("P430 tile confidence must be in [0.001, 1].")
@@ -59,7 +64,7 @@ class P430TiledBackend(UltralyticsBackend):
 
         self.output_confidence = float(confidence)
         arguments = {
-            "device": predict_arguments.get("device", 0), "imgsz": 640, "rect": False,
+            "device": predict_arguments.get("device", 0), "imgsz": 640 if square else [640, 768], "rect": False,
             "conf": float(premerge_confidence), "iou": .7, "classes": [0], "max_det": 100,
         }
         if half:
