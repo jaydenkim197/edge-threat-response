@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 · 승인 학습 자료의 배경 기준 확인
+
+- P430 두 촬영의 배경은 같은 좌표에서 차이가 컸다. 촬영별 배경으로도 승인 학습 음성의 RF-DETR 오탐 8프레임 중 정적 배경과 일치한 사례는 0개였다. 검출 점수에는 반영하지 않았다. [배경 자료와 오탐 검사](../reports/training/p430-autonomous-2026-11-27/report.md#고정형-cctv-배경-기준의-학습-자료-사전-확인)
+
 ## 2026-11-28 · RF-DETR 추가 검출의 과거 D1 관측 대조
 
 - 승인 튜닝에서 과거 네 슬롯의 D1 관측으로 RF-DETR 추가 검출을 검증했다. 전체 +9·소형 +6에 FP 박스 9개였으나 11/19 비소형 추가 검출은 세 팔 모두 0건이라 공통 개발 확인으로 넘기지 않았다. [입력과 대조 결과](../reports/training/p430-autonomous-2026-11-27/report.md#과거-d1-관측으로-rf-detr-추가-검출을-제한한-대조)
