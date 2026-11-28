@@ -1,5 +1,9 @@
 # Context-Aware Edge Threat Detection System - Development Log
 
+## 2026-11-28 — R18 점수 정련과 첫 epoch bias 대조
+
+R18의 디코더 박스 일치도로 점수를 보정했으나 같은 오탐 한도에서 전체 21/46·작은 칼 13/22를 넘지 못했다. Orin의 동일 검출 경로에서 낮은 bias warmup 1,024 업데이트는 기본 warmup 대조의 전체 107/161·작은 칼 79/105에서 76/161·61/105로 하락했다. PC12와 PC14의 12 epoch 및 등록 평가를 유지한다. [검증 조건과 비교 결과](../reports/training/p430-autonomous-2026-11-27/report.md#r18-박스-정련과-낮은-bias-warmup의-초기-대조)
+
 ## 2026-11-28 — R18 초기 평가와 박스 위치 진단 완료
 
 R18 3 epoch는 같은 튜닝 표본에서 전체 21/46·작은 칼 13/22였다. D1의 20/46·13/22와 비교해 사전 승격 기준에는 미달했다. 첫 가중치의 오탐은 정답 근처의 위치 오차였고 NMS 강화와 촬영 간 크기 보정에서 개선이 없었다. [비교와 연구 결정](../reports/training/p430-autonomous-2026-11-27/report.md#rt-detrv2-초기-평가-완료와-박스-오차-분리)
